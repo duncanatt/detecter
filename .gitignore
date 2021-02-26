@@ -1,0 +1,73 @@
+################################################################################
+##                          Standard files and tools                          ##
+################################################################################
+
+# OS-generated files.
+.DS_Store*
+._*
+.Trashes
+*.db
+.Spotlight*
+
+# Compiled binary and library files.
+*.com
+*.class
+*.beam
+*.pyc
+*.dll
+*.exe
+*.o
+*.a
+*.obj
+*.out
+*.so
+*.lib
+
+# Temporary, log and backup files.
+*.dump
+*.tmp
+*.temp
+*.log
+*.blg
+*.bak
+
+# LaTeX-generated files.
+*.aux
+*.bbl
+*.lof
+*.lot
+*.toc
+*.txss
+*.nav
+*.snm
+*.vrb
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+
+# IntelliJ IDEA-generated files and directories.
+.idea/
+*.ipr
+*.iml
+*.iws
+
+# Eclipse-generated files and directories.
+.settings/
+.classpath
+.project
+
+# NetBeans-generated files and directories.
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+nbactions.xml
+nb-configuration.xml
+
+# Tool-generated files and directories.
+target/
+doc/
+venv/
+ebin/
+

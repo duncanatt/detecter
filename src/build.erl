@@ -47,6 +47,7 @@
 %%% documentation in source code. Might be modified in future to generate XML
 %%% rather than HTML directly.
 -define(MACROS, [
+  {sect, "<h4>{@?}</h4>"},
   {returns, "<p><b>Returns:</b> {@?}</p>"},
   {params, "<dl>{@?}</dl>"},
   {name, "<dt>`{@?}'</dt>"},

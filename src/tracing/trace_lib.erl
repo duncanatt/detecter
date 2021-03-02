@@ -43,9 +43,6 @@
 -export([start/1, stop/0]).
 -export([trace/1, clear/1, preempt/1]).
 
-%%% Types.
-%%-export_type([trace_method/0]).
-
 
 %%% ----------------------------------------------------------------------------
 %%% Macro and record definitions.
@@ -66,7 +63,7 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
--type trace_method() :: evm | {log, File :: string()}.
+-type trace_method() :: evm | {log, File :: file:filename()}.
 %% Supported tracing methods:
 %% <dl>
 %%   <dt>`evm'</dt>

@@ -86,7 +86,7 @@ clear(Tracee) when is_pid(Tracee) ->
   trace(Tracee, false),
   true.
 
-%%  Establishes the calling process as the new tracer of the specified
+%% Establishes the calling process as the new tracer of the specified
 %% tracee PID.
 %%
 %% {@params

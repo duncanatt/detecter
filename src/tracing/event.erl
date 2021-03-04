@@ -1,7 +1,7 @@
 %%% ----------------------------------------------------------------------------
 %%% @author Duncan Paul Attard
 %%%
-%%% @doc Abstract to Erlang Virtual Machine trace event translation.
+%%% @doc Intermediate to Erlang Virtual Machine trace event translation.
 %%%
 %%% @end
 %%% 
@@ -27,20 +27,20 @@
 -export([to_evm_event/1]).
 
 %%% Types.
--export_type([event/0, evm_event/0]).
+-export_type([int_event/0, evm_event/0]).
 
 
 %%% ----------------------------------------------------------------------------
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
--type event() ::
+-type int_event() ::
 {fork, Parent :: pid(), Child :: pid(), Mfa :: mfa()} |
 {init, Child :: pid(), Parent :: pid(), Mfa :: mfa()} |
 {exit, Process :: pid(), Reason :: term()} |
 {send, Sender :: pid(), Receiver :: pid(), Message :: term()} |
 {recv, Receiver :: pid(), Message :: term()}.
-%% Abstract trace event format agnostic of the tracer implementation. See
+%% Intermediate trace event format agnostic of the tracer implementation. See
 %% {@link evm_event/0} for trace events specific to the Erlang Virtual Machine.
 
 -type evm_event() ::
@@ -57,16 +57,16 @@
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-%% @doc Translates the abstract event format to its Erlang Virtual Machine tracer
-%% equivalent.
+%% @doc Translates the trace event in intermediate representation to Erlang
+%% Virtual Machine tracer equivalent.
 %%
 %% {@params
 %%   {@name Event}
-%%   {@desc The event to translate to Erlang Virtual Machine tracer format.}
+%%   {@desc Intermediate trace event representation to translate.}
 %% }
 %%
-%% {@returns The translated event.}
--spec to_evm_event(Event :: event()) -> evm_event().
+%% {@returns Translated event.}
+-spec to_evm_event(Event :: int_event()) -> evm_event().
 to_evm_event({fork, Parent, Child, Mfa}) ->
   {trace, Parent, spawn, Child, Mfa};
 to_evm_event({init, Child, Parent, Mfa}) ->

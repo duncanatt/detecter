@@ -30,17 +30,6 @@
 %%% Public API.
 -export([eval_string/2]).
 
-%%% Callbacks.
--export([]).
-
-%%% Types.
--export_type([]).
-
-
-%%% ----------------------------------------------------------------------------
-%%% Macro and record definitions.
-%%% ----------------------------------------------------------------------------
-
 
 %%% ----------------------------------------------------------------------------
 %%% Type definitions.
@@ -75,7 +64,7 @@ ev_string() | ev_list() | ev_tuple().
 %% Term AST node.
 
 -type ev_mfa() :: {mfa, ev_atom(), ev_atom(), ev_list()}.
-%% MFA node.
+%% MFA AST node.
 
 -type ev_fork() :: {fork, ev_pid(), ev_pid(), ev_mfa()}.
 %% Fork trace event AST node.
@@ -97,26 +86,26 @@ ev_string() | ev_list() | ev_tuple().
 
 -type ev_delay() :: {delay, Ms :: ev_int(), Event :: ev_event()}.
 
-%% TODO: What to do with this? In which module shall I put it?
--type log() :: {delay, Ms :: timeout(), Event :: event:event()}.
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-%% @doc Converts the specified trace event specification string to its native
-%% Erlang form.
+%% @doc Parses the specified trace event description into its intermediate
+%% representation in Erlang format.
 %%
 %% {@params
 %%   {@name String}
-%%   {@desc The stringified representation of the trace event specification. See
-%%          {@section Trace events} for the expected trace event specification
-%%          format.
+%%   {@desc Trace event description string. See {@section Trace events}
+%%          for the trace event string format.
 %%   }
+%%   {@name LineNum}
+%%   {@desc Line number of the trace event description in source log file.}
 %% }
 %%
-%% {@returns the parsed trace event specification in Erlang form.}
--spec eval_string(String, LineNum) -> {ok, skip} | {ok, log()} | no_return()
+%% {@returns Intermediate trace event representation in Erlang format.}
+-spec eval_string(String, LineNum) ->
+  {ok, skip} | {ok, log_tracer:event()} | no_return()
   when
   String :: string(),
   LineNum :: line_num().
@@ -140,13 +129,30 @@ eval_string(String, LineNum) when is_list(String) ->
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------
 
--spec eval_delay(Delay :: ev_delay() | ev_event()) -> log().
+%% @private Evaluates the delayed trace event AST node.
+%%
+%% {@params
+%%   {@name Delay}
+%%   {@desc Delayed trace event AST node to evaluate.}
+%% }
+%%
+%% {@returns Intermediate trace event representation in Erlang format.}
+-spec eval_delay(Delay :: ev_delay() | ev_event()) -> log_tracer:event().
 eval_delay({delay, {int, _, Ms}, Event}) ->
   {delay, Ms, eval_event(Event)};
 eval_delay(Event) ->
   {delay, 0, eval_event(Event)}.
 
--spec eval_event(Event :: ev_event()) -> event:event().
+%% @private Evaluates the trace event AST node.
+%%
+%%
+%% {@params
+%%   {@name Event}
+%%   {@desc Trace event AST node to evaluate.}
+%% }
+%%
+%% {@returns Intermediate trace event representation in Erlang format.}
+-spec eval_event(Event :: ev_event()) -> event:int_event().
 eval_event({fork, {pid, _, Pid}, {pid, _, Pid2}, Mfa}) ->
   {fork, Pid, Pid2, eval_mfa(Mfa)};
 eval_event({init, {pid, _, Pid}, {pid, _, Pid2}, Mfa}) ->
@@ -158,10 +164,27 @@ eval_event({send, {pid, _, Pid}, {pid, _, Pid2}, Item}) ->
 eval_event({recv, {pid, _, Pid}, Item}) ->
   {recv, Pid, eval_term(Item)}.
 
+%% @private Evaluates the MFA AST node.
+%%
+%% {@params
+%%   {@name Mfa}
+%%   {@desc MFA AST node to evaluate.}
+%% }
+%%
+%% {@returns Intermediate MFA representation in Erlang format.}
 -spec eval_mfa(Mfa :: ev_mfa()) -> mfa().
 eval_mfa({mfa, {atom, _, M}, {atom, _, F}, Args}) ->
   {M, F, eval_term(Args)}.
 
+
+%% @private Evaluates the term AST node.
+%%
+%% {@params
+%%   {@name Term}
+%%   {@desc Term AST node to evaluate.}
+%% }
+%%
+%% {@returns Simple or complex Erlang data type.}
 -spec eval_term(Term :: ev_term()) ->
   pid() | atom() | integer() | float() | list() | tuple().
 eval_term({pid, _, Pid}) ->
@@ -183,6 +206,14 @@ eval_term({tuple, []}) ->
 eval_term({tuple, Terms}) ->
   list_to_tuple(conv_list(Terms)).
 
+%% @private Evaluates a list of term AST nodes.
+%%
+%% {@params
+%%   {@name Terms}
+%%   {@desc List of term AST nodes.}
+%% }
+%%
+%% {@returns List of simple or complex Erlang data types.}
 -spec conv_list(Terms :: list(ev_delay())) -> list().
 conv_list([]) ->
   [];

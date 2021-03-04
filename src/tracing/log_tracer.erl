@@ -73,8 +73,12 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
-%%-type log() :: {delay, Ms :: timeout(), Event :: event:event()}.
--type backlog() :: list(log_eval:entry()).
+
+-type event() :: {delay, Ms :: timeout(), Event :: event:int_event()}.
+
+-type backlog() :: list(event()).
+
+
 
 
 %%% ----------------------------------------------------------------------------

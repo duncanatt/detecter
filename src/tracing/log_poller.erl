@@ -1,8 +1,7 @@
 %%% ----------------------------------------------------------------------------
 %%% @author Duncan Paul Attard
 %%%
-%%% @doc Module description (becomes module heading).
-%%%
+%%% @doc Active file polling and parsing of trace event logs.
 %%% @end
 %%% 
 %%% Copyright (c) 2021, Duncan Paul Attard <duncanatt@gmail.com>
@@ -32,9 +31,6 @@
 
 %%% Callbacks.
 -export([init/1, handle_line/3]).
-
-%%% Types.
--export_type([]).
 
 %%% Implemented behaviors.
 -behavior(gen_file_poller).
@@ -110,7 +106,7 @@ stop() ->
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------
 
-%% @doc Handles the log poller initialization.
+%% @private Handles the log poller initialization.
 %%
 %% {@params
 %%   {@name Args}
@@ -122,8 +118,8 @@ stop() ->
 init(_Args) ->
   {ok, {events_read, 0}}.
 
-%% @doc Parses one trace event specification from its list of bytes, and posts
-%% the event to the log tracer.
+%% @private Parses one trace event specification from its list of bytes, and
+%% posts the event to the log tracer.
 %%
 %% {@params
 %%   {@name Line}

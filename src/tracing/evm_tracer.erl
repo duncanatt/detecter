@@ -152,7 +152,7 @@ preempt(Tracee) when is_pid(Tracee) ->
     catch
       error:badarg ->
 
-        % Tracee not be resumed: it does not exist, has already exited, or has a
+        % Tracee not resumed: it does not exist, has already exited, or has a
         % suspend count < 0.
         ?WARN("Tracee ~w not resumed.", [Tracee]),
         false
@@ -160,7 +160,7 @@ preempt(Tracee) when is_pid(Tracee) ->
   catch
     error:badarg ->
 
-      % Tracee not be suspended: it does not exist or has already exited.
+      % Tracee not suspended: it does not exist or has already exited.
       ?WARN("Tracee ~w not suspended.", [Tracee]),
       false
   end.

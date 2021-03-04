@@ -72,6 +72,7 @@
 
 %%% Public API.
 -export([start/3, start/4, start_link/3, start_link/4, stop/1]).
+-export([new_line_info/2, line_info_byte_off/1, line_info_line_num/1]).
 
 %%% Callbacks.
 -export([init_it/6]). %% Gen module.
@@ -95,10 +96,10 @@
 %% Default buffer length in bytes.
 -define(BUF_LEN, 3).
 
-%% Start byte in source log file.
+%% Start byte in source file.
 -define(START_BYTE, 0).
 
-%% Start line in source log file.
+%% Start line in source file.
 -define(START_LINE, 1).
 
 %% Used by the generic file poller to keep track of the buffer status while it
@@ -137,7 +138,7 @@
 %%% ----------------------------------------------------------------------------
 
 -type offset() :: non_neg_integer().
-%% Byte offset in the source log file.
+%% Byte offset in the source file.
 
 -type buf_stat() :: #buf_stat{}.
 %% Buffer information.
@@ -183,9 +184,9 @@
 %% @doc Returns a new line information record from the specified arguments.
 %%
 %% {@params
-%%   {@name `ByteOff'}
+%%   {@name ByteOff}
 %%   {@desc Starting byte offset of the current line in source file.}
-%%   {@name `LineNum'}
+%%   {@name LineNum}
 %%   {@desc Current line number in source file.}
 %% }
 %%
@@ -200,27 +201,26 @@ new_line_info(ByteOff, LineNum) ->
 %% @doc Returns the byte offset from the specified line information record.
 %%
 %% {@params
-%%   {@name `LineInfo'}
+%%   {@name LineInfo}
 %%   {@desc Line information record.}
 %% }
 %%
 %% {@returns The byte offset.}
--spec line_info_byte_offset(LineInfo :: line_info()) -> ByteOffset :: offset().
-line_info_byte_offset(#line_info{byte_off = ByteOffset}) ->
-  ByteOffset.
+-spec line_info_byte_off(LineInfo :: line_info()) -> offset().
+line_info_byte_off(#line_info{byte_off = ByteOff}) ->
+  ByteOff.
 
 %% @doc Returns the line number from the specified line information record.
 %%
 %% {@params
-%%   {@name `LineInfo'}
+%%   {@name LineInfo}
 %%   {@desc Line information record.}
 %% }
 %%
 %% {@returns The line number.}
--spec line_info_line_number(LineInfo :: line_info()) ->
-  LineNumber :: pos_integer().
-line_info_line_number(#line_info{line_num = LineNumber}) ->
-  LineNumber.
+-spec line_info_line_num(LineInfo :: line_info()) -> pos_integer().
+line_info_line_num(#line_info{line_num = LineNum}) ->
+  LineNum.
 
 
 %%% ----------------------------------------------------------------------------
@@ -275,13 +275,13 @@ start_link(Mod, File, Opts) when
 %% @doc Starts a file poller process as part of a supervision tree.
 %%
 %% {@params
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller process registered name.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callback `Mod:handle_line/3'.}
-%%   {@name `File'}
+%%   {@name File}
 %%   {@desc Source file to monitor for changes.}
-%%   {@name `Opts'}
+%%   {@name Opts}
 %%   {@desc File poller configuration options. Only one option is supported:
 %%          {@dl
 %%            {@term `@{poll_ms, Ms@}'}
@@ -304,7 +304,7 @@ start_link(Name, Mod, File, Opts) when
 %% @doc Shuts down a file poller process.
 %%
 %% {@params
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
 %% }
 %%
@@ -323,22 +323,22 @@ stop(Name) ->
 %% @private Initializes and launches main file poller loop.
 %%
 %% {@params
-%%   {@name `Starter'}
+%%   {@name Starter}
 %%   {@desc PID of the process starting the file poller.}
-%%   {@name `Parent'}
+%%   {@name Parent}
 %%   {@desc PID of the process the file poller is linked to or `self', if the
 %%          file poller is standalone. TODO: Confirm this.
 %%   }
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `Args'}
+%%   {@name Args}
 %%   {@desc File poller initialization arguments. The only argument currently
 %%          possible is the filename where the source file to be processed
 %%          resides.
 %%   }
-%%   {@name `Opts'}
+%%   {@name Opts}
 %%   {@desc File poller configuration options.}
 %% }
 %%
@@ -467,28 +467,28 @@ write_debug(IoDev, Event, Name) ->
 %% }
 %%
 %% {@params
-%%   {@name `Parent'}
+%%   {@name Parent}
 %%   {@desc PID of the process the file poller is linked to or `self', if the
 %%          file poller is standalone.}
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
-%%   {@name `State'}
+%%   {@name State}
 %%   {@desc File poller state.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `File'}
+%%   {@name File}
 %%   {@desc Source file to monitor for changes.}
-%%   {@name `PollMs'}
+%%   {@name PollMs}
 %%   {@desc File polling frequency.}
-%%   {@name `LastModTime'}
+%%   {@name LastModTime}
 %%   {@desc Last known file modification time.}
-%%   {@name `ByteOff'}
+%%   {@name ByteOff}
 %%   {@desc (0-based) byte offset from where to start reading the source file.}
-%%   {@name `LineNum'}
+%%   {@name LineNum}
 %%   {@desc (1-based) line number that tracks the new lines processed in the
 %%          source file byte stream up to the current point.
 %%   }
-%%   {@name `Debug'}
+%%   {@name Debug}
 %%   {@desc Debugging information and flags.}
 %% }
 %%
@@ -551,17 +551,17 @@ loop(Parent, Name, State, Mod, File, PollMs, LastModTime, ByteOff, LineNum, Debu
 %% }
 %%
 %% {@params
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
-%%   {@name `State'}
+%%   {@name State}
 %%   {@desc File poller state.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `IoDev'}
+%%   {@name IoDev}
 %%   {@desc Device identifier of the open file being processed.}
-%%   {@name `ByteOff'}
+%%   {@name ByteOff}
 %%   {@desc (0-based) byte offset from where to start reading the source file.}
-%%   {@name `LineNum'}
+%%   {@name LineNum}
 %%   {@desc (1-based) line number that tracks the new lines processed in the
 %%          source file byte stream up to the current point.
 %%   }
@@ -671,7 +671,7 @@ parse_lines(Name, State, Mod, IoDev, Buf, ByteOff, LineNum) ->
 %% }
 %%
 %% {@params
-%%   {@name `Buf'}
+%%   {@name Buf}
 %%   {@desc Buffer of bytes to process.}
 %% }
 %%
@@ -731,12 +731,12 @@ parse_line([Byte | Buf], BytesCnt, LinesCnt, Line) ->
 %% @private Creates a new `buf_stat' record.
 %%
 %% {@params
-%%   {@name `ByteCnt'}
+%%   {@name ByteCnt}
 %%   {@desc Number of bytes processed from the buffer.}
-%%   {@name `LineCnt'}
+%%   {@name LineCnt}
 %%   {@desc Number of new lines processed when reading the buffer.}
-%%   {@name `BufLeft'}
-%%   {@desc }Bytes left unprocessed in the buffer.}
+%%   {@name BufLeft}
+%%   {@desc Bytes left unprocessed in the buffer.}
 %% }
 %%
 %% {@returns A new `buf_stat' record.}
@@ -754,16 +754,16 @@ new_buf_stat(ByteCnt, LineCnt, BufLeft) ->
 %% state.
 %%
 %% {@params
-%%   {@name `Starter'}
+%%   {@name Starter}
 %%   {@desc PID of the process starting the file poller.}
-%%   {@name `Parent'}
+%%   {@name Parent}
 %%   {@desc PID of the process the file poller is linked to or `self', if the
 %%          file poller is standalone.}
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `Args'}
+%%   {@name Args}
 %%   {@desc File poller initialization arguments.}
 %% }
 %%
@@ -815,15 +815,15 @@ init(Starter, _Parent, Name, Mod, Args) ->
 %% information.
 %%
 %% {@params
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
-%%   {@name `State'}
+%%   {@name State}
 %%   {@desc File poller state.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `Line'}
+%%   {@name Line}
 %%   {@desc Parsed line bytes.}
-%%   {@name `LineInfo'}
+%%   {@name LineInfo}
 %%   {@desc Line information record.}
 %% }
 %%
@@ -862,15 +862,15 @@ handle_line(_Name, State, Mod, Line, LineInfo = #line_info{}) ->
 %% {@par The return value from the callback is discarded.}
 %%
 %% {@params
-%%   {@name `Reason'}
+%%   {@name Reason}
 %%   {@desc Termination reason.}
-%%   {@name `Name'}
+%%   {@name Name}
 %%   {@desc File poller PID or registered name.}
-%%   {@name `State'}
+%%   {@name State}
 %%   {@desc File poller terminating state.}
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `Debug'}
+%%   {@name Debug}
 %%   {@desc Debugging information and flags.}
 %% }
 %%
@@ -911,11 +911,11 @@ terminate(Reason, _Name, State, Mod, _Debug) ->
 %% and translation.
 %%
 %% {@params
-%%   {@name `Mod'}
+%%   {@name Mod}
 %%   {@desc Module implementing the callbacks.}
-%%   {@name `Callback'}
+%%   {@name Callback}
 %%   {@desc Callback name.}
-%%   {@name `Args'}
+%%   {@name Args}
 %%   {@desc Callback arguments.}
 %% }
 %%
@@ -953,11 +953,11 @@ try_callback(Mod, Callback, Args) ->
 %% (also called the exception type).
 %%
 %% {@params
-%%   {@name `Class'}
+%%   {@name Class}
 %%   {@desc Exception class denoting the kind of exception.}
-%%   {@name `Reason'}
+%%   {@name Reason}
 %%   {@desc Termination reason.}
-%%   {@name `Stacktrace'}
+%%   {@name Stacktrace}
 %%   {@desc Detailed stacktrace causing the termination.}
 %% }
 %%

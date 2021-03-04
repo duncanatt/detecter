@@ -263,7 +263,10 @@ all: compile
 compile: clean
 	mkdir -p $(BIN)
 	erlc -pa $(BIN) +debug_info -I $(INCLUDE) -o $(BIN) $(call recursive,$(SRC),erl)
-	cp $(RES)/* $(BIN)
+	#cp $(RES)/* $(BIN)
+
+analyze:
+	 dialyzer -pa $(BIN) -I $(INCLUDE) $(call recursive,$(SRC),erl)
 
 compile-test: clean
 	mkdir -p $(BIN)

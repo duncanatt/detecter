@@ -29,11 +29,9 @@
 %%% Public API.
 -export([start/0, stop/0, trace/1, clear/1, preempt/1]).
 
-%%% Callbacks.
--export([]).
-
-%%% Types.
--export_type([]).
+-ifdef(TEST).
+-export([get_tracer/1]).
+-endif.
 
 
 %%% ----------------------------------------------------------------------------
@@ -60,83 +58,40 @@ stop() ->
   erlang:trace(all, false, [set_on_spawn | ?TRC_FLAGS]),
   ok.
 
-%% @doc Sets the caller process as the tracer for the specified tracee PID.
+%% @doc Sets the caller process as the tracer for tracee.
 %%
 %% {@params
 %%   {@name Tracee}
 %%   {@desc PID of the process to trace.}
 %% }
-%% {@par Call fails if another process is already tracing `Tracee'.}
 %%
-%% {@returns `true' if successful, otherwise `false'.}
+%% {@returns `true' if successful, or `false' if `Tracee' is already being
+%%            traced.}
 -spec trace(Tracee :: pid()) -> boolean().
 trace(Tracee) when is_pid(Tracee) ->
   trace(Tracee, true).
 
-%% @doc Clears the tracer for the specified tracee PID.
+%% @doc Clears the tracer for the specified tracee.
 %%
 %% {@params
 %%   {@name Tracee}
 %%   {@desc PID of the process whose tracer is to be cleared.}
 %% }
 %%
-%% {@returns `true' regardless of whether a tracer was set up for `Tracee'.}
+%% {@returns `true' to acknowledge that `Tracee' is no longer being traced.}
 -spec clear(pid()) -> true.
 clear(Tracee) when is_pid(Tracee) ->
   trace(Tracee, false),
   true.
 
-%% Establishes the calling process as the new tracer of the specified
-%% tracee PID.
+%% @doc Sets the caller process as the new tracer for tracee.
 %%
 %% {@params
 %%   {@name Tracee}
-%%   {@desc PID of the process whose tracer is to be preempted.}
+%%   {@desc PID of the process to trace.}
 %% }
-%% {@par Call fails if no tracer is set up for `Tracee'.}
 %%
-%% {@returns `true' if successful, otherwise `false'.}
-%%-spec preempt(Tracee :: pid()) -> boolean().
-%%preempt2(Tracee) when is_pid(Tracee) ->
-%%%%  case get_tracer(Tracee) of % TODO: Can probably be removed since this same case is handled by "case catch erlang:suspend_process(Tracee) of".
-%%%%    undefined ->
-%%%%      false;
-%%%%    _ ->
-%%  case catch erlang:suspend_process(Tracee) of
-%%    true ->
-%%
-%%      % Tracee successfully suspended. The calling process stops the
-%%      % previous tracer from tracing Tracee and starts tracing Tracee
-%%      % itself. It then resumes Tracee.
-%%      trace(Tracee, false) and trace(Tracee, true) and
-%%        case catch erlang:resume_process(Tracee) of
-%%          true ->
-%%            true;
-%%          {'EXIT', _} ->
-%%
-%%            % Tracee could not be resumed: it does not exist, has already
-%%            % exited, or has a suspend count < 0.
-%%            ?WARN("Tracee ~w not resumed.", [Tracee]),
-%%            false
-%%        end;
-%%    {'EXIT', _} ->
-%%
-%%      % Tracee not be suspended: it does not exist or has already exited.
-%%      ?WARN("Tracee ~w not suspended.", [Tracee]),
-%%      false
-%%%%      end
-%%  end.
-
-%% @doc Establishes the calling process as the new tracer of the specified
-%% tracee PID.
-%%
-%% {@params
-%%   {@name Tracee}
-%%   {@desc PID of the process whose tracer is to be preempted.}
-%% }
-%% {@par Call fails if no tracer is set up for `Tracee'.}
-%%
-%% {@returns `true' if successful, otherwise `false'.}
+%% {@returns `true' if successful, or `false' if `Tracee' is not being traced.}
 preempt(Tracee) when is_pid(Tracee) ->
   try
 
@@ -290,6 +245,35 @@ config_tracer() ->
   ],
     []).
 
+
+%%% ----------------------------------------------------------------------------
+%%% Testing.
+%%% ----------------------------------------------------------------------------
+
+-ifdef(TEST).
+
+%% @doc Determines whether tracee is being traced.
+%%
+%% {@params
+%%   {@name Tracee}
+%%   {@desc PID of the process to check.}
+%% }
+%%
+%% {@returns PID of the associated tracer or `undefined' if `Tracee' is not
+%%           being traced.
+%% }
+-spec get_tracer(Tracee :: pid()) -> pid() | undefined.
+get_tracer(Tracee) ->
+  case erlang:trace_info(Tracee, tracer) of
+    {tracer, []} ->
+      undefined; % Tracee defined but tracer undefined.
+    {tracer, Tracer} ->
+      Tracer;
+    undefined ->
+      undefined % Tracee undefined.
+  end.
+
+-endif.
 
 %%Pid = spawn(fun() -> Loop = fun Loop(N) -> receive spawn -> _Pid = spawn(fun() -> ok, receive _ -> ok end end), io:format("Spawned: ~p.~n", [_Pid]); Msg -> io:format("[~p] Received ~p.~n", [N, Msg]), Loop(N + 1) end end, Loop(0) end).
 %%TrcPid = spawn(fun() -> trace_lib:start(evm), trace_lib:trace(Pid), Loop = fun Loop(N) -> receive Msg -> io:format("[~p] Received event ~p.~n", [N, Msg]), Loop(N + 1) end end, Loop(0) end).

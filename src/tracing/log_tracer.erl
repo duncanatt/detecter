@@ -1,7 +1,121 @@
 %%% ----------------------------------------------------------------------------
 %%% @author Duncan Paul Attard
 %%%
-%%% @doc Wrapper for the Log file tracing infrastructure.
+%%% @doc Asynchronous tracing that monitors log file for trace events.
+%%%
+%%% {@par The module provides a file-based tracing implementation that actively
+%%%       monitors files of trace events to read and dispatch them to allocated
+%%%       tracers. Source log files are structured as {@emph one} trace event
+%%%       per line; these events describe the execution trace of a single
+%%%       process. The tracer handles interleaved trace events written to the
+%%%       file by multiple processes, and guarantees that the sequential order
+%%%       of events from the point of view of individual processes is respected.
+%%% }
+%%% {@par This tracing implementation is forward-only, meaning that it cannot
+%%%       revisit previously processed lines in the source log file. It also
+%%%       does not assume that the log file (and traces within) is complete.
+%%%       although it a complete log file can be easily processed. Internally,
+%%%       the tracer employs a polling mechanism (see {@link log_poller} to
+%%%       monitor the log file, similar to what is done by `tail' in *nix
+%%%       systems.
+%%% }
+%%%
+%%% {@sect Log file format}
+%%%
+%%% {@par For the format of individual trace events, see {@link log_eval}.}
+%%% {@par Log files are structured as one trace event description per line:
+%%% ```
+%%% fork(<0.17.0>, <0.19.0>, @{mod_p_4, start, []@})
+%%% init(<0.19.0>, <0.17.0>, @{mod_p_4, start, []@})
+%%% send(<0.19.0>, <0.11.0>, msg_c)
+%%% exit(<0.19.0>, kill_p_4)
+%%% fork(<0.11.0>, <0.13.0>, @{mod_p_2, start, []@})
+%%% init(<0.13.0>, <0.11.0>, @{mod_p_2, start, []@})
+%%% recv(<0.13.0>, msg_a)
+%%% send(<0.11.0>, <0.13.0>, msg_a)
+%%% recv(<0.11.0>, msg_c)
+%%% exit(<0.11.0>, kill_p_1)
+%%% fork(<0.13.0>, <0.17.0>, @{mod_p_3, start, []@})
+%%% send(<0.13.0>, <0.17.0>, msg_b)
+%%% init(<0.17.0>, <0.13.0>, @{mod_p_3, start, []@})
+%%% recv(<0.17.0>, msg_b)
+%%% exit(<0.17.0>, kill_p_3)
+%%% exit(<0.13.0>, kill_p_2)
+%%% '''
+%%% }
+%%%
+%%% {@par This log file describes the behavior of four concurrent processes,
+%%%       P<sub>1</sub> ({@lt}0.11.0{@gt}), P<sub>2</sub> ({@lt}0.13.0{@gt}),
+%%%       P<sub>3</sub> ({@lt}0.17.0{@gt}) and P<sub>4</sub> ({@lt}0.19.0{@gt}).
+%%%       The behaviour of these processes is causally related: P<sub>1</sub>
+%%%       forks P<sub>2</sub>, which in its turn, forks P<sub>3</sub>, with the
+%%%       latter finally forking P<sub>4</sub>. Notwithstanding their causality,
+%%%       the respective trace events of these processes appear in a different
+%%%       order than one would expect due to their interleaved execution. This
+%%%       reordering may also arise when each process is competing for the
+%%%       {@emph shared write lock} that needs to be acquired before the trace
+%%%       event can be written to the log file by the process.
+%%% }
+%%% {@par Processes P<sub>1</sub> to P<sub>4</sub> are sequential entities. One
+%%%       should distinguish between the relative ordering of trace events for
+%%%       each process, as opposed to the global ordering of events as reported
+%%%       in the log file. The log tracer implementation expects the trace event
+%%%       order for one particular process to be logically consistent with the
+%%%       behaviour of the process when this is considered in isolation. To
+%%%       illustrate, the interleaved global trace in the example above can be
+%%%       projected into the following four traces:
+%%% }
+%%% {@dl
+%%%   {@term Trace P<sub>1</sub> (note that the {@mono init} trace event for
+%%%          P<sub>1</sub> is missing from the log file):
+%%%   }
+%%%   {@desc {@ol
+%%%            {@item {@mono fork({@lt}0.11.0{@gt}, {@lt}0.13.0{@gt}, @{mod_p_2, start, []@})}}
+%%%            {@item {@mono send({@lt}0.11.0{@gt}, {@lt}0.13.0{@gt}, msg_a)}}
+%%%            {@item {@mono recv({@lt}0.11.0{@gt}, msg_c)}}
+%%%            {@item {@mono exit({@lt}0.11.0{@gt}, kill_p_1)}}
+%%%   }}
+%%%   {@term Trace P<sub>2</sub>:}
+%%%   {@desc {@ol
+%%%            {@item {@mono init({@lt}0.13.0{@gt}, {@lt}0.11.0{@gt}, @{mod_p_2, start, []@})}}
+%%%            {@item {@mono recv({@lt}0.13.0{@gt}, msg_a)}}
+%%%            {@item {@mono fork({@lt}0.13.0{@gt}, {@lt}0.17.0{@gt}, @{mod_p_3, start, []@})}}
+%%%            {@item {@mono send({@lt}0.13.0{@gt}, {@lt}0.17.0{@gt}, msg_b)}}
+%%%            {@item {@mono exit({@lt}0.13.0{@gt}, kill_p_2)}}
+%%%   }}
+%%%   {@term Trace P<sub>3</sub>:}
+%%%   {@desc {@ol
+%%%            {@item {@mono fork({@lt}0.17.0{@gt}, {@lt}0.19.0{@gt}, @{mod_p_4, start, []@})}}
+%%%            {@item {@mono init({@lt}0.17.0{@gt}, {@lt}0.13.0{@gt}, @{mod_p_3, start, []@})}}
+%%%            {@item {@mono recv({@lt}0.17.0{@gt}, msg_b)}}
+%%%            {@item {@mono exit({@lt}0.17.0{@gt}, kill_p_3)}}
+%%%   }}
+%%%   {@term Trace P<sub>4</sub>:}
+%%%   {@desc {@ol
+%%%            {@item {@mono init({@lt}0.19.0{@gt}, {@lt}0.17.0{@gt}, @{mod_p_4, start, []@})}}
+%%%            {@item {@mono send({@lt}0.19.0{@gt}, {@lt}0.11.0{@gt}, msg_c)}}
+%%%            {@item {@mono exit({@lt}0.19.0{@gt}, kill_p_4)}}
+%%%   }}
+%%% }
+%%% {@par The projected traces for P<sub>1</sub> to P<sub>4</sub> are valid. For
+%%%       instance, {@mono exit} events, that signal process termination are,
+%%%       never followed by any other event: this would constitute unsound
+%%%       behaviour where the process first terminated and then performed other
+%%%       actions. Likewise, {@mono init} events (when present in the trace),
+%%%       are the first to be exhibited, indicating that a process must be
+%%%       initialized (or created) before it can perform any other action. To
+%%%       summarize, trace events for individual process are totally ordered,
+%%%       whereas a global view of the events for all processes generally yields
+%%%       a partial ordering.
+%%% }
+%%%
+%%% {@sect Automatic tracer allocation}
+%%%
+%%% {@par To be filled later.}
+%%%
+%%% {@sect Tracer guarantees}
+%%%
+%%% {@par To be filled later.}
 %%% @end
 %%% 
 %%% Copyright (c) 2021, Duncan Paul Attard <duncanatt@gmail.com>
@@ -28,14 +142,18 @@
 
 %%% Public API.
 -export([start/1, start/2, stop/0]).
--export([trace/1, clear/1, preempt/1, query/1]).
--export([get_backlog/0, post_event/1, post_events/1]).
+-export([trace/1, clear/1, preempt/1]).
+-export([post_event/1, post_events/1]).
+
+-ifdef(TEST).
+-export([get_tracer/1, get_backlog/0]).
+-endif.
 
 %%% Callbacks.
 -export([init/1, terminate/2, handle_call/3, handle_cast/2]).
 
 %%% Types.
-%%-export_type([log/0]).
+-export_type([event/0]).
 
 %%% Implemented behaviors.
 -behavior(gen_server).
@@ -73,35 +191,62 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
-
 -type event() :: {delay, Ms :: timeout(), Event :: event:int_event()}.
+%% Delayed trace event with data payload.
 
 -type backlog() :: list(event()).
-
-
+%% Backlog of undelivered trace events.
 
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
+%% @doc Configures and starts the tracer.
+%%
+%% {@params
+%%   {@name File}
+%%   {@desc Full path of log file containing the trace event descriptions.}
+%% }
+%%
+%% {@returns PID of the tracer process.}
 -spec start(File :: file:filename()) ->
-  {ok, Pid :: pid()} |
-  {error, {already_started, Pid :: pid()}}.
+  {ok, Pid :: pid()} | {error, {already_started, Pid :: pid()}}.
 start(File) ->
   start(File, []).
 
-
+%% @doc Configures and starts the tracer.
+%%
+%% {@params
+%%   {@name File}
+%%   {@desc Full path of log file containing the trace event descriptions.}
+%%   {@name Opts}
+%%   {@desc Configuration options. No options are currently supported.}
+%% }
+%%
+%% {@returns PID of the tracer process.}
 -spec start(File :: file:filename(), Opts :: proplists:proplist()) ->
   {ok, Pid :: pid()} |
   {error, {already_started, Pid :: pid()}}.
 start(File, Opts) ->
   gen_server:start({local, ?MODULE}, ?MODULE, [File], Opts).
 
+%% @doc Stops the tracer.
+%%
+%% {@returns `ok' to indicate successful termination.}
 -spec stop() -> ok | no_return().
 stop() ->
   gen_server:stop(?MODULE).
 
+%% @doc Sets the caller process as the tracer for tracee.
+%%
+%% {@params
+%%   {@name Tracee}
+%%   {@desc PID of the process to trace.}
+%% }
+%%
+%% {@returns `true' if successful, or `false' if `Tracee' is already being
+%%            traced.}
 -spec trace(Tracee :: pid()) -> Success :: boolean().
 trace(Tracee) when is_pid(Tracee) -> %% Can be asynchronous to speed things up.
   case create_alloc(Tracee, self()) of
@@ -112,10 +257,26 @@ trace(Tracee) when is_pid(Tracee) -> %% Can be asynchronous to speed things up.
       Reply
   end.
 
+%% @doc Clears the tracer for the specified tracee.
+%%
+%% {@params
+%%   {@name Tracee}
+%%   {@desc PID of the process whose tracer is to be cleared.}
+%% }
+%%
+%% {@returns `true' to acknowledge that `Tracee' is no longer being traced.}
 -spec clear(Tracee :: pid()) -> true.
 clear(Tracee) when is_pid(Tracee) ->
   delete_alloc(Tracee).
 
+%% @doc Sets the caller process as the new tracer for tracee.
+%%
+%% {@params
+%%   {@name Tracee}
+%%   {@desc PID of the process to trace.}
+%% }
+%%
+%% {@returns `true' if successful, or `false' if `Tracee' is not being traced.}
 -spec preempt(Tracee :: pid()) -> Success :: boolean().
 preempt(Tracee) when is_pid(Tracee) ->
 
@@ -161,34 +322,48 @@ preempt(Tracee) when is_pid(Tracee) ->
       false
   end.
 
-
--spec post_event(Event :: log_eval:entry()) -> ok.
+%% @doc Posts a trace event description to the tracer.
+%%
+%% {@params
+%%   {@name Event}
+%%   {@desc Trace event description to post.}
+%% }
+%%
+%% {@returns `ok' to acknowledge success.}
+-spec post_event(Event :: event()) -> ok.
 post_event(Event) ->
   gen_server:call(?MODULE, {post, Event}, infinity).
 
--spec post_events(Events :: [log_eval:entry()]) -> [ok].
+%% @doc Posts a list of trace event descriptions to the tracer.
+%%
+%% {@params
+%%   {@name Events}
+%%   {@desc List of trace event descriptions to post.}
+%% }
+%%
+%% {@returns List of `ok' atoms for each acknowledged post.}
+-spec post_events(Events :: list(event())) -> list(ok).
 post_events([]) ->
   [];
 post_events([Event | Events]) ->
   [post_event(Event) | post_events(Events)].
 
 
-% TODO: Is this needed? (probably by tests)
--spec query(Tracee :: pid()) -> pid() | undefined.
-query(Tracee) when is_pid(Tracee) ->
-  return_alloc(Tracee).
-
-% TODO: Is this needed? (probably by tests)
--spec get_backlog() -> Backlog :: backlog().
-get_backlog() ->
-  gen_server:call(?MODULE, get_backlog, infinity).
-
-
 %%% ----------------------------------------------------------------------------
 %%% Callbacks.
 %%% ----------------------------------------------------------------------------
 
--spec init(Args :: [File :: string()]) -> no_return().
+%% @doc Handles initialization.
+%%
+%% {@params
+%%   {@name Args}
+%%   {@desc A single-element list that points to the full path path of log file
+%%          containing the trace event descriptions.
+%%   }
+%% }
+%%
+%% {@returns Empty state.}
+-spec init(Args :: [File :: file:filename()]) -> no_return().
 init([File]) ->
 
   % Create fresh allocations table.
@@ -198,6 +373,16 @@ init([File]) ->
   log_poller:start_link(File, []),
   {ok, []}.
 
+%% @private Handles termination.
+%%
+%% {@params
+%%   {@name Reason}
+%%   {@desc Termination reason.}
+%%   {@name Backlog}
+%%   {@desc Trace event backlog.}
+%% }
+%%
+%% {@returns `ok' to indicate successful termination.}
 -spec terminate(Reason, Backlog) -> ok when
   Reason :: normal | shutdown | {shutdown, term()} | term(),
   Backlog :: backlog().
@@ -206,14 +391,49 @@ terminate(Reason, _) ->
   delete_alloc_table(),
   ?DEBUG("Tracer stopped for the following reasons ~p and ~p.", [Reason, Stop]).
 
+%% @doc Handles requests synchronously.
+%%
+%% {@par The following requests are supported:}
+%% {@dl
+%%   {@term {@code get_backlog}}
+%%   {@desc {@returns Complete trace event backlog to the requesting process.}}
+%%   {@term {@code @{post, Event::{@link event()}@}}}
+%%   {@desc
+%%     {@par Accepts a trace event description to be dispatched to the a tracer
+%%           if this is allocated to a tracee. If the trace event could not be
+%%           immediately dispatched due to the absence of such an allocation, it
+%%           is instead appended to the backlog.
+%%     }
+%%     {@par If the event dispatch resulted in the automatic allocation of a new
+%%           tracer, all of the queued events in the backlog are examined to
+%%           determine whether these have become eligible for dispatch in view
+%%           of this recent tracer allocation. These are handled accordingly,
+%%           should this be the case. Note that this handling may itself
+%%           automatically allocate further tracers, and this must be
+%%           continually repeated until all the events in the backlog that can
+%%           be dispatched have been dispatched, and the tracer is in a stable
+%%           state.
+%%     }
+%%     {@par Processing trace events in the backlog in sequential fashion
+%%           ensures that the order in which these were admitted into the
+%%           backlog remains preserved, despite the possible dynamic automatic
+%%           allocations of new tracers.
+%%     }
+%%     {@returns `ok' to acknowledge the requesting process.}
+%%   }
+%%   {@term {@code @{unblock, Ref::{@link reference()}@}}}
+%%   {@desc Blocks the caller until the request is processed by the tracer. Used
+%%          internally by the {@link preempt/1} implementation, which might
+%%          change in the future.
+%%          {@returns {@code @{unblocked, Ref@}} to unblock the requesting process.}
+%%   }
+%% }
 -spec handle_call(Request, From, Backlog) ->
   {reply, Backlog, Backlog} |
   {reply, ok, NewBacklog :: backlog()} |
   {reply, {unblocked, Ref :: reference()}, Backlog}
   when
-  Request :: get_backlog |
-  {post, Entry :: log_eval:entry()} |
-  {unblock, Ref :: reference()},
+  Request :: get_backlog | {post, Event :: event()} | {unblock, Ref :: reference()},
   From :: {Pid :: pid(), Tag :: reference()},
   Backlog :: backlog().
 handle_call(get_backlog, _, Backlog) ->
@@ -243,14 +463,24 @@ handle_call({post, Entry = {delay, Ms, Event}}, _, Backlog) when
       % tracers table was updated. This may make events queued in the backlog
       % eligible to being dispatched, and the backlog needs to be processed.
       % Since this processing may itself create additional updates, the
-      % processing must be continually repeated until all events that are meant
-      % to be dispatched have been dispatched.
+      % processing must be continually repeated until all events that can be
+      % dispatched have been dispatched
       NewBacklog = replay_backlog(Backlog),
       {reply, ok, NewBacklog}
   end;
 handle_call({unblock, Ref}, _From, Backlog) ->
   {reply, {unblocked, Ref}, Backlog}.
 
+%% @doc Handles requests asynchronously.
+%%
+%% {@par The following requests are supported:}
+%% {@dl
+%%   {@term `update'}
+%%   {@desc Indicates to the log tracer that a new tracer allocation has been
+%%          created externally via the API.
+%%     {@returns No reply is returned.}
+%%   }
+%% }
 -spec handle_cast(Request, Backlog) -> {noreply, UpdatedBacklog :: backlog()}
   when
   Request :: update,
@@ -261,7 +491,7 @@ handle_cast(update, Backlog) ->
   % make events queued in the backlog eligible to being dispatched, and the
   % backlog needs to be processed. Since this processing may itself create
   % additional allocations, the processing must be continually repeated until
-  % all events that are meant to be dispatched have been dispatched.
+  % all events that can be dispatched have been dispatched
   {noreply, replay_backlog(Backlog)}.
 
 
@@ -269,28 +499,32 @@ handle_cast(update, Backlog) ->
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------
 
-%% @private Dispatches events in the backlog repeatedly until all events that
-%% were meant to be dispatched have been dispatched.
+%% @doc Dispatches trace events from the backlog to tracers.
 %%
 %% {@params
 %%   {@name Backlog}
-%%   {@desc The trace event backlog to process.}
+%%   {@desc Trace event backlog to process.}
 %% }
-%% {@par Events in the backlog are processed one by one and guaranteed to be
-%%       dispatched in the same order in which these were posted to the tracer.
+%%
+%% {@par Trace events in the backlog are processed sequentially. This ensures
+%%       that events are dispatched in the correct order with respect to one
+%%       another, corresponding to the order in which these were admitted into
+%%       the backlog.
 %% }
-%% {@par When the processing of an event results in a new allocation being
-%%       automatically made for a <tt><b>fork</b></tt> event (see
-%%       {@link play_backlog/1}), processing stops and recommences from the
-%%       beginning of the backlog: his ensures that any queued for the process
-%%       that have become eligible to being dispatched are dispatched
-%%       <i>before</i> any other events for the process in question. The
-%%       reprocessing is again repeated should the next iteration again result
-%%       in a new allocation, and so on until the progressive application of the
-%%       function on intermediate refinements of the backlog yields one that is
-%%       free from events pending dispatch (see {@link ref_log_tracer}).
+%% {@par Dispatching `fork' events will result in the automatic allocation of
+%%       new tracers (see {@link play_backlog/1}). When this happens, the
+%%       sequential processing of the backlog is restarted at the head of the
+%%       backlog. This guarantees that any queued trace events for the forked
+%%       process that can be now dispatched (in light of the new tracer
+%%       allocation) are dispatched before other recent trace events for said
+%%       process. This reprocessing of the backlog may, yet again, give rise to
+%%       further automatic tracer allocations, which need to be handled as
+%%       described. In this manner, this function is reapplied to eliminate from
+%%       the backlog, via these intermediate steps, all the trace events that
+%%       can be dispatched, to yield a stable backlog.
 %% }
-%% {@returns the fully-processed backlog.}
+%%
+%% {@returns Stable backlog.}
 -spec replay_backlog(Backlog :: backlog()) -> ProcessedBacklog :: backlog().
 replay_backlog(Backlog) ->
   case play_backlog(Backlog) of
@@ -309,50 +543,48 @@ replay_backlog(Backlog) ->
       replay_backlog(PartiallyProcessedBacklog)
   end.
 
-%% @doc Dispatches events in the backlog to tracers whenever a corresponding
-%% allocation exists.
+%% @doc Dispatches events from the the backlog to tracers.
 %%
 %% {@params
 %%   {@name Backlog}
-%%   {@desc The trace event backlog to process.}
+%%   {@desc Trace event backlog to process.}
 %% }
-%% {@par Attempting to dispatch trace events from the backlog leads to three
-%%       different outcomes, each of which must be handled accordingly:
+%%
+%% {@par When examining each trace event in the backlog, one of three scenarios
+%%       arises. These are handled thus:
 %% }
 %% {@ol
-%%   {@item The trace event under consideration could not be dispatched because
-%%          no tracer is allocated at the time. The event is left in the
-%%          backlog.
+%%   {@item Current trace event could not be dispatched since no tracers are
+%%          allocated at present. The event is left in the backlog.
 %%   }
-%%   {@item The trace event under consideration was dispatched because an
-%%          allocated tracer was found. The event is removed from the backlog.
+%%   {@item Current trace event was dispatched since an allocated tracer exists.
+%%          The event is removed from the backlog.
 %%   }
-%%   {@item The trace event under consideration was dispatched because an
-%%          allocated tracer was found. The event is removed from the backlog.
-%%          However, the processing of the event in question resulted in a new
-%%          allocation being automatically made: the only instance when this
-%%          happens is in the case of `fork(P, Q)' events, where the same tracer
-%%          `T' for process `P' is also allocated to the forked process `Q'. The
-%%          rest of the backlog remains unprocessed.
+%%   {@item Current trace event was dispatched since an allocated tracer exists.
+%%          The event is removed from the backlog. Additionally, processing the
+%%          event resulted in the automatic allocation of a tracer. The only
+%%          instance where this is possible is in the case of `fork(P, Q)' trace
+%%          events, where the same tracer `T' for process `P' is also allocated
+%%          to the forked process `Q'. Processing of the backlog ceases.
 %%   }
 %% }
 %%
-%% {@returns a result corresponding to one of the above outcomes:
+%% {@returns Corresponds to the above scenarios:
 %%   {@dl
 %%     {@term `@{stable, ProcessedBacklog@}'}
-%%     {@desc The backlog has been processed and all events that were meant to
-%%            be dispatched (if any) have been dispatched. This is the case for
-%%            outcomes 1 and 2 above.
+%%     {@desc Backlog has been processed, and all events that could be
+%%            dispatched (if any) were dispatched. This is the case for 1 and 2.
 %%     }
 %%     {@term `@{replay, PartiallyProcessedBacklog@}'}
-%%     {@desc The backlog processing has been interrupted on account of a new
-%%            allocation being automatically created. As this could potentially
-%%            make certain queued events in the backlog to be eligible to being
-%%            dispatched, ensuing events in the backlog cannot be processed
-%%            until all other previous events have been reexamined to determine
-%%            whether these can be dispatched. The caller must handle this case
-%%            by invoking this function anew with the fresh
-%%            `PartiallyProcessedBacklog'. See {@link replay_backlog}.
+%%     {@desc Backlog processing interrupted due to the automatic allocation of
+%%            a tracer. This could potentially render previously examined trace
+%%            events in the backlog eligible for dispatch. Consequently, ensuing
+%%            events in the backlog cannot be processed until all other previous
+%%            events are reexamined to determine whether these can be dispatched
+%%            or otherwise. When this is the case, the caller of this function
+%%            must re-invoke this function anew, specifying the partially
+%%            processed backlog, `PartiallyProcessedBacklog', returned by the
+%%            current call (see {@link replay_backlog}). This is the case for 3.
 %%     }
 %%   }
 %% }
@@ -365,20 +597,29 @@ play_backlog([Entry | Backlog]) ->
   case dispatch(Entry) of
     false ->
 
-      % Process event was not dispatched to tracer. Skip process and process
-      % next.
+      %% TODO: Assert that the size of the ETS table is unchanged.
+      %% TODO: Assers that the size of backlog is unchanched.
+
+      % Trace event was not dispatched to tracer. Skip event and process next.
       {Status, Rest} = play_backlog(Backlog),
       {Status, [Entry | Rest]};
 
     {true, stable} ->
 
-      % Process event was dispatched to tracer and no update has been made to
+      %% TODO: Assert that the size of the ETS table is unchanged.
+      %% TODO: Assers that the size of backlog is smaller by 1.
+
+      % Trace event was dispatched to tracer and no update has been made to
       % allocated tracers table. Remove event from backlog and process next.
       play_backlog(Backlog);
 
     {true, update} ->
 
-      % Process event was dispatched to tracer and an update has been made to
+      % TODO: Assert that this is fork.
+      % TODO: Assert that size of ETS is greater by 1.
+      %% TODO: Assers that the size of backlog is smaller by 1.
+
+      % Trace event was dispatched to tracer and an update has been made to
       % allocated tracers table. As this update may affect subsequent event
       % dispatching for the process in question, stop processing remaining
       % backlog events.
@@ -387,18 +628,18 @@ play_backlog([Entry | Backlog]) ->
 
 %% @doc Creates the allocated tracers table.
 %%
-%% {@returns the table name.}
+%% {@returns Table name.}
 -spec create_alloc_table() -> ?ETS_ALLOC_NAME.
 create_alloc_table() ->
   % The default locking is on table-level, allowing only one update
   % operation at a time per table.
-  % Table option write_concurrency will enable locking on a more fine
-  % grained level, allowing concurrent update operations. In current
-  % implementation 16 locks per table is used, which result in a probability
+  % Table option `write_concurrency' enables locking on a more fine
+  % grained level, allowing concurrent update operations. In the current
+  % implementation 16 locks per table is used, which results in a probability
   % of 1/16 that two random keys will collide on the same lock.
   % See: http://erlang.org/pipermail/erlang-questions/2012-May/066632.html
-  % 'write_concurrency' enables concurrent writes.
-  % 'read_concurrency' speeds up concurrent reads.
+  % * `write_concurrency' enables concurrent writes.
+  % * `read_concurrency' speeds up concurrent reads.
   EtsAttrs = [set, public, named_table, {keypos, #alloc.tracee},
     {write_concurrency, true}],
   ets:new(?ETS_ALLOC_NAME, EtsAttrs).
@@ -414,29 +655,25 @@ delete_alloc_table() ->
 %%
 %% {@params
 %%   {@name Tracee}
-%%   {@desc The PID of the tracee.}
+%%   {@desc PID of the tracee.}
 %%   {@name Tracer}
-%%   {@desc The PID of the tracer to allocate.}
+%%   {@desc PID of the tracer to allocate.}
 %% }
-%% {@par The operation fails if `Tracee' already exists in the table.}
+%% {@par Operation fails if `Tracee' already exists in the table.}
 %%
 %% {@returns `true' if the creation succeeded, otherwise `false'.}
 -spec create_alloc(Tracee :: pid(), Tracer :: pid()) -> Success :: boolean().
 create_alloc(Tracee, Tracer) ->
-%%  ?INFO("==== Table BEFORE: ~p~n", [ets:tab2list(?ETS_NAME)]),
-  Ret = ets:insert_new(?ETS_ALLOC_NAME, #alloc{tracee = Tracee, tracer = Tracer}),
-
-%%  ?INFO("==== Table AFTER: ~p~n", [ets:tab2list(?ETS_NAME)]),
-  Ret.
+  ets:insert_new(?ETS_ALLOC_NAME, #alloc{tracee = Tracee, tracer = Tracer}).
 
 %% @doc Returns the PID of the allocated tracer for the specified tracee PID.
 %%
 %% {@params
 %%   {@name Tracee}
-%%   {@desc The PID of the tracee whose tracer is to be returned.}
+%%   {@desc PID of the tracee whose tracer is to be returned.}
 %% }
 %%
-%% {@returns the PID of the tracer if existent, otherwise `undefined'.}
+%% {@returns PID of the tracer if existent, otherwise `undefined'.}
 -spec return_alloc(Tracee :: pid()) -> Tracer :: pid() | undefined.
 return_alloc(Tracee) ->
   case ets:lookup(?ETS_ALLOC_NAME, Tracee) of
@@ -446,13 +683,13 @@ return_alloc(Tracee) ->
       Tracer
   end.
 
-%% @doc Updates the tracer of the associated specified tracee PID.
+%% @doc Updates the tracer of the associated tracee.
 %%
 %% {@params
 %%   {@name Tracee}
-%%   {@desc The PID of the tracee whose tracer is to be updated.}
+%%   {@desc PID of the tracee whose tracer is to be updated.}
 %%   {@name Tracer}
-%%   {@desc The new tracer PID.}
+%%   {@desc New tracer PID.}
 %% }
 %%
 %% {@returns `true' if the update succeeded, otherwise `false'.}
@@ -460,12 +697,11 @@ return_alloc(Tracee) ->
 update_alloc(Tracee, Tracer) ->
   ets:update_element(?ETS_ALLOC_NAME, Tracee, {#alloc.tracer, Tracer}).
 
-%% @doc Deletes the entry identified by the specified tracee from the allocated
-%% tracers table.
+%% @doc Deletes the entry identified by tracee from the allocated tracers table.
 %%
 %% {@params
 %%   {@name Tracee}
-%%   {@desc The PID of the tracee whose entry is to be deleted.}
+%%   {@desc PID of the tracee whose entry is to be deleted.}
 %% }
 %%
 %% {@returns `true' regardless of whether the tracee exists.}
@@ -473,47 +709,57 @@ update_alloc(Tracee, Tracer) ->
 delete_alloc(Tracee) ->
   ets:delete(?ETS_ALLOC_NAME, Tracee).
 
-%% @doc Dispatches the event enclosed in the specified specification.
+%% @doc Dispatches the trace event according to the allocated tracers table.
 %%
 %% {@params
-%%   {@name Spec}
-%%   {@desc The specification enclosing the event to be dispatched.}
+%%   {@name Event}
+%%   {@desc Trace event description dispatch.}
 %% }
+%%
 %% {@par Trace events are handled according to their type:}
 %% {@dl
 %%   {@term `fork(P, Q)'}
 %%   {@desc If process `P' is allocated a tracer `T', the event is dispatched to
-%%          `T'. In addition, `Q' is also allocated `T' so that subsequent
-%%           events are directed to it, emulating automatic tracer inheritance
-%%           of forked processes from their parents. Nothing happens otherwise.
+%%          `T'. As a side-effect, `Q' is allocated `T', so that subsequent
+%%          events are dispatched to it. This emulates the automatic tracer
+%%          inheritance of forked processes in the EVM tracer. The event is
+%%          otherwise left in the backlog if no tracer is allocated to `P'.
 %%   }
 %%   {@term `exit(P)'}
 %%   {@desc If process `P' is allocated a tracer `T', the event is dispatched to
-%%          `T'. In addition, the allocation of `T' for `P' is removed,
-%%          emulating automatic tracer deallocation for terminated processes.
-%%          Nothing happens otherwise.
+%%          `T'. As a side-effect, the allocation of `T' for `P' is removed.
+%%          This emulates the automatic tracer removal for terminated processes
+%%          in the EVM tracer. The trace event is otherwise left in the backlog
+%%          if no tracer is allocated to `P'.
 %%   }
-%%   {@term `send(P, Q)'}
+%%   {@term `init(P, Q)', `send(P, Q)', `recv(Q)'}
 %%   {@desc If process `P' is allocated a tracer `T', the event is dispatched to
-%%          `T'. Nothing happens otherwise.
-%%   }
-%%   {@term `recv(Q)'}
-%%   {@desc If process `Q' is allocated a tracer `T', the event is dispatched to
-%%          `T'. Nothing happens otherwise.
+%%          `T'. The event is otherwise left in the backlog if no tracer is
+%%          allocated to `P'.
 %%   }
 %% }
 %%
-%% {@returns `@{true, stable@}' when the event has been dispatched,
-%%           `@{true, update@}' when the dispatched and this resulted in an
-%%            automatic tracer allocation, and `false' otherwise.
+%% {@returns Two outcomes are possible:
+%%           {@dl
+%%             {@item `@{true, stable@}'}
+%%             {@desc Trace event has been dispatched. The backlog does not need
+%%                    to be revisited to examine events preceding the current
+%%                    one.
+%%             }
+%%             {@item `@{true, update@}'}
+%%             {@desc Trace event has been dispatched and a new tracer has been
+%%                    automatically allocated. The backlog needs to be revisited
+%%                    to determine whether events preceding the current one can
+%%                    be dispatched.
+%%             }
+%%           }
 %% }
--spec dispatch(Entry :: log_eval:entry()) ->
-  {true, stable} | {true, update} | false.
-dispatch(Entry = {delay, _, _Event = {fork, _, Pid2, _}}) ->
-  gen_dispatch(Entry,
+-spec dispatch(Event :: event()) -> {true, stable} | {true, update}.
+dispatch(Event = {delay, _, _E = {fork, _, Pid2, _}}) ->
+  gen_dispatch(Event,
     fun(Tracer) ->
 
-      ?TRACE("AUTO allocating tracer ~p to forked process ~p (~p).", [Tracer, Pid2, _Event]),
+      ?TRACE("AUTO allocating tracer ~p to forked process ~p (~p).", [Tracer, Pid2, _E]),
 
       % ** Harmless race condition **
       % To handle automatic tracer inheritance, allocate the tracer to the
@@ -545,48 +791,54 @@ dispatch(Entry = {delay, _, _Event = {fork, _, Pid2, _}}) ->
       create_alloc(Pid2, Tracer),
       update
     end);
-dispatch(Entry = {delay, _, _Event = {exit, Pid, _}}) ->
-  gen_dispatch(Entry,
+dispatch(Event = {delay, _, _E = {exit, Pid, _}}) ->
+  gen_dispatch(Event,
     fun(Tracer) ->
 
-      ?TRACE("Deallocating tracer ~p for exiting process ~p (~p).", [Tracer, Pid, _Event]),
+      ?TRACE("Deallocating tracer ~p for exiting process ~p (~p).", [Tracer, Pid, _E]),
 
+      % ** Harmless race condition **
       % Automatically deallocate tracer for terminated PID. As this point, it is
-      % possible that immediately before this deallocation is effected, an
-      % external entity deallocates the tracer via `clear/1'. This race
-      % condition does not impinge on event dispatching.
+      % possible that immediately before this deallocation is done, an external
+      % process deallocates the tracer via `clear/1'. This race condition does
+      % not impinge on event dispatching.
       delete_alloc(Pid),
       stable
     end);
 dispatch(Entry = {delay, _, _}) ->
   gen_dispatch(Entry, fun(_) -> stable end).
 
-%% @doc Attempts to dispatch the event enclosed in the specified specification,
-%% invoking the callback when successful.
+%% @doc Handles event dispatching and invokes the specified callback on success.
 %%
 %% {@params
-%%   {@name Spec}
-%%   {@desc The specification enclosing the event to be dispatched.}
+%%   {@name Event}
+%%   {@desc Trace event to be dispatched.}
 %%   {@name OnDispatch}
-%%   {@desc The callback function accepting a single parameter `Tracer' that
-%%          corresponds to the allocated tracer PID.
+%%   {@desc Callback accepting a single parameter `Tracer' that is populated
+%%          with the allocated tracer PID.
 %%   }
 %% }
-%% {@par The event is dispatched <i>only</i> when a tracer allocation is found.}
 %%
-%% {@returns `@{true, Result@}' when the event has been dispatched, otherwise
-%%           `false'. `Result' is the return result of the callback function.
+%% {@returns Two outcomes are possible:
+%%           {@dl
+%%             {@term `@{true, Result@}'}
+%%             {@desc Trace event has been dispatched, and the result of the
+%%                    `OnDispatch' is returned in `Result'.
+%%             }
+%%             {@term `false'}
+%%             {@desc Trace event could not be dispatched.}
+%%           }
 %% }
--spec gen_dispatch(Entry, OnDispatch) -> Status :: {true, any()} | false
+-spec gen_dispatch(Event, OnDispatch) -> Status :: {true, any()} | false
   when
-  Entry :: log_eval:entry(),
+  Event :: event(),
   OnDispatch :: function().
-gen_dispatch({delay, _Ms, Event}, OnDispatch) when is_function(OnDispatch, 1) ->
-  Pid = element(2, Event),
+gen_dispatch({delay, _Ms, Event0}, OnDispatch) when is_function(OnDispatch, 1) ->
+  Pid = element(2, Event0),
   case return_alloc(Pid) of
     undefined ->
 
-      ?TRACE("No tracer allocated to ~p: placing ~p on backlog.", [Pid, Event]),
+      ?TRACE("No tracer allocated to ~p: placing ~p on backlog.", [Pid, Event0]),
 
       % No tracer allocated to PID - withhold dispatching.
       false;
@@ -596,22 +848,18 @@ gen_dispatch({delay, _Ms, Event}, OnDispatch) when is_function(OnDispatch, 1) ->
       Return = OnDispatch(Tracer),
 
       % A tracer is allocated to source PID.
-      ?TRACE("Tracer ~p allocated to ~p: dispatching ~p.", [Tracer, Pid, Event]),
+      ?TRACE("Tracer ~p allocated to ~p: dispatching ~p.", [Tracer, Pid, Event0]),
 
-      % Implementation note: We could have instead modified the evm_tracer
-      % module and added a translator that acts as a proxy, rewriting
-      % EVM-specific trace events into a more general form (e.g., using fork,
-      % exit, send, receive). This would however require introducing an extra
-      % translator process for each tracer (introducing just a common one would
-      % not do because it would create a bottle neck and introduce a possible
-      % single point of failure). Since in our experiments we'll most likely be
-      % using EVM tracing, we want to keep the latter as efficient as possible
-      % eliminating altogether the translation. Instead, we opt to do this
-      % translation for offline mode, were timing constraints are somewhat less
-      % pressing. This is a small price to pay to keep the message format of the
-      % EVM (but it's not that bad). For other implementations (e.g., DB or RSS)
-      % we would have to do something similar.
-      Tracer ! event:to_evm_event(Event),
+      % ** Implementation note **
+      % We could have instead modified the evm_tracer module to add a translator
+      % from EVM-specific descriptions to more general intermediate trace event
+      % descriptions (e.g. fork instead of the EVM-specific spawn event). This
+      % approach would have required introducing an extra translation layer that
+      % complicates matters. Instead, we settled for EVM-specific trace events
+      % as our default events, and do the translation in the opposite way, i.e,
+      % translate from general events to the EVM format before these are
+      % dispatched to tracers.
+      Tracer ! event:to_evm_event(Event0),
 
       % Perhaps, we can improve the unblocking of PREEMPTED tracers by
       % unblocking them earlier.
@@ -628,3 +876,33 @@ gen_dispatch({delay, _Ms, Event}, OnDispatch) when is_function(OnDispatch, 1) ->
       % 2. Send msg.
       {true, Return}
   end.
+
+
+%%% ----------------------------------------------------------------------------
+%%% Testing.
+%%% ----------------------------------------------------------------------------
+
+-ifdef(TEST).
+
+%% @doc Determines whether tracee is being traced.
+%%
+%% {@params
+%%   {@name Tracee}
+%%   {@desc PID of the process to check.}
+%% }
+%%
+%% {@returns PID of the associated tracer or `undefined' if `Tracee' is not
+%%           being traced.
+%% }
+-spec get_tracer(Tracee :: pid()) -> pid() | undefined.
+get_tracer(Tracee) when is_pid(Tracee) ->
+  return_alloc(Tracee).
+
+%% @doc Fetches the backlog of trace events currently queued for delivery.
+%%
+%% {@returns Trace event queue.}
+-spec get_backlog() -> Backlog :: backlog().
+get_backlog() ->
+  gen_server:call(?MODULE, get_backlog, infinity).
+
+-endif.

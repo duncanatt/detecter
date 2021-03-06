@@ -68,7 +68,7 @@ tracer_allocation_test_() -> {"Tracer allocation test",
           % Allocate current process as the tracer of P_1.
             Result = log_tracer:trace(?P1),
             ?assert(Result),
-            ?assertEqual(self(), log_tracer:query(?P1))
+            ?assertEqual(self(), log_tracer:get_tracer(?P1))
           end)}
       end,
       fun(_) ->
@@ -78,7 +78,7 @@ tracer_allocation_test_() -> {"Tracer allocation test",
           % Allocate current process as the tracer of P_1.
             Result = log_tracer:trace(?P1),
             ?assert(Result),
-            ?assertEqual(self(), log_tracer:query(?P1)),
+            ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
             % Reallocate current process as the tracer of P_1.
             Result2 = log_tracer:trace(?P1),
@@ -103,7 +103,7 @@ tracer_allocation_test_() -> {"Tracer allocation test",
           % Allocate current process as the tracer of P_1.
             Result = log_tracer:trace(?P1),
             ?assert(Result),
-            ?assertEqual(self(), log_tracer:query(?P1)),
+            ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
             % Deallocate current process as the tracer of P_1.
             Result2 = log_tracer:clear(?P1),
@@ -128,12 +128,12 @@ tracer_allocation_test_() -> {"Tracer allocation test",
           % Allocate current process as the tracer of P_1.
             Result = log_tracer:trace(?P1),
             ?assert(Result),
-            ?assertEqual(self(), log_tracer:query(?P1)),
+            ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
             % Preempt original allocated tracer of P_1 with the new tracer.
             {Pid, Ref} = promise(fun() -> log_tracer:preempt(?P1) end),
             ?assert(yield(Ref)),
-            ?assertEqual(Pid, log_tracer:query(?P1))
+            ?assertEqual(Pid, log_tracer:get_tracer(?P1))
           end
         )}
       end
@@ -188,7 +188,7 @@ event_dispatch_test_() -> {"General trace event dispatch test",
             % P_3.
               Result = log_tracer:trace(?P3),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P3)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -210,7 +210,7 @@ event_dispatch_test_() -> {"General trace event dispatch test",
             % persists since P_1 does not terminate.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -258,7 +258,7 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
             % P_3.
               Result = log_tracer:trace(?P3),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P3)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -283,7 +283,7 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
             % persists since P_1 does not terminate.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -293,7 +293,7 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
               % is performed incrementally with each posted trace event (P_1, is
               % already allocated a tracer prior to posting the trace), and
               % waiting for it complete is not necessary.
-              ?assertEqual(self(), log_tracer:query(?P2)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P2)),
 
               % Assert that the events dispatched to the tracer allocated to
               % P_1 and P_2are indeed correct and in the expected order.
@@ -325,7 +325,7 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
             % persists since P_1 does not terminate.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -335,8 +335,8 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
               % is performed incrementally with each posted trace event (P_1, is
               % already allocated a tracer prior to posting the trace), and
               % waiting for it complete is not necessary.
-              ?assertEqual(self(), log_tracer:query(?P2)),
-              ?assertEqual(self(), log_tracer:query(?P3)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P2)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
               % Assert that the events dispatched to the tracer allocated to
               % P_1, P_2 and P_3 are indeed correct and in the expected order.
@@ -382,7 +382,7 @@ exit_dispatch_test_() -> {"Exit trace event dispatch test",
             % P_3.
               Result = log_tracer:trace(?P3),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P3)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -406,7 +406,7 @@ exit_dispatch_test_() -> {"Exit trace event dispatch test",
             % does not persist since P_1 terminates.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -416,7 +416,7 @@ exit_dispatch_test_() -> {"Exit trace event dispatch test",
               % incrementally with each posted trace event (P_1 is already
               % allocated a tracer prior to posting the trace), and waiting for
               % it to complete is not necessary.
-              ?assertEqual(undefined, log_tracer:query(?P1)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
 
               % Assert that the event dispatched to the tracer for P_1 is
               % indeed correct. Dispatching in this case is performed
@@ -471,7 +471,7 @@ fork_and_exit_dispatch_test_() -> {"Fork and exit interoperation dispatch test",
             % does not persist since P_1 terminates.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Post event trace to log tracer.
               log_tracer:post_events(Trace),
@@ -482,9 +482,9 @@ fork_and_exit_dispatch_test_() -> {"Fork and exit interoperation dispatch test",
               % incrementally with each posted trace event (P_1 is already
               % allocated a tracer prior to posting the trace), and waiting for
               % it to complete is not necessary.
-              ?assertEqual(undefined, log_tracer:query(?P1)),
-              ?assertEqual(undefined, log_tracer:query(?P2)),
-              ?assertEqual(undefined, log_tracer:query(?P3)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P2)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P3)),
 
               % Assert that the events dispatched to the tracer allocated to
               % P_1, P_2 and P_3 are indeed correct and in the expected order.
@@ -546,7 +546,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
               % persists since P_1 does not terminate.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Assert that the event dispatched to the tracer for P_1 is
               % indeed correct. Dispatching depends on the speed with which the
@@ -579,7 +579,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
               % does not persist since P_1 terminates.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Assert that the events dispatched to the tracer allocated to
               % P_1 are indeed correct and in the expected order. Dispatching
@@ -593,7 +593,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
 
               % Assert that the tracer automatically allocated to P_2 is still
               % allocated.
-              ?assertEqual(self(), log_tracer:query(?P2)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P2)),
 
               % Allocate a new tracer to P_1. This executes asynchronously
               % until it terminates with a result.
@@ -607,7 +607,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
                 end
               ),
               timer:sleep(500), % To give log_tracer time to process preempt request.
-              ?assertEqual(Pid, log_tracer:query(?P1)),
+              ?assertEqual(Pid, log_tracer:get_tracer(?P1)),
 
               % Post second part of event trace to log tracer.
               log_tracer:post_events(Trace2),
@@ -631,8 +631,8 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
               % event (P_1 and P_2 are already allocated a tracer prior to
               % posting the trace), and waiting for it to complete is not
               % necessary.
-              ?assertEqual(undefined, log_tracer:query(?P1)),
-              ?assertEqual(undefined, log_tracer:query(?P2)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P2)),
 
               % Assert that the remaining events in the second trace and those
               % queued in the event backlog are identical and in the original
@@ -659,7 +659,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
               % does not persist since P_1 terminates.
               Result = log_tracer:trace(?P1),
               ?assert(Result),
-              ?assertEqual(self(), log_tracer:query(?P1)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
               % Assert that the events dispatched to the tracer allocated to
               % P_1 are indeed correct and in the expected order. Dispatching
@@ -674,11 +674,11 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
               % Deallocate current process as the tracer of P_1.
               Result2 = log_tracer:clear(?P1),
               ?assert(Result2),
-              ?assertEqual(undefined, log_tracer:query(?P1)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
 
               % Assert that the tracer automatically allocated to P_2 is still
               % allocated.
-              ?assertEqual(self(), log_tracer:query(?P2)),
+              ?assertEqual(self(), log_tracer:get_tracer(?P2)),
 
               % Post second part of event trace to log tracer.
               log_tracer:post_events(Trace2),
@@ -711,7 +711,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
                 % does not persist since P_1 terminates.
                 Result = log_tracer:trace(?P1),
                 ?assert(Result),
-                ?assertEqual(self(), log_tracer:query(?P1)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
                 % Assert that the events dispatched to the tracer allocated to
                 % P_1 are indeed correct and in the expected order. Dispatching
@@ -726,11 +726,11 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
                 % Deallocate current process as the tracer of P_1.
                 Result2 = log_tracer:clear(?P1),
                 ?assert(Result2),
-                ?assertEqual(undefined, log_tracer:query(?P1)),
+                ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
 
                 % Assert that the tracer automatically allocated to P_2 is still
                 % allocated.
-                ?assertEqual(self(), log_tracer:query(?P2)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P2)),
 
                 % Allocate a new tracer to P_1. This executes asynchronously
                 % until it terminates with a result.
@@ -743,7 +743,7 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
                     {Result2, Wait()}
                   end
                 ),
-                ?assertEqual(Pid, log_tracer:query(?P1)),
+                ?assertEqual(Pid, log_tracer:get_tracer(?P1)),
 
                 % Post second part of event trace to log tracer.
                 log_tracer:post_events(Trace2),
@@ -767,8 +767,8 @@ dynamic_allocation_test_() -> {"Dynamic allocation and backlog processing test",
                 % event (P_1 and P_2 are already allocated a tracer prior to
                 % posting the trace), and waiting for it to complete is not
                 % necessary.
-                ?assertEqual(undefined, log_tracer:query(?P1)),
-                ?assertEqual(undefined, log_tracer:query(?P2)),
+                ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
+                ?assertEqual(undefined, log_tracer:get_tracer(?P2)),
 
                 % Assert that the remaining events in the second trace and those
                 % queued in the event backlog are identical and in the original
@@ -852,7 +852,7 @@ event_reordering_test_() -> {"Trace event reordering test",
               % persists since P_1 does not terminate.
                 Result = log_tracer:trace(?P1),
                 ?assert(Result),
-                ?assertEqual(self(), log_tracer:query(?P1)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
                 % Post event trace to log tracer.
                 log_tracer:post_events(Trace),
@@ -862,8 +862,8 @@ event_reordering_test_() -> {"Trace event reordering test",
                 % is performed incrementally with each posted trace event (P_1
                 % is already allocated a tracer prior to posting the trace),
                 % and waiting for it complete is not necessary.
-                ?assertEqual(self(), log_tracer:query(?P2)),
-                ?assertEqual(self(), log_tracer:query(?P3)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P2)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
                 % Assert that the events dispatched to the tracer are indeed
                 % correct and in the expected order. When events are reordered
@@ -905,15 +905,15 @@ event_reordering_test_() -> {"Trace event reordering test",
                 % persists since P_1 does not terminate.
                 Result = log_tracer:trace(?P1),
                 ?assert(Result),
-                ?assertEqual(self(), log_tracer:query(?P1)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P1)),
 
                 % Assert that the tracer allocated to P_1 is also automatically
                 % allocated to the forked processes P_2 and P_3. This allocation
                 % depends on the speed with which the trace event backlog is
                 % processed; wait until it completes.
                 wait_backlog(),
-                ?assertEqual(self(), log_tracer:query(?P2)),
-                ?assertEqual(self(), log_tracer:query(?P3)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P2)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
                 % Assert that the events dispatched to the tracer are indeed
                 % correct and in the expected order. When events are reordered
@@ -964,9 +964,9 @@ event_reordering_test_() -> {"Trace event reordering test",
               % which the trace event backlog is processed; wait until it
               % completes.
               wait_backlog(),
-              ?assertEqual(undefined, log_tracer:query(?P1)),
-              ?assertEqual(undefined, log_tracer:query(?P2)),
-              ?assertEqual(undefined, log_tracer:query(?P3)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P2)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P3)),
 
               % Assert that the events dispatched to the tracer are indeed
               % correct and in the expected order. When events are reordered in
@@ -1008,14 +1008,14 @@ event_reordering_test_() -> {"Trace event reordering test",
                 % persists since P_2 does not terminate.
                 Result = log_tracer:trace(?P2),
                 ?assert(Result),
-                ?assertEqual(self(), log_tracer:query(?P2)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P2)),
 
                 % Assert that the tracer allocated to P_2 is also automatically
                 % allocated to the forked process P_3. This allocation depends
                 % on the speed with which the trace event backlog is processed;
                 % wait until it completes.
                 wait_backlog(),
-                ?assertEqual(self(), log_tracer:query(?P3)),
+                ?assertEqual(self(), log_tracer:get_tracer(?P3)),
 
                 % Assert that the events dispatched to the tracer are indeed
                 % correct and in the expected order. When events are reordered
@@ -1078,10 +1078,10 @@ event_reordering_test_() -> {"Trace event reordering test",
               % incrementally with each posted trace event (P_1 is already
               % allocated a tracer prior to posting the trace), and waiting for
               % it complete is not necessary.
-              ?assertEqual(undefined, log_tracer:query(?P1)),
-              ?assertEqual(undefined, log_tracer:query(?P2)),
-              ?assertEqual(undefined, log_tracer:query(?P3)),
-              ?assertEqual(undefined, log_tracer:query(?P4)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P1)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P2)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P3)),
+              ?assertEqual(undefined, log_tracer:get_tracer(?P4)),
 
               % Assert that the events dispatched to the tracer are indeed
               % correct and in the expected order. When events are reordered in

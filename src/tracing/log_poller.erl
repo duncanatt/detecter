@@ -118,12 +118,12 @@ stop() ->
 init(_Args) ->
   {ok, {events_read, 0}}.
 
-%% @private Parses one trace event specification from its list of bytes, and
+%% @private Parses one trace event description from its list of bytes, and
 %% posts the event to the log tracer.
 %%
 %% {@params
 %%   {@name Line}
-%%   {@desc Stringified trace event specification as a list of bytes.}
+%%   {@desc Trace event description as a list of bytes.}
 %%   {@name LineInfo}
 %%   {@desc Line position information in source log file.}
 %%   {@name State}

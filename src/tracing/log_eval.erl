@@ -1,10 +1,46 @@
 %%% ----------------------------------------------------------------------------
 %%% @author Duncan Paul Attard
 %%%
-%%% @doc Module description (becomes module heading).
+%%% @doc Parsing of string trace event descriptions.
 %%%
+%%% {@sect Trace event descriptions}
+%%%
+%%% {@par The following five trace event descriptions are supported:}
+%%% {@ul
+%%%   {@item {@mono {@emph fork}(`P', `Q', `MFA') [{@emph delayed by} `Ms']}}
+%%%   {@item {@mono {@emph init}(`Q', `P', `MFA') [{@emph delayed by} `Ms']}}
+%%%   {@item {@mono {@emph exit}(`P', `Res') [{@emph delayed by} `Ms']}}
+%%%   {@item {@mono {@emph send}(`P', `Q', `Msg') [{@emph delayed by} `Ms']}}
+%%%   {@item {@mono {@emph recv}(`Q', `Msg') [{@emph delayed by} `Ms']}}
+%%% }
+%%% {@dl
+%%%   {@term `P' and `Q'}
+%%%   {@desc `P' is the ID of the process P that forks process Q with ID `Q'.
+%%%           Process IDs are represented by the triple {@mono
+%%%           {@lt}{@link integer()}, {@link integer()}, {@link integer()}{@gt}},
+%%%           {@eg} {@mono {@lt}10.10.97{@gt}}.
+%%%   }
+%%%   {@term `MFA'}
+%%%   {@desc Encoded function description in terms of {@mono
+%%%          @{`Mod', `Fun', `Args'@}}, where `Mod' is the module name, `Fun' is
+%%%          a function inside `Mod', and `Args' is the list of arguments passed
+%%%          to `Fun'. `Args' may contain process IDs atoms, integers or floats,
+%%%          {@eg} {@mono [9, {@lt}10.10.97{@gt}, true]}. `Args' may also be
+%%%          empty.
+%%%   }
+%%%   {@term `Res'}
+%%%   {@desc Termination reason which must be an atom, {@eg} {@mono crashed.}}
+%%%   {@term `Msg'}
+%%%   {@desc Message sent by process P to process Q. Must be a process ID, atom,
+%%%          integer or float.
+%%%   }
+%%%   {@term {@mono {@emph delayed by} `Ms'} (optional)}
+%%%   {@desc Delay in milliseconds after which the trace event message is
+%%%          dispatched by the tracer. May be used for testing.
+%%%   }
+%%% }
 %%% @end
-%%% 
+%%%
 %%% Copyright (c) 2021, Duncan Paul Attard <duncanatt@gmail.com>
 %%%
 %%% This program is free software: you can redistribute it and/or modify it 

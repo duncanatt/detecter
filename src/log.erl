@@ -38,7 +38,7 @@
 %%
 %% {@params
 %%   {@name File}
-%%   {@desc The file where the logger output is directed.}
+%%   {@desc Full filename where the logger output is directed.}
 %% }
 %%
 %% {@returns `true' indicating that log file is configured.}
@@ -51,13 +51,13 @@ log_to_file(File) ->
 %%
 %% {@params
 %%   {@name LogLabel}
-%%   {@desc The label indicating the severity of the log statement.}
+%%   {@desc Label indicating the severity of the log statement.}
 %%   {@name Module}
-%%   {@desc The name of the module issuing the log statement.}
+%%   {@desc Name of the module issuing the log statement.}
 %%   {@name Line}
-%%   {@desc The line number of the log statement.}
+%%   {@desc Line number of the log statement.}
 %%   {@name Fmt}
-%%   {@desc The format of the log statement string.}
+%%   {@desc Format of the log statement string.}
 %% }
 %%
 %% {@returns `true' if the log statement was output, otherwise `false'.}
@@ -74,15 +74,15 @@ write(LogLabel, Module, Line, Fmt) ->
 %%
 %% {@params
 %%   {@name LogLabel}
-%%   {@desc The label indicating the severity of the log statement.}
+%%   {@desc Label indicating the severity of the log statement.}
 %%   {@name Module}
-%%   {@desc The name of the module issuing the log statement.}
+%%   {@desc Name of the module issuing the log statement.}
 %%   {@name Line}
-%%   {@desc The line number of the log statement.}
+%%   {@desc Line number of the log statement.}
 %%   {@name Fmt}
-%%   {@desc The format of the log statement string.}
+%%   {@desc Format of the log statement string.}
 %%   {@name Params}
-%%   {@desc The formatting parameters for the log statement string.}
+%%   {@desc Formatting parameters for the log statement string.}
 %% }
 %%
 %% {@returns `true' if the log statement was output, otherwise `false'.}
@@ -111,11 +111,11 @@ write(LogLabel, Module, Line, Fmt, Params) ->
 %%
 %% {@params
 %%   {@name LogLevel}
-%%   {@desc The level from 1 to 5, indicating the severity of the log statement,
+%%   {@desc Level from 1 to 5, indicating the severity of the log statement,
 %%          where 1 = TRACE, 2 = DEBUG, 3 = INFO, 4 = WARN, 5 = ERROR.
 %%   }
 %%   {@name LogLabel}
-%%   {@desc The label indicating the severity of the log statement.}
+%%   {@desc Label indicating the severity of the log statement.}
 %% }
 %%
 %% {@returns `true' if the log statement can be output, otherwise `false'.}

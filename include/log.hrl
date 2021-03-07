@@ -19,14 +19,11 @@
 %%% this program. If not, see <https://www.gnu.org/licenses/>.
 %%% ----------------------------------------------------------------------------
 
-%%% ------------------------------------------------------------------------ %%%
-%%% Client configuration macros.                                             %%%
-%%% ------------------------------------------------------------------------ %%%
+%%% ----------------------------------------------------------------------------
+%%% Client configuration macros.
+%%% ----------------------------------------------------------------------------
 
-%% -----------------------------------------------------------------------------
-%% Comment the line below to disable logging entirely (i.e. logging statements
-%% in the code do not show up).
-%% -----------------------------------------------------------------------------
+%% Comment the line below to disable logging.
 -define(log, log).
 
 %% -----------------------------------------------------------------------------
@@ -58,30 +55,12 @@
 -endif.
 
 
-%%% ------------------------------------------------------------------------ %%%
-%%% Internal macros (DO NOT MODIFY).                                         %%%
-%%% ------------------------------------------------------------------------ %%%
-
-%%% Trace level definitions (DO NOT CHANGE).
--define(trace_level, 1).
--define(debug_level, 2).
--define(info_level, 3).
--define(warn_level, 4).
--define(error_level, 5).
-
-%%% Trace level string definitions (DO NOT CHANGE).
--define(trace_str, "TRACE").
--define(debug_str, "DEBUG").
--define(info_str, "INFO").
--define(warn_str, "WARN").
--define(error_str, "ERROR").
-
-%%% ------------------------------------------------------------------------ %%%
-%%% Client API macros.                                                       %%%
-%%% ------------------------------------------------------------------------ %%%
+%%% ----------------------------------------------------------------------------
+%%% Client API macros.
+%%% ----------------------------------------------------------------------------
 
 %% -----------------------------------------------------------------------------
-%% Provide a simple and clean logging interface that can be used to output
+%% Provides a simple and clean logging interface that can be used to output
 %% logging statements on screen.
 %%
 %% The available macros
@@ -97,16 +76,12 @@
 
 -define(on_true(Cond, Term), case Cond of true -> Term; _ -> ok end).
 
+%% Logging macro expanded to log output when the LOG macro is defined.
 -define(TRACE(Fmt, Params), log:write(?trace_str, ?MODULE, ?LINE, Fmt, Params)).
 -define(DEBUG(Fmt, Params), log:write(?debug_str, ?MODULE, ?LINE, Fmt, Params)).
 -define(INFO(Fmt, Params), log:write(?info_str, ?MODULE, ?LINE, Fmt, Params)).
 -define(WARN(Fmt, Params), log:write(?warn_str, ?MODULE, ?LINE, Fmt, Params)).
 -define(ERROR(Fmt, Params), log:write(?error_str, ?MODULE, ?LINE, Fmt, Params)).
-%%-define(TRACE(Format), log:write(?trace_str, ?MODULE, ?LINE, Format)).
-%%-define(DEBUG(Format), log:write(?debug_str, ?MODULE, ?LINE, Format)).
-%%-define(INFO(Format), log:write(?info_str, ?MODULE, ?LINE, Format)).
-%%-define(WARN(Format), log:write(?warn_str, ?MODULE, ?LINE, Format)).
-%%-define(ERROR(Format), log:write(?error_str, ?MODULE, ?LINE, Format)).
 -define(TRACE(Msg), ?TRACE(Msg, [])).
 -define(DEBUG(Msg), ?DEBUG(Msg, [])).
 -define(INFO(Msg), ?INFO(Msg, [])).
@@ -135,4 +110,23 @@
 -define(ERROR(Fmt), ok).
 
 -endif.
+
+
+%%% ----------------------------------------------------------------------------
+%%% Private macros (DO NOT MODIFY).
+%%% ----------------------------------------------------------------------------
+
+%% Logging level definitions.
+-define(trace_level, 1).
+-define(debug_level, 2).
+-define(info_level, 3).
+-define(warn_level, 4).
+-define(error_level, 5).
+
+%% Logging level string definitions.
+-define(trace_str, "TRACE").
+-define(debug_str, "DEBUG").
+-define(info_str, "INFO").
+-define(warn_str, "WARN").
+-define(error_str, "ERROR").
 

@@ -28,6 +28,8 @@
 
 %%% Public API.
 -export([rpc/2, rpc_async/2, rpc_yield/1, rpc_yield/2]).
+-export([syn/1, syn_ack/1]).
+-export([promise/1, then/1]).
 
 %%% Callbacks/Internal.
 -export([]).
@@ -83,7 +85,7 @@ rpc(To, Req) when is_pid(To); is_atom(To) ->
 %%       {@link rpc_yield/1} or {@link rpc_yield/2}.
 %% }
 %%
-%% {@returns Unique reference identifying the issued request.}
+%% {@returns Reference identifying the issued request.}
 -spec rpc_async(To :: pid() | atom(), Req :: term()) -> reference().
 rpc_async(To, Req) when is_pid(To); is_atom(To) ->
   Ref = erlang:make_ref(),
@@ -129,6 +131,105 @@ rpc_yield(Ref, TimeoutMs) when
     {timeout, Ref}
   end.
 
+%% @doc Issues a synchronization request that initiates the first phase of a
+%% three-way handshake.
+%%
+%% {@params
+%%   {@name To}
+%%   {@desc PID of the remote party to synchronize with.}
+%% }
+%%
+%% {@par The caller blocks until an acknowledgement from the remote party is
+%%   received. This implementation is inspired by the three-way handshake used
+%%   in TCP (see <a
+%%   href="https://en.wikipedia.org/wiki/Handshaking#TCP_three-way_handshake">
+%%   TCP three-way handshake</a>) but uses Erlang references instead of
+%%   incrementing sequence numbers.
+%% }
+%%
+%% {@returns Pair consisting of the remote party PID and synchronization message
+%%           reference.
+%% }
+-spec syn(To :: pid()) -> {pid(), reference()}.
+syn(To) when is_pid(To) ->
+  Ref = erlang:make_ref(),
+  ?TRACE("~p sending syn to ~p (~p) and waiting for syn-ack..", [self(), To, Ref]),
+  To ! {'$syn', self(), Ref},
+  receive
+    {'$syn_ack', Ref} ->
+      ?TRACE("~p got syn-ack from ~p (~p)..sending ack.", [self(), To, Ref]),
+      To ! {'$ack', Ref},
+      {To, Ref}
+  end.
+
+%% @doc Replies to a synchronization request, completing the second phase of a
+%% three-way handshake.
+%%
+%% {@params
+%%   {@name From}
+%%   {@desc PID of the remote party initiating the synchronization.}
+%% }
+%%
+%% {@par The caller blocks until an initiating request is received. The embedded
+%%       Erlang reference in the synchronization request is directed back to the
+%%       initiating remote party: this assures the latter that the
+%%       acknowledgement originates from the correct party participating in the
+%%       handshake. In order to ensure that the caller unblocks by one specific
+%%       initiating remote party, the PID specified in the argument `From' must
+%%       correspond to the PID embedded in the synchronization request message
+%%       issued by the initiating remote party. See {@link syn/1}.
+%% }
+%%
+%% {@returns Pair consisting of the initiating remote party PID and
+%%           synchronization message reference.
+%% }
+-spec syn_ack(From :: pid()) -> {pid(), reference()}.
+syn_ack(From) when is_pid(From) ->
+  ?TRACE("~p waiting for syn from ~p..", [self(), From]),
+  receive
+    {'$syn', From, Ref} ->
+      ?TRACE("~p got syn from ~p (~p)..sending syn-ack..", [self(), From, Ref]),
+      From ! {'$syn_ack', Ref},
+      receive
+        {'$ack', Ref} ->
+          ?TRACE("~p ack'ed by ~p (~p).", [self(), From, Ref]),
+          {From, Ref}
+      end
+  end.
+
+%% @doc Executes the specified function asynchronously and returns the result
+%% when ready.
+%%
+%% {@params
+%%   {@name Fun}
+%%   {@desc Function to execute.}
+%% }
+%%
+%% {@returns Reference identifying the function execution.}
+-spec promise(fun()) -> reference().
+promise(Fun) ->
+  Self = self(),
+  Ref = erlang:make_ref(),
+  Pid = spawn(fun() -> Self ! {ok, Ref}, Self ! {promise, Ref, Fun()} end),
+  receive
+    {ok, Ref} -> {Pid, Ref}
+  end.
+
+%% @doc Blocks until the promise identified by the specified reference is
+%% fulfilled.
+%%
+%% {@params
+%%   {@name Ref}
+%%   {@desc Promise reference.}
+%% }
+%%
+%% {@returns Function execution result.}
+-spec then(reference()) -> term().
+then(Ref) ->
+  receive
+    {promise, Ref, Result} ->
+      Result
+  end.
 
 %%% ----------------------------------------------------------------------------
 %%% Private helper functions.

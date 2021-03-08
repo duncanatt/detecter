@@ -28,17 +28,15 @@
 -include("log.hrl").
 
 %%% Public API.
--export([start/4, stop/1]).
+-export([start/2, stop/1]).
 -export([dispatch/1, do_monitor/2, filter/1]).
 
-%%% Callbacks/Internal.
--export([init/3]).
+%%% Internal callbacks.
+-export([init/1]).
 
 %%% Types.
--export_type([]).
+-export_type([mfa_spec/0]).
 
-%%% Implemented behaviors.
-%-behavior().
 
 
 %%% ----------------------------------------------------------------------------
@@ -71,10 +69,15 @@
 %% consumed albeit a final verdict is never reached.
 
 -type mfa_spec() :: fun((Mfa :: mfa()) -> {ok, monitor()} | undefined).
-%% Function mapping that specified the forked function calls that are to be
-%% monitored. For the case of erlang, these function calls are always external
-%% calls, such as those issued via {@link spawn/3}.
-
+%% Function mapping that returns the analysis encoding as an anonymous function.
+%% The analysis encoding corresponds to the logic formula that specifies the
+%% runtime property to be analysed, and therefore, is the product of the
+%% synthesis, see {@link hml_eval}.
+%% When the mapping is `undefined', the system process corresponding to the
+%% forked function will share the same tracer of its parent process, otherwise,
+%% a new and separate tracer is forked for the new process, see {@link tracer}.
+%% Note that only external function calls can be tracked, and therefore,
+%% instrumented with a new tracer.
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.
@@ -83,25 +86,19 @@
 %% @doc Starts the analyzer.
 %%
 %% {@params
-%%   {@name Tracer}
-%%   {@desc PID of tracer process starting the analyzer.}
-%%   {@name Owner}
-%%   {@desc }
-%%   {@name }
-%%   {@desc }
-%%   {@name }
-%%   {@desc }
+%%   {@name Parent}
+%%   {@desc PID of supervisor that is linked to analyzer process.}
+%%   {@name Analysis}
+%%   {@desc The synthesised analysis encoding as an anonymous function.}
 %% }
 %%
-%% {@returns PID of the analyzer process.}
--spec start(Tracer, Owner, Pid, Monitor) -> Pid :: pid()
+%% {@returns PID of analyzer process.}
+-spec start(Parent, Monitor) -> Pid :: pid()
   when
-  Tracer :: pid(),
-  Owner :: tracer:owner(),
-  Pid :: pid(),
+  Parent :: tracer:parent(),
   Monitor :: monitor().
-start(Tracer, Owner, Pid, Monitor) ->
-  spawn(fun() -> put(?MONITOR, Monitor), init(Tracer, Owner, Pid) end).
+start(Parent, Monitor) ->
+  spawn(fun() -> put(?MONITOR, Monitor), init(Parent) end).
 
 %% @doc Stops the asynchronous monitor identified by the specified Pid.
 -spec stop(Pid :: pid()) -> Ref :: reference().
@@ -109,22 +106,18 @@ stop(Pid) ->
   util:rpc_async(Pid, stop).
 
 %% @private Monitor initialization.
--spec init(Tracer, Owner, Pid) -> no_return()
+-spec init(Parent) -> no_return()
   when
-  Tracer :: pid(),
-  Owner :: tracer:owner(),
-  Pid :: pid().
-init(Tracer, Owner, Pid) ->
-  if is_pid(Owner) -> link(Owner); true -> ok end,
-  loop(Tracer, Owner, Pid).
+  Parent :: tracer:parent().
+init(Parent) ->
+  if is_pid(Parent) -> link(Parent); true -> ok end,
+  loop(Parent).
 
 %% @private Main monitor loop.
--spec loop(Tracer, Owner, PidS) -> no_return()
+-spec loop(Parent) -> no_return()
   when
-  Tracer :: pid(),
-  Owner :: tracer:owner(),
-  PidS :: pid().
-loop(Tracer, Owner, PidS) ->
+  Parent :: tracer:parent().
+loop(Parent) ->
   receive
     {From, _, stop} ->
 
@@ -152,7 +145,7 @@ loop(Tracer, Owner, PidS) ->
       ),
       % TODO: Test this
 
-      loop(Tracer, Owner, PidS)
+      loop(Parent)
   end.
 
 
@@ -183,27 +176,27 @@ loop(Tracer, Owner, PidS) ->
 %% }
 -spec dispatch(Event :: events:event()) -> term().
 dispatch(Event = {fork, _Parent, Child, _Mfa}) ->
-  do_monitor(events:to_evm_event(Event),
+  do_monitor(event:to_evm_event(Event),
     fun(Verdict) -> ?INFO("Reached verdict '~s' after ~w.", [Verdict, Event]) end
   ),
   Child;
 dispatch(Event = {init, _Child, Parent, _Mfa}) ->
-  do_monitor(events:to_evm_event(Event),
+  do_monitor(event:to_evm_event(Event),
     fun(Verdict) -> ?INFO("Reached verdict '~s' after ~w.", [Verdict, Event]) end
   ),
   Parent;
 dispatch(Event = {exit, _Process, Reason}) ->
-  do_monitor(events:to_evm_event(Event),
+  do_monitor(event:to_evm_event(Event),
     fun(Verdict) -> ?INFO("Reached verdict '~s' after ~w.", [Verdict, Event]) end
   ),
   Reason;
 dispatch(Event = {send, _Sender, _Receiver, Msg}) ->
-  do_monitor(events:to_evm_event(Event),
+  do_monitor(event:to_evm_event(Event),
     fun(Verdict) -> ?INFO("Reached verdict '~s' after ~w.", [Verdict, Event]) end
   ),
   Msg;
 dispatch(Event = {recv, _Receiver, Msg}) ->
-  do_monitor(events:to_evm_event(Event),
+  do_monitor(event:to_evm_event(Event),
     fun(Verdict) -> ?INFO("Reached verdict '~s' after ~w.", [Verdict, Event]) end
   ),
   Msg.

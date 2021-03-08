@@ -61,7 +61,8 @@
 -define(MODE_DIRECT, direct).
 -define(MODE_PRIORITY, priority).
 
-%% TODO: What are these? Probably tables used to keep counts used in the ETS table? We'll see.
+%% TODO: What are these? Probably tables used to keep counts used in the ETS table? We'll see
+%% TODO: I think they are used in testing to keep the association between tracers and processes.
 -ifdef(TEST).
 -define(MON_INFO_ETS_NAME, mon_state).
 -define(MON_INFO_INV_ETS_NAME, mon_inv_state).
@@ -111,7 +112,7 @@
 
 -type group() :: #{pid() => tracer_mode()}.
 
--type owner() :: pid() | self.
+-type parent() :: pid() | self.
 
 -type event_stats() :: #event_stats{}.
 
@@ -158,7 +159,7 @@ new_mon_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
   when
   PidS :: pid(),
   MfaSpec :: analyzer:mfa_spec(),
-  Owner :: owner().
+  Owner :: parent().
 start(PidS, MfaSpec, Owner)
   when is_pid(PidS), is_function(MfaSpec, 1),
   is_pid(Owner); Owner =:= self ->
@@ -190,7 +191,7 @@ stop() ->
   PidS :: pid(),
   MfaSpec :: analyzer:mfa_spec(),
   Parent :: pid(),
-  Owner :: owner().
+  Owner :: parent().
 tracer(PidS, MfaSpec, Parent, Owner) ->
 
   ?INFO("Started ROOT tracer ~w for process ~w.", [self(), PidS]),
@@ -221,11 +222,11 @@ tracer(PidS, MfaSpec, Parent, Owner) ->
   PidT :: pid(),
   MonFun :: analyzer:monitor(),
   MfaSpec :: analyzer:mfa_spec(),
-  Owner :: owner().
+  Owner :: parent().
 tracer(PidS, PidT, MonFun, MfaSpec, Owner) ->
 
   % Spawn monitor process to analyze trace events.
-  PidM = analyzer:start(self(), Owner, PidS, MonFun),
+  PidM = analyzer:start(Owner, MonFun),
   ?INFO("Started tracer ~w - monitor ~w for process ~w.", [self(), PidM, PidS]),
 
   % Detach system process from ancestor tracer and assume control of it in this
@@ -260,7 +261,7 @@ tracer(PidS, PidT, MonFun, MfaSpec, Owner) ->
   Mode :: tracer_mode(),
   State :: tracer_state(),
   PidM :: pid() | undefined,
-  Owner :: owner().
+  Owner :: parent().
 loop(?MODE_PRIORITY, State = #tracer_state{}, PidM, Owner) ->
 
   % Monitor reference must be a PID when tracer is in PRIORITY mode. It can
@@ -463,7 +464,7 @@ set_state(State = #tracer_state{trace = _Trace, stats = Stats}, Event) ->
   State :: tracer_state(),
   Msg :: message(),
   PidM :: pid(),
-  Owner :: owner().
+  Owner :: parent().
 handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, PidM, Owner) ->
   dispatch(PidSrc, State,
     fun _Route(PidT) ->
@@ -681,7 +682,7 @@ handle_event(_, State, Msg, _, _) ->
   State :: tracer_state(),
   Cmd :: detach(),
   PidM :: pid(),
-  Owner :: owner().
+  Owner :: parent().
 route_detach(State, Cmd = {detach, PidT, PidTgt}, PidM, Owner) ->
   dispatch(PidTgt, State,
     fun _Route(PidT) ->
@@ -720,7 +721,7 @@ route_detach(State, Cmd = {detach, PidT, PidTgt}, PidM, Owner) ->
   State :: tracer_state(),
   Msg :: message(),
   PidM :: pid(),
-  Owner :: owner().
+  Owner :: parent().
 relay_detach(State, Msg = {route, _, {detach, _, PidTgt}}, PidM, Owner) ->
   dispatch(PidTgt, State,
     fun _Relay(PidT) ->
@@ -843,7 +844,7 @@ relay_event(State = #tracer_state{}, Msg = {route, _, Evt}) when
   State :: tracer_state(),
   Msg :: message(),
   PidM :: pid(),
-  Owner :: owner().
+  Owner :: parent().
 handle_detach(State, Msg = {route, _, {detach, Self, PidTgt}}, PidM, Owner) ->
   dispatch(PidTgt, State,
     fun _Relay(PidT) ->
@@ -967,7 +968,7 @@ detach(PidS, PidT) ->
   when
   State :: tracer_state(),
   PidM :: pid() | undefined,
-  Owner :: owner().
+  Owner :: parent().
 try_gc(#tracer_state{group = Group, routes = Routes, trace = _Trace, stats = Stats}, undefined, Owner) when
   map_size(Group) =:= 0, map_size(Routes) =:= 0 ->
 

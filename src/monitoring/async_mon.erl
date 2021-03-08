@@ -220,7 +220,7 @@ stop() ->
 % statistics are only partially collected, but the system does not block.
 -spec init_online(Owner, NumMonitors) -> no_return()
   when
-  Owner :: tracer:owner(),
+  Owner :: tracer:parent(),
   NumMonitors :: non_neg_integer().
 init_online(Owner, NumMonitors) ->
 
@@ -267,7 +267,7 @@ init_online(Owner, NumMonitors) ->
   when
   State :: shutdown_state(),
   Counts :: non_neg_integer(),
-  Owner :: tracer:owner(),
+  Owner :: tracer:parent(),
   Stats :: tracer:event_stats(),
   ExpectedStats :: tracer:event_stats().
 loop_online(?STATE_EXITING, 0, Owner, Stats, ExpectedStats) ->
@@ -323,13 +323,13 @@ loop_online(State, Count, Owner, Stats, ExpectedStats)
 
 
 
--spec init_offline(Owner :: tracer:owner()) -> no_return().
+-spec init_offline(Owner :: tracer:parent()) -> no_return().
 init_offline(Owner) ->
   process_flag(trap_exit, true),
   util:syn_ack(Owner),
   loop_offline(Owner).
 
--spec loop_offline(Owner :: tracer:owner()) -> no_return().
+-spec loop_offline(Owner :: tracer:parent()) -> no_return().
 loop_offline(Owner) ->
   receive
     {'EXIT', Pid, {garbage_collect, {tracer, Stats0}}} ->

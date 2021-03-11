@@ -206,7 +206,7 @@ syn_ack(From) when is_pid(From) ->
 %% }
 %%
 %% {@returns Reference identifying the function execution.}
--spec promise(fun()) -> reference().
+-spec promise(fun()) -> {pid(), reference()}.
 promise(Fun) ->
   Self = self(),
   Ref = erlang:make_ref(),

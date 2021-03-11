@@ -60,8 +60,8 @@ log_to_file(File) ->
 %%   {@desc Format of the log statement string.}
 %% }
 %%
-%% {@returns `true' if the log statement was output, otherwise `false'.}
--spec write(LogLabel, Module, Line, Fmt) -> boolean()
+%% {@returns `ok' to acknowledge success.}
+-spec write(LogLabel, Module, Line, Fmt) -> ok
   when
   LogLabel :: string(),
   Module :: atom(),
@@ -85,8 +85,8 @@ write(LogLabel, Module, Line, Fmt) ->
 %%   {@desc Formatting parameters for the log statement string.}
 %% }
 %%
-%% {@returns `true' if the log statement was output, otherwise `false'.}
--spec write(LogLabel, Module, Line, Fmt, Params) -> boolean()
+%% {@returns `ok' to acknowledge success.}
+-spec write(LogLabel, Module, Line, Fmt, Params) -> ok
   when
   LogLabel :: string(),
   Module :: atom(),

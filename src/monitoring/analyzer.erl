@@ -35,7 +35,7 @@
 -export([init/1]).
 
 %%% Types.
--export_type([mfa_spec/0]).
+-export_type([mfa_spec/0, monitor/0]).
 
 
 
@@ -93,15 +93,15 @@
 %% }
 %%
 %% {@returns PID of analyzer process.}
--spec start(Parent, Monitor) -> Pid :: pid()
+-spec start(Parent, MonFun) -> pid()
   when
   Parent :: tracer:parent(),
-  Monitor :: monitor().
-start(Parent, Monitor) ->
-  spawn(fun() -> put(?MONITOR, Monitor), init(Parent) end).
+  MonFun :: monitor().
+start(Parent, MonFun) ->
+  spawn(fun() -> put(?MONITOR, MonFun), init(Parent) end).
 
 %% @doc Stops the asynchronous monitor identified by the specified Pid.
--spec stop(Pid :: pid()) -> Ref :: reference().
+-spec stop(Pid :: pid()) -> reference().
 stop(Pid) ->
   util:rpc_async(Pid, stop).
 
@@ -161,7 +161,7 @@ loop(Parent) ->
 %%   {@desc The abstract event that the monitor is to analyze.}
 %% }
 %%
-%% {@returns Depends on the event type. See {@link trace_lib:event/0}.
+%% {@returns Depends on the event type. See {@link event:event/0}.
 %%           {@ul
 %%             {@item When event is of type `fork', the PID of the new child
 %%                    process is returned;
@@ -169,12 +169,14 @@ loop(Parent) ->
 %%             {@item When event is of type `init', the PID of the parent
 %%                    process is returned;
 %%             }
-%%             {@item When event is of type `exit', the exit reason is returned;}
+%%             {@item When event is of type `exit', the exit reason is
+%%                    returned;
+%%             }
 %%             {@item When event is of type `send', the message is returned;}
 %%             {@item When event is of type `recv', the message is returned.}
 %%           }
 %% }
--spec dispatch(Event :: events:event()) -> term().
+-spec dispatch(Event :: event:int_event()) -> term().
 dispatch(Event = {fork, _Parent, Child, _Mfa}) ->
   do_monitor(event:to_evm_event(Event),
     fun(Verdict) -> ?INFO("Reached verdict '~s' after ~w.", [Verdict, Event]) end
@@ -208,9 +210,9 @@ dispatch(Event = {recv, _Receiver, Msg}) ->
 %% otherwise nothing is done. When no monitor function is stored inside the
 %% process dictionary (i.e. meaning that the process is not monitored), the atom
 %% `undefined' is returned.
--spec do_monitor(Event, VerdictFun) -> Monitor :: monitor() | undefined
+-spec do_monitor(Event, VerdictFun) -> monitor() | undefined
   when
-  Event :: trace_lib:evm_event(),
+  Event :: event:evm_event(),
   VerdictFun :: fun((Verdict :: verdict()) -> any()).
 do_monitor(Event, VerdictFun) when is_function(VerdictFun, 1) ->
   case get(?MONITOR) of
@@ -252,10 +254,10 @@ is_verdict(_) ->
 %% @private Effects the analysis by applying the monitor function to the
 %% specified event. If a verdict state is reached, the event is silently
 %% discarded.
--spec analyze(Monitor, Event) -> Monitor0 :: monitor()
+-spec analyze(Monitor, Event) -> monitor()
   when
   Monitor :: monitor(),
-  Event :: trace_lib:event().
+  Event :: event:int_event().
 analyze(Monitor, Event) ->
   case is_verdict(Monitor) of
     true ->
@@ -274,6 +276,6 @@ analyze(Monitor, Event) ->
   end.
 
 %% @doc Default filter that allows all events to pass.
--spec filter(Event :: events:event()) -> true.
+-spec filter(Event :: event:int_event()) -> true.
 filter(_) ->
   true. % True = keep event.

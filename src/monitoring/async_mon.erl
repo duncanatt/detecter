@@ -92,7 +92,7 @@
 -spec start(Mfa, MfaSpec, Opts) -> Root :: pid()
   when
   Mfa :: mfa(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   Opts :: proplists:proplist().
 start({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 
@@ -124,7 +124,7 @@ start({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 -spec start_online(Mfa, MfaSpec, Opts) -> Root :: pid()
   when
   Mfa :: mfa(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   Opts :: proplists:proplist().
 start_online({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 
@@ -175,7 +175,7 @@ start_online({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
   when
   File :: string(),
   Pid :: pid(),
-  MfaSpec :: monitor:mfa_spec().
+  MfaSpec :: analyzer:mfa_spec().
 start_offline(File, Pid, MfaSpec) when is_function(MfaSpec, 1) ->
 
   % Set up controller monitor. The controller collects all the tracer statistics

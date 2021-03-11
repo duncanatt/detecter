@@ -739,8 +739,12 @@ delete_alloc(Tracee) ->
 %%   }
 %% }
 %%
-%% {@returns Two outcomes are possible:
+%% {@returns Three outcomes are possible:
 %%           {@dl
+%%             {@item `false'}
+%%             {@desc Trace event could not be dispatched since no tracer is
+%%                    allocated.
+%%             }
 %%             {@item `@{true, stable@}'}
 %%             {@desc Trace event has been dispatched. The backlog does not need
 %%                    to be revisited to examine events preceding the current
@@ -754,7 +758,7 @@ delete_alloc(Tracee) ->
 %%             }
 %%           }
 %% }
--spec dispatch(Event :: event()) -> {true, stable} | {true, update}.
+-spec dispatch(Event :: event()) -> false | {true, stable} | {true, update}.
 dispatch(Event = {delay, _, _E = {fork, _, Pid2, _}}) ->
   gen_dispatch(Event,
     fun(Tracer) ->
@@ -821,15 +825,17 @@ dispatch(Entry = {delay, _, _}) ->
 %%
 %% {@returns Two outcomes are possible:
 %%           {@dl
+%%             {@term `false'}
+%%             {@desc Trace event could not be dispatched since no tracer is
+%%                    allocated.
+%%             }
 %%             {@term `@{true, Result@}'}
 %%             {@desc Trace event has been dispatched, and the result of the
 %%                    `OnDispatch' is returned in `Result'.
 %%             }
-%%             {@term `false'}
-%%             {@desc Trace event could not be dispatched.}
 %%           }
 %% }
--spec gen_dispatch(Event, OnDispatch) -> Status :: {true, any()} | false
+-spec gen_dispatch(Event, OnDispatch) -> Status :: false | {true, any()}
   when
   Event :: event(),
   OnDispatch :: function().

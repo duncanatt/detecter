@@ -29,7 +29,7 @@
 
 %%% Public API.
 -export([start/2, stop/1]).
--export([dispatch/1, do_monitor/2, filter/1]).
+-export([embed/1, dispatch/1, do_monitor/2, filter/1]).
 
 %%% Internal callbacks.
 -export([init/1]).
@@ -86,24 +86,29 @@
 %% @doc Starts the analyzer.
 %%
 %% {@params
+%%   {@name MonFun/Analysis}
+%%   {@desc The synthesised analysis encoding as an anonymous function.}
 %%   {@name Parent}
 %%   {@desc PID of supervisor that is linked to analyzer process.}
-%%   {@name Analysis}
-%%   {@desc The synthesised analysis encoding as an anonymous function.}
 %% }
 %%
 %% {@returns PID of analyzer process.}
--spec start(Parent, MonFun) -> pid()
+-spec start(MonFun, Parent) -> pid()
   when
-  Parent :: tracer:parent(),
-  MonFun :: monitor().
-start(Parent, MonFun) ->
+  MonFun :: monitor(),
+  Parent :: tracer:parent().
+start(MonFun, Parent) ->
   spawn(fun() -> put(?MONITOR, MonFun), init(Parent) end).
 
 %% @doc Stops the asynchronous monitor identified by the specified Pid.
 -spec stop(Pid :: pid()) -> reference().
 stop(Pid) ->
   util:rpc_async(Pid, stop).
+
+%% @doc Embeds the monitor into the process dictionary.
+embed(MonFun) ->
+  put(?MONITOR, MonFun),
+  self.
 
 %% @private Monitor initialization.
 -spec init(Parent) -> no_return()

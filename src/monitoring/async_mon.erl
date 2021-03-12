@@ -111,8 +111,9 @@ start({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 
   % Launch tracer using separate or merged monitors.
   Root =
-    if Merged =:= false -> tracer:start(Pid, MfaSpec, self);
-      true -> tracer_monitor:start(Pid, MfaSpec, self)
+    if Merged =:= false -> tracer:start(Pid, MfaSpec, external, self);
+%%      true -> tracer_monitor:start(Pid, MfaSpec, self)
+      true -> tracer:start(Pid, MfaSpec, internal, self)
     end,
 
   % Ack root monitor and system, now that the former has been fully started.
@@ -192,7 +193,7 @@ start_offline(File, Pid, MfaSpec) when is_function(MfaSpec, 1) ->
   % Start root tracer for system. Since this is offline monitoring, the trace
   % is assumed to exist. As in the online case, the root tracer is bootstrapped
   % by specifying the root process of the system (obtained from the trace log).
-  Root = tracer:start(Pid, MfaSpec, Controller),
+  Root = tracer:start(Pid, MfaSpec, external, Controller),
 
   % Ack root monitor.
   util:syn_ack(Root),

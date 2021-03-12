@@ -28,6 +28,8 @@
 -include("log.hrl").
 
 
+%%-export([init/0]).
+
 %%% ----------------------------------------------------------------------------
 %%% Macro and record definitions.
 %%% ----------------------------------------------------------------------------
@@ -51,6 +53,113 @@
 %%% Tests.
 %%% ----------------------------------------------------------------------------
 
+%%init() ->
+%%  process_flag(trap_exit, true),
+%%  loop().
+%%
+%%loop() ->
+%%
+%%  receive
+%%    {'EXIT', Pid, {garbage_collect, {tracer, Stats0}}} ->
+%%      tracer:show_stats(Stats0, Pid, "tracer");
+%%    {'EXIT', Pid, {garbage_collect, {root, Stats0}}} ->
+%%      tracer:show_stats(Stats0, Pid, "ROOT")
+%%  end,
+%%  loop().
+
+generic_monitor_test_for_testing_to_remove_test_() -> {"Generic dynamic monitor routing algorithm test",
+  {foreachx,
+    fun({Trace, Monitors}) ->
+
+%%      Controller = spawn(?MODULE, init, []),
+
+      % Start the monitoring system in offline mode. The system under scrutiny
+      % is not run; rather a run simulation is performed by posting trace events
+      % to the underlying log tracer.
+      monitor:start_off("", ?P1, Monitors, [{parent, self}, {analysis, internal}]),
+      log_tracer:post_events(Trace)
+    end,
+    fun(_, _) ->
+      % Stop monitoring system and underlying tracer.
+      monitor:stop()
+    end,
+    [
+      {{
+        [{delay, 0, {fork, ?P1, ?P2, {m2, f2, []}}},
+          {delay, 0, {send, ?P2, ?P2, msg_to_p2_1}},
+          {delay, 0, {recv, ?P2, msg_to_p2_1}},
+          {delay, 0, {exit, ?P1, normal}},
+          {delay, 0, {fork, ?P2, ?P3, {m3, f3, []}}},
+          {delay, 0, {recv, ?P2, msg_to_p2_2}},
+          {delay, 0, {exit, ?P2, normal}},
+          {delay, 0, {send, ?P3, ?P2, msg_to_p2_2}},
+          {delay, 0, {exit, ?P3, normal}}],
+        fun({m2, f2, []}) ->
+          {ok, fun(_) -> 'end' end};
+          ({m3, f3, []}) ->
+            {ok, fun(_) -> 'end' end};
+          ({_, _, _}) ->
+            undefined
+        end
+      },
+        fun(_, _) ->
+          {"All processes have dedicated monitors (messages sent on start up)",
+            ?_test(
+              begin
+
+              % Wait until monitoring simulation completes and traces are
+              % collected.
+                ?small_wait,
+
+                % Monitor M1 receives trace events for P1 only.
+                {_, _, T1} = tracer:get_mon_info_rev(?P1),
+                ?assertEqual([
+                  {trace, ?P1, spawn, ?P2, {m2, f2, []}},
+                  {trace, ?P1, exit, normal}
+                ], T1),
+
+                % Monitor M2 receives trace events for P2 only.
+                {_, _, T2} = tracer:get_mon_info_rev(?P2),
+                ?assertEqual([
+                  {trace, ?P2, send, msg_to_p2_1, ?P2},
+                  {trace, ?P2, 'receive', msg_to_p2_1},
+                  {trace, ?P2, spawn, ?P3, {m3, f3, []}},
+                  {trace, ?P2, 'receive', msg_to_p2_2},
+                  {trace, ?P2, exit, normal}
+                ], T2),
+
+                % Monitor M3 receives trace events for P3 only.
+                {_, _, T3} = tracer:get_mon_info_rev(?P3),
+                ?assertEqual([
+                  {trace, ?P3, send, msg_to_p2_2, ?P2},
+                  {trace, ?P3, exit, normal}
+                ], T3)
+              end
+            )}
+        end}
+
+%%      {{[
+%%
+%%      ],
+%%        fun({_, _, _}) ->
+%%          false
+%%        end
+%%      },
+%%        fun(_, _) ->
+%%          {"Tests that the Monitor M1 is shared by all processes", ?_test(
+%%            begin
+%%
+%%            % Wait until monitoring simulation completes and traces are
+%%            % collected.
+%%              ?small_wait
+%%
+%%            end
+%%          )}
+%%        end}
+
+    ]}
+}.
+
 %% @doc Tests the generic dynamic routing logic and the assignment of tracers to
 %% system processes.
 generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
@@ -60,13 +169,13 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
       % Start the monitoring system in offline mode. The system under scrutiny
       % is not run; rather a run simulation is performed by posting trace events
       % to the underlying log tracer.
-      async_mon:start_offline("", ?P1, Monitors),
+      monitor:start_offline("", ?P1, Monitors),
       log_tracer:post_events(Trace)
     end,
     fun(_, _) ->
 
       % Stop monitoring system and underlying tracer.
-      async_mon:stop()
+      monitor:stop()
     end,
     [
       {{
@@ -874,13 +983,13 @@ p3_dies_monitor_test_() -> {"P3 dies when it has a monitor attached test",
       % Start the monitoring system in offline mode. The system under scrutiny
       % is not run; rather a run simulation is performed by posting trace events
       % to the underlying log tracer.
-      async_mon:start_offline("", ?P1, Monitors),
+      monitor:start_offline("", ?P1, Monitors),
       log_tracer:post_events(Trace)
     end,
     fun(_, _) ->
 
       % Stop monitoring system and underlying tracer.
-      async_mon:stop()
+      monitor:stop()
     end,
     [
       {{[{delay, 0, {fork, ?P1, ?P2, {m2, f2, []}}},
@@ -1332,13 +1441,13 @@ p3_spawns_multiple_child_processes_test_() ->
         % Start the monitoring system in offline mode. The system under scrutiny
         % is not run; rather a run simulation is performed by posting trace events
         % to the underlying log tracer.
-        async_mon:start_offline("", ?P1, Monitors),
+        monitor:start_offline("", ?P1, Monitors),
         log_tracer:post_events(Trace)
       end,
       fun(_, _) ->
 
         % Stop monitoring system and underlying tracer.
-        async_mon:stop()
+        monitor:stop()
       end,
       [
         {{[{delay, 0, {fork, ?P1, ?P2, {m2, f2, []}}},

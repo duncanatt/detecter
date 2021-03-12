@@ -41,11 +41,12 @@
 %%% Internal callbacks.
 -export([root/5, tracer/6]).
 
--export([new_mon_stats/0, new_mon_stats/6]).
--export([show_stats/2, cum_sum_stats/2]).
+-export([new_stats/0, new_stats/6]).
+%%-export([show_stats/2, cum_sum_stats/2]).
+%%-export([show_stats/3]).
 
 %%% Types.
--export_type([]).
+-export_type([parent/0, a_mode/0]).
 
 %%% Implemented behaviors.
 %-behavior().
@@ -76,7 +77,7 @@
 -endif.
 
 %% Maintains the count of the events seen by the tracer.
--record(event_stats, {
+-record(stats, {
   cnt_spawn = 0 :: non_neg_integer(),
   cnt_exit = 0 :: non_neg_integer(),
   cnt_send = 0 :: non_neg_integer(),
@@ -100,14 +101,13 @@
 %%   {@item `stats'}
 %%   {@desc Counts of the events seen by the tracer.}
 %% }
--record(tracer_state, {
+-record(state, {
   routes = #{} :: routes(),
   traced = #{} :: traced(),
   mfa_spec = fun({_, _, _}) -> undefined end :: analyzer:mfa_spec(),
   analysis = ?ANALYSIS_EXTERNAL,
-%%  analysis = internal,
   trace = [] :: list(),
-  stats = #event_stats{} :: event_stats()
+  stats = #stats{} :: stats()
 }).
 
 
@@ -115,25 +115,27 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
--type mode() :: ?MODE_PRIORITY | ?MODE_DIRECT.
+-type t_mode() :: ?MODE_PRIORITY | ?MODE_DIRECT.
+
+-type a_mode() :: ?ANALYSIS_INTERNAL | ?ANALYSIS_EXTERNAL.
+
+-type state() :: #state{}.
 
 -type routes() :: #{pid() => pid()}.
 
--type traced() :: #{pid() => mode()}.
+-type traced() :: #{pid() => t_mode()}.
+
+-type stats() :: #stats{}.
 
 -type parent() :: pid() | self.
 
 -type analyzer() :: undefined | pid() | self.
 
--type event_stats() :: #event_stats{}.
-
--type state() :: #tracer_state{}.
-
 -type detach() :: {detach, PidRtr :: pid(), PidS :: pid()}.
 
 -type routed(Msg) :: {route, PidRtr :: pid(), Msg}.
 
--type analysis() :: ?ANALYSIS_INTERNAL | ?ANALYSIS_EXTERNAL.
+
 
 
 %%% ----------------------------------------------------------------------------
@@ -141,12 +143,12 @@
 %%% ----------------------------------------------------------------------------
 % Testing = for me, Debugging = For users of the tool.
 
--spec new_mon_stats() -> Stats :: event_stats().
-new_mon_stats() ->
-  #event_stats{}.
+-spec new_stats() -> Stats :: stats().
+new_stats() ->
+  #stats{}.
 
--spec new_mon_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
-  Stats :: event_stats()
+-spec new_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
+  Stats :: stats()
   when
   CntSpawn :: non_neg_integer(),
   CntExit :: non_neg_integer(),
@@ -154,8 +156,8 @@ new_mon_stats() ->
   CntReceive :: non_neg_integer(),
   CntSpawned :: non_neg_integer(),
   CntOther :: non_neg_integer().
-new_mon_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
-  #event_stats{
+new_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
+  #stats{
     cnt_spawn = CntSpawn, cnt_exit = CntExit, cnt_send = CntSend,
     cnt_receive = CntReceive, cnt_spawned = CntSpawned, cnt_other = CntOther
   }.
@@ -229,7 +231,7 @@ root(PidS, MfaSpec, Analysis, Starter, Parent) ->
 
   % Initialize state. Root system process ID is added to the empty set of
   % processes traced by the root tracer.
-  State = #tracer_state{
+  State = #state{
     traced = add_proc(PidS, ?MODE_DIRECT, #{}), mfa_spec = MfaSpec, analysis = Analysis
   },
 
@@ -259,8 +261,7 @@ tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
   % Start independent analyzer to analyse trace events.
 %%  PidM = analyzer:start(MonFun, Parent),
   Analyzer = init_analyzer(MonFun, Parent, Analysis),
-  ?INFO("------------------ Analysis ~p.", [Analysis]),
-  ?INFO("Started tracer ~w and analyzer ~w for process ~w.", [self(), Analyzer, PidS]),
+  ?INFO("New tracer ~w and analyzer ~w for process ~w.", [self(), Analyzer, PidS]),
 
   % Detach system process from router tracer. The detach command notifies the
   % router tracer that it is now in charge of collecting trace events for this
@@ -269,7 +270,7 @@ tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
 
   % Initialize tracer state. Detached system process ID is added to the empty
   % set of processes traced by this tracer.
-  State = #tracer_state{
+  State = #state{
     traced = add_proc(PidS, ?MODE_PRIORITY, #{}), mfa_spec = MfaSpec, analysis = Analysis
   },
 
@@ -334,11 +335,11 @@ tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
 %% {@returns Does not return.}
 -spec loop(Mode, State, PidA, Parent) -> no_return()
   when
-  Mode :: mode(),
+  Mode :: t_mode(),
   State :: state(),
   PidA :: pid() | self | undefined,
   Parent :: parent().
-loop(?MODE_PRIORITY, State = #tracer_state{}, PidA, Parent) ->
+loop(?MODE_PRIORITY, State = #state{}, PidA, Parent) ->
 
   % Analyzer reference must be one of PID or the atom 'self' when the tracer is
   % in 'priority' mode. It cannot be 'undefined': this is only allowed for the
@@ -374,7 +375,7 @@ loop(?MODE_PRIORITY, State = #tracer_state{}, PidA, Parent) ->
       loop(?MODE_PRIORITY, State0, PidA, Parent)
   end;
 
-loop(?MODE_DIRECT, State = #tracer_state{}, PidA, Parent) ->
+loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
 %%  ?exec_if_test(show_state(State, ?MODE_DIRECT), ok),
 
   % When in 'direct' mode, the tracer dequeues both direct and routed messages.
@@ -462,7 +463,7 @@ loop(?MODE_DIRECT, State = #tracer_state{}, PidA, Parent) ->
 %% {@returns Updated tracer state.}
 -spec handle_event(Mode, State, Msg, PidA, Parent) -> state()
   when
-  Mode :: mode(),
+  Mode :: t_mode(),
   State :: state(),
   Msg :: event:evm_event() | routed(event:evm_event()),
   PidA :: analyzer(),
@@ -474,8 +475,8 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, PidA,
       % Route trace event to next hop. Routing of a 'spawn' events result in the
       % addition of a tracer-process mapping in the tracer routing map.
       route(PidT, Evt),
-      State#tracer_state{
-        routes = add_route(PidTgt, PidT, State#tracer_state.routes)
+      State#state{
+        routes = add_route(PidTgt, PidT, State#state.routes)
       }
     end,
     fun _Instr() ->
@@ -487,7 +488,7 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, PidA,
 
       % Instrument tracer and update processed trace event count.
       State0 = instr(?MODE_DIRECT, State, Evt, self(), Parent),
-      State1 = set_state(State0, Evt),
+      State1 = upd_state(State0, Evt),
 
       ?exec_if_test(
         % Update tracer-process mapping in ETS lookup tables.
@@ -511,10 +512,10 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, exit, _}, PidA, Parent) 
 
       % Remove terminated system process from traced processes map and update
       % processed trace event count.
-      State0 = State#tracer_state{
-        traced = del_proc(PidSrc, State#tracer_state.traced)
+      State0 = State#state{
+        traced = del_proc(PidSrc, State#state.traced)
       },
-      State1 = set_state(State0, Evt),
+      State1 = upd_state(State0, Evt),
 
       ?exec_if_test(
         % Update tracer-process mapping in ETS lookup tables.
@@ -542,7 +543,7 @@ handle_event(?MODE_DIRECT, State, Evt, PidA, _) when
       analyze(PidA, Evt),
 
       % Update processed trace event count.
-      State0 = set_state(State, Evt),
+      State0 = upd_state(State, Evt),
 
       ?exec_if_test(
         % Update tracer-process mapping in ETS lookup tables.
@@ -557,18 +558,19 @@ handle_event(?MODE_PRIORITY, State, Msg = {route, PidRtr, Evt = {trace, PidSrc, 
       % Forward trace event to next hop. Forwarding of 'spawn' events result in
       % the addition of a tracer-process mapping in the tracer routing map.
       forwd(PidT, Msg),
-      State#tracer_state{
-        routes = add_route(PidTgt, PidT, State#tracer_state.routes)
+      State#state{
+        routes = add_route(PidTgt, PidT, State#state.routes)
       }
     end,
     fun _Instr() ->
 
       % Analyze trace event.
       analyze(PidA, Evt),
+      % TODO: Assert that the analyzer is a PID or self.
 
       % Instrument tracer and update processed trace event count.
       State0 = instr(?MODE_PRIORITY, State, Evt, PidRtr, Parent),
-      State1 = set_state(State0, Evt),
+      State1 = upd_state(State0, Evt),
 
       ?exec_if_test(
         % Update tracer-process mapping in ETS lookup tables.
@@ -587,13 +589,14 @@ handle_event(?MODE_PRIORITY, State, Msg = {route, _PidRtr, Evt = {trace, PidSrc,
 
       % Analyze trace event.
       analyze(PidA, Evt),
+      % TODO: Assert that the analyzer is a PID or self.
 
       % Remove terminated system process from traced processes map and update
       % processed trace event count.
-      State0 = State#tracer_state{
-        traced = del_proc(PidSrc, State#tracer_state.traced)
+      State0 = State#state{
+        traced = del_proc(PidSrc, State#state.traced)
       },
-      State1 = set_state(State0, Evt),
+      State1 = upd_state(State0, Evt),
 
       ?exec_if_test(
         % Update tracer-process mapping in ETS lookup tables.
@@ -617,9 +620,10 @@ handle_event(?MODE_PRIORITY, State, Msg = {route, _PidRtr, Evt}, PidA, _) when
 
       % Analyze trace event.
       analyze(PidA, Evt),
+      % TODO: Assert that the analyzer is a PID or self.
 
       % Update processed trace event count.
-      State0 = set_state(State, Evt),
+      State0 = upd_state(State, Evt),
 
       ?exec_if_test(
         % Update tracer-process mapping in ETS lookup tables.
@@ -651,7 +655,7 @@ handle_event(_, State, Msg, _, _) ->
 %% {@returns Updated tracer state.}
 -spec instr(Mode, State, Event, PidT, Parent) -> state()
   when
-  Mode :: mode(),
+  Mode :: t_mode(),
   State :: state(),
   Event :: event:evm_event(),
   PidT :: pid(),
@@ -662,7 +666,7 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
   % Check whether a new tracer needs to be instrumented for the system process.
   % This check is performed against the instrumentation map which contains the
   % MFAs that require tracing.
-  case (State#tracer_state.mfa_spec)(Mfa) of
+  case (State#state.mfa_spec)(Mfa) of
     undefined ->
       ?TRACE("No tracer found for process ~w; adding to own traced processes map.", [PidTgt]),
 
@@ -678,8 +682,8 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
 
       % New system process is added to the traced processes map under the
       % tracer. The process is marked with the tracer mode it was added in.
-      State#tracer_state{
-        traced = add_proc(PidTgt, Mode, State#tracer_state.traced)
+      State#state{
+        traced = add_proc(PidTgt, Mode, State#state.traced)
       };
     {ok, MonFun} ->
 
@@ -699,7 +703,7 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
       %
       % Note that the new system process is not added to the traced processes
       % map of the tracer since it is being traced by the new tracer.
-      Args = [PidTgt, PidT, MonFun, State#tracer_state.mfa_spec, State#tracer_state.analysis, Parent],
+      Args = [PidTgt, PidT, MonFun, State#state.mfa_spec, State#state.analysis, Parent],
       PidT0 = spawn(?MODULE, tracer, Args),
 
       ?INFO("Instrumenting tracer ~w on MFA ~w for process ~w.", [PidT0, Mfa, PidTgt]),
@@ -712,8 +716,8 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
       % Create a new process-tracer mapping in the routes map to enable the
       % tracer to forward events to the next hop. The next hop is, in fact, the
       % newly-created tracer.
-      State#tracer_state{
-        routes = add_route(PidTgt, PidT0, State#tracer_state.routes)
+      State#state{
+        routes = add_route(PidTgt, PidT0, State#state.routes)
       }
   end.
 
@@ -759,7 +763,7 @@ route_detach(State, Cmd = {detach, PidT, PidTgt}, PidA, Parent) ->
       % removed from the routing map. All tracers in subsequent hops handle the
       % routed 'detach' command analogously.
       route(PidT, Cmd),
-      State0 = State#tracer_state{routes = del_route(PidTgt, State#tracer_state.routes)},
+      State0 = State#state{routes = del_route(PidTgt, State#state.routes)},
 
       % Check whether tracer can be terminated.
       try_gc(State0, PidA, Parent)
@@ -819,8 +823,8 @@ forwd_detach(State, Msg = {route, _, {detach, _PidT, PidTgt}}, PidA, Parent) ->
       % results in the removal of a process-tracer mapping in the tracer
       % routing map.
       forwd(PidT, Msg),
-      State0 = State#tracer_state{
-        routes = del_route(PidTgt, State#tracer_state.routes)
+      State0 = State#state{
+        routes = del_route(PidTgt, State#state.routes)
       },
 
       % ** Harmless race condition **
@@ -923,8 +927,8 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
       % results in the removal of a process-tracer mapping in the tracer
       % routing map.
       forwd(PidT, Rtd),
-      State0 = State#tracer_state{
-        routes = del_route(PidTgt, State#tracer_state.routes)
+      State0 = State#state{
+        routes = del_route(PidTgt, State#state.routes)
       },
 
       % Check whether tracer can be terminated.
@@ -946,8 +950,8 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
       % system process in the traced processes map by switching it from
       % 'priority' to direct'. The tracer now collects events for said process
       % directly from the trace.
-      State0 = State#tracer_state{
-        traced = sub_proc(PidTgt, ?MODE_DIRECT, State#tracer_state.traced)
+      State0 = State#state{
+        traced = upd_proc(PidTgt, ?MODE_DIRECT, State#state.traced)
       },
 
       % Check whether tracer can transition to 'direct' mode. This is possible
@@ -994,8 +998,8 @@ forwd_event(State, Rtd = {route, _, {trace, PidSrc, spawn, PidTgt, _}}) ->
       % the addition of a process-tracer mapping in the tracer routing map for
       % the child process.
       forwd(PidT, Rtd),
-      State#tracer_state{
-        routes = add_route(PidTgt, PidT, State#tracer_state.routes)
+      State#state{
+        routes = add_route(PidTgt, PidT, State#state.routes)
       }
     end,
     fun _Fail() ->
@@ -1039,30 +1043,7 @@ forwd_event(State, Rtd = {route, _, Evt}) ->
 
 
 
--spec set_stats(Stats, Event) -> event_stats()
-  when
-  Stats :: event_stats(),
-  Event :: event:evm_event().
-set_stats(Stats = #event_stats{cnt_spawn = Cnt}, {trace, _, spawn, _, _}) ->
-  Stats#event_stats{cnt_spawn = Cnt + 1};
-set_stats(Stats = #event_stats{cnt_exit = Cnt}, {trace, _, exit, _}) ->
-  Stats#event_stats{cnt_exit = Cnt + 1};
-set_stats(Stats = #event_stats{cnt_send = Cnt}, {trace, _, send, _, _}) ->
-  Stats#event_stats{cnt_send = Cnt + 1};
-set_stats(Stats = #event_stats{cnt_receive = Cnt}, {trace, _, 'receive', _}) ->
-  Stats#event_stats{cnt_receive = Cnt + 1};
-set_stats(Stats = #event_stats{cnt_spawned = Cnt}, {trace, _, spawned, _, _}) ->
-  Stats#event_stats{cnt_spawned = Cnt + 1};
-set_stats(Stats = #event_stats{cnt_other = Cnt}, Event) when element(1, Event) =:= trace ->
-  Stats#event_stats{cnt_other = Cnt + 1}.
 
--spec set_state(State, Event) -> State0 :: state()
-  when
-  State :: state(),
-  Event :: event:evm_event().
-set_state(State = #tracer_state{trace = _Trace, stats = Stats}, Event) ->
-  State0 = State#tracer_state{stats = set_stats(Stats, Event)},
-  ?exec_if_test(State0#tracer_state{trace = [Event | _Trace]}, State0).
 
 
 %%% ----------------------------------------------------------------------------
@@ -1072,7 +1053,7 @@ set_state(State = #tracer_state{trace = _Trace, stats = Stats}, Event) ->
 -spec add_proc(PidS, Mode, Group) -> UpdatedGroup :: traced()
   when
   PidS :: pid(),
-  Mode :: mode(),
+  Mode :: t_mode(),
   Group :: traced().
 add_proc(PidS, Mode, Group) ->
   ?assertNot(maps:is_key(PidS, Group),
@@ -1090,12 +1071,12 @@ del_proc(PidS, Group) ->
 
   maps:remove(PidS, Group).
 
--spec sub_proc(PidS, NewMode, Group) -> UpdatedGroup :: traced()
+-spec upd_proc(PidS, NewMode, Group) -> UpdatedGroup :: traced()
   when
   PidS :: pid(),
-  NewMode :: mode(),
+  NewMode :: t_mode(),
   Group :: traced().
-sub_proc(PidS, NewMode, Group) ->
+upd_proc(PidS, NewMode, Group) ->
   % It may be the case that the process we are trying to update does not exist.
   % This happens when a process has exited and is removed from the process group
   % BEFORE the detach command reaches the monitor and there would be no process
@@ -1121,7 +1102,7 @@ del_route(PidS, Routes) ->
   maps:remove(PidS, Routes).
 
 -spec can_detach(State :: state()) -> boolean().
-can_detach(#tracer_state{traced = Group}) ->
+can_detach(#state{traced = Group}) ->
   length(lists:filter(
     fun(?MODE_DIRECT) -> false; (_) -> true end, maps:values(Group)
   )) =:= 0.
@@ -1146,7 +1127,7 @@ detach(PidS, PidT) ->
   State :: state(),
   Analyzer :: pid() | undefined,
   Parent :: parent().
-try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, undefined, Parent) when
+try_gc(State = #state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, undefined, Parent) when
   map_size(Group) =:= 0, map_size(Routes) =:= 0 ->
 
   ?DEBUG("Terminated ROOT tracer ~w.", [self()]),
@@ -1155,6 +1136,8 @@ try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = St
   % Link to owner process (if Owner =/= self) and exit. Stats are embedded in
   % the exit signal so that these can be collected if Owner is trapping exits.
   if is_pid(Parent) -> link(Parent); true -> ok end,
+
+  ?exec_if_test(show_state(State, "ROOT"), ok),
   exit({garbage_collect, {root, Stats}});
 
 %%try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, self, Owner) when
@@ -1164,7 +1147,7 @@ try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = St
 %%  exit({garbage_collect, {tracer, Stats}});
 
 
-try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, Analyzer, Parent) when
+try_gc(State = #state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, Analyzer, Parent) when
   map_size(Group) =:= 0, map_size(Routes) =:= 0 ->
 
   % Issue stop command to monitor. Monitor will eventually process the command
@@ -1184,9 +1167,11 @@ try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = St
   % this may still be solved by post processing the monitor's mailbox, it would
   % needlessly complicate its code.
   if is_pid(Parent) -> link(Parent); true -> ok end,
+
+  ?exec_if_test(show_state(State, "Tracer"), ok),
   exit({garbage_collect, {tracer, Stats}});
 
-try_gc(State = #tracer_state{}, _, _) ->
+try_gc(State = #state{}, _, _) ->
   State.
 
 -spec route(PidT, Msg) -> routed(event:evm_event()) | routed(detach())
@@ -1204,22 +1189,8 @@ forwd(PidT, Routed) when element(1, Routed) =:= route ->
   ?TRACE("Tracer ~w forwarding ~w to next hop ~w.", [self(), Routed, PidT]),
   PidT ! Routed.
 
-%%-spec analyze(PidA :: pid(), Evt :: event:evm_event()) -> event:evm_event().
-%%analyze(PidA, Evt) when element(1, Evt) =:= trace ->
-%%  ?TRACE("Tracer ~w sent trace event ~w to ~w for analysis.",
-%%    [self(), Evt, PidA]),
-%%  PidA ! Evt.
 
-% TODO: HERE!!!!
-%%analyze(self, Evt) when element(1, Evt) =:= trace ->
-%%  ?TRACE("Tracer ~w analyzing event ~w internally.", [self(), Evt]),
-%%  analyzer:do_monitor(Evt, fun(_Verdict) -> ok end),
-%%  Evt;
-%%analyze(undefined, _) ->
-%%  ?TRACE("Skipping analysis.");
-%%analyze(PidA, Evt) when is_pid(PidA), element(1, Evt) =:= trace ->
-%%  ?TRACE("Tracer ~w sent event ~w to ~w for analysis.", [self(), Evt, PidA]),
-%%  PidA ! Evt.
+
 
 %% @doc Initializes the analyzer based on the type.
 init_analyzer(MonFun, _, internal) ->
@@ -1238,10 +1209,6 @@ analyze(undefined, Evt) -> % This should be removed and made explicit in the cod
 % The loop in priority mode must have an analyzer, because if the tracer is in priority mode, it must have been created
 % due to the MonFun MFA, and we stated that new tracers are created in PRIORITY mode.
   ok;
-%%analyze(PidA, Evt) when is_pid(PidA), PidA =:= self() ->
-%%  ?TRACE("Tracer ~w analyzing event ~w internally.", [self(), Evt]),
-%%  analyzer:do_monitor(Evt, fun(_Verdict) -> ok end),
-%%  Evt;
 analyze(self, Evt) ->
   ?TRACE("Tracer ~w analyzing event ~w internally.", [self(), Evt]),
   analyzer:do_monitor(Evt, fun(_Verdict) -> ok end),
@@ -1258,7 +1225,7 @@ analyze(PidA, Evt) when is_pid(PidA) ->
   State :: state(),
   Forward :: fun((NextHop :: pid()) -> term()),
   Handle :: fun(() -> term()).
-do_handle(PidSrc, #tracer_state{routes = Routes, traced = Group}, Forward, Handle)
+do_handle(PidSrc, #state{routes = Routes, traced = Group}, Forward, Handle)
   when is_function(Handle, 0), is_function(Forward, 1) ->
 
   % In general, the process PID cannot be traced by this tracer (i.e., be in its
@@ -1289,56 +1256,83 @@ do_handle(PidSrc, #tracer_state{routes = Routes, traced = Group}, Forward, Handl
 format(Format, Args) -> lists:flatten(io_lib:format(Format, Args)).
 
 
-%%% ----------------------------------------------------------------------------
-%%% Statistics functions for events.
-%%% ----------------------------------------------------------------------------
 
 
--spec cum_sum_stats(Stats0, Stats1) -> Stats2 :: event_stats()
+-spec upd_stats(Stats, Event) -> stats()
   when
-  Stats0 :: event_stats(),
-  Stats1 :: event_stats().
-cum_sum_stats(Stats0 = #event_stats{cnt_spawn = Spawn0, cnt_exit = Exit0, cnt_send = Send0, cnt_receive = Receive0, cnt_spawned = Spawned0, cnt_other = Other0},
-    #event_stats{cnt_spawn = Spawn1, cnt_exit = Exit1, cnt_send = Send1, cnt_receive = Receive1, cnt_spawned = Spawned1, cnt_other = Other1}) ->
-  Stats0#event_stats{cnt_spawn = Spawn0 + Spawn1, cnt_exit = Exit0 + Exit1, cnt_send = Send0 + Send1, cnt_receive = Receive0 + Receive1, cnt_spawned = Spawned0 + Spawned1, cnt_other = Other0 + Other1}.
+  Stats :: stats(),
+  Event :: event:evm_event().
+upd_stats(Stats = #stats{cnt_spawn = Cnt}, {trace, _, spawn, _, _}) ->
+  Stats#stats{cnt_spawn = Cnt + 1};
+upd_stats(Stats = #stats{cnt_exit = Cnt}, {trace, _, exit, _}) ->
+  Stats#stats{cnt_exit = Cnt + 1};
+upd_stats(Stats = #stats{cnt_send = Cnt}, {trace, _, send, _, _}) ->
+  Stats#stats{cnt_send = Cnt + 1};
+upd_stats(Stats = #stats{cnt_receive = Cnt}, {trace, _, 'receive', _}) ->
+  Stats#stats{cnt_receive = Cnt + 1};
+upd_stats(Stats = #stats{cnt_spawned = Cnt}, {trace, _, spawned, _, _}) ->
+  Stats#stats{cnt_spawned = Cnt + 1};
+upd_stats(Stats = #stats{cnt_other = Cnt}, Event) when element(1, Event) =:= trace ->
+  Stats#stats{cnt_other = Cnt + 1}.
 
--spec show_stats(Stats0 :: event_stats(), Stats1 :: event_stats()) -> ok.
-show_stats(Stats = #event_stats{}, #event_stats{cnt_send = CntSend, cnt_receive = CntRecv, cnt_other = CntTerm}) ->
+-spec upd_state(State, Event) -> state()
+  when
+  State :: state(),
+  Event :: event:evm_event().
+upd_state(State = #state{trace = _Trace, stats = Stats}, Event) ->
+  State0 = State#state{stats = upd_stats(Stats, Event)},
+  ?exec_if_test(State0#state{trace = [Event | _Trace]}, State0).
 
-  % Calculate the number of expected send and receive trace event messages.
-  CntSend0 = CntSend + CntRecv + CntTerm,
-  CntRecv0 = CntRecv + CntSend + CntTerm,
 
-  Title = format("Trace Summary", []),
-  S0 = color_by_pid(self(), format("~n~64c[ ~s ]~64c~n", [$-, Title, $-])) ++
-    format("~-8.s ~b~n", ["Spawn:", Stats#event_stats.cnt_spawn]) ++
-    format("~-8.s ~b~n", ["Exit:", Stats#event_stats.cnt_exit]) ++
-    format("~-8.s ~b (expected ~b, ~.4f% loss)~n", ["Send:", Stats#event_stats.cnt_send, CntSend0, (CntSend0 - Stats#event_stats.cnt_send) / CntSend0 * 100]) ++
-    format("~-8.s ~b (expected ~b, ~.4f% loss)~n", ["Receive:", Stats#event_stats.cnt_receive, CntRecv0, (CntRecv0 - Stats#event_stats.cnt_receive) / CntRecv0 * 100]) ++
-    format("~-8.s ~b~n", ["Spawned:", Stats#event_stats.cnt_spawned]) ++
-    format("~-8.s ~b~n", ["Other:", Stats#event_stats.cnt_other]) ++
-    color_by_pid(self(), format("~" ++ integer_to_list(length(Title) + (64 * 2) + 4) ++ "c~n", [$-])),
-  io:put_chars(user, S0).
 
--spec color_by_pid(Pid :: pid(), Text :: string()) -> iolist().
-color_by_pid(Pid, Text) when is_pid(Pid) ->
-  {_, N, _} = util:pid_tokens(Pid),
-  Code = N rem 255,
-  ["\e[38;5;", integer_to_list(Code), "m", Text, "\e[0m"].
 
+
+%%% ----------------------------------------------------------------------------
+%%% Testing.
+%%% ----------------------------------------------------------------------------
 
 -ifdef(TEST).
 
--spec show_state(State :: state(), Mode :: mode()) -> ok.
+-spec color_by_pid(Pid :: pid(), Text :: string()) -> iolist().
+color_by_pid(Pid, Text) when is_pid(Pid) ->
+  {_, N, _} = pid_tokens(Pid),
+  Code = N rem 255,
+  ["\e[38;5;", integer_to_list(Code), "m", Text, "\e[0m"].
+
+-spec pid_tokens(Pid :: pid()) ->
+  {non_neg_integer(), non_neg_integer(), non_neg_integer()}.
+pid_tokens(Pid) when is_pid(Pid) ->
+  pid_tokens(lists:reverse(pid_to_list(Pid)), 1, 0, {}).
+
+-spec pid_tokens(PidChars, Fact, N, Elements) ->
+  {non_neg_integer(), non_neg_integer(), non_neg_integer()}
+  when
+  PidChars :: string(),
+  Fact :: pos_integer(),
+  N :: non_neg_integer(),
+  Elements :: tuple().
+pid_tokens([], _, N, Elements) ->
+  erlang:insert_element(1, Elements, N);
+pid_tokens([$< | Tokens], Fact, N, Elements) ->
+  pid_tokens(Tokens, Fact, N, Elements);
+pid_tokens([$> | Tokens], Fact, N, Elements) ->
+  pid_tokens(Tokens, Fact, N, Elements);
+pid_tokens([Token | Tokens], Fact, N, Elements) when Token >= $0, Token =< $9 ->
+  pid_tokens(Tokens, Fact * 10, N + (Token - $0) * Fact, Elements);
+pid_tokens([$. | Tokens], _, N, Elements) ->
+  pid_tokens(Tokens, 1, 0, erlang:insert_element(1, Elements, N)).
+
+-spec show_state(State :: state(), Mode :: t_mode()) -> ok.
 show_state(State, Mode) ->
   {messages, MQueue} = erlang:process_info(self(), messages),
-  Symbol = if Mode =:= ?MODE_DIRECT -> $o; Mode =:= ?MODE_PRIORITY -> $* end,
+%%  Symbol = if Mode =:= ?MODE_DIRECT -> $o; Mode =:= ?MODE_PRIORITY -> $* end,
 
-  Title = format("(~c) Tracer ~w", [Symbol, self()]),
+  Title = format("(~s) Tracer ~w", [Mode, self()]),
   S0 = color_by_pid(self(), format("~n~64c[ ~s ]~64c~n", [$-, Title, $-])) ++
-    format("~-8.s ~p~n", ["Routes:", State#tracer_state.routes]) ++
-    format("~-8.s ~p~n", ["Group:", State#tracer_state.traced]) ++
-    format("~-8.s ~p~n", ["Trace:", State#tracer_state.trace]) ++
+    format("~-8.s ~p~n", ["Routes:", State#state.routes]) ++
+    format("~-8.s ~p~n", ["Traced:", State#state.traced]) ++
+    format("~-8.s ~p~n", ["Stats:", State#state.stats]) ++
+    format("~-8.s ~p~n", ["Trace:", lists:reverse(State#state.trace)]) ++
     format("~-8.s ~p~n", ["MQueue:", MQueue]) ++
     color_by_pid(self(), format("~" ++ integer_to_list(length(Title) + (64 * 2) + 4) ++ "c~n", [$-])),
   io:put_chars(user, S0).
@@ -1365,7 +1359,7 @@ get_mon_info(MonPid) ->
   end.
 
 -spec set_trc_info(Pid :: pid(), State :: state()) -> State :: state().
-set_trc_info(Pid, State = #tracer_state{traced = Group, trace = Trace}) ->
+set_trc_info(Pid, State = #state{traced = Group, trace = Trace}) ->
   MonPid = self(),
   Info = {MonPid, maps:keys(Group), lists:reverse(Trace)},
 

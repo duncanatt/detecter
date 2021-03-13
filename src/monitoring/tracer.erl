@@ -41,15 +41,8 @@
 %%% Internal callbacks.
 -export([root/5, tracer/6]).
 
--export([new_stats/0, new_stats/6]).
-%%-export([show_stats/2, cum_sum_stats/2]).
-%%-export([show_stats/3]).
-
 %%% Types.
 -export_type([parent/0, a_mode/0]).
-
-%%% Implemented behaviors.
-%-behavior().
 
 
 %%% ----------------------------------------------------------------------------
@@ -62,11 +55,11 @@
 %% must nevertheless first analyze those events forwarded to it by other tracers
 %% (a.k.a. priority events) before it can then analyse the trace events it
 %% receives directly from the processes it traces.
--define(MODE_DIRECT, direct).
--define(MODE_PRIORITY, priority).
+-define(T_MODE_DIRECT, direct).
+-define(T_MODE_PRIORITY, priority).
 
--define(ANALYSIS_INTERNAL, internal).
--define(ANALYSIS_EXTERNAL, external).
+-define(A_MODE_INTERNAL, internal).
+-define(A_MODE_EXTERNAL, external).
 
 
 %% TODO: What are these? Probably tables used to keep counts used in the ETS table? We'll see
@@ -96,6 +89,11 @@
 %%   {@item `mfa_spec'}
 %%   {@desc Function that determines whether an analyzer is associated with a
 %%          MFA whose process instantiation needs to be monitored.}
+%%   {@item `a_mode'}
+%%   {@desc Analysis mode determining whether the analysis is conducted
+%%          internally in tracer processes or externally in independent
+%%          analyzer processes.
+%%   }
 %%   {@item `trace'}
 %%   {@desc List of trace events seen by the tracer.}
 %%   {@item `stats'}
@@ -105,7 +103,7 @@
   routes = #{} :: routes(),
   traced = #{} :: traced(),
   mfa_spec = fun({_, _, _}) -> undefined end :: analyzer:mfa_spec(),
-  analysis = ?ANALYSIS_EXTERNAL,
+  a_mode = ?A_MODE_EXTERNAL :: a_mode(),
   trace = [] :: list(),
   stats = #stats{} :: stats()
 }).
@@ -115,9 +113,9 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
--type t_mode() :: ?MODE_PRIORITY | ?MODE_DIRECT.
+-type t_mode() :: ?T_MODE_PRIORITY | ?T_MODE_DIRECT.
 
--type a_mode() :: ?ANALYSIS_INTERNAL | ?ANALYSIS_EXTERNAL.
+-type a_mode() :: ?A_MODE_INTERNAL | ?A_MODE_EXTERNAL.
 
 -type state() :: #state{}.
 
@@ -129,52 +127,43 @@
 
 -type parent() :: pid() | self.
 
--type analyzer() :: undefined | pid() | self.
+-type analyzer() :: pid() | self | undefined.
 
 -type detach() :: {detach, PidRtr :: pid(), PidS :: pid()}.
 
 -type routed(Msg) :: {route, PidRtr :: pid(), Msg}.
 
 
-
-
-%%% ----------------------------------------------------------------------------
-%%% Data API.
-%%% ----------------------------------------------------------------------------
-% Testing = for me, Debugging = For users of the tool.
-
--spec new_stats() -> Stats :: stats().
-new_stats() ->
-  #stats{}.
-
--spec new_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
-  Stats :: stats()
-  when
-  CntSpawn :: non_neg_integer(),
-  CntExit :: non_neg_integer(),
-  CntSend :: non_neg_integer(),
-  CntReceive :: non_neg_integer(),
-  CntSpawned :: non_neg_integer(),
-  CntOther :: non_neg_integer().
-new_stats(CntSpawn, CntExit, CntSend, CntReceive, CntSpawned, CntOther) ->
-  #stats{
-    cnt_spawn = CntSpawn, cnt_exit = CntExit, cnt_send = CntSend,
-    cnt_receive = CntReceive, cnt_spawned = CntSpawned, cnt_other = CntOther
-  }.
-
-
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-% TODO: We need to add another parameter that specifies whether the analysis
-% TODO: is done locally in the tracer or separately in another analyzer process.
-%%-spec start(PidS, MfaSpec, Analysis, Parent) -> pid()
-%%  when
-%%  PidS :: pid(),
-%%  MfaSpec :: analyzer:mfa_spec(),
-%%  Parent :: parent().
-start(PidS, MfaSpec, Analysis, Parent)
+%% @doc Starts and instruments the top-level system process with the root
+%%      tracer.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of the top-level system process.}
+%%   {@name MfaSpec}
+%%   {@desc Function that determines whether an analyzer is associated with a
+%%          MFA whose process instantiation needs to be monitored.}
+%%   {@name AMode}
+%%   {@desc Analysis mode determining whether the analysis is conducted
+%%          internally in tracer processes or externally in independent
+%%          analyzer processes.
+%%   }
+%%   {@name Parent}
+%%   {@desc PID of supervisor that is linked to tracer process or `self'.}
+%% }
+%%
+%% {@returns PID of root tracer process.}
+-spec start(PidS, MfaSpec, AMode, Parent) -> pid()
+  when
+  PidS :: pid(),
+  MfaSpec :: analyzer:mfa_spec(),
+  AMode :: a_mode(),
+  Parent :: parent().
+start(PidS, MfaSpec, AMode, Parent)
   when is_pid(PidS), is_function(MfaSpec, 1),
   is_pid(Parent); Parent =:= self ->
 
@@ -184,10 +173,13 @@ start(PidS, MfaSpec, Analysis, Parent)
     init_mon_info_tbls(), ok
   ),
 
+  % Start root tracer.
   Starter = self(),
-  spawn(?MODULE, root, [PidS, MfaSpec, Analysis, Starter, Parent]).
+  spawn(?MODULE, root, [PidS, MfaSpec, AMode, Starter, Parent]).
 
-
+%% @doc Performs cleanup.
+%%
+%% {@returns `ok'.}
 -spec stop() -> ok.
 stop() ->
   ?exec_if_test(
@@ -202,24 +194,42 @@ stop() ->
 %%% Internal callbacks.
 %%% ----------------------------------------------------------------------------
 
-%% @doc Initializes the root tracer and starts tracing the top-level system
-%% process.
+%% @doc Starts tracing the specified top-level system process.
 %%
 %% {@params
-%%   {@name }
-%%   {@desc }
+%%   {@name PidS}
+%%   {@desc PID of the top-level system process.}
+%%   {@name MfaSpec}
+%%   {@desc Function that determines whether an analyzer is associated with a
+%%          MFA whose process instantiation needs to be monitored.}
+%%   {@name AMode}
+%%   {@desc Analysis mode determining whether the analysis is conducted
+%%          internally in tracer processes or externally in independent
+%%          analyzer processes.
+%%   }
+%%   {@name Starter}
+%%   {@desc PID of the process launching the tracer.}
+%%   {@name Parent}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
+%% }
+%%
+%% {@par To prevent the loss of trace events, the root tracer blocks after it
+%%       starts tracing `PidS' and waits until it is ack'ed by `Starter'.
 %% }
 %%
 %% {@returns Does not return.}
-%%-spec root(PidS, MfaSpec, Analysis, Starter, Parent) -> no_return()
-%%  when
-%%  PidS :: pid(),
-%%  MfaSpec :: analyzer:mfa_spec(),
-%%  Starter :: pid(),
-%%  Parent :: parent().
-root(PidS, MfaSpec, Analysis, Starter, Parent) ->
+-spec root(PidS, MfaSpec, AMode, Starter, Parent) -> no_return()
+  when
+  PidS :: pid(),
+  MfaSpec :: analyzer:mfa_spec(),
+  AMode :: a_mode(),
+  Starter :: pid(),
+  Parent :: parent().
+root(PidS, MfaSpec, AMode, Starter, Parent) ->
 
-  ?INFO("Started ROOT tracer ~w for process ~w.", [self(), PidS]),
+  ?INFO("Started ROOT tracer ~w for top-level process ~w.", [self(), PidS]),
 
   % Start tracing top-level system process. Trace events from the top-level
   % process and its children will be deposited in the mailbox.
@@ -232,7 +242,8 @@ root(PidS, MfaSpec, Analysis, Starter, Parent) ->
   % Initialize state. Root system process ID is added to the empty set of
   % processes traced by the root tracer.
   State = #state{
-    traced = add_proc(PidS, ?MODE_DIRECT, #{}), mfa_spec = MfaSpec, analysis = Analysis
+    traced = add_proc(PidS, ?T_MODE_DIRECT, #{}), mfa_spec = MfaSpec,
+    a_mode = AMode
   },
 
   ?exec_if_test(
@@ -241,27 +252,48 @@ root(PidS, MfaSpec, Analysis, Starter, Parent) ->
   ),
 
   % Start root tracer in 'direct' mode since it has no ancestor. This means
-  % that (i) never has to detach from a parent tracer, and (ii) no trace events
+  % that (i) never has to detach from a router tracer, and (ii) no trace events
   % are routed to it. The root tracer has no analyzer associated with it either.
-  loop(?MODE_DIRECT, State, undefined, Parent).
+  loop(?T_MODE_DIRECT, State, undefined, Parent).
 
+%% @doc Starts tracing the specified system process.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of the top-level system process.}
+%%   {@name PidT}
+%%   {@desc PID of the router tracer to detach from.}
+%%   {@name AnlFun}
+%%   {@desc Analysis function that is applied to trace events to determine their
+%%          correct or incorrect sequence.
+%%   }
+%%   {@name MfaSpec}
+%%   {@desc Function that determines whether an analyzer is associated with a
+%%          MFA whose process instantiation needs to be monitored.}
+%%   {@name AMode}
+%%   {@desc Analysis mode determining whether the analysis is conducted
+%%          internally in tracer processes or externally in independent
+%%          analyzer processes.
+%%   }
+%%   {@name Parent}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
+%% }
+%%
+%% {@returns Does not return.}
+-spec tracer(PidS, PidT, AnlFun, MfaSpec, AMode, Parent) -> no_return()
+  when
+  PidS :: pid(),
+  PidT :: pid(),
+  AnlFun :: analyzer:monitor(),
+  MfaSpec :: analyzer:mfa_spec(),
+  AMode :: a_mode(),
+  Parent :: parent().
+tracer(PidS, PidT, AnlFun, MfaSpec, AMode, Parent) ->
 
-
-
-%% TODO: Add comments and also a flag to determine local or separate analysis.
-%%-spec tracer(PidS, PidT, MonFun, MfaSpec, Parent) -> no_return()
-%%  when
-%%  PidS :: pid(),
-%%  PidT :: pid(),
-%%  MonFun :: analyzer:monitor(),
-%%  MfaSpec :: analyzer:mfa_spec(),
-%%  Parent :: parent().
-tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
-
-  % Start independent analyzer to analyse trace events.
-%%  PidM = analyzer:start(MonFun, Parent),
-  Analyzer = init_analyzer(MonFun, Parent, Analysis),
-  ?INFO("New tracer ~w and analyzer ~w for process ~w.", [self(), Analyzer, PidS]),
+  % Create new analyzer to which trace events will be dispatched.
+  Analyzer = new_analyzer(AnlFun, Parent, AMode),
 
   % Detach system process from router tracer. The detach command notifies the
   % router tracer that it is now in charge of collecting trace events for this
@@ -271,7 +303,8 @@ tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
   % Initialize tracer state. Detached system process ID is added to the empty
   % set of processes traced by this tracer.
   State = #state{
-    traced = add_proc(PidS, ?MODE_PRIORITY, #{}), mfa_spec = MfaSpec, analysis = Analysis
+    traced = add_proc(PidS, ?T_MODE_PRIORITY, #{}), mfa_spec = MfaSpec,
+    a_mode = AMode
   },
 
   ?exec_if_test(
@@ -286,30 +319,36 @@ tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
   % system processes directly. This tracer can transition to 'direct' mode *only
   % if all* the system processes it traces, i.e., those in the process group,
   % have been marked as detached.
-  loop(?MODE_PRIORITY, State, Analyzer, Parent).
+  loop(?T_MODE_PRIORITY, State, Analyzer, Parent).
 
 
 %%% ----------------------------------------------------------------------------
-%%% Private helper functions.
+%%% Private helper functions (Trace event routing and analysis).
 %%% ----------------------------------------------------------------------------
 
 %% @doc Main tracer loop that routes, collects and analyzes trace events.
 %%
 %% {@params
-%%   {@name Mode}
+%%   {@name TMode}
 %%   {@desc Tracer mode.}
 %%   {@name State}
-%%   {@desc Internal tracer state.}
-%%   {@name PidA}
-%%   {@desc PID of trace event analyzer or the atom `self'.}
+%%   {@desc Tracer state.}
+%%   {@name Analyzer}
+%%   {@desc PID of independent trace event analyzer process if the analysis is
+%%          external, `self' if the analysis is internal, or `undefined' if no
+%%          analysis is performed.
+%%   }
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to tracer process.}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
 %% }
 %%
-%% {@par When {@mono `PidA' =/= `self'}, the tracer creates an independent
+%% {@par When {@mono `Analyzer' =/= `self'}, the tracer creates an independent
 %%       analyzer process to which it dispatches trace events for asynchronous
 %%       analysis. The tracer and analyzer processes are not linked. When
-%%       {@mono `PidA' == `self'}, trace events are analyzed by the tracer.
+%%       {@mono `Analyzer' == `self'}, trace events are analyzed internally by
+%%       the tracer.
 %% }
 %% {@par Tracers operate in one of two modes: `direct' or `priority'. In
 %%       `direct' mode, a tracer collects trace events for the system process or
@@ -332,19 +371,20 @@ tracer(PidS, PidT, MonFun, MfaSpec, Analysis, Parent) ->
 %% is received. The event `stp' serves to notify the ancestor tracer that the
 %% local tracer is subscribed to its local trace, and therefore, requires no
 %% further message routing.</p>
+%%
 %% {@returns Does not return.}
--spec loop(Mode, State, PidA, Parent) -> no_return()
+-spec loop(TMode, State, Analyzer, Parent) -> no_return()
   when
-  Mode :: t_mode(),
+  TMode :: t_mode(),
   State :: state(),
-  PidA :: pid() | self | undefined,
+  Analyzer :: analyzer(),
   Parent :: parent().
-loop(?MODE_PRIORITY, State = #state{}, PidA, Parent) ->
+loop(?T_MODE_PRIORITY, State = #state{}, Analyzer, Parent) ->
 
   % Analyzer reference must be one of PID or the atom 'self' when the tracer is
   % in 'priority' mode. It cannot be 'undefined': this is only allowed for the
   % root tracer which is *always* started in 'direct' mode, never 'priority'.
-  ?assert(is_pid(PidA) or (PidA =:= self), "Analyzer reference is not PID | self"),
+  ?assert(is_pid(Analyzer) or (Analyzer =:= self), "Analyzer reference is not PID | self"),
 %%  ?exec_if_test(show_state(State, ?MODE_PRIORITY), ok),
 
   % When in 'priority' mode, the tracer dequeues *only* routed messages. These
@@ -358,24 +398,19 @@ loop(?MODE_PRIORITY, State = #state{}, PidA, Parent) ->
       % Routed 'detach' command. It may be forwarded to the next hop, but if
       % not possible (no entry in routing map), is handled by the tracer.
       % Handling 'detach' may cause the tracer to transition to 'direct' mode.
-      %
-      % *Invariant*: It must be the case that for the tracer to handle the
-      % routed 'detach' command, it should be the tracer that issued the
-      % command in the first place. Consequently, the tracer PID embedded inside
-      % the routed command must correspond to self().
-      State0 = handle_detach(State, Msg, PidA, Parent),
-      loop(?MODE_PRIORITY, State0, PidA, Parent);
+      State0 = handle_detach(State, Msg, Analyzer, Parent),
+      loop(?T_MODE_PRIORITY, State0, Analyzer, Parent);
 
     Msg = {route, PidRtr, Evt} when element(1, Evt) =:= trace ->
       ?TRACE("(*) Dequeued relayed trace event ~w from router tracer ~w.", [Msg, PidRtr]),
 
       % Routed trace event. It may be forwarded to the next hop, but if not
       % possible (no entry in routing map), is handled by the tracer.
-      State0 = handle_event(?MODE_PRIORITY, State, Msg, PidA, Parent),
-      loop(?MODE_PRIORITY, State0, PidA, Parent)
+      State0 = handle_event(?T_MODE_PRIORITY, State, Msg, Analyzer, Parent),
+      loop(?T_MODE_PRIORITY, State0, Analyzer, Parent)
   end;
 
-loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
+loop(?T_MODE_DIRECT, State = #state{}, Analyzer, Parent) ->
 %%  ?exec_if_test(show_state(State, ?MODE_DIRECT), ok),
 
   % When in 'direct' mode, the tracer dequeues both direct and routed messages.
@@ -389,8 +424,8 @@ loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
 
       % Direct trace event. It may be forwarded to the next hop, but if not
       % possible (no entry in routing map), is handled by the tracer.
-      State0 = handle_event(?MODE_DIRECT, State, Evt, PidA, Parent),
-      loop(?MODE_DIRECT, State0, PidA, Parent);
+      State0 = handle_event(?T_MODE_DIRECT, State, Evt, Analyzer, Parent),
+      loop(?T_MODE_DIRECT, State0, Analyzer, Parent);
 
     Cmd when element(1, Cmd) =:= detach ->
       ?TRACE("(o) Signalled by command ~w from ~w.", [Cmd, element(2, Cmd)]),
@@ -400,12 +435,8 @@ loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
       % The tracer reacts by routing the 'detach' command to the next hop, thus
       % designating it as the *router tracer* for that detach and associated
       % descendant tracer process that issued the 'detach'.
-      %
-      % *Invariant*: It must the case that for the tracer to route the 'detach'
-      % command, an entry in the routing map for this command must exist for it
-      % to be routed.
-      State0 = route_detach(State, Cmd, PidA, Parent),
-      loop(?MODE_DIRECT, State0, PidA, Parent);
+      State0 = route_detach(State, Cmd, Analyzer, Parent),
+      loop(?T_MODE_DIRECT, State0, Analyzer, Parent);
 
     Msg = {route, PidRtr, Evt} when element(1, Evt) =:= trace ->
       ?TRACE("(o) Dequeued forwarded trace event ~w from router tracer ~w.",
@@ -414,12 +445,8 @@ loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
       % Routed trace event. Since a routed trace event must *always* be handled
       % by a tracer when in 'priority' mode, the only possible option is for the
       % tracer to forward the event to the next hop.
-      %
-      % *Invariant*: It must be the case that for the tracer to forward the
-      % trace event, an entry in the routing map for this event must exist for
-      % it to be routed.
       State0 = forwd_event(State, Msg),
-      loop(?MODE_DIRECT, State0, PidA, Parent);
+      loop(?T_MODE_DIRECT, State0, Analyzer, Parent);
 
   %% TODO: May be incorporated in the above clause of forwd_routed.
     Msg = {route, PidRtr, Cmd} when element(1, Cmd) =:= detach ->
@@ -429,12 +456,8 @@ loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
       % Routed 'detach' command. Since a routed 'detach' command must *always*
       % be handled by a tracer when in 'priority' mode, the only possible option
       % is for the tracer to forward the command to the next hop.
-      %
-      % *Invariant*: It must be the case that for the tracer to forward the
-      % 'detach' command, an entry in the routing map for this command must
-      % exist for it to be routed.
-      State0 = forwd_detach(State, Msg, PidA, Parent),
-      loop(?MODE_DIRECT, State0, PidA, Parent);
+      State0 = forwd_detach(State, Msg, Analyzer, Parent),
+      loop(?T_MODE_DIRECT, State0, Analyzer, Parent);
 
     _Other ->
 
@@ -444,31 +467,35 @@ loop(?MODE_DIRECT, State = #state{}, PidA, Parent) ->
       error(invalid_event)
   end.
 
-
-%% @doc Handles trace events in direct and priority modes.
+%% @doc Processes trace events in direct and priority modes.
 %%
 %% {@params
-%%   {@name Mode}
+%%   {@name TMode}
 %%   {@desc Tracer mode.}
 %%   {@name State}
 %%   {@desc Tracer state.}
 %%   {@name Msg}
-%%   {@desc What?????????????????????????????????????????????????????????????}
-%%   {@name PidA}
-%%   {@desc PID of trace event analyzer or `self'.}
+%%   {@desc Direct or routed trace event message to route, analyze or forward.}
+%%   {@name Analyzer}
+%%   {@desc PID of independent trace event analyzer process if the analysis is
+%%          external, `self' if the analysis is internal, or `undefined' if no
+%%          analysis is performed.
+%%   }
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to tracer process.}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
 %% }
 %%
 %% {@returns Updated tracer state.}
--spec handle_event(Mode, State, Msg, PidA, Parent) -> state()
+-spec handle_event(TMode, State, Msg, Analyzer, Parent) -> state()
   when
-  Mode :: t_mode(),
+  TMode :: t_mode(),
   State :: state(),
   Msg :: event:evm_event() | routed(event:evm_event()),
-  PidA :: analyzer(),
+  Analyzer :: analyzer(),
   Parent :: parent().
-handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, PidA, Parent) ->
+handle_event(?T_MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, Analyzer, Parent) ->
   do_handle(PidSrc, State,
     fun _Route(PidT) ->
 
@@ -481,13 +508,11 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, PidA,
     end,
     fun _Instr() ->
 
-      % Analyze trace event. Analysis is performed only if the analyzer is
-      % available. This is not the case for the root tracer, PidA == undefined.
-%%      if PidA =/= undefined -> analyze(PidA, Evt); true -> ok end,
-      analyze(PidA, Evt),
+      % Analyze trace event.
+      analyze(Analyzer, Evt),
 
       % Instrument tracer and update processed trace event count.
-      State0 = instr(?MODE_DIRECT, State, Evt, self(), Parent),
+      State0 = instr(?T_MODE_DIRECT, State, Evt, self(), Parent),
       State1 = upd_state(State0, Evt),
 
       ?exec_if_test(
@@ -495,7 +520,7 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, spawn, PidTgt, _}, PidA,
         set_trc_info(PidTgt, State1), State1
       )
     end);
-handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, exit, _}, PidA, Parent) ->
+handle_event(?T_MODE_DIRECT, State, Evt = {trace, PidSrc, exit, _}, Analyzer, Parent) ->
   do_handle(PidSrc, State,
     fun _Route(PidT) ->
 
@@ -505,10 +530,8 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, exit, _}, PidA, Parent) 
     end,
     fun _Clean() ->
 
-      % Analyze trace event. Analysis is performed only if the analyzer is
-      % available. This is not the case for the root tracer, PidA == undefined.
-%%      if PidA =/= undefined -> analyze(PidA, Evt); true -> ok end,
-      analyze(PidA, Evt),
+      % Analyze trace event.
+      analyze(Analyzer, Evt),
 
       % Remove terminated system process from traced processes map and update
       % processed trace event count.
@@ -523,10 +546,11 @@ handle_event(?MODE_DIRECT, State, Evt = {trace, PidSrc, exit, _}, PidA, Parent) 
       ),
 
       % Check whether tracer can be terminated.
-      try_gc(State1, PidA, Parent)
+      try_gc(State1, Analyzer, Parent)
     end);
-handle_event(?MODE_DIRECT, State, Evt, PidA, _) when
-  element(3, Evt) =:= send; element(3, Evt) =:= 'receive'; element(3, Evt) =:= spawned ->
+handle_event(?T_MODE_DIRECT, State, Evt, Analyzer, _) when
+  element(3, Evt) =:= send; element(3, Evt) =:= 'receive';
+  element(3, Evt) =:= spawned ->
   PidSrc = element(2, Evt),
   do_handle(PidSrc, State,
     fun _Route(PidT) ->
@@ -537,10 +561,8 @@ handle_event(?MODE_DIRECT, State, Evt, PidA, _) when
     end,
     fun _Analyze() ->
 
-      % Analyze trace event. Analysis is performed only if the analyzer is
-      % available. This is not the case for the root tracer, PidA == undefined.
-%%      if PidA =/= undefined -> analyze(PidA, Evt); true -> ok end,
-      analyze(PidA, Evt),
+      % Analyze trace event.
+      analyze(Analyzer, Evt),
 
       % Update processed trace event count.
       State0 = upd_state(State, Evt),
@@ -551,25 +573,31 @@ handle_event(?MODE_DIRECT, State, Evt, PidA, _) when
       )
     end);
 
-handle_event(?MODE_PRIORITY, State, Msg = {route, PidRtr, Evt = {trace, PidSrc, spawn, PidTgt, _}}, PidA, Parent) ->
+handle_event(?T_MODE_PRIORITY, State, Rtd = {route, PidRtr, Evt = {trace, PidSrc, spawn, PidTgt, _}}, Analyzer, Parent) ->
   do_handle(PidSrc, State,
     fun _Forwd(PidT) ->
 
       % Forward trace event to next hop. Forwarding of 'spawn' events result in
       % the addition of a tracer-process mapping in the tracer routing map.
-      forwd(PidT, Msg),
+      forwd(PidT, Rtd),
       State#state{
         routes = add_route(PidTgt, PidT, State#state.routes)
       }
     end,
     fun _Instr() ->
 
+      % In 'priority' mode, analyzer cannot be undefined. An undefined analyzer
+      % is set only for the root tracer that always operates in 'direct' mode.
+      ?assert((Analyzer =/= undefined) and
+        (is_pid(Analyzer) or (Analyzer =:= self)),
+        format("Analyzer cannot be undefined for tracer ~w", [self()])
+      ),
+
       % Analyze trace event.
-      analyze(PidA, Evt),
-      % TODO: Assert that the analyzer is a PID or self.
+      analyze(Analyzer, Evt),
 
       % Instrument tracer and update processed trace event count.
-      State0 = instr(?MODE_PRIORITY, State, Evt, PidRtr, Parent),
+      State0 = instr(?T_MODE_PRIORITY, State, Evt, PidRtr, Parent),
       State1 = upd_state(State0, Evt),
 
       ?exec_if_test(
@@ -577,19 +605,25 @@ handle_event(?MODE_PRIORITY, State, Msg = {route, PidRtr, Evt = {trace, PidSrc, 
         set_trc_info(PidTgt, State1), State1
       )
     end);
-handle_event(?MODE_PRIORITY, State, Msg = {route, _PidRtr, Evt = {trace, PidSrc, exit, _}}, PidA, Parent) ->
+handle_event(?T_MODE_PRIORITY, State, Rtd = {route, _PidRtr, Evt = {trace, PidSrc, exit, _}}, Analyzer, Parent) ->
   do_handle(PidSrc, State,
     fun _Forwd(PidT) ->
 
       % Forward trace event to next hop.
-      forwd(PidT, Msg),
+      forwd(PidT, Rtd),
       State
     end,
     fun _Clean() ->
 
+      % In 'priority' mode, analyzer cannot be undefined. An undefined analyzer
+      % is set only for the root tracer that always operates in 'direct' mode.
+      ?assert((Analyzer =/= undefined) and
+        (is_pid(Analyzer) or (Analyzer =:= self)),
+        format("Analyzer cannot be undefined for tracer ~w", [self()])
+      ),
+
       % Analyze trace event.
-      analyze(PidA, Evt),
-      % TODO: Assert that the analyzer is a PID or self.
+      analyze(Analyzer, Evt),
 
       % Remove terminated system process from traced processes map and update
       % processed trace event count.
@@ -604,23 +638,29 @@ handle_event(?MODE_PRIORITY, State, Msg = {route, _PidRtr, Evt = {trace, PidSrc,
       ),
 
       % Check whether tracer can be terminated.
-      try_gc(State1, PidA, Parent)
+      try_gc(State1, Analyzer, Parent)
     end);
-handle_event(?MODE_PRIORITY, State, Msg = {route, _PidRtr, Evt}, PidA, _) when
+handle_event(?T_MODE_PRIORITY, State, Rtd = {route, _PidRtr, Evt}, Analyzer, _) when
   element(3, Evt) =:= send; element(3, Evt) =:= 'receive'; element(3, Evt) =:= spawned ->
   PidSrc = element(2, Evt),
   do_handle(PidSrc, State,
     fun _Forwd(PidT) ->
 
       % Forward trace event to next hop.
-      forwd(PidT, Msg),
+      forwd(PidT, Rtd),
       State
     end,
     fun _Analyze() ->
 
+      % In 'priority' mode, analyzer cannot be undefined. An undefined analyzer
+      % is set only for the root tracer that always operates in 'direct' mode.
+      ?assert((Analyzer =/= undefined) and
+        (is_pid(Analyzer) or (Analyzer =:= self)),
+        format("Analyzer cannot be undefined for tracer ~w", [self()])
+      ),
+
       % Analyze trace event.
-      analyze(PidA, Evt),
-      % TODO: Assert that the analyzer is a PID or self.
+      analyze(Analyzer, Evt),
 
       % Update processed trace event count.
       State0 = upd_state(State, Evt),
@@ -635,33 +675,34 @@ handle_event(_, State, Msg, _, _) ->
   ?WARN("Not handling trace event ~p.", [Msg]),
   State.
 
-
 %% @doc Instruments a system process with a new tracer or adds the system
 %% process under the current tracer.
 %%
 %% {@params
-%%   {@name Mode}
+%%   {@name TMode}
 %%   {@desc Tracer mode.}
 %%   {@name State}
 %%   {@desc Tracer state.}
-%%   {@name Event}
-%%   {@desc Trace event containing the information of the new system process.}
+%%   {@name Evt}
+%%   {@desc Trace event carrying the information of the new system process.}
 %%   {@name PidT}
-%%   {@desc PID of the tracer process to issue the detach command to.}
+%%   {@desc PID of the router tracer to detach from.}
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to tracer process.}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
 %% }
 %%
 %% {@returns Updated tracer state.}
--spec instr(Mode, State, Event, PidT, Parent) -> state()
+-spec instr(TMode, State, Evt, PidT, Parent) -> state()
   when
-  Mode :: t_mode(),
+  TMode :: t_mode(),
   State :: state(),
-  Event :: event:evm_event(),
+  Evt :: event:evm_event(),
   PidT :: pid(),
   Parent :: parent().
 instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
-  when Mode =:= ?MODE_PRIORITY; Mode =:= ?MODE_DIRECT ->
+  when Mode =:= ?T_MODE_PRIORITY; Mode =:= ?T_MODE_DIRECT ->
 
   % Check whether a new tracer needs to be instrumented for the system process.
   % This check is performed against the instrumentation map which contains the
@@ -678,7 +719,7 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
       % In 'direct' mode, this 'spawn' event is collected directly from the
       % newly created system process (i.e., event is not routed) *and* a new
       % tracer is not created. Consequently, there is no 'detach' to perform.
-      if Mode =:= ?MODE_PRIORITY -> detach(PidTgt, PidT); true -> ok end,
+      if Mode =:= ?T_MODE_PRIORITY -> detach(PidTgt, PidT); true -> ok end,
 
       % New system process is added to the traced processes map under the
       % tracer. The process is marked with the tracer mode it was added in.
@@ -703,15 +744,10 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
       %
       % Note that the new system process is not added to the traced processes
       % map of the tracer since it is being traced by the new tracer.
-      Args = [PidTgt, PidT, MonFun, State#state.mfa_spec, State#state.analysis, Parent],
+      Args = [PidTgt, PidT, MonFun, State#state.mfa_spec, State#state.a_mode, Parent],
       PidT0 = spawn(?MODULE, tracer, Args),
 
       ?INFO("Instrumenting tracer ~w on MFA ~w for process ~w.", [PidT0, Mfa, PidTgt]),
-
-      % New system process is NOT added to the set of processes this tracer
-      % currently traces: it is being traced by the new tracer. Set up new route
-      % in this tracer's routes table to enable it to forward other events for
-      % the system process to the new tracer.
 
       % Create a new process-tracer mapping in the routes map to enable the
       % tracer to forward events to the next hop. The next hop is, in fact, the
@@ -721,7 +757,6 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
       }
   end.
 
-
 %% @doc Routes detach commands to the next hop.
 %%
 %% {@params
@@ -729,10 +764,15 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
 %%   {@desc Tracer state.}
 %%   {@name Cmd}
 %%   {@desc Detach command to route.}
-%%   {@name PidA}
-%%   {@desc PID of trace event analyzer or `self'.}
+%%   {@name Analyzer}
+%%   {@desc PID of independent trace event analyzer process if the analysis is
+%%          external, `self' if the analysis is internal, or `undefined' if no
+%%          analysis is performed.
+%%   }
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to tracer process.}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
 %% }
 %%
 %% {@par The function should be used in `direct' mode.}
@@ -743,13 +783,13 @@ instr(Mode, State, {trace, _, spawn, PidTgt, Mfa = {_, _, _}}, PidT, Parent)
 %% {@returns Updated tracer state, or does not return if tracer is garbage
 %%           collected.
 %% }
--spec route_detach(State, Cmd, PidA, Parent) -> state() | no_return()
+-spec route_detach(State, Cmd, Analyzer, Parent) -> state() | no_return()
   when
   State :: state(),
   Cmd :: detach(),
-  PidA :: analyzer(),
+  Analyzer :: analyzer(),
   Parent :: parent().
-route_detach(State, Cmd = {detach, PidT, PidTgt}, PidA, Parent) ->
+route_detach(State, Cmd = {detach, PidT, PidTgt}, Analyzer, Parent) ->
   do_handle(PidTgt, State,
     fun _Route(PidT) ->
 
@@ -766,11 +806,10 @@ route_detach(State, Cmd = {detach, PidT, PidTgt}, PidA, Parent) ->
       State0 = State#state{routes = del_route(PidTgt, State#state.routes)},
 
       % Check whether tracer can be terminated.
-      try_gc(State0, PidA, Parent)
+      try_gc(State0, Analyzer, Parent)
     end,
     fun _Fail() ->
 
-      % TODO: Copy to main loop?
       % *Invariant*: For the command to be routed, a corresponding entry in
       % the routing map must exist. This entry should have been created by the
       % tracer when it handled the 'spawn' event of the process whose command in
@@ -789,10 +828,15 @@ route_detach(State, Cmd = {detach, PidT, PidTgt}, PidA, Parent) ->
 %%   {@desc Tracer state.}
 %%   {@name Rtd}
 %%   {@desc Routed message to forward.}
-%%   {@name PidA}
-%%   {@desc PID of trace event analyzer or `self'.}
+%%   {@name Analyzer}
+%%   {@desc PID of independent trace event analyzer process if the analysis is
+%%          external, `self' if the analysis is internal, or `undefined' if no
+%%          analysis is performed.
+%%   }
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to tracer process.}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
 %% }
 %%
 %% {@par The function should be used in `direct' mode.}
@@ -809,13 +853,13 @@ route_detach(State, Cmd = {detach, PidT, PidTgt}, PidA, Parent) ->
 %%
 %% {@returns Updated tracer state, or does not return if tracer is garbage
 %%           collected.}
--spec forwd_detach(State, Rtd, PidA, Parent) -> state() | no_return()
+-spec forwd_detach(State, Rtd, Analyzer, Parent) -> state() | no_return()
   when
   State :: state(),
   Rtd :: routed(detach()),
-  PidA :: analyzer(),
+  Analyzer :: analyzer(),
   Parent :: parent().
-forwd_detach(State, Msg = {route, _, {detach, _PidT, PidTgt}}, PidA, Parent) ->
+forwd_detach(State, Msg = {route, _, {detach, _PidT, PidTgt}}, Analyzer, Parent) ->
   do_handle(PidTgt, State,
     fun _Forwd(PidT) ->
 
@@ -863,7 +907,7 @@ forwd_detach(State, Msg = {route, _, {detach, _PidT, PidTgt}}, PidA, Parent) ->
       %    the tracer choreography remains sound.
 
       % Check whether tracer can be terminated.
-      try_gc(State0, PidA, Parent)
+      try_gc(State0, Analyzer, Parent)
     end,
     fun _DetachOfATerminatedProcessNoLongerInTheTracedProcessesMapOfTracer() ->
 
@@ -900,10 +944,15 @@ forwd_detach(State, Msg = {route, _, {detach, _PidT, PidTgt}}, PidA, Parent) ->
 %%   {@desc Tracer state.}
 %%   {@name Rtd}
 %%   {@desc Routed message to forward.}
-%%   {@name PidA}
-%%   {@desc PID of trace event analyzer or `self'.}
+%%   {@name Analyzer}
+%%   {@desc PID of independent trace event analyzer process if the analysis is
+%%          external, `self' if the analysis is internal, or `undefined' if no
+%%          analysis is performed.
+%%   }
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to tracer process.}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
 %% }
 %%
 %% {@par The function should be used in `priority' mode.}
@@ -913,13 +962,13 @@ forwd_detach(State, Msg = {route, _, {detach, _PidT, PidTgt}}, PidA, Parent) ->
 %%
 %% {@returns Updated tracer state, or does not return if tracer is garbage
 %%           collected.}
--spec handle_detach(State, Rtd, PidA, Parent) -> UpdatedState :: state() | no_return()
+-spec handle_detach(State, Rtd, Analyzer, Parent) -> state() | no_return()
   when
   State :: state(),
   Rtd :: routed(detach()),
-  PidA :: analyzer(),
+  Analyzer :: analyzer(),
   Parent :: parent().
-handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
+handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, Analyzer, Parent) ->
   do_handle(PidTgt, State,
     fun _Relay(PidT) ->
 
@@ -932,7 +981,7 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
       },
 
       % Check whether tracer can be terminated.
-      try_gc(State0, PidA, Parent)
+      try_gc(State0, Analyzer, Parent)
     end,
     fun _CheckIfCanTransitionToDirectMode() ->
 
@@ -951,7 +1000,7 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
       % 'priority' to direct'. The tracer now collects events for said process
       % directly from the trace.
       State0 = State#state{
-        traced = upd_proc(PidTgt, ?MODE_DIRECT, State#state.traced)
+        traced = upd_proc(PidTgt, ?T_MODE_DIRECT, State#state.traced)
       },
 
       % Check whether tracer can transition to 'direct' mode. This is possible
@@ -959,8 +1008,8 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
       case can_detach(State0) of
         true ->
 
-          ?TRACE("Tracer ~w switched to ~w mode.", [self(), ?MODE_DIRECT]),
-          loop(?MODE_DIRECT, State0, PidA, Parent);
+          ?TRACE("Tracer ~w switched to ~w mode.", [self(), ?T_MODE_DIRECT]),
+          loop(?T_MODE_DIRECT, State0, Analyzer, Parent);
         false ->
           State0
       end
@@ -971,7 +1020,7 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
 %% {@params
 %%   {@name State}
 %%   {@desc Tracer state.}
-%%   {@name Msg}
+%%   {@name Rtd}
 %%   {@desc Routed message to forward.}
 %% }
 %%
@@ -985,7 +1034,7 @@ handle_detach(State, Rtd = {route, _, {detach, Self, PidTgt}}, PidA, Parent) ->
 %% }
 %%
 %% {@returns Update tracer state.}
-% TODO: Can this be tightened? It can but the result is more cryptic.
+% TODO: Can this be tightened? It can, but the result is more cryptic (IN FUTURE).
 -spec forwd_event(State, Rtd) -> state()
   when
   State :: state(),
@@ -1004,7 +1053,6 @@ forwd_event(State, Rtd = {route, _, {trace, PidSrc, spawn, PidTgt, _}}) ->
     end,
     fun _Fail() ->
 
-      % TODO: Copy it to main loop?
       % *Invariant*: For the event to be forwarded, a corresponding entry in the
       % routing map must exist. This entry should have been created by the
       % tracer when it handled the 'spawn' event of the process whose event in
@@ -1014,7 +1062,7 @@ forwd_event(State, Rtd = {route, _, {trace, PidSrc, spawn, PidTgt, _}}) ->
       % the event cannot be forwarded. This means that the event must be handled
       % by the tracer, but this goes against the assumption that the event
       % should have been handled by the tracer when in 'priority' mode.
-      ?assert(false, format("Routed trace event ~w cannot be handled while in ~s mode", [Rtd, ?MODE_DIRECT]))
+      ?assert(false, format("Routed trace event ~w cannot be handled while in ~s mode", [Rtd, ?T_MODE_DIRECT]))
     end);
 forwd_event(State, Rtd = {route, _, Evt}) ->
   PidSrc = element(2, Evt),
@@ -1036,198 +1084,24 @@ forwd_event(State, Rtd = {route, _, Evt}) ->
       % the event cannot be forwarded. This means that the event must be handled
       % by the tracer, but this goes against the assumption that the event
       % should have been handled by the tracer when in 'priority' mode.
-      ?assert(false, format("Routed trace event ~w cannot be handled while in ~s mode", [Rtd, ?MODE_DIRECT]))
+      ?assert(false, format("Routed trace event ~w cannot be handled while in ~s mode", [Rtd, ?T_MODE_DIRECT]))
     end).
 
 
-
-
-
-
-
-
 %%% ----------------------------------------------------------------------------
-%%% Private helper functions.
+%%% Private helper functions (Tracer utility).
 %%% ----------------------------------------------------------------------------
 
--spec add_proc(PidS, Mode, Group) -> UpdatedGroup :: traced()
-  when
-  PidS :: pid(),
-  Mode :: t_mode(),
-  Group :: traced().
-add_proc(PidS, Mode, Group) ->
-  ?assertNot(maps:is_key(PidS, Group),
-    format("Process ~w must not exist when adding", [PidS])),
-  Group#{PidS => Mode}.
-
--spec del_proc(PidS :: pid(), Group :: traced()) -> UpdatedGroup :: traced().
-del_proc(PidS, Group) ->
-  % ?assert(maps:is_key(PidS, Group), % TODO: Commented this for now since might be a potential bug.
-  %   format("Process ~w must exist when deleting", [PidS])),
-
-  % Is it always the case that a process must exist before deleting?
-  % Well for sure, a process is deleted when an exit is processed.
-  ?TRACE("Process ~w deleted from group while in ~w mode.", [PidS, maps:get(PidS, Group)]),
-
-  maps:remove(PidS, Group).
-
--spec upd_proc(PidS, NewMode, Group) -> UpdatedGroup :: traced()
-  when
-  PidS :: pid(),
-  NewMode :: t_mode(),
-  Group :: traced().
-upd_proc(PidS, NewMode, Group) ->
-  % It may be the case that the process we are trying to update does not exist.
-  % This happens when a process has exited and is removed from the process group
-  % BEFORE the detach command reaches the monitor and there would be no process
-  % to update. In this case do nothing and leave group unmodified.
-  case maps:is_key(PidS, Group) of
-    true ->
-      Group#{PidS := NewMode}; % Only update existing value, otherwise fail.
-    false ->
-      ?TRACE("Process ~w not updated since it is no longer in group.", [PidS]),
-      Group
-  end.
-
--spec add_route(PidS :: pid(), PidT :: pid(), Routes :: routes()) ->
-  UpdatedRoutes :: routes().
-add_route(PidS, PidT, Routes) ->
-  ?assertNot(maps:is_key(PidS, Routes)),
-  Routes#{PidS => PidT}.
-
--spec del_route(PidS :: pid(), Routes :: routes()) ->
-  UpdatedRoutes :: routes().
-del_route(PidS, Routes) ->
-  ?assert(maps:is_key(PidS, Routes)),
-  maps:remove(PidS, Routes).
-
--spec can_detach(State :: state()) -> boolean().
-can_detach(#state{traced = Group}) ->
-  length(lists:filter(
-    fun(?MODE_DIRECT) -> false; (_) -> true end, maps:values(Group)
-  )) =:= 0.
-
--spec detach(PidS :: pid(), PidT :: pid()) -> Detach :: detach().
-detach(PidS, PidT) ->
-
-  % Preempt former (ancestor) tracer. This tracer now takes over the tracing of
-  % the system process: this gives rise to a new 'trace partition'. Ancestor
-  % tracer is informed that this tracer (i.e., self()) issued preempt, and that
-  % moreover, tracing of the system process will be done by this tracer in turn.
-  % Note that there is one specific case where preempt does not succeed (i.e.,
-  % returns 'false'): this arises whenever preempt is invoked on a process that
-  % has exited before the call to preempt was made. This is perfectly normal,
-  % since the tracer is asynchronous, and may process event long after the
-  % system process in under scrutiny has terminated.
-  trace_lib:preempt(PidS),
-  PidT ! {detach, self(), PidS}.
-
--spec try_gc(State, Analyzer, Parent) -> State :: state() | no_return()
-  when
-  State :: state(),
-  Analyzer :: pid() | undefined,
-  Parent :: parent().
-try_gc(State = #state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, undefined, Parent) when
-  map_size(Group) =:= 0, map_size(Routes) =:= 0 ->
-
-  ?DEBUG("Terminated ROOT tracer ~w.", [self()]),
-%%  ?TRACE("Terminated ROOT tracer ~w with trace ~p.", [self(), Trace]),
-
-  % Link to owner process (if Owner =/= self) and exit. Stats are embedded in
-  % the exit signal so that these can be collected if Owner is trapping exits.
-  if is_pid(Parent) -> link(Parent); true -> ok end,
-
-  ?exec_if_test(show_state(State, "ROOT"), ok),
-  exit({garbage_collect, {root, Stats}});
-
-%%try_gc(#tracer_state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, self, Owner) when
-%%  map_size(Group) =:= 0, map_size(Routes) =:= 0 ->
-%%  ?DEBUG("Terminated tracer ~w.", [self()]),
-%%  if is_pid(Owner) -> link(Owner); true -> ok end,
-%%  exit({garbage_collect, {tracer, Stats}});
-
-
-try_gc(State = #state{traced = Group, routes = Routes, trace = _Trace, stats = Stats}, Analyzer, Parent) when
-  map_size(Group) =:= 0, map_size(Routes) =:= 0 ->
-
-  % Issue stop command to monitor. Monitor will eventually process the command
-  % and terminate its execution.
-%%  analyzer:stop(PidM),
-  stop_analyzer(Analyzer),
-
-  ?DEBUG("Terminated tracer ~w for analyzer ~w.", [self(), Analyzer]),
-%%  ?TRACE("Terminated tracer ~w for monitor ~w with trace ~p.",
-%%    [self(), PidM, Trace]),
-
-  % Link to owner process (if Owner =/= self) and exit. Stats are embedded in
-  % the exit signal so that these can be collected if Owner is trapping exits.
-  % Note: Stats are sent from the tracer (rather than the monitor), since the
-  % monitor might not process all trace events before reaching a verdict, and
-  % the stats collected up to that point would not reflect the true count. While
-  % this may still be solved by post processing the monitor's mailbox, it would
-  % needlessly complicate its code.
-  if is_pid(Parent) -> link(Parent); true -> ok end,
-
-  ?exec_if_test(show_state(State, "Tracer"), ok),
-  exit({garbage_collect, {tracer, Stats}});
-
-try_gc(State = #state{}, _, _) ->
-  State.
-
--spec route(PidT, Msg) -> routed(event:evm_event()) | routed(detach())
-  when
-  PidT :: pid(),
-  Msg :: event:evm_event() | detach().
-route(PidT, Msg) when element(1, Msg) =:= trace; element(1, Msg) =:= detach ->
-  ?TRACE("Tracer ~w routing ~w to next tracer ~w.", [self(), Msg, PidT]),
-  PidT ! {route, self(), Msg}.
-
--spec forwd(PidT :: pid(), Rtd) -> routed(event:evm_event()) | routed(detach())
-  when
-  Rtd :: routed(event:evm_event()) | routed(detach()).
-forwd(PidT, Routed) when element(1, Routed) =:= route ->
-  ?TRACE("Tracer ~w forwarding ~w to next hop ~w.", [self(), Routed, PidT]),
-  PidT ! Routed.
-
-
-
-
-%% @doc Initializes the analyzer based on the type.
-init_analyzer(MonFun, _, internal) ->
-  analyzer:embed(MonFun);
-init_analyzer(MonFun, Parent, external) ->
-  analyzer:start(MonFun, Parent).
-
-stop_analyzer(self) ->
-  ok;
-stop_analyzer(PidA) when is_pid(PidA) ->
-  analyzer:stop(PidA).
-
-% Analyzer.
-analyze(undefined, Evt) -> % This should be removed and made explicit in the code.
-% Because the only type of tracer that does not have an analyzer is the ROOT monitor: this is the loop in DIRECT mode.
-% The loop in priority mode must have an analyzer, because if the tracer is in priority mode, it must have been created
-% due to the MonFun MFA, and we stated that new tracers are created in PRIORITY mode.
-  ok;
-analyze(self, Evt) ->
-  ?TRACE("Tracer ~w analyzing event ~w internally.", [self(), Evt]),
-  analyzer:do_monitor(Evt, fun(_Verdict) -> ok end),
-  Evt;
-analyze(PidA, Evt) when is_pid(PidA) ->
-  ?TRACE("Tracer ~w sent event ~w to ~w for analysis (externally).", [self(), Evt, PidA]),
-  PidA ! Evt.
-
-
-
--spec do_handle(PidSrc, State, Forward, Handle) -> term()
+-spec do_handle(PidSrc, State, OnForward, OnHandle) -> term()
   when
   PidSrc :: pid(),
   State :: state(),
-  Forward :: fun((NextHop :: pid()) -> term()),
-  Handle :: fun(() -> term()).
-do_handle(PidSrc, #state{routes = Routes, traced = Group}, Forward, Handle)
-  when is_function(Handle, 0), is_function(Forward, 1) ->
+  OnForward :: fun((NextHop :: pid()) -> term()),
+  OnHandle :: fun(() -> term()).
+do_handle(PidSrc, #state{routes = Routes, traced = Traced}, OnForward, OnHandle)
+  when is_function(OnHandle, 0), is_function(OnForward, 1) ->
 
+  % TODO: Update docs.
   % In general, the process PID cannot be traced by this tracer (i.e., be in its
   % process group) and at the same time, be contained in the tracer's routes
   % table: this would seem to suggest that the process is also being traced by
@@ -1241,27 +1115,274 @@ do_handle(PidSrc, #state{routes = Routes, traced = Group}, Forward, Handle)
   % reverse must always hold: a process that is in the tracer's routes table can
   % never be in its process group as well. This means that R -> not G, or stated
   % differently, not R or not G.
-  ?assert((not maps:is_key(PidSrc, Routes)) or not maps:is_key(PidSrc, Group)),
+  ?assert((not maps:is_key(PidSrc, Routes)) or not maps:is_key(PidSrc, Traced)),
 
   case maps:get(PidSrc, Routes, undefined) of
     undefined ->
-      Handle();
+      OnHandle();
     NextHop ->
-      Forward(NextHop)
+      OnForward(NextHop)
   end.
 
-%% @private Returns a character list that represents data formatted in
-%% accordance with the specified format.
--spec format(Format :: string(), Args :: list()) -> String :: string().
-format(Format, Args) -> lists:flatten(io_lib:format(Format, Args)).
+%% @doc Determines whether a tracer can transition to `direct' mode.
+%%
+%% {@params
+%%   {@name State}
+%%   {@desc Tracer state.}
+%% }
+%%
+%% {@returns `true' if the tracer can transition to `direct' mode, otherwise
+%%           false.
+%% }
+-spec can_detach(State :: state()) -> boolean().
+can_detach(#state{traced = Group}) ->
+  length(lists:filter(
+    fun(?T_MODE_DIRECT) -> false; (_) -> true end, maps:values(Group)
+  )) =:= 0.
+
+-spec detach(PidS :: pid(), PidT :: pid()) -> Detach :: detach().
+detach(PidS, PidT) ->
+
+  % TODO: Update docs.
+  % Preempt former (ancestor) tracer. This tracer now takes over the tracing of
+  % the system process: this gives rise to a new 'trace partition'. Ancestor
+  % tracer is informed that this tracer (i.e., self()) issued preempt, and that
+  % moreover, tracing of the system process will be done by this tracer in turn.
+  % Note that there is one specific case where preempt does not succeed (i.e.,
+  % returns 'false'): this arises whenever preempt is invoked on a process that
+  % has exited before the call to preempt was made. This is perfectly normal,
+  % since the tracer is asynchronous, and may process event long after the
+  % system process in under scrutiny has terminated.
+  trace_lib:preempt(PidS),
+  PidT ! {detach, self(), PidS}.
+
+%% @doc Terminates the tracer when the routes and traced processes maps are
+%% empty.
+%%
+%% {@params
+%%   {@name State}
+%%   {@desc Tracer state.}
+%%   {@name Analyzer}
+%%   {@desc PID of independent trace event analyzer process if the analysis is
+%%          external, `self' if the analysis is internal, or `undefined' if no
+%%          analysis is performed.
+%%   }
+%%   {@name Parent}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
+%% }
+%%
+%% {@returns Updated tracer state, or does not return if tracer is garbage
+%%           collected.}
+-spec try_gc(State, Analyzer, Parent) -> state() | no_return()
+  when
+  State :: state(),
+  Analyzer :: analyzer(),
+  Parent :: parent().
+try_gc(State = #state{traced = Traced, routes = Routes}, Analyzer, Parent) when
+  map_size(Traced) =:= 0, map_size(Routes) =:= 0 ->
+
+  % Stop analyzer. Depending on the analyzer type, the analysis of events ceases
+  % immediately when the tracer terminates, or resumes independently in the
+  % analyzer process until completed. In the latter case, the tracer does not
+  % block or wait for the analysis to finish.
+  stop_analyzer(Analyzer),
+
+  % Get tracer tag.
+  Tag = if Analyzer =:= undefined -> root; true -> tracer end,
+
+  % Dump tracer state.
+  ?exec_if_test(show_state(State, Tag), ok),
+
+  % If available, link to parent process. Providing the parent =/= self and it
+  % traps exits, it receives trace event stats collected by the tracer.
+  if is_pid(Parent) -> link(Parent); true -> ok end,
+  exit({garbage_collect, {Tag, State#state.stats}});
+
+try_gc(State = #state{}, _, _) ->
+  State.
+
+%% @doc Routes the specified trace event or command.
+%%
+%% {@params
+%%   {@name PidT}
+%%   {@desc PID of destination tracer process.}
+%%   {@name Msg}
+%%   {@desc Trace event or command to route.}
+%% }
+%%
+%% {@returns Routed message.}
+-spec route(PidT, Msg) -> routed(event:evm_event()) | routed(detach())
+  when
+  PidT :: pid(),
+  Msg :: event:evm_event() | detach().
+route(PidT, Msg) when element(1, Msg) =:= trace; element(1, Msg) =:= detach ->
+  ?TRACE("Tracer ~w routing ~w to next hop ~w.", [self(), Msg, PidT]),
+  PidT ! {route, self(), Msg}.
+
+%% @doc Forwards the specified trace event or command.
+%%
+%% {@params
+%%   {@name PidT}
+%%   {@desc PID of destination tracer process.}
+%%   {@name Rtd}
+%%   {@desc Routed trace event or command to forward.}
+%% }
+%%
+%% {@returns Forwarded message.}
+-spec forwd(PidT, Rtd) -> routed(event:evm_event()) | routed(detach())
+  when
+  PidT :: pid(),
+  Rtd :: routed(event:evm_event()) | routed(detach()).
+forwd(PidT, Rtd) when element(1, Rtd) =:= route ->
+  ?TRACE("Tracer ~w forwarding ~w to next hop ~w.", [self(), Rtd, PidT]),
+  PidT ! Rtd.
 
 
+%%% ----------------------------------------------------------------------------
+%%% Private helper functions (State management).
+%%% ----------------------------------------------------------------------------
 
+%% @doc Adds the specified system process to the traced processes map.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of system process to add.}
+%%   {@name TMode}
+%%   {@desc Tracer mode.}
+%%   {@name Traced}
+%%   {@desc Traced processes map.}
+%% }
+%%
+%% {@returns Updated traced processes map.}
+-spec add_proc(PidS, TMode, Traced) -> traced()
+  when
+  PidS :: pid(),
+  TMode :: t_mode(),
+  Traced :: traced().
+add_proc(PidS, TMode, Traced) ->
+  ?assertNot(maps:is_key(PidS, Traced),
+    format("Process ~w should not be in traced processes map", [PidS])
+  ),
+  Traced#{PidS => TMode}.
 
--spec upd_stats(Stats, Event) -> stats()
+%% @doc Deletes the specified system process from the traced processes map.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of system process to delete.}
+%%   {@name Traced}
+%%   {@desc Traced processes map.}
+%% }
+%%
+%% {@returns Updated traced processes map.}
+-spec del_proc(PidS :: pid(), Traced :: traced()) -> traced().
+del_proc(PidS, Traced) ->
+  % ?assert(maps:is_key(PidS, Group), % TODO: Commented this for now since might be a potential bug.
+  %   format("Process ~w must exist when deleting", [PidS])),
+
+  % TODO: Is it always the case that a process must exist before deleting?
+  % TODO: Well for sure, a process is deleted when an exit is processed.
+  % TODO: Think long and hard about this, and come up with an execution
+  % TODO: interleaving where this can occur.
+
+  % This log was left here. It will cause the deletion to fail when there is
+  % no process inside the map, since maps:get/2 requires the key to exist. But
+  % I left it here as a reminder on what the bug or interleaving scenario I
+  % did not caterfor ot think about could be.
+  ?TRACE("Process ~w deleted from traced processes map while in ~w mode.", [PidS, maps:get(PidS, Traced)]),
+  maps:remove(PidS, Traced).
+
+%% @doc Updates the specified system process in the traced processes map with
+%%      the new mode.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of system process to update.}
+%%   {@name NewMode}
+%%   {@desc New process mode.}
+%%   {@name Traced}
+%%   {@desc Traced processes map.}
+%% }
+%%
+%% {@par No update is performed if `PidS' does not exist.}
+%%
+%% {@returns Updated traced processes map.}
+-spec upd_proc(PidS, NewMode, Traced) -> UpdatedGroup :: traced()
+  when
+  PidS :: pid(),
+  NewMode :: t_mode(),
+  Traced :: traced().
+upd_proc(PidS, NewMode, Traced) ->
+
+  % It might be possible for the process to be updated to have been already
+  % removed from the traced processes map. This happens when the system process
+  % exits before the 'detach' command reaches the tracer, in which case there
+  % is no process to mark from 'priority' to 'direct'. In this case, the traced
+  % processes map is left unmodified.
+  case maps:is_key(PidS, Traced) of
+    true ->
+      Traced#{PidS := NewMode}; % Only update existing value, otherwise fail.
+    false ->
+      ?TRACE("Process ~w not updated since it is no longer in group.", [PidS]),
+      Traced
+  end.
+
+%% @doc Adds a new process-tracer mapping to the routes map.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of system process for which future trace events will be routed
+%%          or forwarded.
+%%   }
+%%   {@name PidT}
+%%   {@desc PID of tracer process to which future trace events from `PidS' are
+%%          forwarded.
+%%   }
+%%   {@name Routes}
+%%   {@desc Routes map.}
+%% }
+%%
+%% {@returns Updated routes map.}
+-spec add_route(PidS :: pid(), PidT :: pid(), Routes :: routes()) -> routes().
+add_route(PidS, PidT, Routes) ->
+  ?assertNot(maps:is_key(PidS, Routes),
+    format("Process ~w already in routes map", [PidS])
+  ),
+  Routes#{PidS => PidT}.
+
+%% @doc Deletes the existing process-tracer mapping from the routes map.
+%%
+%% {@params
+%%   {@name PidS}
+%%   {@desc PID of system process for which mapping is to be deleted.}
+%%   {@name Routes}
+%%   {@desc Routes map.}
+%% }
+%%
+%% {@returns Updated routes map.}
+-spec del_route(PidS :: pid(), routes()) -> routes().
+del_route(PidS, Routes) ->
+  ?assert(maps:is_key(PidS, Routes),
+    format("Process ~w not in routes map", [PidS])
+  ),
+  maps:remove(PidS, Routes).
+
+%% @doc Updates the processed event counts for the specified event.
+%%
+%% {@params
+%%   {@name Stats}
+%%   {@desc Trace event counts.}
+%%   {@name Evt}
+%%   {@desc Event to increment.}
+%% }
+%%
+%% {@returns Updated event counts.}
+-spec upd_stats(Stats, Evt) -> stats()
   when
   Stats :: stats(),
-  Event :: event:evm_event().
+  Evt :: tuple().
 upd_stats(Stats = #stats{cnt_spawn = Cnt}, {trace, _, spawn, _, _}) ->
   Stats#stats{cnt_spawn = Cnt + 1};
 upd_stats(Stats = #stats{cnt_exit = Cnt}, {trace, _, exit, _}) ->
@@ -1272,19 +1393,128 @@ upd_stats(Stats = #stats{cnt_receive = Cnt}, {trace, _, 'receive', _}) ->
   Stats#stats{cnt_receive = Cnt + 1};
 upd_stats(Stats = #stats{cnt_spawned = Cnt}, {trace, _, spawned, _, _}) ->
   Stats#stats{cnt_spawned = Cnt + 1};
-upd_stats(Stats = #stats{cnt_other = Cnt}, Event) when element(1, Event) =:= trace ->
+upd_stats(Stats = #stats{cnt_other = Cnt}, Evt) when element(1, Evt) =:= trace ->
   Stats#stats{cnt_other = Cnt + 1}.
 
--spec upd_state(State, Event) -> state()
+%% @doc Updates the tracer state for the specified event.
+%%
+%% {@params
+%%   {@name State}
+%%   {@desc Tracer state.}
+%%   {@name Evt}
+%%   {@desc Event for which the state is to be updated.}
+%% }
+%%
+%% {@return Updated tracer state.}
+-spec upd_state(State, Evt) -> state()
   when
   State :: state(),
-  Event :: event:evm_event().
+  Evt :: event:evm_event().
 upd_state(State = #state{trace = _Trace, stats = Stats}, Event) ->
   State0 = State#state{stats = upd_stats(Stats, Event)},
   ?exec_if_test(State0#state{trace = [Event | _Trace]}, State0).
 
 
+%%% ----------------------------------------------------------------------------
+%%% Private helper functions (Event analysis).
+%%% ----------------------------------------------------------------------------
 
+%% @doc Creates a new internal or external trace event analyzer that is
+%%      initialized with the specified analysis function.
+%%
+%% {@params
+%%   {@name AnlFun}
+%%   {@desc Analysis function that is applied to trace events to determine their
+%%          correct or incorrect sequence.
+%%   }
+%%   {@name Parent}
+%%   {@desc PID of supervisor to be linked to tracer processes or `self' if no
+%%          supervision is required.
+%%   }
+%%   {@name AMode}
+%%   {@desc Analysis mode.}
+%% }
+%%
+%% {@returns PID of external analyzer process or `self' if the analyzer is
+%%           embedded in the tracer process itself.
+%% }
+-spec new_analyzer(AnlFun, Parent, AMode) -> pid() | self
+  when
+  AnlFun :: analyzer:monitor(),
+  Parent :: parent(),
+  AMode :: a_mode().
+new_analyzer(AnlFun, _, ?A_MODE_INTERNAL) ->
+  true = analyzer:embed(AnlFun),
+  ?TRACE("Embedded new analyzer in tracer ~w.", [self()]),
+  self;
+new_analyzer(AnlFun, Parent, ?A_MODE_EXTERNAL) ->
+  Pid = analyzer:start(AnlFun, Parent),
+  ?TRACE("Forked new independent analyzer ~w for tracer ~w.", [Pid, self()]),
+  Pid.
+
+%% @doc Stops the embedded or process-based analyzer, if defined.
+%%
+%% {@params
+%%   {@name Analyzer}
+%%   {@desc Analyzer to stop.}
+%% }
+%%
+%% {@returns `ok' to indicate success.}
+-spec stop_analyzer(Analyzer :: analyzer()) -> ok.
+stop_analyzer(undefined) ->
+  ok;
+stop_analyzer(self) ->
+  ok;
+stop_analyzer(PidA) when is_pid(PidA) ->
+  analyzer:stop(PidA),
+  ok.
+
+%% @doc Analyses the specified trace event.
+%%
+%% {@params
+%%   {@name Analyzer}
+%%   {@desc Analyzer to use.}
+%%   {@name Evt}
+%%   {@desc Trace event to analyze.}
+%% }
+%%
+%% {@returns Analyzed event.}
+-spec analyze(Analyzer, Evt) -> Evt
+  when
+  Analyzer :: analyzer(),
+  Evt :: event:evm_event().
+analyze(undefined, Evt) ->
+
+  % An undefined analyzer is set only for the root tracer that always operates
+  % in 'direct' mode. Any other tracer besides the root must have an analyzer
+  % that is either external (PID) or internal (self).
+  Evt;
+analyze(self, Evt) ->
+  ?TRACE("Tracer ~w analyzing event ~w internally.", [self(), Evt]),
+  analyzer:do_monitor(Evt, fun(_Verdict) -> ok end),
+  Evt;
+analyze(PidA, Evt) when is_pid(PidA) ->
+  ?TRACE("Tracer ~w dispatched event ~w to ~w for external analysis.", [self(), Evt, PidA]),
+  PidA ! Evt.
+
+
+%%% ----------------------------------------------------------------------------
+%%% Private helper functions (Misc).
+%%% ----------------------------------------------------------------------------
+
+%% @doc Returns a character list that represents the data formatted according to
+%%      the specified format flags.
+%%
+%% {@params
+%%   {@name Fmt}
+%%   {@desc String formatting.}
+%%   {@name Args}
+%%   {@desc Arguments to pass to the formatting.}
+%% }
+%%
+%% {@returns Formatted character list.}
+-spec format(Fmt :: string(), Args :: list()) -> String :: string().
+format(Fmt, Args) -> lists:flatten(io_lib:format(Fmt, Args)).
 
 
 %%% ----------------------------------------------------------------------------
@@ -1322,12 +1552,11 @@ pid_tokens([Token | Tokens], Fact, N, Elements) when Token >= $0, Token =< $9 ->
 pid_tokens([$. | Tokens], _, N, Elements) ->
   pid_tokens(Tokens, 1, 0, erlang:insert_element(1, Elements, N)).
 
--spec show_state(State :: state(), Mode :: t_mode()) -> ok.
+-spec show_state(State :: state(), Mode :: any()) -> ok.
 show_state(State, Mode) ->
   {messages, MQueue} = erlang:process_info(self(), messages),
-%%  Symbol = if Mode =:= ?MODE_DIRECT -> $o; Mode =:= ?MODE_PRIORITY -> $* end,
 
-  Title = format("(~s) Tracer ~w", [Mode, self()]),
+  Title = format("(~p) Tracer ~w", [Mode, self()]),
   S0 = color_by_pid(self(), format("~n~64c[ ~s ]~64c~n", [$-, Title, $-])) ++
     format("~-8.s ~p~n", ["Routes:", State#state.routes]) ++
     format("~-8.s ~p~n", ["Traced:", State#state.traced]) ++

@@ -38,7 +38,6 @@
 -export_type([mfa_spec/0, monitor/0]).
 
 
-
 %%% ----------------------------------------------------------------------------
 %%% Macro and record definitions.
 %%% ----------------------------------------------------------------------------
@@ -79,6 +78,7 @@
 %% Note that only external function calls can be tracked, and therefore,
 %% instrumented with a new tracer.
 
+
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
@@ -86,78 +86,50 @@
 %% @doc Starts the analyzer.
 %%
 %% {@params
-%%   {@name MonFun/Analysis}
-%%   {@desc The synthesised analysis encoding as an anonymous function.}
+%%   {@name AnlFun}
+%%   {@desc Analysis function that is applied to trace events to determine their
+%%          correct or incorrect sequence.
+%%   }
 %%   {@name Parent}
-%%   {@desc PID of supervisor that is linked to analyzer process.}
+%%   {@desc PID of supervisor to be linked to the analyzer process or `self' if
+%%          no supervision is required.
+%%   }
 %% }
 %%
 %% {@returns PID of analyzer process.}
--spec start(MonFun, Parent) -> pid()
+-spec start(AnlFun, Parent) -> pid()
   when
-  MonFun :: monitor(),
+  AnlFun :: monitor(),
   Parent :: tracer:parent().
-start(MonFun, Parent) ->
-  spawn(fun() -> put(?MONITOR, MonFun), init(Parent) end).
+start(AnlFun, Parent) ->
+  spawn(fun() -> put(?MONITOR, AnlFun), init(Parent) end).
 
-%% @doc Stops the asynchronous monitor identified by the specified Pid.
--spec stop(Pid :: pid()) -> reference().
+%% @doc Stops the analyzer identified by the specified PID.
+%%
+%% {@params
+%%   {@name Pid}
+%%   {@desc PID of analyzer to stop.}
+%% }
+%%
+%% {@returns `ok' to indicate successful termination.}
+-spec stop(Pid :: pid()) -> ok.
 stop(Pid) ->
-  util:rpc_async(Pid, stop).
+  util:rpc_async(Pid, stop),
+  ok.
 
-%% @doc Embeds the monitor into the process dictionary.
-embed(MonFun) ->
-  put(?MONITOR, MonFun),
-  self.
-
-%% @private Monitor initialization.
--spec init(Parent) -> no_return()
-  when
-  Parent :: tracer:parent().
-init(Parent) ->
-  if is_pid(Parent) -> link(Parent); true -> ok end,
-  loop(Parent).
-
-%% @private Main monitor loop.
--spec loop(Parent) -> no_return()
-  when
-  Parent :: tracer:parent().
-loop(Parent) ->
-  receive
-    {From, _, stop} ->
-
-      % There should be no more trace messages left when the stop command is
-      % received.
-      ?assertEqual({messages, []}, process_info(self(), messages)),
-
-      ?INFO("Monitor received STOP command from tracer ~w.", [From]),
-      exit({garbage_collect, {monitor, ?VERDICT_END}});
-
-    Event ->
-
-      % At this point, the monitor should only receive trace events. Events
-      % should also be of specific types.
-      ?assertEqual(trace, element(1, Event)),
-      ?assert(
-        element(3, Event) =:= spawn orelse element(3, Event) =:= exit orelse
-          element(3, Event) =:= send orelse element(3, Event) =:= 'receive' orelse
-          element(3, Event) =:= spawned
-      ),
-
-      % Analyze event and garbage collect monitor is verdict is reached.
-      do_monitor(Event,
-        fun(Verdict) -> exit({garbage_collect, {monitor, Verdict}}) end
-      ),
-      % TODO: Test this
-
-      loop(Parent)
-  end.
-
-
-%%% ----------------------------------------------------------------------------
-%%% Private helper functions.
-%%% ----------------------------------------------------------------------------
-
+%% @doc Embeds the trace event analysis function into the process dictionary.
+%%
+%% {@params
+%%   {@name AnlFun}
+%%   {@desc Analysis function that is applied to trace events to determine their
+%%          correct or incorrect sequence.
+%%   }
+%% }
+%%
+%% {@returns `true' to indicate success, otherwise `false'.}
+-spec embed(AnlFun :: monitor()) -> true.
+embed(AnlFun) ->
+  undefined =:= put(?MONITOR, AnlFun).
 
 %% @doc Dispatches the specified abstract event to the monitor for analysis.
 %%
@@ -208,7 +180,6 @@ dispatch(Event = {recv, _Receiver, Msg}) ->
   ),
   Msg.
 
-
 %% @doc Retrieves the monitor function stored in the process dictionary (if
 %% any), and applies it on the event. The result is put back in the process
 %% dictionary. If a verdict state is reached, the callback function is invoked,
@@ -239,15 +210,63 @@ do_monitor(Event, VerdictFun) when is_function(VerdictFun, 1) ->
       Monitor0
   end.
 
-% TODO: Include another submit function that is used to submit asynchronously
-% TODO: to the monitor. This may be used by the tracer module, instead of
-% TODO: directly using ! to send messages to monitor. Problem is that the events
-% TODO: submitted by the tracer are EVM events, whereas the submit above uses
-% TODO: abstract events :(
+%% @doc Default filter that allows all events to pass.
+-spec filter(Event :: event:int_event()) -> true.
+filter(_) ->
+  true. % True = keep event.
+
+
+%%% ----------------------------------------------------------------------------
+%%% Internal callbacks.
+%%% ----------------------------------------------------------------------------
+
+%% @private Monitor initialization.
+-spec init(Parent) -> no_return()
+  when
+  Parent :: tracer:parent().
+init(Parent) ->
+  if is_pid(Parent) -> link(Parent); true -> ok end,
+  loop(Parent).
+
 
 %%% ----------------------------------------------------------------------------
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------
+
+%% @private Main monitor loop.
+-spec loop(Parent) -> no_return()
+  when
+  Parent :: tracer:parent().
+loop(Parent) ->
+  receive
+    {From, _, stop} ->
+
+      % There should be no more trace messages left when the stop command is
+      % received.
+      ?assertEqual({messages, []}, process_info(self(), messages)),
+
+      ?INFO("Monitor received STOP command from tracer ~w.", [From]),
+      exit({garbage_collect, {monitor, ?VERDICT_END}});
+
+    Event ->
+
+      % At this point, the monitor should only receive trace events. Events
+      % should also be of specific types.
+      ?assertEqual(trace, element(1, Event)),
+      ?assert(
+        element(3, Event) =:= spawn orelse element(3, Event) =:= exit orelse
+          element(3, Event) =:= send orelse element(3, Event) =:= 'receive' orelse
+          element(3, Event) =:= spawned
+      ),
+
+      % Analyze event and garbage collect monitor is verdict is reached.
+      do_monitor(Event,
+        fun(Verdict) -> exit({garbage_collect, {monitor, Verdict}}) end
+      ),
+      % TODO: Test this
+
+      loop(Parent)
+  end.
 
 %% @private Determines whether the specified monitor is indeed a verdict.
 -spec is_verdict(Verdict :: term()) -> boolean().
@@ -279,8 +298,3 @@ analyze(Monitor, Event) ->
       ?TRACE("Monitor analyzing event ~w.", [Event]),
       Monitor(Event)
   end.
-
-%% @doc Default filter that allows all events to pass.
--spec filter(Event :: event:int_event()) -> true.
-filter(_) ->
-  true. % True = keep event.

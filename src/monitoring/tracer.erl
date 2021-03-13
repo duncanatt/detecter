@@ -317,8 +317,9 @@ tracer(PidS, PidT, AnlFun, MfaSpec, AMode, Parent) ->
   % the router tracer, (ii) the router tracer potentially needs to route trace
   % events to it before this tracer can, in turn, collect trace events for
   % system processes directly. This tracer can transition to 'direct' mode *only
-  % if all* the system processes it traces, i.e., those in the process group,
-  % have been marked as detached.
+  % if all* the system processes it traces, i.e., those in the traced processes
+  % map have been marked as detached (or said map is empty, in which case
+  % 'detach' commands are simply discarded).
   loop(?T_MODE_PRIORITY, State, Analyzer, Parent).
 
 
@@ -1135,9 +1136,9 @@ do_handle(PidSrc, #state{routes = Routes, traced = Traced}, OnForward, OnHandle)
 %%           false.
 %% }
 -spec can_detach(State :: state()) -> boolean().
-can_detach(#state{traced = Group}) ->
+can_detach(#state{traced = Traced}) ->
   length(lists:filter(
-    fun(?T_MODE_DIRECT) -> false; (_) -> true end, maps:values(Group)
+    fun(?T_MODE_DIRECT) -> false; (_) -> true end, maps:values(Traced)
   )) =:= 0.
 
 -spec detach(PidS :: pid(), PidT :: pid()) -> Detach :: detach().
@@ -1279,7 +1280,7 @@ add_proc(PidS, TMode, Traced) ->
 %% {@returns Updated traced processes map.}
 -spec del_proc(PidS :: pid(), Traced :: traced()) -> traced().
 del_proc(PidS, Traced) ->
-  % ?assert(maps:is_key(PidS, Group), % TODO: Commented this for now since might be a potential bug.
+  % ?assert(maps:is_key(PidS, Traced), % TODO: Commented this for now since might be a potential bug.
   %   format("Process ~w must exist when deleting", [PidS])),
 
   % TODO: Is it always the case that a process must exist before deleting?
@@ -1309,7 +1310,7 @@ del_proc(PidS, Traced) ->
 %% {@par No update is performed if `PidS' does not exist.}
 %%
 %% {@returns Updated traced processes map.}
--spec upd_proc(PidS, NewMode, Traced) -> UpdatedGroup :: traced()
+-spec upd_proc(PidS, NewMode, Traced) -> traced()
   when
   PidS :: pid(),
   NewMode :: t_mode(),
@@ -1325,7 +1326,7 @@ upd_proc(PidS, NewMode, Traced) ->
     true ->
       Traced#{PidS := NewMode}; % Only update existing value, otherwise fail.
     false ->
-      ?TRACE("Process ~w not updated since it is no longer in group.", [PidS]),
+      ?TRACE("Process ~w not updated since not in traced processes map.", [PidS]),
       Traced
   end.
 
@@ -1552,11 +1553,11 @@ pid_tokens([Token | Tokens], Fact, N, Elements) when Token >= $0, Token =< $9 ->
 pid_tokens([$. | Tokens], _, N, Elements) ->
   pid_tokens(Tokens, 1, 0, erlang:insert_element(1, Elements, N)).
 
--spec show_state(State :: state(), Mode :: any()) -> ok.
-show_state(State, Mode) ->
+-spec show_state(State :: state(), Data :: any()) -> ok.
+show_state(State, Data) ->
   {messages, MQueue} = erlang:process_info(self(), messages),
 
-  Title = format("(~p) Tracer ~w", [Mode, self()]),
+  Title = format("(~p) Tracer ~w", [Data, self()]),
   S0 = color_by_pid(self(), format("~n~64c[ ~s ]~64c~n", [$-, Title, $-])) ++
     format("~-8.s ~p~n", ["Routes:", State#state.routes]) ++
     format("~-8.s ~p~n", ["Traced:", State#state.traced]) ++
@@ -1588,9 +1589,9 @@ get_mon_info(MonPid) ->
   end.
 
 -spec set_trc_info(Pid :: pid(), State :: state()) -> State :: state().
-set_trc_info(Pid, State = #state{traced = Group, trace = Trace}) ->
+set_trc_info(Pid, State = #state{traced = Traced, trace = Trace}) ->
   MonPid = self(),
-  Info = {MonPid, maps:keys(Group), lists:reverse(Trace)},
+  Info = {MonPid, maps:keys(Traced), lists:reverse(Trace)},
 
   % Insert monitor info in lookup and reverse lookup tables.
   ets:insert(?MON_INFO_ETS_NAME, Info),

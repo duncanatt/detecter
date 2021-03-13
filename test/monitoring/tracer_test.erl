@@ -76,7 +76,7 @@ generic_monitor_test_for_testing_to_remove_test_() -> {"Generic dynamic monitor 
       % Start the monitoring system in offline mode. The system under scrutiny
       % is not run; rather a run simulation is performed by posting trace events
       % to the underlying log tracer.
-      monitor:start_off("", ?P1, Monitors, [{parent, self}, {analysis, internal}]),
+      monitor:start_offline("", ?P1, Monitors, []),
       log_tracer:post_events(Trace)
     end,
     fun(_, _) ->
@@ -169,7 +169,7 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
       % Start the monitoring system in offline mode. The system under scrutiny
       % is not run; rather a run simulation is performed by posting trace events
       % to the underlying log tracer.
-      monitor:start_offline("", ?P1, Monitors),
+      monitor:start_offline("", ?P1, Monitors, []),
       log_tracer:post_events(Trace)
     end,
     fun(_, _) ->
@@ -983,7 +983,7 @@ p3_dies_monitor_test_() -> {"P3 dies when it has a monitor attached test",
       % Start the monitoring system in offline mode. The system under scrutiny
       % is not run; rather a run simulation is performed by posting trace events
       % to the underlying log tracer.
-      monitor:start_offline("", ?P1, Monitors),
+      monitor:start_offline("", ?P1, Monitors, []),
       log_tracer:post_events(Trace)
     end,
     fun(_, _) ->
@@ -1441,7 +1441,7 @@ p3_spawns_multiple_child_processes_test_() ->
         % Start the monitoring system in offline mode. The system under scrutiny
         % is not run; rather a run simulation is performed by posting trace events
         % to the underlying log tracer.
-        monitor:start_offline("", ?P1, Monitors),
+        monitor:start_offline("", ?P1, Monitors, []),
         log_tracer:post_events(Trace)
       end,
       fun(_, _) ->

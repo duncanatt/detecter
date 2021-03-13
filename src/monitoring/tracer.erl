@@ -146,7 +146,8 @@
 %%   {@desc PID of the top-level system process.}
 %%   {@name MfaSpec}
 %%   {@desc Function that determines whether an analyzer is associated with a
-%%          MFA whose process instantiation needs to be monitored.}
+%%          MFA whose process instantiation needs to be monitored.
+%%   }
 %%   {@name AMode}
 %%   {@desc Analysis mode determining whether the analysis is conducted
 %%          internally in tracer processes or externally in independent
@@ -201,7 +202,8 @@ stop() ->
 %%   {@desc PID of the top-level system process.}
 %%   {@name MfaSpec}
 %%   {@desc Function that determines whether an analyzer is associated with a
-%%          MFA whose process instantiation needs to be monitored.}
+%%          MFA whose process instantiation needs to be monitored.
+%%   }
 %%   {@name AMode}
 %%   {@desc Analysis mode determining whether the analysis is conducted
 %%          internally in tracer processes or externally in independent
@@ -269,7 +271,8 @@ root(PidS, MfaSpec, AMode, Starter, Parent) ->
 %%   }
 %%   {@name MfaSpec}
 %%   {@desc Function that determines whether an analyzer is associated with a
-%%          MFA whose process instantiation needs to be monitored.}
+%%          MFA whose process instantiation needs to be monitored.
+%%   }
 %%   {@name AMode}
 %%   {@desc Analysis mode determining whether the analysis is conducted
 %%          internally in tracer processes or externally in independent

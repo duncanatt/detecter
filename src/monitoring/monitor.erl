@@ -28,24 +28,18 @@
 -include("log.hrl").
 
 %%% Public API.
--export([start_online/3, start_offline/3, stop/0]).
--export([start_off/4]).
-
-
-%%% Callbacks/Internal.
--export([]).
+-export([start_online/3, start_offline/4, stop/0]).
+%%-export([start_off/4]).
 
 %%% Types.
--export_type([]).
-
-%%% Implemented behaviors.
-%-behavior().
+-export_type([option/0, options/0]).
 
 
 %%% ----------------------------------------------------------------------------
 %%% Macro and record definitions.
 %%% ----------------------------------------------------------------------------
 
+%% Option definitions.
 -define(OPT_PARENT, parent).
 -define(OPT_ANALYSIS, analysis).
 
@@ -55,95 +49,115 @@
 %%% ----------------------------------------------------------------------------
 
 -type option() :: {?OPT_PARENT, tracer:parent()} | {?OPT_ANALYSIS, tracer:a_mode()}.
+%% Monitor options.
 
 -type options() :: list(option()).
+%% Monitor option list.
+
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-%% {@returns Root monitor PID.}
-%%-spec start_online(Mfa, MfaSpec, Opts) -> pid()
-%%  when
-%%  Mfa :: mfa(),
-%%  MfaSpec :: analyzer:mfa_spec(),
-%%  Opts :: proplists:proplist().
+%% @doc Starts and instruments the specified system with online monitors.
+%%
+%% {@params
+%%   {@name {@Mod, Fun, Args@}}
+%%   {@desc }
+%%   {@name MfaSpec}
+%%   {@desc Function that determines whether an analyzer is associated with a
+%%          MFA whose process instantiation needs to be monitored.
+%%   }
+%%   {@name Opts}
+%%   {@desc To be filled later.}
+%% }
+%%
+%% {@returns PID of root monitor.}
+-spec start_online({Mod, Fun, Args}, MfaSpec, Opts) -> pid()
+  when
+  Mod :: module(),
+  Fun :: atom(),
+  Args :: list(),
+  MfaSpec :: analyzer:mfa_spec(),
+  Opts :: options().
 start_online({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 
   % Start tracing framework.
   trace_lib:start(evm),
 
-  % Launch system in a blocked state, and wait for ack from launching process.
-  % Syn is sent prior the system starts executing in order to prevent the
-  % potential loss of trace events.
+  % Syn is issued before so that the system is executed one the root monitor
+  % has ack'ed. This prevents potential trace event loss.
   Self = self(),
-  Pid = spawn(fun() -> util:syn(Self), apply(Mod, Fun, Args) end),
+  PidS = spawn(fun() -> util:syn(Self), apply(Mod, Fun, Args) end),
 
-  % Start root tracer for system. System is currently blocked: this prevents
-  % trace events from being lost.
-  Merged = proplists:get_value(merged, Opts, false),
-  Root =
-    if Merged =:= false -> tracer:start(Pid, MfaSpec, external, self);
-      true -> tracer:start(Pid, MfaSpec, internal, self)
-    end,
+  % Start root tracer with specified options.
+  Root = tracer:start(PidS, MfaSpec, analysis_opt(Opts), parent_opt(Opts)),
 
   % Ack root monitor and system, now that the former has been fully started.
   util:syn_ack(Root),
-  util:syn_ack(Pid),
+  util:syn_ack(PidS),
   Root.
 
-%% {@returns Root monitor PID.}
-%%-spec start_offline(File, PidS, MfaSpec) -> pid()
-%%  when
-%%  File :: string(),
-%%  PidS :: pid(),
-%%  MfaSpec :: analyzer:mfa_spec().
-start_offline(File, PidS, MfaSpec) when is_function(MfaSpec, 1) ->
-
-  % Set up controller monitor. The controller collects all the tracer statistics
-  % and monitor verdicts at their time of exit by relying process linking.
-%%  Self = self(),
-
-  % Wait for controller to start up and ack before continuing.
-%%  util:syn(Controller),
+%% @doc Loads the offline trace from the specified file and replay it with offline
+%% monitors.
+%%
+%% {@params
+%%   {@name File}
+%%   {@desc Full path of log file containing the trace event descriptions.}
+%%   {@name PidS}
+%%   {@desc PID of the top-level system process.}
+%%   {@name MfaSpec}
+%%   {@desc Function that determines whether an analyzer is associated with a
+%%          MFA whose process instantiation needs to be monitored.
+%%   }
+%%   {@name Opts}
+%%   {@desc To be filled later.}
+%% }
+%%
+%% {@returns PID of root monitor.}
+-spec start_offline(File, PidS, MfaSpec, Opts) -> pid()
+  when
+  File :: file:filename(),
+  PidS :: pid(),
+  MfaSpec :: analyzer:mfa_spec(),
+  Opts :: option().
+start_offline(File, PidS, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 
   % Start tracing framework.
   trace_lib:start({log, File}),
 
-  % Start root tracer for system. Since this is offline monitoring, the trace
-  % is assumed to exist. As in the online case, the root tracer is bootstrapped
-  % by specifying the root process of the system (obtained from the trace log).
-%%  Merged = proplists:get_value(merged, Opts, false),
-  Root = tracer:start(PidS, MfaSpec, external, self),
+  % Start root tracer with specified options. In offline monitoring, the trace
+  % is already assumed to exist. As is done for the online case, the root tracer
+  % is bootstrapped with the PID of the top-level system process.
+  Root = tracer:start(PidS, MfaSpec, analysis_opt(Opts), parent_opt(Opts)),
 
   % Ack root monitor.
   util:syn_ack(Root),
   Root.
 
 
-start_off(File, PidS, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
+%%start_off(File, PidS, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
+%%
+%%  Parent = parent_opt(Opts),
+%%  Analysis = analysis_opt(Opts),
+%%
+%%  % Start tracing framework.
+%%  trace_lib:start({log, File}),
+%%
+%%  Root = tracer:start(PidS, MfaSpec, Analysis, Parent),
+%%
+%%  % Ack root monitor.
+%%  util:syn_ack(Root),
+%%  Root.
 
-  Parent = parent_opt(Opts),
-  Analysis = analysis_opt(Opts),
 
-  % Start tracing framework.
-  trace_lib:start({log, File}),
-
-  Root = tracer:start(PidS, MfaSpec, Analysis, Parent),
-
-  % Ack root monitor.
-  util:syn_ack(Root),
-  Root.
-
+%% @doc Shuts down the monitors.
+%%
+%% {@returns `ok' to indicate successful shut down, `@{error, not_started@}'
+%%            otherwise.
+%% }
 -spec stop() -> ok | {error, not_started}.
 stop() ->
-  %% TODO: Update to modern syntax using try-catch block.
-  case catch unregister(?MODULE) of
-    true ->
-      ok;
-    {'EXIT', _} ->
-      io:format("Unable to unregister ~s; already terminated.~n", [?MODULE])
-  end,
   tracer:stop(),
   trace_lib:stop().
 
@@ -151,9 +165,26 @@ stop() ->
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------
 
-
+%% @doc Returns the user-specified parent option.
+%%
+%% {@params
+%%   {@name Opts}
+%%   {@desc Monitor options list.}
+%% }
+%%
+%% {@returns User-specified option or `self' if undefined.}
+-spec parent_opt(Opts :: options()) -> {?OPT_PARENT, tracer:parent()}.
 parent_opt(Opts) ->
   proplists:get_value(?OPT_PARENT, Opts, self).
 
+%% @doc Returns the user-specified analysis mode option.
+%%
+%% {@params
+%%   {@name Opts}
+%%   {@desc Monitor options list.}
+%% }
+%%
+%% {@returns User-specified option or `internal' if undefined.}
+-spec analysis_opt(Opts :: options()) -> {?OPT_ANALYSIS, tracer:a_mode()}.
 analysis_opt(Opts) ->
   proplists:get_value(?OPT_ANALYSIS, Opts, internal).

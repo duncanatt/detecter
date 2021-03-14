@@ -12,7 +12,7 @@
 -export([format_error/1]).
 
 %% User code. This is placed here to allow extra attributes.
--file("priv/hml_lexer.xrl", 133).
+-file("priv/hml_lexer.xrl", 132).
 
 %% String conversion macros.
 -define(to_atom(String), list_to_atom(String)).
@@ -1196,47 +1196,47 @@ yyaction(15, _, _, _) ->
 yyaction(_, _, _, _) -> error.
 
 -compile({inline,yyaction_0/1}).
--file("priv/hml_lexer.xrl", 73).
+-file("priv/hml_lexer.xrl", 72).
 yyaction_0(TokenLine) ->
      { token, { and_op, TokenLine } } .
 
 -compile({inline,yyaction_1/2}).
--file("priv/hml_lexer.xrl", 76).
+-file("priv/hml_lexer.xrl", 75).
 yyaction_1(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_2/2}).
--file("priv/hml_lexer.xrl", 79).
+-file("priv/hml_lexer.xrl", 78).
 yyaction_2(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_3/2}).
--file("priv/hml_lexer.xrl", 82).
+-file("priv/hml_lexer.xrl", 81).
 yyaction_3(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_4/2}).
--file("priv/hml_lexer.xrl", 85).
+-file("priv/hml_lexer.xrl", 84).
 yyaction_4(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_5/2}).
--file("priv/hml_lexer.xrl", 88).
+-file("priv/hml_lexer.xrl", 87).
 yyaction_5(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_6/2}).
--file("priv/hml_lexer.xrl", 91).
+-file("priv/hml_lexer.xrl", 90).
 yyaction_6(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_7/2}).
--file("priv/hml_lexer.xrl", 94).
+-file("priv/hml_lexer.xrl", 93).
 yyaction_7(TokenChars, TokenLine) ->
      { token, { var, TokenLine, ? to_atom (TokenChars) } } .
 
 -compile({inline,yyaction_8/2}).
--file("priv/hml_lexer.xrl", 97).
+-file("priv/hml_lexer.xrl", 96).
 yyaction_8(TokenChars, TokenLine) ->
      Atom = ? to_atom (TokenChars),
      { token,
@@ -1247,37 +1247,37 @@ yyaction_8(TokenChars, TokenLine) ->
      } .
 
 -compile({inline,yyaction_9/2}).
--file("priv/hml_lexer.xrl", 106).
+-file("priv/hml_lexer.xrl", 105).
 yyaction_9(TokenChars, TokenLine) ->
      { token, { atom, TokenLine, ? to_atom (? no_quotes (TokenChars)) } } .
 
 -compile({inline,yyaction_10/2}).
--file("priv/hml_lexer.xrl", 109).
+-file("priv/hml_lexer.xrl", 108).
 yyaction_10(TokenChars, TokenLine) ->
      { token, { integer, TokenLine, ? to_integer (TokenChars) } } .
 
 -compile({inline,yyaction_11/2}).
--file("priv/hml_lexer.xrl", 112).
+-file("priv/hml_lexer.xrl", 111).
 yyaction_11(TokenChars, TokenLine) ->
      { token, { float, TokenLine, ? to_float (TokenChars) } } .
 
 -compile({inline,yyaction_12/2}).
--file("priv/hml_lexer.xrl", 115).
+-file("priv/hml_lexer.xrl", 114).
 yyaction_12(TokenChars, TokenLine) ->
      { token, { pid, TokenLine, ? to_pid (TokenChars) } } .
 
 -compile({inline,yyaction_13/2}).
--file("priv/hml_lexer.xrl", 118).
+-file("priv/hml_lexer.xrl", 117).
 yyaction_13(TokenChars, TokenLine) ->
      { token, { string, TokenLine, ? no_quotes (TokenChars) } } .
 
 -compile({inline,yyaction_14/2}).
--file("priv/hml_lexer.xrl", 121).
+-file("priv/hml_lexer.xrl", 120).
 yyaction_14(TokenChars, TokenLine) ->
      { token, { ? to_atom (TokenChars), TokenLine } } .
 
 -compile({inline,yyaction_15/0}).
--file("priv/hml_lexer.xrl", 124).
+-file("priv/hml_lexer.xrl", 123).
 yyaction_15() ->
      skip_token .
 

@@ -52,6 +52,9 @@ recv                      : {token, {recv, TokenLine}}.
 % PID token.
 <{DIGIT}+\.{DIGIT}+\.{DIGIT}+> : {token, {pid, TokenLine, ?to_pid(TokenChars)}}.
 
+% Reference token.
+#Ref<{DIGIT}+\.{DIGIT}+\.{DIGIT}+\.{DIGIT}+> : {token, {ref, TokenLine, ?to_ref(TokenChars)}}.
+
 % String token.
 "{STRING}*" : {token, {string, TokenLine, TokenChars}}.
 
@@ -72,3 +75,4 @@ Erlang code.
 -define(to_integer(String), list_to_integer(String)).
 -define(to_float(String), list_to_float(String)).
 -define(to_pid(String), list_to_pid(String)).
+-define(to_ref(String), list_to_ref(String)).

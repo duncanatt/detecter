@@ -225,6 +225,8 @@ eval_mfa({mfa, {atom, _, M}, {atom, _, F}, Args}) ->
   pid() | atom() | integer() | float() | list() | tuple().
 eval_term({pid, _, Pid}) ->
   Pid;
+eval_term({ref, _, Pid}) ->
+  Pid;
 eval_term({atom, _, Atom}) ->
   Atom;
 eval_term({int, _, Int}) ->

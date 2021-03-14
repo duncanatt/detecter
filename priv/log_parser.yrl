@@ -18,7 +18,7 @@ Terminals
 '(' ')' '[' ']' '{' '}' ',' '.'
 
 % Data types.
-pid atom int float string
+pid ref atom int float string
 
 % Keywords.
 delayed by
@@ -59,6 +59,7 @@ items -> item                                   : ['$1'].
 items -> item ',' items                         : ['$1' | '$3'].
 
 item -> pid                                     : '$1'.
+item -> ref                                     : '$1'.
 item -> atom                                    : '$1'.
 item -> int                                     : '$1'.
 item -> float                                   : '$1'.

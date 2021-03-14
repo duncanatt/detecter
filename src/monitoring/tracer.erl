@@ -397,7 +397,7 @@ loop(?T_MODE_PRIORITY, State = #state{}, Analyzer, Parent) ->
   % 'direct' mode (see receive clause _Other in loop/5 function for 'direct').
   receive
     Msg = {route, PidRtr, Cmd} when element(1, Cmd) =:= detach ->
-      ?TRACE("(*) Dequeued relayed command ~w from router tracer ~w.", [Msg, PidRtr]),
+      ?TRACE("(*) Dequeued command ~w routed from router tracer ~w.", [Msg, PidRtr]),
 
       % Routed 'detach' command. It may be forwarded to the next hop, but if
       % not possible (no entry in routing map), is handled by the tracer.
@@ -406,7 +406,7 @@ loop(?T_MODE_PRIORITY, State = #state{}, Analyzer, Parent) ->
       loop(?T_MODE_PRIORITY, State0, Analyzer, Parent);
 
     Msg = {route, PidRtr, Evt} when element(1, Evt) =:= trace ->
-      ?TRACE("(*) Dequeued relayed trace event ~w routed from router tracer ~w.", [Msg, PidRtr]),
+      ?TRACE("(*) Dequeued trace event ~w routed from router tracer ~w.", [Msg, PidRtr]),
 
       % Routed trace event. It may be forwarded to the next hop, but if not
       % possible (no entry in routing map), is handled by the tracer.
@@ -1202,6 +1202,8 @@ try_gc(State = #state{traced = Traced, routes = Routes}, Analyzer, Parent) when
   % If available, link to parent process. Providing the parent =/= self and it
   % traps exits, it receives trace event stats collected by the tracer.
   if is_pid(Parent) -> link(Parent); true -> ok end,
+
+  ?TRACE("Garbage collecting tracer ~w.", [self()]),
   exit({garbage_collect, {Tag, State#state.stats}});
 
 try_gc(State = #state{}, _, _) ->
@@ -1294,7 +1296,7 @@ del_proc(PidS, Traced) ->
   % This log was left here. It will cause the deletion to fail when there is
   % no process inside the map, since maps:get/2 requires the key to exist. But
   % I left it here as a reminder on what the bug or interleaving scenario I
-  % did not caterfor ot think about could be.
+  % did not cater for ot think about could be.
   ?TRACE("Process ~w deleted from traced processes map while in ~w mode.", [PidS, maps:get(PidS, Traced)]),
   maps:remove(PidS, Traced).
 
@@ -1498,7 +1500,10 @@ analyze(self, Evt) ->
   analyzer:do_monitor(Evt, fun(_Verdict) -> ok end),
   Evt;
 analyze(PidA, Evt) when is_pid(PidA) ->
-  ?TRACE("Tracer ~w dispatched event ~w to ~w for external analysis.", [self(), Evt, PidA]),
+  ?TRACE("Tracer ~w ~s event ~w to ~w for external analysis.",
+    [self(),
+      case is_process_alive(PidA) of true -> "dispatched"; _ -> "did not dispatch" end,
+      Evt, PidA]),
   PidA ! Evt.
 
 

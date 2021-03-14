@@ -158,11 +158,11 @@ start_offline(File, PidS, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 %%  util:syn_ack(Root),
 %%  Root.
 
-attach(Pid, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
+online_attach(Pid, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
   % TODO: (Future). Attach to process once the system has been started.
   ok.
 
-detach(Pid) ->
+online_detach(Pid) ->
   % TODO: (Future). Stop analysing process.
   ok.
 

@@ -30,6 +30,7 @@
 -export([rpc/2, rpc_async/2, rpc_yield/1, rpc_yield/2]).
 -export([syn/1, syn_ack/1]).
 -export([promise/1, then/1]).
+-export([as_dir_name/1]).
 
 %%% Callbacks/Internal.
 -export([]).
@@ -230,6 +231,26 @@ then(Ref) ->
     {promise, Ref, Result} ->
       Result
   end.
+
+%% @doc Appends the forward slash character to the specified directory path
+%% if this does not exist.
+%%
+%% {@params
+%%   {@name Dir}
+%%   {@desc The directory path to append with `/'.}
+%% }
+%%
+%% {@returns The dir name appended with `/'.}
+-spec as_dir_name(Dir :: string()) -> Dir0 :: string().
+as_dir_name([]) ->
+  [$.];
+as_dir_name([Char]) when Char =/= $/ ->
+  [Char, $/];
+as_dir_name(Last = [_]) ->
+  Last;
+as_dir_name([Char | Name]) ->
+  [Char | as_dir_name(Name)].
+
 
 %%% ----------------------------------------------------------------------------
 %%% Private helper functions.

@@ -19,11 +19,10 @@
 %%% this program. If not, see <https://www.gnu.org/licenses/>.
 %%% ----------------------------------------------------------------------------
 
+
 %%% ----------------------------------------------------------------------------
 %%% Regular expression classes.
 %%% ----------------------------------------------------------------------------
-
-% on {M, F, A} when [Guards] attach [Phi].
 
 Definitions.
 
@@ -72,7 +71,7 @@ ATOM                            = [^']
 
 Rules.
 
-&&										: {token, {and_op, TokenLine}}.
+&&										          : {token, {and_op, TokenLine}}.
 
 % Boolean operator tokens.
 {BOOL_OP}                       : {token, {?to_atom(TokenChars), TokenLine}}.

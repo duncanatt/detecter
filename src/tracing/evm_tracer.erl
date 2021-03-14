@@ -174,8 +174,8 @@ config_tracer() ->
         {'=/=', {element, 1, '$1'}, '$ack'}, % and
         {'=/=', {element, 1, '$1'}, '$syn_ack'}, % and
         {'=/=', {element, 1, '$1'}, '$log'}, % and
-        {'=/=', {element, 1, '$1'}, '$cmd'}, % and
-        {'not', {'is_reference', {element, 1, '$1'}}} % and, not of is_reference of the first element of the tuple.
+        {'=/=', {element, 1, '$1'}, '$cmd'}%, % and
+%%        {'not', {'is_reference', {element, 1, '$1'}}} % and, not of is_reference of the first element of the tuple.
       ],
       [] % Action
     },
@@ -220,8 +220,8 @@ config_tracer() ->
         {'=/=', {element, 1, '$1'}, '$ack'}, % and
         {'=/=', {element, 1, '$1'}, '$syn_ack'}, % and
         {'=/=', {element, 1, '$1'}, '$log'}, % and
-        {'=/=', {element, 1, '$1'}, '$cmd'}, % and
-        {'not', {'is_reference', {element, 1, '$1'}}} % and, not of is_reference of the first element of the tuple.
+        {'=/=', {element, 1, '$1'}, '$cmd'}%, % and
+%%        {'not', {'is_reference', {element, 1, '$1'}}} % and, not of is_reference of the first element of the tuple.
       ],
       [] % Action
     },
@@ -275,5 +275,11 @@ get_tracer(Tracee) ->
 
 -endif.
 
+%% Just receive.
 %%Pid = spawn(fun() -> Loop = fun Loop(N) -> receive spawn -> _Pid = spawn(fun() -> ok, receive _ -> ok end end), io:format("Spawned: ~p.~n", [_Pid]); Msg -> io:format("[~p] Received ~p.~n", [N, Msg]), Loop(N + 1) end end, Loop(0) end).
-%%TrcPid = spawn(fun() -> trace_lib:start(evm), trace_lib:trace(Pid), Loop = fun Loop(N) -> receive Msg -> io:format("[~p] Received event ~p.~n", [N, Msg]), Loop(N + 1) end end, Loop(0) end).
+
+%% Receive with reply.
+%%Pid = spawn(fun() -> Loop = fun Loop(N) -> receive spawn -> _Pid = spawn(fun() -> ok, receive _ -> ok end end), io:format("Spawned: ~p.~n", [_Pid]); {From, Msg} -> io:format("[~p] Received ~p from ~p.~n", [N, Msg, From]), From ! {self(), ok_reply}, Loop(N + 1) end end, Loop(0) end).
+
+%% Tracer.
+%%TrcPid = spawn(fun() -> trace_lib:start(evm), trace_lib:trace(Pid), Loop = fun Loop(N) -> receive Msg -> io:format("[~p] TRC Received event ~p.~n", [N, Msg]), Loop(N + 1) end end, Loop(0) end).

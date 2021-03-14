@@ -30,4 +30,4 @@ jobs:
       - name: Test
         run: |
           erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
-          erl -noshell -pa ebin -eval 'eunit:test(async_tracer_test, [verbose])' -s init stop
+          erl -noshell -pa ebin -eval 'eunit:test(tracer_test, [verbose])' -s init stop

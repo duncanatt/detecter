@@ -406,7 +406,7 @@ loop(?T_MODE_PRIORITY, State = #state{}, Analyzer, Parent) ->
       loop(?T_MODE_PRIORITY, State0, Analyzer, Parent);
 
     Msg = {route, PidRtr, Evt} when element(1, Evt) =:= trace ->
-      ?TRACE("(*) Dequeued relayed trace event ~w from router tracer ~w.", [Msg, PidRtr]),
+      ?TRACE("(*) Dequeued relayed trace event ~w routed from router tracer ~w.", [Msg, PidRtr]),
 
       % Routed trace event. It may be forwarded to the next hop, but if not
       % possible (no entry in routing map), is handled by the tracer.
@@ -676,7 +676,7 @@ handle_event(?T_MODE_PRIORITY, State, Rtd = {route, _PidRtr, Evt}, Analyzer, _) 
     end);
 
 handle_event(_, State, Msg, _, _) ->
-  ?WARN("Not handling trace event ~p.", [Msg]),
+  ?WARN("Discarding trace event ~p.", [Msg]),
   State.
 
 %% @doc Instruments a system process with a new tracer or adds the system

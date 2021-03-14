@@ -88,7 +88,15 @@ start_online({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
   % Syn is issued before so that the system is executed one the root monitor
   % has ack'ed. This prevents potential trace event loss.
   Self = self(),
-  PidS = spawn(fun() -> util:syn(Self), apply(Mod, Fun, Args) end),
+  PidS = spawn(
+    fun() ->
+      ?TRACE("Started bootstrapping process.."),
+
+      util:syn(Self),
+      apply(Mod, Fun, Args),
+
+      ?TRACE("Bootstrapping process terminated.")
+    end),
 
   % Start root tracer with specified options.
   Root = tracer:start(PidS, MfaSpec, analysis_opt(Opts), parent_opt(Opts)),
@@ -149,6 +157,14 @@ start_offline(File, PidS, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 %%  % Ack root monitor.
 %%  util:syn_ack(Root),
 %%  Root.
+
+attach(Pid, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
+  % TODO: (Future). Attach to process once the system has been started.
+  ok.
+
+detach(Pid) ->
+  % TODO: (Future). Stop analysing process.
+  ok.
 
 
 %% @doc Shuts down the monitors.

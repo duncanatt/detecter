@@ -33,9 +33,10 @@
 %%% Public API exports.
 -export([start/1, stop/0]).
 
-%%% Internal exports.
+%%% Callbacks.
 -export([init/1, handle_line/3, terminate/2]).
 
+%%% Implemented behaviors.
 -behavior(gen_file_poller).
 
 

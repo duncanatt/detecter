@@ -193,7 +193,7 @@ dispatch(Event = {recv, _Receiver, Msg}) ->
 do_monitor(Event, VerdictFun) when is_function(VerdictFun, 1) ->
   case get(?MONITOR) of
     undefined ->
-      ?TRACE("Monitor not defined; not handling trace event ~w.", [Event]),
+      ?TRACE("Analyzer undefined; discarding trace event ~w.", [Event]),
       undefined;
     Monitor ->
 
@@ -245,7 +245,7 @@ loop(Parent) ->
       % received.
       ?assertEqual({messages, []}, process_info(self(), messages)),
 
-      ?INFO("Monitor received STOP command from tracer ~w.", [From]),
+      ?INFO("Analyzer received STOP command from tracer ~w.", [From]),
       exit({garbage_collect, {monitor, ?VERDICT_END}});
 
     Event ->
@@ -288,13 +288,13 @@ analyze(Monitor, Event) ->
 
       % Monitor is at the verdict state, and the event, even though it is
       % analyzed, does not alter the current verdict.
-      ?TRACE("Monitor analyzing event ~w and reached verdict '~s'.",
+      ?TRACE("Analyzing event ~w and reached verdict '~s'.",
         [Event, Monitor]),
       Monitor;
     false ->
 
       % Monitor is not yet at the verdict state and can analyze the event.
       % Return next monitor unfolding.
-      ?TRACE("Monitor analyzing event ~w.", [Event]),
+      ?TRACE("Analyzing event ~w.", [Event]),
       Monitor(Event)
   end.

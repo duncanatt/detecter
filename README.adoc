@@ -23,7 +23,7 @@ endif::[]
 // Shields.
 image:https://img.shields.io/badge/license-GPLv3-blue[link="https://www.gnu.org/licenses/gpl-3.0"]
 image:https://img.shields.io/badge/version-v0.9-yellow[]
-image:https://github.com/asciidoctor/asciidoctor/workflows/Testbuild/badge.svg[Build Status (GitHub Actions)]
+image:https://github.com/duncanatt/detecter/workflows/TestBuild/badge.svg[Build Status (GitHub Actions)]
 
 //[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 //![](https://github.com/duncanatt/detecter/workflows/Build/badge.svg)

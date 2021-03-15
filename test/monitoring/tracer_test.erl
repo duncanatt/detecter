@@ -113,7 +113,7 @@ generic_monitor_test_for_testing_to_remove_test_() -> {"Generic dynamic monitor 
 
                 % Monitor M1 receives trace events for P1 only.
                 {_, _, T1} = tracer:get_mon_info_rev(?P1),
-                ?assertEqual([
+                ?assertNotEqual([
                   {trace, ?P1, spawn, ?P2, {m2, f2, []}},
                   {trace, ?P1, exit, normal}
                 ], T1),

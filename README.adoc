@@ -1,0 +1,25 @@
+= Introduction
+<duncanatt@gmail.com>
+v0.9, 04-05-2020 (Star Wars Day)
+:appversion: 0.9
+
+:stem: latexmath
+:icons: font
+:source-highlighter: highlightjs
+:toc:
+:toc-placement!:
+//:sectnums:
+
+// Github-specific styling.
+ifdef::env-github[]
+:tip-caption: :bulb:
+:note-caption: :information_source:
+:important-caption: :heavy_exclamation_mark:
+:caution-caption: :fire:
+:warning-caption: :warning:
+endif::[]
+
+
+// Shields.
+image:https://img.shields.io/badge/license-GPLv3-blue[link="https://www.gnu.org/licenses/gpl-3.0"]
+image:https://img.shields.io/badge/version-v0.9-yellow[]

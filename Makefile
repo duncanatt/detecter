@@ -241,12 +241,12 @@ APP_CMD=experiment_cowboy:start()
 ## Project configurations                                                     ##
 ################################################################################
 
-BIN=ebin
+BIN=detecter/ebin
 # BIN=ebin2
-INCLUDE=include
-SRC=src
-TEST=test
-RES=resources
+INCLUDE=detecter/include
+SRC=detecter/src
+TEST=detecter/test
+RES=detecter/resources
 
 SCRIPTS=scripts
 VENV=$(SCRIPTS)/venv

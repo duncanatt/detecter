@@ -58,6 +58,8 @@ defmodule Demo.CalcClient do
   ## Parameters
   - to: PID or registered name of target process.
   - req: Request to issue.
+
+  Returns: Response.
   """
   @spec rpc(to :: pid() | atom(), req :: any()) :: any()
   def rpc(to, req) do

@@ -309,3 +309,37 @@ load:
 
 clean:
 	rm -rf $(BIN)/*.beam $(BIN)/*.E $(BIN)/*.tmp erl_crash.dump $(BIN)/*.app
+
+
+# Running the Erlang example.
+
+## 1. Compile HML file.
+# hml_eval:compile("props/server_props.hml", [{outdir,"ebin"}, v]).
+
+## 2. Weave system (start dir: examples/erlang).
+# weaver:weave("src/demo", fun server_props:mfa_spec/1, [{outdir,"ebin"}]).
+
+## 3. Run system.
+# calc_server:start(ok).
+# calc_server:start(buggy).
+
+# Running the Elixir example.
+
+## 1. Compile HML file.
+# :hml_eval.compile('props/server_props.hml', [{:outdir,'ebin'}, :v])
+
+## 2. Run outline monitoring.
+# :monitor.start_online({Elixir.Demo.CalcServer,:start,[:ok]}, &:server_props.mfa_spec/1, [])
+# :monitor.start_online({Elixir.Demo.CalcServer,:start,[:buggy]}, &:server_props.mfa_spec/1, [{:analysis,:external}])
+
+
+# Running the Outline example.
+
+## 2. Run the outline monitor from the Erlang console (start dir: examples/erlang).
+# It's ok for the log file not to exist. The file poller will pick it automatically once it does.
+# monitor:start_offline("../../trace.log", pid(0,102,0), fun server_props:mfa_spec/1, []).
+
+## 1. Run the Python script (start dir: examples/python/src).
+# python -m demo.calc_server ok ../../../trace.log
+# python -m demo.calc_server buggy ../../../trace.log
+

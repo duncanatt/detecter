@@ -274,7 +274,7 @@ compile-test: clean
 	erlc -DTEST -pa $(BIN) -I $(INCLUDE) -o $(BIN) $(call recursive,$(TEST),erl)
 
 test: compile-test
-	erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
+	#erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
 	erl -noshell -pa ebin -eval 'eunit:test(tracer_test, [verbose])' -s init stop
 
 weave: compile
@@ -305,7 +305,7 @@ plot: run
 	source $(VENV)/bin/activate; python $(SCRIPTS)/$(PLT_CMD)
 
 load:
-	erl +S 4 +SDcpu 2 +P 134217727 -pa $(BIN)/ -eval 'code:ensure_modules_loaded([ascii_writer,async_mon,async_tracer_test,build,client,collector,common,csv_writer,distr,driver,echo_protocol,events,evm_tracer,gen_file_poller,gen_file_poller_impl,gen_looper,gen_looper_impl,hml_eval,hml_lexer,hml_lint,hml_parser,launcher,log,log_eval,log_lexer,log_parser,log_poller,log_tracer,main,master,monitor,opts,server,slave,stats,system,trace_lib,tracer,tracer_monitor,util,weaver]).'
+	erl +S 4 +SDcpu 2 +P 134217727 -pa $(BIN)/ -eval 'code:ensure_modules_loaded([ascii_writer,async_mon,async_tracer_test,build,client,collector,common,csv_writer,distr,driver,echo_protocol,events,evm_tracer,gen_file_poller,gen_file_poller_impl,gen_looper,gen_looper_impl,hml_eval,hml_lexer,hml_lint,hml_parser,launcher,log,log_eval,log_lexer,log_parser,log_poller,log_tracer,main,master,monitor,opts,server,slave,stats,system,trace_lib,tracer,tracer_monitor,util,weaver,example_1,simple]).'
 
 clean:
 	rm -rf $(BIN)/*.beam $(BIN)/*.E $(BIN)/*.tmp erl_crash.dump $(BIN)/*.app

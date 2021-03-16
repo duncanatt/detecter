@@ -15,8 +15,8 @@
 %{trace,<0.138.0>,exit,normal}.
 
 % Intermediate trace event description.
-fork(<0.128.0>,<0.131.0>,{calc_server,loop,[0]})
-init(<0.131.0>,<0.128.0>,{calc_server,loop,[0]})
+fork(<0.128.0>,<0.131.0>,{calc_server,loop,[1]})
+init(<0.131.0>,<0.128.0>,{calc_server,loop,[1]})
 exit(<0.128.0>,normal)
 recv(<0.131.0>,{<0.126.0>,#Ref<0.2591416663.1992818690.191784>,{mul,10,97}})
 send(<0.131.0>,<0.126.0>,{#Ref<0.2591416663.1992818690.191784>,{mul,971}})

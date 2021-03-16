@@ -38,9 +38,11 @@ ENC = 'ascii'  # Encoding used to parse bytes to and from the socket byte stream
 P_ID = 1024  # Parent thread party (or process) ID.
 
 # Configure global logging.
-logging.basicConfig(
-    filename='test.log', format='%(message)s', filemode='w', level=logging.DEBUG
-)
+# logging.basicConfig(
+#     filename='test.log', format='%(message)s', filemode='w', level=logging.DEBUG
+# )
+
+logging.basicConfig(format='%(message)s', level=logging.DEBUG)
 
 # Get main logger.
 log = logging.getLogger(__name__)
@@ -156,12 +158,26 @@ def to_pid(id):
 
 
 if __name__ == '__main__':
+
+    # Configure command line argument parser and parse.
     parser = argparse.ArgumentParser(
         description='Starts the example calculator service over TCP'
     )
-    parser.add_argument('Mode', metavar='mode', choices=['ok', 'buggy'],
+    parser.add_argument('mode', metavar='Mode', choices=['ok', 'buggy'],
                         type=str, help='Normal and buggy operation')
-
-    # Parse server mode argument and start main server thread.
+    parser.add_argument('log', metavar='Log File', type=str,
+                        help='File path of trace log file')
     args = parser.parse_args()
-    start(args.Mode)
+
+    # Configure global logger file.
+    file_handler = logging.FileHandler(args.log, 'w')
+
+    # Get root logger, remove old log handlers and set new one with configured
+    # log file.
+    log = logging.getLogger()
+    for handler in log.handlers[:]:
+        log.removeHandler(handler)
+    log.addHandler(file_handler)
+
+    # Start main server thread.
+    start(args.mode)

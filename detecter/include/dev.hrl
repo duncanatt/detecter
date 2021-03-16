@@ -34,7 +34,7 @@
 %% modes are intended for development only, and should only be used to fine tune
 %% the code and its operation.
 
-%%-undef(TEST).
+-undef(TEST).
 %%-define(TEST, true).
 %%-define(PROFILE, true).
 
@@ -43,34 +43,27 @@
 %%% Private macros (DO NOT MODIFY).
 %%% ----------------------------------------------------------------------------
 
-%% TODO: Comment the below, except profile.
-
-%% TODO: Remove this commented bit..because probably is redundant.
-%%-ifdef(TEST).
-%%-define(TEST_TRACES_ETS_NAME, mon_state). % Monitor state ETS name.
-%%-define(TESTER_REG_NAME, tester). % Tester registered process name.
-%%-endif.
-
-%% Inserts the specified expression only if the 'TEST' macro is defined. Used to
-%% add extra information to the monitor which is useful when performing unit
-%% tests, but would otherwise slow the monitor down when used in production.
+%% Expands the test expression when the 'TEST' macro is defined. Used to add
+%% supporting code for unit testing purposes. Should be disabled for production
+%% use. When disabled, the default expression is expanded instead.
 -ifdef(TEST).
 -define(exec_if_test(TestExpr, Default), TestExpr).
 -else.
 -define(exec_if_test(TestExpr, Default), Default).
 -endif.
 
-%% Inserts the specified expression only if the 'WEAVED' macro is defined.
-
-%% Expands the macro expression only when the WEAVED macro is defined.
+%% Expands the weaved expression when the 'WEAVED' macro is defined. Used to
+%% add supporting code to weaved code. When disabled, the default expression is
+%% expanded instead.
 -ifdef(WEAVED).
 -define(exec_if_weaved(WeavedExpr, Default), WeavedExpr).
 -else.
 -define(exec_if_weaved(WeavedExpr, Default), Default).
 -endif.
 
-%% Profile macro expanded to show the time taken for the code expression to
-%% execute if the PROFILE macro is defined.
+%% Expands the profile expression when the 'PROFILE' macro is defined. Used to
+%% measure execution times for code segments for profiling purposes. May be left
+%% enabled in production use. When disabled, no profiling is performed.
 -ifdef(PROFILE).
 -define(profile(Expr), dev:profile(fun() -> Expr end, ok)).
 -define(profile(Expr, Tag), dev:profile(fun() -> Expr end, Tag)).

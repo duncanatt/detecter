@@ -14,10 +14,10 @@ jobs:
       image: erlang:22.1.5
 
     env:
-      BIN: ebin
-      INCLUDE: include
-      SRC: src
-      TEST: test
+      BIN: detecter/ebin
+      INCLUDE: detecter/include
+      SRC: detecter/src
+      TEST: detecter/test
 
     steps:
       - uses: actions/checkout@v1

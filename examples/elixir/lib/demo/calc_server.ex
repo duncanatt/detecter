@@ -44,8 +44,8 @@ defmodule Demo.CalcServer do
   ## Parameters
   - mode: Server operation mode.
 
-  The server operates in one of two modes: `ok', where it handles calculations
-  correctly, and `buggy', to return incorrect results.
+  The server operates in one of two modes: `ok`, where it handles calculations
+  correctly, and `buggy`, to return incorrect results.
 
   Returns: Server PID.
   """
@@ -67,7 +67,7 @@ defmodule Demo.CalcServer do
   @doc """
   Stops server.
 
-  Returns: `stopped' to indicate successful termination.
+  Returns: `stopped` to indicate successful termination.
   """
   @spec stop() :: :ok
   def stop() do

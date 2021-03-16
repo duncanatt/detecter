@@ -154,7 +154,7 @@ def to_pid(id):
     :param id: ID to convert.
     :return: Converted ID.
     """
-    return '<0.{0}.0>'.format(id)
+    return '<0.{0:3.3}.0>'.format(str(id))
 
 
 if __name__ == '__main__':

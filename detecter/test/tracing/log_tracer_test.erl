@@ -1104,7 +1104,7 @@ event_reordering_test_() -> {"Trace event reordering test",
                 {send, ?P2, ?P3, msg},
                 {recv, ?P3, msg},
                 {exit, ?P3, reason},
-                {exit, ?P2, reasonx}
+                {exit, ?P2, reason}
               ],
               ?assertEqual(to_evm_events(Expected), flush()),
 

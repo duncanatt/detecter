@@ -27,6 +27,9 @@ jobs:
           mkdir -p $BIN
           erlc -DTEST -pa $BIN +debug_info -I $INCLUDE -o $BIN $SRC/*.erl $SRC/**/*.erl
           erlc -DTEST -pa $BIN +debug_info -I $INCLUDE -o $BIN $TEST/**/*.erl
+      - name: List
+        run: |
+          ls -lart $BIN
       - name: Test
         run: |
           erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop

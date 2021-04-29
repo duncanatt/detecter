@@ -1,7 +1,0 @@
-name: Tutorial
-
-on:
-  push:
-    paths:
-      - 'tutorial/site/**'
-    branches: gh-pages

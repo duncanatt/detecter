@@ -274,8 +274,8 @@ compile-test: clean
 	erlc -DTEST -pa $(BIN) -I $(INCLUDE) -o $(BIN) $(call recursive,$(TEST),erl)
 
 test: compile-test
-	#erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
-	erl -noshell -pa ebin -eval 'eunit:test(tracer_test, [verbose])' -s init stop
+	#erl -noshell -pa $(BIN) -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
+	erl -noshell -pa $(BIN) -eval 'eunit:test(tracer_test, [verbose])' -s init stop
 
 weave: compile
 # 	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", "$(INCLUDE)", "$(BIN)", fun launcher:driver_monitors/1, fun launcher:filter_spec/1).' -s init stop

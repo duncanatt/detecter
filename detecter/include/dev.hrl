@@ -35,7 +35,7 @@
 %% modes are intended for development only, and should only be used to fine tune
 %% the code and its operation.
 
--undef(TEST).
+%%-undef(TEST).
 %%-define(TEST, true).
 %%-define(PROFILE, true).
 

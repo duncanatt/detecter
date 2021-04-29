@@ -1,0 +1,97 @@
+site_name: detectEr Tutorial
+site_description: A step-by-step guide to using detectEr
+repo_url: https://github.com/duncanatt/detecter
+repo_name: duncanatt/detecter
+use_directory_urls: false
+copyright: Copyright &copy; 2019 - 2021 Duncan Paul Attard
+
+markdown_extensions:
+  - def_list # Definition lists.
+  - abbr # Abbreviation definitions and hover help tooltip.
+  - admonition # Admonitions.
+  - pymdownx.superfences # Nestable code and content blocks inside admonitions..
+  - pymdownx.highlight # Block code syntax highlighting.
+  - pymdownx.inlinehilite # Inline code syntax highlighting.
+  - pymdownx.smartsymbols
+  - pymdownx.keys # Icon keyboard keys.
+  - pymdownx.details # Collapsible admonitions.
+  - pymdownx.tabbed # Tabs.
+  - pymdownx.caret # Superscripts.
+  - pymdownx.tilde # Subscripts.
+  - pymdownx.mark # Highlighting.
+  - pymdownx.betterem: # Better support for bold and italicized text.
+      smart_enable: all
+  - pymdownx.arithmatex: # MathJax
+      generic: true
+
+  - toc:
+      permalink: false
+
+extra_javascript:
+  - https://polyfill.io/v3/polyfill.min.js?features=es6 # Polyfills.
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js # Add MathJax
+
+plugins:
+  - search
+  - macros
+
+extra:
+  generator: true
+  social:
+    - icon: fontawesome/solid/user-circle
+      link: https://duncanatt.github.io
+      name: Profile
+    - icon: fontawesome/brands/github
+      link: https://github.com/duncanatt
+      name: Duncan on GitHub
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/duncanattard
+      name: Duncan on Twitter
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:duncanatt@gmail.com
+      name: Drop a line
+
+theme:
+  name: material
+
+#  favicon: assets/logo.png
+
+  palette:
+    - scheme: default
+      primary: deep-purple
+      accent: deep-purple
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/weather-night
+        name: Switch to light mode
+
+  font:
+    text: Source Sans Pro
+    code: Fira Code
+
+  language: en
+
+  features:
+    - navigation.instant
+#    - navigation.sections
+    - navigation.top
+    - header.autohide
+#    - navigation.tabs
+    - navigation.expand
+    - toc.integrate
+
+  icon:
+    repo: fontawesome/brands/github
+
+nav:
+  - Home: index.md
+#  - About: about.md
+#  - Erlang: erlang.md
+#  - 'User Guide':
+#    - 'Writing your docs': 'writing-your-docs.md'
+#    - 'Styling your docs': 'styling-your-docs.md'

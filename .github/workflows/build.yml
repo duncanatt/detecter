@@ -32,5 +32,5 @@ jobs:
           ls -lart $BIN
       - name: Test
         run: |
-          erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
-          erl -noshell -pa ebin -eval 'eunit:test(tracer_test, [verbose])' -s init stop
+          erl -noshell -pa $BIN -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
+          erl -noshell -pa $BIN -eval 'eunit:test(tracer_test, [verbose])' -s init stop

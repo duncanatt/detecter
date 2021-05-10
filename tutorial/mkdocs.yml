@@ -47,7 +47,7 @@ extra:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/duncanattard
       name: Duncan on Twitter
-    - icon: fontawesome/solid/paper-plane
+    - icon: fontawesome/solid/envelope-open
       link: mailto:duncanatt@gmail.com
       name: Drop a line
 
@@ -90,8 +90,12 @@ theme:
 
 nav:
   - Home: index.md
-#  - About: about.md
-#  - Erlang: erlang.md
-#  - 'User Guide':
-#    - 'Writing your docs': 'writing-your-docs.md'
-#    - 'Styling your docs': 'styling-your-docs.md'
+  - Getting Started:
+    - Perparation: getting-started/installing-erlang.md # Installing Erlang and configuring the system and python.
+    - Setting Up detectEr: getting-started/setting-up-detecter.md  # Cloning from Github
+    - Hello World: getting-started/hello-world.md # Very small property or a ping pong server..
+  - Using detectEr:
+    - The Example System: using-detecter/the-example-system.md
+    - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.
+    - Properties: properties.md # The properties in the paper.
+    - Instrumentation: instrumentation.md # Synthesis Inline outline and offline. on one system.

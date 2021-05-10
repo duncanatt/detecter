@@ -12,22 +12,22 @@
  
 
 
-# What is detectEr?
+## What is detectEr?
 
 detectEr is a runtime verification tool for asynchronous component systems.
 
 Detecter outline
 
 
-# Publications
+## Publications
 
 List of publications.
 
-# Who are we?
+## Our team
 
 The team.
 
-# Help us
+## Help us
 
 Typos and bugs.
 

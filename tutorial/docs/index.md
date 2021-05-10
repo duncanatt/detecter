@@ -8,6 +8,27 @@
 ![GitHub issues](https://img.shields.io/github/issues/duncanatt/detecter)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/duncanatt/detecter)
 
-## Introduction
+# Welcome to the detectEr tutorial!
+ 
 
-detectEr is a runtime verification tool for asynchronous component systems. 
+
+# What is detectEr?
+
+detectEr is a runtime verification tool for asynchronous component systems.
+
+Detecter outline
+
+
+# Publications
+
+List of publications.
+
+# Who are we?
+
+The team.
+
+# Help us
+
+Typos and bugs.
+
+

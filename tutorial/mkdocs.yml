@@ -9,7 +9,7 @@ markdown_extensions:
   - def_list # Definition lists.
   - abbr # Abbreviation definitions and hover help tooltip.
   - admonition # Admonitions.
-  - pymdownx.superfences # Nestable code and content blocks inside admonitions..
+  - pymdownx.superfences # Nestable code and content blocks inside admonitions.
   - pymdownx.highlight # Block code syntax highlighting.
   - pymdownx.inlinehilite # Inline code syntax highlighting.
   - pymdownx.smartsymbols
@@ -19,6 +19,7 @@ markdown_extensions:
   - pymdownx.caret # Superscripts.
   - pymdownx.tilde # Subscripts.
   - pymdownx.mark # Highlighting.
+  - pymdownx.smartsymbols # Smart symbols such as (tm), (c), etc.
   - pymdownx.betterem: # Better support for bold and italicized text.
       smart_enable: all
   - pymdownx.arithmatex: # MathJax
@@ -91,11 +92,11 @@ theme:
 nav:
   - Home: index.md
   - Getting Started:
-    - Perparation: getting-started/installing-erlang.md # Installing Erlang and configuring the system and python.
+    - Perparation: getting-started/preparation.md # Installing Erlang and configuring the system and python.
     - Setting Up detectEr: getting-started/setting-up-detecter.md  # Cloning from Github
     - Hello World: getting-started/hello-world.md # Very small property or a ping pong server..
   - Using detectEr:
-    - The Example System: using-detecter/the-example-system.md
     - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.
+    - The Example Systems: using-detecter/the-example-system.md
     - Properties: properties.md # The properties in the paper.
     - Instrumentation: instrumentation.md # Synthesis Inline outline and offline. on one system.

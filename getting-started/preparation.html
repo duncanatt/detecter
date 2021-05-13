@@ -38,6 +38,8 @@
     
     
     
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
     
       
     
@@ -314,33 +316,39 @@
     Installing Python
   </a>
   
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#installing-the-source-code-editor" class="md-nav__link">
-    Installing the source code editor
-  </a>
-  
-    <nav class="md-nav" aria-label="Installing the source code editor">
+    <nav class="md-nav" aria-label="Installing Python">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#configuring-the-editor-with-extensions" class="md-nav__link">
-    Configuring the editor with extensions
+  <a href="#installing-the-virtual-environment-management-tool" class="md-nav__link">
+    Installing the virtual environment management tool
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#configuring-visual-studio-code" class="md-nav__link">
+    Configuring Visual Studio Code
+  </a>
+  
+    <nav class="md-nav" aria-label="Configuring Visual Studio Code">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#adding-extensions" class="md-nav__link">
+    Adding extensions
   </a>
   
 </li>
         
           <li class="md-nav__item">
   <a href="#configuring-the-erlang-shell" class="md-nav__link">
-    Configuring the Erlang shell
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#setting-up-the-virtual-environment" class="md-nav__link">
-    Setting up the virtual environment?
+    Configuring the Erlang shell?
   </a>
   
 </li>
@@ -363,8 +371,8 @@
   
   
     <li class="md-nav__item">
-      <a href="setting-up-detecter.md" class="md-nav__link">
-        Setting Up detectEr
+      <a href="setting-up-detecter.html" class="md-nav__link">
+        Setting up detectEr
       </a>
     </li>
   
@@ -375,8 +383,8 @@
   
   
     <li class="md-nav__item">
-      <a href="hello-world.md" class="md-nav__link">
-        Hello World
+      <a href="quickstart.html" class="md-nav__link">
+        Quickstart
       </a>
     </li>
   
@@ -484,11 +492,12 @@
                 
                 
                 <h1 id="preparation">Preparation</h1>
+<hr />
 <h2 id="installing-erlang">Installing Erlang</h2>
 <p>Erlang can be installed on multiple platforms by compiling it from <a href="https://github.com/erlang/otp">source</a> or  downloading one of the pre-compiled distributions hosted on <a href="https://www.erlang-solutions.com/downloads">erlang-solutions.com</a>.
 In this tutorial, we take a simpler route, and install Erlang using the package manager that comes bundled with the operating system.</p>
 <div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Ubuntu/Debian</label><div class="tabbed-content">
-<p>On Ubuntu and Debian, Erlang can be installed using APT.</p>
+<p>On Ubuntu and Debian, Erlang can be installed using <abbr title="Advanced Packaging Tool">APT</abbr>.</p>
 <ol>
 <li>
 <p>Add the Erlang Solutions repository:</p>
@@ -497,29 +506,29 @@ sudo dpkg -i erlang-solutions_2.0_all.deb
 </code></pre></div>
 </li>
 <li>
-<p>Refresh the package manager repository cache: <code>sudo apt update</code></p>
+<p>Refresh the package manager repository cache: <code>sudo apt update</code>.</p>
 </li>
 <li>
-<p>Install the entire Erlang/OTP suite only: <code>sudo apt install erlang</code></p>
+<p>Install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite only: <code>sudo apt install erlang</code>.</p>
 </li>
 </ol>
 </div>
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">macOS</label><div class="tabbed-content">
-<p>macOS users can install the entire Erlang/OTP suite using Homebrew by running: <code>brew install erlang</code>.</p>
+<p>macOS users can install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite using Homebrew by running: <code>brew install erlang</code>.</p>
 </div>
 <input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Others</label><div class="tabbed-content">
-<p>Refer to the Erlang Solutions <a href="https://www.erlang-solutions.com/downloads">guide</a> for installing Erlang/OTP on other operating systems.</p>
+<p>Refer to the Erlang Solutions <a href="https://www.erlang-solutions.com/downloads">guide</a> for installing Erlang/<abbr title="Open Telecom Platform">OTP</abbr> on other operating systems.</p>
 </div>
 </div>
 <div class="admonition hint">
 <p class="admonition-title">Quick check</p>
-<p>Confirm that Erlang/OTP distribution has been successfully installed and that the system <code>PATH</code> variable is properly configured by typing <code>erl --version</code>.</p>
+<p>Confirm that Erlang/<abbr title="Open Telecom Platform">OTP</abbr> distribution has been successfully installed and that the system <code>PATH</code> variable is properly configured by typing <code>erl --version</code>.</p>
 </div>
 <h2 id="installing-elixir">Installing Elixir</h2>
-<p>Elixir runs on the Erlang virtual machine and uses the same OTP libraries.
+<p>Elixir runs on the Erlang virtual machine and uses the same <abbr title="Open Telecom Platform">OTP</abbr> libraries.
 We already installed the Erlang ecosystem, and need only install the Elixir language libraries.</p>
 <div class="tabbed-set" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Ubuntu/Debian</label><div class="tabbed-content">
-<p>On Ubuntu and Debian, Elixir can be installed via APT using: <code>sudo apt-get install elixir</code>.</p>
+<p>On Ubuntu and Debian, Elixir can be installed via <abbr title="Advanced Packaging Tool">APT</abbr> using: <code>sudo apt-get install elixir</code>.</p>
 </div>
 <input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">macOS</label><div class="tabbed-content">
 <p>Homebrew users can run: <code>brew install elixir</code>.</p>
@@ -540,23 +549,23 @@ Check the version of Python available on your operating system by executing <cod
 <p>If the reported version is older than <code>3.7.x</code> or Python is not installed, follow these steps.</p>
 <ol>
 <li>
-<p>Refresh the package manager repository cache (if not already done): <code>sudo apt update</code></p>
+<p>Refresh the package manager repository cache (if not already done): <code>sudo apt update</code>.</p>
 </li>
 <li>
-<p>Install Python 3: <code>sudo apt install python3.8</code></p>
+<p>Install Python 3: <code>sudo apt install python3.9</code>.</p>
 </li>
 <li>
-<p>Install the Python package manager PIP: <code>sudo apt install python3-pip</code></p>
+<p>Install the Python package manager <abbr title="PIP Installs Packages">PIP</abbr>: <code>sudo apt install python3-pip</code>.</p>
 </li>
 <li>
-<p>Install also the core development support tools: <code>sudo apt install -y build-essential libssl-dev libffi-dev python3-dev</code></p>
+<p>Install also the core development support tools: <code>sudo apt install -y build-essential libssl-dev libffi-dev python3-dev</code>.</p>
 </li>
 </ol>
 </div>
 <input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">macOS</label><div class="tabbed-content">
 <p>macOS comes pre-installed with Python 2.7, which is not the version we use in this tutorial.</p>
 <p>Install Python 3 via Homebrew by typing: <code>brew install python3</code>.
-The Python package manager PIP for Python 3 is automatically installed by the recent versions of Homebrew.</p>
+The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 is automatically installed by the recent versions of Homebrew.</p>
 </div>
 <input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><label for="__tabbed_3_3">Others</label><div class="tabbed-content">
 <p>Refer to the Real Python <a href="https://realpython.com/installing-python">guide</a> for installing Python 3 on other operating systems. </p>
@@ -565,11 +574,62 @@ The Python package manager PIP for Python 3 is automatically installed by the re
 <div class="admonition hint">
 <p class="admonition-title">Quick check</p>
 <p>Confirm that Python 3 has been successfully installed and that the system <code>PATH</code> variable is properly configured by typing <code>python3 --version</code>.
-Also check that PIP for Python 3 has been installed, <code>pip3 --version</code>.</p>
+Also check that <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 has been installed, <code>pip3 --version</code>.</p>
 </div>
-<h2 id="installing-the-source-code-editor">Installing the source code editor</h2>
-<h3 id="configuring-the-editor-with-extensions">Configuring the editor with extensions</h3>
-<p>Syntax highlighting for Erlang, Elixir, Python. </p>
+<h3 id="installing-the-virtual-environment-management-tool">Installing the virtual environment management tool</h3>
+<p><a href="https://virtualenv.pypa.io/en/latest">Virtualenv</a> is a tool used to create isolated Python environments.
+The environment it creates has its own installation directory, and does not share libraries with other Virtualenv environments.
+Virtualenv can be installed via <abbr title="PIP Installs Packages">PIP</abbr>: <code>pip3 install virtualenv</code>.</p>
+<h2 id="configuring-visual-studio-code">Configuring Visual Studio Code</h2>
+<p>Any plain text editor can be used, but for this tutorial we opt for Visual Studio Code that can be downloaded from <a href="https://code.visualstudio.com">https://code.visualstudio.com</a>.
+It can also be installed using the respective operating system package manager.</p>
+<div class="tabbed-set" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Ubuntu/Debian</label><div class="tabbed-content">
+<p>On Ubuntu and Debian, VS Code can be installed using <abbr title="Advanced Packaging Tool">APT</abbr>.</p>
+<ol>
+<li>
+<p>Install <abbr title="Advanced Packaging Tool">APT</abbr> transport for downloading packages via HTTPS: <code>sudo apt install apt-transport-https</code> <strong>to check</strong></p>
+</li>
+<li>
+<p>Import the Microsoft <abbr title="GNU Privacy Guard">GPG</abbr> key: </p>
+<div class="highlight"><pre><span></span><code>wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add -
+</code></pre></div>
+</li>
+<li>
+<p>Add the VS Code repository by typing: </p>
+<div class="highlight"><pre><span></span><code>sudo add-apt-repository &quot;deb [arch=amd64] https://packages.microsoft.com/repos/code stable main&quot;
+</code></pre></div>
+</li>
+<li>
+<p>Refresh the package manager repository cache: <code>sudo apt update</code>.</p>
+</li>
+<li>
+<p>Install VS Code: <code>sudo apt install code</code>.</p>
+</li>
+</ol>
+</div>
+<input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">macOS</label><div class="tabbed-content">
+<p>macOS users can install VS Code using Homebrew by running: <code>brew install --cask visual-studio-code</code>.</p>
+</div>
+<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Others</label><div class="tabbed-content">
+<p>Refer to the Visual Studio Code <a href="https://code.visualstudio.com/download">guide</a> for installing it on other operating systems. </p>
+</div>
+</div>
+<h3 id="adding-extensions">Adding extensions</h3>
+<p>To enable syntax highlighting and language support for the languages used in this tutorial, VS Code can be configured with these extensions. </p>
+<ul>
+<li>
+<p><a href="https://marketplace.visualstudio.com/items?itemName=pgourlain.erlang">Erlang</a>.</p>
+</li>
+<li>
+<p><a href="https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls">Elixir</a>.</p>
+</li>
+<li>
+<p><a href="https://marketplace.visualstudio.com/items?itemName=ms-python.python">Python</a>.</p>
+</li>
+<li>
+<p><abbr title="Safety Hennessy-Milner Logic">sHML</abbr> syntax highlighting?</p>
+</li>
+</ul>
 <div class="admonition info">
 <p class="admonition-title">Versions</p>
 <p>These distribution versions are used in this tutorial.
@@ -583,7 +643,7 @@ Your installed versions need not exactly match, but we document these in case of
 </thead>
 <tbody>
 <tr>
-<td>Erlang/OTP</td>
+<td>Erlang/<abbr title="Open Telecom Platform">OTP</abbr></td>
 <td><code>23.3.2</code></td>
 </tr>
 <tr>
@@ -595,7 +655,7 @@ Your installed versions need not exactly match, but we document these in case of
 <td><code>3.9.4</code></td>
 </tr>
 <tr>
-<td>PIP</td>
+<td><abbr title="PIP Installs Packages">PIP</abbr></td>
 <td><code>21.0.1</code></td>
 </tr>
 <tr>
@@ -606,13 +666,8 @@ Your installed versions need not exactly match, but we document these in case of
 </table>
 </div>
 <hr />
-<h3 id="configuring-the-erlang-shell">Configuring the Erlang shell</h3>
+<h3 id="configuring-the-erlang-shell">Configuring the Erlang shell?</h3>
 <p>For the purposes of this tutorial, we shall not use sophisticated code building mechanisms like <code>rebar</code>. Instead, we stick to <code>make</code></p>
-<div class="admonition todo">
-<p class="admonition-title">Todo</p>
-</div>
-<p>Flesh in the rest of the shell configuration.</p>
-<h3 id="setting-up-the-virtual-environment">Setting up the virtual environment?</h3>
                 
               
               
@@ -650,13 +705,13 @@ Your installed versions need not exactly match, but we document these in case of
         </a>
       
       
-        <a href="../using-detecter/the-specification-logic.html" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="setting-up-detecter.html" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              The Specification Logic
+              Setting up detectEr
             </div>
           </div>
           <div class="md-footer__button md-icon">

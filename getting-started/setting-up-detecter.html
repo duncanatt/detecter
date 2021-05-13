@@ -16,7 +16,7 @@
     
     
       
-        <title>Synthesis - detectEr Tutorial</title>
+        <title>Setting up detectEr - detectEr Tutorial</title>
       
     
     
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#synthesis" class="md-skip">
+        <a href="#setting-up-detecter" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Synthesis
+              Setting up detectEr
             
           </span>
         </div>
@@ -240,12 +240,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" data-md-state="indeterminate" type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" type="checkbox" id="__nav_2" checked>
       
       <label class="md-nav__link" for="__nav_2">
         Getting Started
@@ -263,7 +265,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/preparation.html" class="md-nav__link">
+      <a href="preparation.html" class="md-nav__link">
         Perparation
       </a>
     </li>
@@ -273,11 +275,21 @@
             
   
   
+    
   
-    <li class="md-nav__item">
-      <a href="../getting-started/setting-up-detecter.html" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+      <a href="setting-up-detecter.html" class="md-nav__link md-nav__link--active">
         Setting up detectEr
       </a>
+      
     </li>
   
 
@@ -287,7 +299,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting-started/quickstart.html" class="md-nav__link">
+      <a href="quickstart.html" class="md-nav__link">
         Quickstart
       </a>
     </li>
@@ -329,7 +341,7 @@
   
   
     <li class="md-nav__item">
-      <a href="the-specification-logic.html" class="md-nav__link">
+      <a href="../using-detecter/the-specification-logic.html" class="md-nav__link">
         The Specification Logic
       </a>
     </li>
@@ -341,7 +353,7 @@
   
   
     <li class="md-nav__item">
-      <a href="the-example-system.md" class="md-nav__link">
+      <a href="../using-detecter/the-example-system.md" class="md-nav__link">
         The Example Systems
       </a>
     </li>
@@ -390,21 +402,102 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/duncanatt/detecter/edit/master/docs/using-detecter/properties.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/duncanatt/detecter/edit/master/docs/getting-started/setting-up-detecter.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="synthesis">Synthesis</h1>
+                <h1 id="setting-up-detecter">Setting up detectEr</h1>
 <hr />
-<ul>
-<li>
-<p>The property of request count, but instead of the <code>exit</code> event use the <code>init</code> event of the process.</p>
-</li>
-<li>
-<p>Specify a simple property and explain the synthesised code, giving an example of how the events are consumed and processed.</p>
-</li>
-</ul>
+<h1 id="downloading-detecter">Downloading detectEr</h1>
+<p>detectEr can be cloned from our GitHub repository: </p>
+<div class="highlight"><pre><span></span><code>git clone https://github.com/duncanatt/detecter.git
+</code></pre></div>
+<p>If GIT is not installed on your system, you can download detectEr in archive format by visiting <a href="https://github.com/duncanatt/detecter">https://github.com/duncanatt/detecter</a> or by running:</p>
+<div class="highlight"><pre><span></span><code>wget -O detecter.zip https://github.com/duncanatt/detecter/archive/refs/heads/master.zip
+unzip detecter.zip
+mv detecter-master detecter
+</code></pre></div>
+<div class="admonition hint">
+<p class="admonition-title">Unzip</p>
+<p>If the <code>unzip</code> utility is not installed on your Ubuntu/Debian system, you can install it via <abbr title="Advanced Packaging Tool">APT</abbr> by running <code>sudo apt install unzip</code>.
+On macOS, <code>unzip</code> is pre-installed.</p>
+</div>
+<p>Both of these actions should result in the creation of the directory <code>detecter</code> that is structured as follows.</p>
+<table>
+<thead>
+<tr>
+<th align="left">Directory name</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code>detecter</code></td>
+<td align="left">detectEr tool directory</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<code>priv</code></td>
+<td align="left">Configuration files</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<code>src</code></td>
+<td align="left">Erlang module sources</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<code>test</code></td>
+<td align="left">Unit tests</td>
+</tr>
+<tr>
+<td align="left"><code>examples</code></td>
+<td align="left">Tutorial examples</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<code>erlang</code></td>
+<td align="left">Calculator server implementation in Erlang</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>src</code></td>
+<td align="left">Erlang module sources</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>props</code></td>
+<td align="left"><abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property specifications</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<code>elixir</code></td>
+<td align="left">Calculator server implementation in Elixir</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>lib</code></td>
+<td align="left">Elixir module sources</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>props</code></td>
+<td align="left"><abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property specifications</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<code>python</code></td>
+<td align="left">Calculator server implementation in Python using TCP sockets</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>src</code></td>
+<td align="left">Python script sources</td>
+</tr>
+<tr>
+<td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>props</code></td>
+<td align="left"><abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property specifications</td>
+</tr>
+<tr>
+<td align="left"><code>LICENSE</code></td>
+<td align="left">GPL3 license</td>
+</tr>
+<tr>
+<td align="left"><code>Makefile</code></td>
+<td align="left">Makefile with targets for running the tutorial examples</td>
+</tr>
+</tbody>
+</table>
                 
               
               
@@ -424,6 +517,39 @@
       
         
 <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="preparation.html" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Perparation
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="quickstart.html" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Quickstart
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

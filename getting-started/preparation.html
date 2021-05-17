@@ -298,6 +298,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#prerequisites" class="md-nav__link">
+    Prerequisites
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#installing-erlang" class="md-nav__link">
     Installing Erlang
   </a>
@@ -342,13 +349,6 @@
           <li class="md-nav__item">
   <a href="#adding-extensions" class="md-nav__link">
     Adding extensions
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#configuring-the-erlang-shell" class="md-nav__link">
-    Configuring the Erlang shell?
   </a>
   
 </li>
@@ -493,10 +493,41 @@
                 
                 <h1 id="preparation">Preparation</h1>
 <hr />
+<h2 id="prerequisites">Prerequisites</h2>
+<p>This tutorial assumes that users are running Ubuntu/Debian, macOS or Windows 10.
+Windows 10 users may either install the <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">Windows Subsystem for Linux</a> and follow the instructions given below for <em>Ubuntu/Debian</em>, or alternatively, configure <a href="https://chocolatey.org">Chocolatey</a> and install the software packages mentioned via <code>choco install</code>.
+However, our instructions will not detail how detectEr is installed and used on Windows systems.</p>
+<p>Please install the software package management system available your particular operating system before proceeding with the rest of the guide.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Operating System</th>
+<th align="center">Package Manager</th>
+<th align="left">Installation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center">Ubuntu/Debian</td>
+<td align="center"><abbr title="Advanced Packaging Tool">APT</abbr></td>
+<td align="left">Not required, comes pre-bundled</td>
+</tr>
+<tr>
+<td align="center">macOS</td>
+<td align="center">Homebrew</td>
+<td align="left">Follow the Homebrew <a href="https://brew.sh">guide</a> for installation</td>
+</tr>
+<tr>
+<td align="center">Windows 10</td>
+<td align="center">Chocolatey</td>
+<td align="left">Follow the Chocolatey <a href="https://chocolatey.org/install">guide</a> for installation</td>
+</tr>
+</tbody>
+</table>
 <h2 id="installing-erlang">Installing Erlang</h2>
 <p>Erlang can be installed on multiple platforms by compiling it from <a href="https://github.com/erlang/otp">source</a> or  downloading one of the pre-compiled distributions hosted on <a href="https://www.erlang-solutions.com/downloads">erlang-solutions.com</a>.
-In this tutorial, we take a simpler route, and install Erlang using the package manager that comes bundled with the operating system.</p>
-<div class="tabbed-set" data-tabs="1:3"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Ubuntu/Debian</label><div class="tabbed-content">
+We however follow the simpler route and install Erlang using the package managers mentioned above.</p>
+<div class="tabbed-set" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Ubuntu/Debian</label><div class="tabbed-content">
 <p>On Ubuntu and Debian, Erlang can be installed using <abbr title="Advanced Packaging Tool">APT</abbr>.</p>
 <ol>
 <li>
@@ -516,7 +547,10 @@ sudo dpkg -i erlang-solutions_2.0_all.deb
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">macOS</label><div class="tabbed-content">
 <p>macOS users can install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite using Homebrew by running: <code>brew install erlang</code>.</p>
 </div>
-<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Others</label><div class="tabbed-content">
+<input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Windows 10</label><div class="tabbed-content">
+<p>Windows 10 users not using WSL can install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite using Chocolatey by running: <code>choco install erlang</code>.</p>
+</div>
+<input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><label for="__tabbed_1_4">Others</label><div class="tabbed-content">
 <p>Refer to the Erlang Solutions <a href="https://www.erlang-solutions.com/downloads">guide</a> for installing Erlang/<abbr title="Open Telecom Platform">OTP</abbr> on other operating systems.</p>
 </div>
 </div>
@@ -527,13 +561,16 @@ sudo dpkg -i erlang-solutions_2.0_all.deb
 <h2 id="installing-elixir">Installing Elixir</h2>
 <p>Elixir runs on the Erlang virtual machine and uses the same <abbr title="Open Telecom Platform">OTP</abbr> libraries.
 We already installed the Erlang ecosystem, and need only install the Elixir language libraries.</p>
-<div class="tabbed-set" data-tabs="2:3"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Ubuntu/Debian</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Ubuntu/Debian</label><div class="tabbed-content">
 <p>On Ubuntu and Debian, Elixir can be installed via <abbr title="Advanced Packaging Tool">APT</abbr> using: <code>sudo apt-get install elixir</code>.</p>
 </div>
 <input id="__tabbed_2_2" name="__tabbed_2" type="radio" /><label for="__tabbed_2_2">macOS</label><div class="tabbed-content">
-<p>Homebrew users can run: <code>brew install elixir</code>.</p>
+<p>macOS users can install Elixir using Homebrew by running: <code>brew install elixir</code>.</p>
 </div>
-<input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><label for="__tabbed_2_3">Others</label><div class="tabbed-content">
+<input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><label for="__tabbed_2_3">Windows 10</label><div class="tabbed-content">
+<p>Windows 10 users not using WSL can install Elixir using Chocolatey by running: <code>choco install elixir</code>.</p>
+</div>
+<input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><label for="__tabbed_2_4">Others</label><div class="tabbed-content">
 <p>Refer to the Elixir Lang <a href="https://elixir-lang.org/install.html">guide</a> for installing Elixir on other operating systems. </p>
 </div>
 </div>
@@ -543,7 +580,7 @@ We already installed the Erlang ecosystem, and need only install the Elixir lang
 </div>
 <h2 id="installing-python">Installing Python</h2>
 <p>We also make use of Python 3, that can be installed as explained below.</p>
-<div class="tabbed-set" data-tabs="3:3"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Ubuntu/Debian</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Ubuntu/Debian</label><div class="tabbed-content">
 <p>Most distributions of Ubuntu and Debian come with Python pre-installed.
 Check the version of Python available on your operating system by executing <code>python --version</code>.</p>
 <p>If the reported version is older than <code>3.7.x</code> or Python is not installed, follow these steps.</p>
@@ -565,9 +602,13 @@ Check the version of Python available on your operating system by executing <cod
 <input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><label for="__tabbed_3_2">macOS</label><div class="tabbed-content">
 <p>macOS comes pre-installed with Python 2.7, which is not the version we use in this tutorial.</p>
 <p>Install Python 3 via Homebrew by typing: <code>brew install python3</code>.
-The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 is automatically installed by the recent versions of Homebrew.</p>
+The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 is bundled in the recent versions of Python.</p>
 </div>
-<input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><label for="__tabbed_3_3">Others</label><div class="tabbed-content">
+<input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><label for="__tabbed_3_3">Windows 10</label><div class="tabbed-content">
+<p>Windows 10 users not using WSL can install Python 3 via Chocolatey by typing: <code>choco install python</code>.
+The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 is bundled in the recent versions of Python.</p>
+</div>
+<input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><label for="__tabbed_3_4">Others</label><div class="tabbed-content">
 <p>Refer to the Real Python <a href="https://realpython.com/installing-python">guide</a> for installing Python 3 on other operating systems. </p>
 </div>
 </div>
@@ -583,7 +624,7 @@ Virtualenv can be installed via <abbr title="PIP Installs Packages">PIP</abbr>: 
 <h2 id="configuring-visual-studio-code">Configuring Visual Studio Code</h2>
 <p>Any plain text editor can be used, but for this tutorial we opt for Visual Studio Code that can be downloaded from <a href="https://code.visualstudio.com">https://code.visualstudio.com</a>.
 It can also be installed using the respective operating system package manager.</p>
-<div class="tabbed-set" data-tabs="4:3"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Ubuntu/Debian</label><div class="tabbed-content">
+<div class="tabbed-set" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Ubuntu/Debian</label><div class="tabbed-content">
 <p>On Ubuntu and Debian, VS Code can be installed using <abbr title="Advanced Packaging Tool">APT</abbr>.</p>
 <ol>
 <li>
@@ -610,7 +651,10 @@ It can also be installed using the respective operating system package manager.<
 <input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><label for="__tabbed_4_2">macOS</label><div class="tabbed-content">
 <p>macOS users can install VS Code using Homebrew by running: <code>brew install --cask visual-studio-code</code>.</p>
 </div>
-<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Others</label><div class="tabbed-content">
+<input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Windows 10</label><div class="tabbed-content">
+<p>Windows 10 users not using WSL can install VS Code using Chocolatey by running: <code>choco install vscode</code>.</p>
+</div>
+<input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><label for="__tabbed_4_4">Others</label><div class="tabbed-content">
 <p>Refer to the Visual Studio Code <a href="https://code.visualstudio.com/download">guide</a> for installing it on other operating systems. </p>
 </div>
 </div>
@@ -630,9 +674,7 @@ It can also be installed using the respective operating system package manager.<
 <p><abbr title="Safety Hennessy-Milner Logic">sHML</abbr> syntax highlighting?</p>
 </li>
 </ul>
-<div class="admonition info">
-<p class="admonition-title">Versions</p>
-<p>These distribution versions are used in this tutorial.
+<details class="info"><summary>Versions</summary><p>These distribution versions are used in this tutorial.
 Your installed versions need not exactly match, but we document these in case of any problems you might face when working through the tutorial later on.</p>
 <table>
 <thead>
@@ -664,10 +706,7 @@ Your installed versions need not exactly match, but we document these in case of
 </tr>
 </tbody>
 </table>
-</div>
-<hr />
-<h3 id="configuring-the-erlang-shell">Configuring the Erlang shell?</h3>
-<p>For the purposes of this tutorial, we shall not use sophisticated code building mechanisms like <code>rebar</code>. Instead, we stick to <code>make</code></p>
+</details>
                 
               
               

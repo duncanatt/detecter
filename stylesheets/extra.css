@@ -43,3 +43,9 @@
     color: #1EBB52;
     -webkit-mask-image: none !important;
 }
+
+.material-icon {
+  position: relative; 
+  top: 2px;
+  margin: 0 -2px;
+}

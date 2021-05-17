@@ -322,22 +322,29 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#testing-the-installation" class="md-nav__link">
-    Testing the installation
+  <a href="#using-detecter-from-the-shell" class="md-nav__link">
+    Using detectEr from the shell
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#testing-the" class="md-nav__link">
-    Testing the
+  <a href="#hello-world" class="md-nav__link">
+    Hello world
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#revisiting-the-erlang-elixir-and-python-installation" class="md-nav__link">
-    Revisiting the Erlang, Elixir and Python installation
+  <a href="#hello-world-the-asynchronous-way" class="md-nav__link">
+    Hello world, the asynchronous way
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#asynchronous-runtime-monitoring" class="md-nav__link">
+    Asynchronous runtime monitoring
   </a>
   
 </li>
@@ -453,14 +460,139 @@
                 
                 <h1 id="quickstart">Quickstart</h1>
 <hr />
-<h2 id="testing-the-installation">Testing the installation</h2>
+<h2 id="using-detecter-from-the-shell">Using detectEr from the shell</h2>
+<p>The <code>detecter/ebin</code> directory created <a href="setting-up-detecter.html">previously</a> needs to be included in the Erlang runtime path to preload all the binaries required to be able to use detectEr.
+This is done by using the <code>-pa</code> switch when launching the Erlang shell.</p>
+<div class="highlight"><pre><span></span><code>erl -pa /path/to/detecter/ebin
+</code></pre></div>
+<p>Once loaded, detectEr can be used to monitor any system that executes on the Erlang Virtual Machine.
+It also supports the monitoring of systems that run outside of the <abbr title="Erlang Virtual Machine">EVM</abbr>, providing these record their logs in files whose every log entry follows a predetermined formatting that enables detectEr to extract runtime information.
+This topic is covered in more depth in the <a href="../using-detecter/instrumentation.html">Instrumentation</a> section.
+For now, we establish the workflow required to use detectEr by way of the traditional hello world example.</p>
+<h2 id="hello-world">Hello world</h2>
+<p>Before using detectEr, you should get an intuitive grasp of what monitoring involves, and the steps one needs to follow to initialise and start the monitoring process.
+This also helps you to get acquainted with the Erlang shell if this is your first time using Erlang.
+Launch a new terminal emulator window (<em>e.g.</em> Terminal Ubuntu or macOS), navigate to the <em>root</em> detectEr directory, and:</p>
+<ol>
+<li>
+<p>Change the directory to <code>examples/erlang</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter$ </span><span class="nb">cd</span> examples/erlang
+<span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>ls -l
+<span class="go">-rw-rw-r-- 1 duncan duncan  996 May 17 17:16 Makefile</span>
+<span class="go">drwxrwxr-x 2 duncan duncan 4096 May 17 17:16 props</span>
+<span class="go">drwxrwxr-x 3 duncan duncan 4096 May 17 17:16 src</span>
+</code></pre></div>
+</li>
+<li>
+<p>Execute <code>make</code> to compile all of the Erlang source code modules located in <code>examples/erlang/src</code>. 
+   A new <code>ebin</code> directory containing the compiled <code>*.beam</code> files is created.</p>
+<p><div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>make
+<span class="go">rm -f ebin/*.beam ebin/*.E ebin/*.tmp erl_crash.dump ebin/*.app</span>
+<span class="go">...</span>
+<span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>ls -l
+<span class="go">-rw-rw-r-- 1 duncan duncan  996 May 17 17:16 Makefile</span>
+<span class="go"><mark class="critic">drwxrwxr-x 7 duncan duncan 224 May 17 17:16 ebin</mark></span>
+<span class="go">drwxrwxr-x 2 duncan duncan 4096 May 17 17:16 props</span>
+<span class="go">drwxrwxr-x 3 duncan duncan 4096 May 17 17:16 src</span>
+</code></pre></div>
+3. Launch the Erlang shell <code>erl</code>. 
+   We add the binaries of the <code>ebin</code> directory to the Erlang code path via the <code>-pa</code> flag to load and make them accessible from the shell.</p>
+<p><div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>erl -pa ebin
+<span class="go">Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe] [dtrace]</span>
+<span class="go">Eshell V11.2.1  (abort with ^G)</span>
+<span class="go">1&gt;</span>
+</code></pre></div>
+4. The Erlang shell allows you to type <em>expressions</em> and execute them by pressing <span class="keys"><kbd class="key-enter">Enter</kbd></span>. 
+   Every expression typed on the shell <em>must</em> be terminated with a full-stop.
+   Try invoking the function <code>greet</code> of the <code>hello</code> module.
+   The function greet accepts one argument, the name of the person to greet, specified as a list of characters or directly as a string enclosed within double quotes.</p>
+<p><div class="highlight"><pre><span></span><code><span class="mi">1</span><span class="o">&gt;</span> <span class="nn">hello</span><span class="p">:</span><span class="nf">greet</span><span class="p">(</span><span class="s">&quot;Duncan&quot;</span><span class="p">).</span>
+<span class="nv">Hello</span> <span class="n">there</span><span class="p">,</span> <span class="nv">Duncan</span><span class="o">!</span>
+<span class="n">ok</span>
+<span class="mi">2</span><span class="o">&gt;</span> 
+</code></pre></div>
+5. Quit the Erlang shell by typing <code>q().</code>   </p>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Function signatures</p>
+<p>In Erlang (and Elixir), functions are uniquely identified via the triple <code class="highlight"><span class="nn">mod</span><span class="p">:</span><span class="k">fun</span><span class="o">/</span><span class="n">arity</span></code>, where <code class="highlight"><span class="n">mod</span></code> is the <em>module</em> name, <code class="highlight"><span class="k">fun</span></code>, the name of the <em>function</em> contained in the module, and <code class="highlight"><span class="n">arity</span></code>, the number of <em>arguments</em> that the function accepts.
+For example, our <code class="highlight"><span class="n">greet</span></code> function inside the module <code class="highlight"><span class="n">hello</span></code> can be concisely referred to as <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code>.</p>
+</div>
+<h2 id="hello-world-the-asynchronous-way">Hello world, the asynchronous way</h2>
+<p>You might have noticed that <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> pauses the Erlang shell momentarily before the greeting is displayed.
+During this interval, the shell is inoperable and cannot accept user input. 
+Such function calls are called <em>synchronous</em> invocations, since they block the caller until the called function returns, <em>i.e.</em> the body of the called function is executed in its entirety <em>and</em> a value is returned to the caller.
+Examining the body of <code class="highlight"><span class="n">greet</span></code> makes it clear why the Erlang shell stops responding when the function call is effected.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">greet</span><span class="p">(</span><span class="nv">Name</span><span class="p">)</span> <span class="o">-&gt;</span>
+<span class="hll">  <span class="nn">timer</span><span class="p">:</span><span class="nf">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">),</span> <span class="c">% Pause for 5 seconds to simulate some work..</span>
+</span>  <span class="nn">io</span><span class="p">:</span><span class="nf">format</span><span class="p">(</span><span class="s">&quot;Hello there, </span><span class="si">~s</span><span class="s">!</span><span class="si">~n</span><span class="s">&quot;</span><span class="p">,</span> <span class="p">[</span><span class="nv">Name</span><span class="p">]).</span>
+</code></pre></div>
+</td></tr></table>
+<p>Line <code>1</code> defines the function <code class="highlight"><span class="n">greet</span></code> that accepts <code class="highlight"><span class="nv">Name</span></code> as parameter, while line <code>3</code> prints the greeting on the Erlang shell via call to <code class="highlight"><span class="nn">io</span><span class="p">:</span><span class="n">format</span><span class="o">/</span><span class="mi">2</span></code>.
+The call <code class="highlight"><span class="nn">timer</span><span class="p">:</span><span class="nf">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span></code> on line <code>2</code> pauses the caller process (<em>i.e.</em> the Erlang shell, in this case) to wait for <code class="highlight"><span class="mi">5000</span></code> ms before executing the rest of the function body.
+In Erlang, the function return value is the result of the last expression in the function, in this instance, the atom ok returned by <code class="highlight"><span class="nn">io</span><span class="p">:</span><span class="n">format</span><span class="o">/</span><span class="mi">2</span></code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Synchronous calls</p>
+<p>Synchronous function calls are useful when one needs to ensure that certain processes execute in some prescribed order with respect to one another, <em>e.g.</em> in lock step.
+This mode of interaction is common to many standard communication protocols such as <abbr title="Hypertext Transfer Protocol">HTTP</abbr>, <abbr title="Simple Mail Transfer Protocol">SMTP</abbr>, <abbr title="Domain Name System">DNS</abbr>, <em>etc.</em></p>
+</div>
+<p>Unwanted synchrony can be easily avoided by launching functions to execute as <em>independent</em> processes that run <em>concurrently</em> with other processes in the system.
+To this end, Erlang provides the Built-in Functions <code class="highlight"><span class="nb">spawn</span><span class="o">/</span><span class="p">{</span><span class="mi">1</span><span class="o">-</span><span class="mi">4</span><span class="p">}</span></code> and their variations.
+Our hello world example is slightly tweaked to <em>spawn</em> <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> as a separate process that executes concurrently with the Erlang shell process.
+The function <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">start_greet</span><span class="o">/</span><span class="mi">1</span></code> implements this modification.
+It uses the <abbr title="Built-in Function">BIF</abbr> <code class="highlight"><span class="nb">spawn</span><span class="o">/</span><span class="mi">3</span></code> (line <code>2</code>) to launch the <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> function as a new process, returning the ID of the new process.
+The Process ID (also called the <abbr title="Process ID">PID</abbr>) is a triple that uniquely identifies an Erlang process executing on the <abbr title="Erlang Virtual Machine">EVM</abbr>.
+Function <code class="highlight"><span class="n">start_greet</span></code> makes use of the predefined macro <code class="highlight"><span class="o">?</span><span class="nv">MODULE</span></code>, that gets replaced with the name of the module it appears in when the source code of the <code class="highlight"><span class="n">hello</span></code> module is <em>preprocessed</em> by the Erlang compiler. 
+Concretely, the invocation to <code>spawn/3</code> on line <code>5</code> yields the source code <code class="highlight"><span class="nb">spawn</span><span class="p">(</span><span class="n">hello</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="nv">Name</span><span class="p">])</span></code> prior to compilation.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4</span>
+<span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">start_greet</span><span class="p">(</span><span class="nv">Name</span><span class="p">)</span> <span class="k">when</span> <span class="nb">is_list</span><span class="p">(</span><span class="nv">Name</span><span class="p">)</span> <span class="o">-&gt;</span> 
+<span class="hll">  <span class="nb">spawn</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="nv">Name</span><span class="p">]).</span>
+</span></code></pre></div>
+</td></tr></table>
+<p>Restart the Erlang shell and invoke <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">start_greet</span><span class="o">/</span><span class="mi">1</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="mi">1</span><span class="o">&gt;</span> <span class="nn">hello</span><span class="p">:</span><span class="nf">start_greet</span><span class="p">(</span><span class="s">&quot;Duncan&quot;</span><span class="p">).</span>
+<span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span>
+<span class="nv">Hello</span> <span class="n">there</span><span class="p">,</span> <span class="nv">Duncan</span><span class="o">!</span> <span class="c">% Shown after a slight pause.</span>
+<span class="mi">2</span><span class="o">&gt;</span> 
+</code></pre></div>
+<p>Observe that now:</p>
+<ol>
+<li>
+<p>The return value of <code class="highlight"><span class="n">start_greet</span></code> is the <abbr title="Process ID">PID</abbr> <code>&lt;0.84.0&gt;</code>, not the atom <code class="highlight"><span class="n">ok</span></code>;</p>
+</li>
+<li>
+<p>The Erlang shell does not block but returns immediately;</p>
+</li>
+<li>
+<p>After the predefined sleep time elapses, the greeting is printed to the shell.</p>
+</li>
+</ol>
+<h2 id="asynchronous-runtime-monitoring">Asynchronous runtime monitoring</h2>
+<p>In this quickstart demo, we monitor the execution of our asynchronous hello world example.</p>
+<h1 id="2-start-shell-erl-pa-ebin-pa-detecterebin">2. Start shell: erl -pa ebin -pa ../../detecter/ebin</h1>
+<h1 id="3-compile-analyzer-hml_evalcompilepropshello_prophml-outdirebin-v">3. Compile analyzer: hml_eval:compile("props/hello_prop.hml", [{outdir,"ebin"}, v]).</h1>
+<h1 id="4-hello_propmfa_spechello-greet-duncan">4. hello_prop:mfa_spec({hello, greet, ["Duncan"]}).</h1>
+<h1 id="4-monitorstart_onlinehellostart_greet-duncan-fun-hello_propmfa_spec1">4. monitor:start_online({hello,start_greet, ["Duncan"]}, fun hello_prop:mfa_spec/1, []).</h1>
+<p>Follow these steps to test the first</p>
+<p>The instructions also </p>
+<p>For now, you can follow these instructions; we elaborate further on what each step entails and the different options detectEr provides when it comes to monitoring.</p>
+<p>Consider the very simple system consisting of a process that forks a second process which prints <code>Hello,</code></p>
+<p>involves, and what steps one needs to execute to start the monitoring process.</p>
+<p>Before using detecter</p>
+<p>You can familiarise yourself with the detecter</p>
+<p>There are a number of steps involved </p>
+<p>Navigate to the </p>
+<p>detecter/examples directory </p>
 <p>Using the Erlang shell</p>
+<p>Using the Elixir shell</p>
+<p>Using the Python shell</p>
+<p>DetectER The outer make file.</p>
+<p>Compiling the simple system of Erlang</p>
 <p>Compiling a simple monitor</p>
 <p>Instrumenting it and we see some verdict.</p>
-<h2 id="testing-the">Testing the</h2>
-<h2 id="revisiting-the-erlang-elixir-and-python-installation">Revisiting the Erlang, Elixir and Python installation</h2>
-<h1 id="confirming-the-installation-and-using-the-shells-for-erlang-elixir-and-python">Confirming the installation and using the shells for Erlang, Elixir and Python.</h1>
-<h1 id="very-small-property-or-a-ping-pong-server">Very small property or a ping pong server.</h1>
                 
               
               

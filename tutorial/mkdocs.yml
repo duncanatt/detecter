@@ -7,8 +7,10 @@ copyright: Copyright &copy; 2019 - 2021 Duncan Paul Attard
 
 markdown_extensions:
   - def_list # Definition lists.
+  - attr_list # Attribute lists.
   - abbr # Abbreviation definitions and hover help tooltip.
   - admonition # Admonitions.
+  - pymdownx.snippets # Insert content from other files.
   - pymdownx.superfences # Nestable code and content blocks inside admonitions.
   - pymdownx.highlight # Block code syntax highlighting.
   - pymdownx.inlinehilite # Inline code syntax highlighting.
@@ -16,6 +18,7 @@ markdown_extensions:
   - pymdownx.keys # Icon keyboard keys.
   - pymdownx.details # Collapsible admonitions.
   - pymdownx.tabbed # Tabs.
+  - pymdownx.critic # Track changes.
   - pymdownx.caret # Superscripts.
   - pymdownx.tilde # Subscripts.
   - pymdownx.mark # Highlighting.
@@ -24,13 +27,20 @@ markdown_extensions:
       smart_enable: all
   - pymdownx.arithmatex: # MathJax
       generic: true
-
+  - pymdownx.emoji: # Icons
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.tasklist:
+      custom_checkbox: true
   - toc:
       permalink: false
 
 extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6 # Polyfills.
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js # Add MathJax
+
+extra_css:
+  - stylesheets/extra.css
 
 plugins:
   - search
@@ -92,9 +102,9 @@ theme:
 nav:
   - Home: index.md
   - Getting Started:
-    - Perparation: getting-started/preparation.md # Installing Erlang and configuring the system and python.
-    - Setting Up detectEr: getting-started/setting-up-detecter.md  # Cloning from Github
-    - Hello World: getting-started/hello-world.md # Very small property or a ping pong server..
+    - Perparation: getting-started/preparation.md
+    - Setting up detectEr: getting-started/setting-up-detecter.md  # Cloning from Github
+    - Quickstart: getting-started/quickstart.md
   - Using detectEr:
     - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.
     - The Example Systems: using-detecter/the-example-system.md

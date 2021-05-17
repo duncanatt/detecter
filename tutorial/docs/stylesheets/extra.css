@@ -1,0 +1,51 @@
+/*.task-list-item {*/
+/*    list-style-type: none !important;*/
+/*    !*color: red !important;*!*/
+/*}*/
+
+/*.task-list-item input[type="checkbox"] {*/
+/*    margin: 0 4px 0.25em -20px;*/
+/*    vertical-align: middle;*/
+/*    color: red !important;*/
+/*    content: "d" !important;*/
+/*}*/
+
+/*task-list-control {*/
+/*    display: inline; !* Ensure label is inline incase theme sets it to block.*!*/
+/*}*/
+
+/*.task-list-control {*/
+/*    !*position: relative;*!*/
+/*    !*display: inline-block;*!*/
+/*    color: red;*/
+/*    cursor: pointer;*/
+/*    content: "";*/
+/*}*/
+
+/*.task-list-control .task-list-indicator:before {*/
+/*    display: block;*/
+/*    margin-top: -4px;*/
+/*    margin-left: 2px;*/
+/*    font-size: 16px;*/
+/*    line-height: 1;*/
+/*    content: "→" !important;*/
+/*    color: red !important;*/
+/*    !*-webkit-mask-image: none !important;*!*/
+/*}*/
+
+.markdown-body .task-list-control input[type="checkbox"]:checked + .task-list-indicator:before {
+    display: block;
+    margin-top: -4px;
+    margin-left: 2px;
+    font-size: 16px;
+    line-height: 1;
+    content: "g";
+    color: #1EBB52;
+    -webkit-mask-image: none !important;
+}
+
+.material-icon {
+  position: relative; 
+  top: 2px;
+  margin: 0 -2px;
+}

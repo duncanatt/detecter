@@ -266,7 +266,7 @@
   
     <li class="md-nav__item">
       <a href="preparation.html" class="md-nav__link">
-        Perparation
+        Preparation
       </a>
     </li>
   
@@ -391,7 +391,7 @@
   
     <li class="md-nav__item">
       <a href="../using-detecter/the-example-system.md" class="md-nav__link">
-        The Example Systems
+        A Client-Server System
       </a>
     </li>
   
@@ -402,8 +402,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../properties.md" class="md-nav__link">
-        Properties
+      <a href="../using-detecter/system-properties.html" class="md-nav__link">
+        System Properties
       </a>
     </li>
   
@@ -414,7 +414,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../instrumentation.md" class="md-nav__link">
+      <a href="../using-detecter/instrumentation.html" class="md-nav__link">
         Instrumentation
       </a>
     </li>
@@ -494,7 +494,7 @@ mv detecter-master detecter
 </tr>
 <tr>
 <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<code>Makefile</code></td>
-<td align="left">Makefile with targets for compiling detectEr</td>
+<td align="left">Makefile with targets for compiling and testing detectEr</td>
 </tr>
 <tr>
 <td align="left">&nbsp;&nbsp;&nbsp;&nbsp;<span class="twemoji material-icon"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58 13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg></span><code>examples</code></td>
@@ -566,7 +566,7 @@ mv detecter-master detecter
 <p>Install make: <code>sudo apt install make</code>.</p>
 </li>
 </ol>
-<p>Alternatively, you may choose to install the full <code>build-essential</code> which includes <code>make</code>. </p>
+<p>Alternatively, you may choose to install the full <code>build-essential</code> package which includes <code>make</code>. </p>
 </div>
 <input id="__tabbed_1_2" name="__tabbed_1" type="radio" /><label for="__tabbed_1_2">macOS</label><div class="tabbed-content">
 <p>macOS users need to download and install the Apple Developer Command Line Tools which includes <code>make</code>.</p>
@@ -581,7 +581,7 @@ mv detecter-master detecter
 <p>You can also install GNU <code>make</code> using Homebrew by typing: <code>brew install make</code>.</p>
 </div>
 <input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Windows 10</label><div class="tabbed-content">
-<p>Windows 10 users not using WSL can install GNU <code>make</code> via Chocolatey by running: <code>choco install make</code>.</p>
+<p>Windows 10 users not using <abbr title="Windows Subsystem for Linux">WSL</abbr> can install GNU <code>make</code> via Chocolatey by running: <code>choco install make</code>.</p>
 </div>
 </div>
 <p>detectEr and its accompanying code examples comes bundled with the necessary makefiles to facilitate their use. To compile detectEr, navigate to the <em>root</em> <code>detecter</code> project directory.</p>
@@ -593,7 +593,8 @@ mv detecter-master detecter
 <p>Execute <code>make</code>.</p>
 </li>
 </ol>
-<p>A new <code>ebin</code> directory is created, containing the compiled Erlang source modules in <code>*.beam</code> representation. The <code>detecter</code> directory now looks as follows:</p>
+<p>A new <code>ebin</code> directory is created, containing the compiled Erlang source modules as <code>*.beam</code> executables. 
+The <code>detecter</code> directory now looks as follows:</p>
 <table>
 <thead>
 <tr>
@@ -663,7 +664,7 @@ mv detecter-master detecter
               <span class="md-footer__direction">
                 Previous
               </span>
-              Perparation
+              Preparation
             </div>
           </div>
         </a>

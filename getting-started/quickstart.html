@@ -266,7 +266,7 @@
   
     <li class="md-nav__item">
       <a href="preparation.html" class="md-nav__link">
-        Perparation
+        Preparation
       </a>
     </li>
   
@@ -322,8 +322,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#using-detecter-from-the-shell" class="md-nav__link">
-    Using detectEr from the shell
+  <a href="#launching-detecter-from-the-shell" class="md-nav__link">
+    Launching detectEr from the shell
   </a>
   
 </li>
@@ -405,7 +405,7 @@
   
     <li class="md-nav__item">
       <a href="../using-detecter/the-example-system.md" class="md-nav__link">
-        The Example Systems
+        A Client-Server System
       </a>
     </li>
   
@@ -416,8 +416,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../properties.md" class="md-nav__link">
-        Properties
+      <a href="../using-detecter/system-properties.html" class="md-nav__link">
+        System Properties
       </a>
     </li>
   
@@ -428,7 +428,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../instrumentation.md" class="md-nav__link">
+      <a href="../using-detecter/instrumentation.html" class="md-nav__link">
         Instrumentation
       </a>
     </li>
@@ -460,19 +460,19 @@
                 
                 <h1 id="quickstart">Quickstart</h1>
 <hr />
-<h2 id="using-detecter-from-the-shell">Using detectEr from the shell</h2>
+<h2 id="launching-detecter-from-the-shell">Launching detectEr from the shell</h2>
 <p>The <code>detecter/ebin</code> directory created <a href="setting-up-detecter.html#compiling-detecter">previously</a> needs to be included in the Erlang runtime path to preload all the binaries required to be able to use detectEr.
 This is done by using the <code>-pa</code> switch when launching the Erlang shell.</p>
-<div class="highlight"><pre><span></span><code>erl -pa /path/to/detecter/ebin
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:$ </span>erl -pa /path/to/detecter/ebin
 </code></pre></div>
-<p>Once loaded, detectEr can be used to monitor any system that executes on the Erlang Virtual Machine.
-It also supports the monitoring of systems that run outside of the <abbr title="Erlang Virtual Machine">EVM</abbr>, providing these record their logs in files whose every log entry follows a predetermined formatting that enables detectEr to extract runtime information.
+<p>Once loaded, detectEr can be used to monitor systems that execute on the Erlang Virtual Machine.
+It also supports the monitoring of systems that run outside of the <abbr title="Erlang Virtual Machine">EVM</abbr>, provided that these record their logs in files following a predetermined formatting that enables detectEr to extract runtime information.
 This topic is covered in more depth in the <a href="../using-detecter/instrumentation.html">Instrumentation</a> section.
-For now, we establish the workflow required to use detectEr by way of the traditional hello world example.</p>
+For now, we establish the workflow required to use detectEr by way of the traditional &lsquo;hello world&rsquo; example.</p>
 <h2 id="hello-world">Hello world</h2>
-<p>Before using detectEr, you should get an intuitive grasp of what monitoring involves, and the steps one needs to follow to initialise and start the monitoring process.
-This also helps you to get acquainted with the Erlang shell if this is your first time using Erlang.
-Launch a new terminal emulator window (<em>e.g.</em> Terminal on Ubuntu or macOS), navigate to the <em>root</em> detectEr directory, and:</p>
+<p>Before using detectEr, you should get an intuitive grasp of what monitoring is, and the steps one needs to follow to initialise and start the monitoring process.
+If this is your first time using Erlang, the following wil help you get acquainted with the Erlang shell.</p>
+<p>Launch a new terminal emulator window (<em>e.g.</em> Terminal on Ubuntu or macOS), navigate to the <em>root</em> detectEr directory, and:</p>
 <ol>
 <li>
 <p>Change the directory to <code>examples/erlang</code>.</p>
@@ -485,14 +485,15 @@ Launch a new terminal emulator window (<em>e.g.</em> Terminal on Ubuntu or macOS
 </li>
 <li>
 <p>Execute <code>make</code> to compile all of the Erlang source code modules located in <code>examples/erlang/src</code>. 
-   A new <code>ebin</code> directory containing the compiled <code>*.beam</code> files is created.</p>
+   A new <code>ebin</code> directory containing the compiled <code>*.beam</code> files is created.
+   <abbr title="Bogdan's Erlang Abstract Machine">BEAM</abbr> files are (fairly) portable binaries consisting of <em>bytecode</em> that is interpreted by the <abbr title="Erlang Virtual Machine">EVM</abbr>, similar to how Java operates.</p>
 <p><div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>make
 <span class="go">rm -f ebin/*.beam ebin/*.E ebin/*.tmp erl_crash.dump ebin/*.app</span>
 <span class="go">...</span>
 <span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>ls -l
 <span class="go">-rw-rw-r-- 1 duncan duncan  996 May 17 17:16 Makefile</span>
-<span class="go"><mark class="critic">drwxrwxr-x 7 duncan duncan 224 May 17 17:16 ebin</mark></span>
-<span class="go">drwxrwxr-x 2 duncan duncan 4096 May 17 17:16 props</span>
+<span class="hll"><span class="go">drwxrwxr-x 7 duncan duncan 224 May 17 17:16 ebin</span>
+</span><span class="go">drwxrwxr-x 2 duncan duncan 4096 May 17 17:16 props</span>
 <span class="go">drwxrwxr-x 3 duncan duncan 4096 May 17 17:16 src</span>
 </code></pre></div>
 3. Launch the Erlang shell <code>erl</code>. 
@@ -517,13 +518,14 @@ Launch a new terminal emulator window (<em>e.g.</em> Terminal on Ubuntu or macOS
 <div class="admonition note">
 <p class="admonition-title">Function signatures</p>
 <p>In Erlang (and Elixir), functions are uniquely identified via the triple <code class="highlight"><span class="nn">mod</span><span class="p">:</span><span class="k">fun</span><span class="o">/</span><span class="n">arity</span></code>, where <code class="highlight"><span class="n">mod</span></code> is the <em>module</em> name, <code class="highlight"><span class="k">fun</span></code>, the name of the <em>function</em> contained in the module, and <code class="highlight"><span class="n">arity</span></code>, the number of <em>arguments</em> that the function accepts.
+This reference format is commonly known as <abbr title="Module, Function, Arity">MFA</abbr>.
 For example, our <code class="highlight"><span class="n">greet</span></code> function inside the module <code class="highlight"><span class="n">hello</span></code> can be concisely referred to as <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code>.</p>
 </div>
 <h2 id="hello-world-the-asynchronous-way">Hello world, the asynchronous way</h2>
 <p>You might have noticed that <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> pauses the Erlang shell momentarily before the greeting is displayed.
 During this interval, the shell is inoperable and cannot accept user input. 
 Such function calls are called <em>synchronous</em> invocations, since they block the caller until the called function returns, <em>i.e.</em> the body of the called function is executed in its <em>entirety</em> and a value is returned to the caller.
-Examining the body of <code class="highlight"><span class="n">greet</span></code> (below) makes it clear why the Erlang shell stops responding when the function call is effected.</p>
+Examining the body of <code class="highlight"><span class="n">greet</span></code> below makes it clear why the Erlang shell stops responding when the function call is effected.</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
 <span class="normal">2</span>
 <span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">greet</span><span class="p">(</span><span class="nv">Name</span><span class="p">)</span> <span class="o">-&gt;</span>
@@ -533,7 +535,7 @@ Examining the body of <code class="highlight"><span class="n">greet</span></code
 </td></tr></table>
 <p>Line <code>1</code> defines the function <code class="highlight"><span class="n">greet</span></code> that accepts <code class="highlight"><span class="nv">Name</span></code> as parameter, while line <code>3</code> prints the greeting on the Erlang shell via call to <code class="highlight"><span class="nn">io</span><span class="p">:</span><span class="n">format</span><span class="o">/</span><span class="mi">2</span></code>.
 The call <code class="highlight"><span class="nn">timer</span><span class="p">:</span><span class="nf">sleep</span><span class="p">(</span><span class="mi">5000</span><span class="p">)</span></code> on line <code>2</code> pauses the caller process (<em>i.e.</em> the Erlang shell, in this case) for <code class="highlight"><span class="mi">5000</span></code> ms before executing the rest of the function body.
-In Erlang, the function return value is the result of the <em>last expression</em> in the function body for the case of <code class="highlight"><span class="n">greet</span></code>, this value is the <em>atom</em> <code class="highlight"><span class="n">ok</span></code> that is returned by <code class="highlight"><span class="nn">io</span><span class="p">:</span><span class="n">format</span><span class="o">/</span><span class="mi">2</span></code>.</p>
+In Erlang, the function return value is the result of the <em>last expression</em> in the function body; for the case of <code class="highlight"><span class="n">greet</span></code>, this value is the <em>atom</em> <code class="highlight"><span class="n">ok</span></code> that is returned by <code class="highlight"><span class="nn">io</span><span class="p">:</span><span class="n">format</span><span class="o">/</span><span class="mi">2</span></code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Synchronous calls</p>
 <p>Synchronous function calls are useful when one needs to ensure that certain processes execute in some prescribed order with respect to one another, <em>e.g.</em> in lock step.
@@ -541,17 +543,17 @@ This mode of interaction is common to many standard communication protocols such
 </div>
 <p>Unwanted synchrony can be easily avoided by launching functions to execute as <em>independent</em> processes that run <em>concurrently</em> with other processes in the system.
 To this end, Erlang provides the Built-in Functions <code class="highlight"><span class="nb">spawn</span><span class="o">/</span><span class="p">{</span><span class="mi">1</span><span class="o">-</span><span class="mi">4</span><span class="p">}</span></code>, and their variations.
-We slightly tweak our hello world example to <em>spawn</em> <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> as a separate process that executes concurrently with the Erlang shell process.
-The function <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">start_greet</span><span class="o">/</span><span class="mi">1</span></code> implements this modification.
-It uses the <abbr title="Built-in Function">BIF</abbr> <code class="highlight"><span class="nb">spawn</span><span class="o">/</span><span class="mi">3</span></code> (line <code>2</code>) to launch the <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> function as a process, returning its process ID.
-The Process ID (also called the <abbr title="Process ID">PID</abbr>) is a triple that uniquely identifies an Erlang process executing on the <abbr title="Erlang Virtual Machine">EVM</abbr>.
-Function <code class="highlight"><span class="n">start_greet</span></code> makes use of the predefined macro <code class="highlight"><span class="o">?</span><span class="nv">MODULE</span></code>, that gets replaced with the name of the module it appears in when the source code of the <code class="highlight"><span class="n">hello</span></code> module is <em>preprocessed</em> by the Erlang compiler. 
-Concretely, the invocation to <code>spawn/3</code> on line <code>5</code> yields the source code <code class="highlight"><span class="nb">spawn</span><span class="p">(</span><span class="n">hello</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="nv">Name</span><span class="p">])</span></code> prior to compilation.</p>
+We slightly tweak our hello world example to <em>spawn</em> <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> as a separate process that executes concurrently with the Erlang shell process.</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">4</span>
 <span class="normal">5</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">start_greet</span><span class="p">(</span><span class="nv">Name</span><span class="p">)</span> <span class="k">when</span> <span class="nb">is_list</span><span class="p">(</span><span class="nv">Name</span><span class="p">)</span> <span class="o">-&gt;</span> 
 <span class="hll">  <span class="nb">spawn</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="nv">Name</span><span class="p">]).</span>
 </span></code></pre></div>
 </td></tr></table>
+<p>The function <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">start_greet</span><span class="o">/</span><span class="mi">1</span></code> implements this modification.
+It uses the <abbr title="Built-in Function">BIF</abbr> <code class="highlight"><span class="nb">spawn</span><span class="o">/</span><span class="mi">3</span></code> (line <code>2</code>) to launch the <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> function as a process, returning its process ID.
+The Process ID (also called the <abbr title="Process ID">PID</abbr>) is a triple that uniquely identifies an Erlang process executing on the <abbr title="Erlang Virtual Machine">EVM</abbr>.
+Function <code class="highlight"><span class="n">start_greet</span></code> makes use of the predefined macro <code class="highlight"><span class="o">?</span><span class="nv">MODULE</span></code>, that gets replaced with the name of the module it appears in when the source code of the <code class="highlight"><span class="n">hello</span></code> module is <em>preprocessed</em> by the Erlang compiler. 
+Concretely, the invocation to <code>spawn/3</code> on line <code>5</code> yields the source code <code class="highlight"><span class="nb">spawn</span><span class="p">(</span><span class="n">hello</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="nv">Name</span><span class="p">])</span></code> prior to compilation.</p>
 <p>Restart the Erlang shell and invoke <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">start_greet</span><span class="o">/</span><span class="mi">1</span></code>.</p>
 <div class="highlight"><pre><span></span><code><span class="mi">1</span><span class="o">&gt;</span> <span class="nn">hello</span><span class="p">:</span><span class="nf">start_greet</span><span class="p">(</span><span class="s">&quot;Duncan&quot;</span><span class="p">).</span>
 <span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span>
@@ -561,46 +563,46 @@ Concretely, the invocation to <code>spawn/3</code> on line <code>5</code> yields
 <p>Observe that now:</p>
 <ol>
 <li>
-<p>The return value of <code class="highlight"><span class="n">start_greet</span></code> is the <abbr title="Process ID">PID</abbr> <code>&lt;0.84.0&gt;</code>, not the atom <code class="highlight"><span class="n">ok</span></code>;</p>
+<p>The return value of <code class="highlight"><span class="n">start_greet</span></code> is the <abbr title="Process ID">PID</abbr> <code>&lt;0.84.0&gt;</code> instead of the atom <code class="highlight"><span class="n">ok</span></code>;</p>
 </li>
 <li>
-<p>The Erlang shell does not block but returns immediately;</p>
+<p>The Erlang shell does not block, but returns immediately;</p>
 </li>
 <li>
 <p>After the predefined sleep time elapses, the greeting is printed to the shell.</p>
 </li>
 </ol>
 <h2 id="outline-runtime-monitoring">Outline runtime monitoring</h2>
-<p>In this quickstart demo, we monitor the execution of our asynchronous hello world example using the <a href="using-detecter/instrumentation.md#outline">outline</a> form of instrumentation. </p>
+<p>In this quickstart demo, we monitor the execution of our asynchronous hello world example using the <a href="../using-detecter/instrumentation.html#outline-instrumentation">outline</a> form of instrumentation. </p>
 <!-- Outline monitoring is operates asynchronously as well, and is described at length in XXX. -->
 
 <ol>
 <li>
 <p>Launch the shell as previous, adding the hello world binaries in <code>ebin</code> to the Erlang code path.
-   The <mark class="critic">detectEr binaries</mark> compiled <a href="setting-up-detecter.html#compiling-detecter">earlier</a> are also included.</p>
-<div class="highlight"><pre><span></span><code>[duncan@local]:/detecter/examples/erlang$ erl -pa ebin <mark class="critic">../../detecter/ebin</mark>
-Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe] [dtrace]
-Eshell V11.2.1  (abort with ^G)
-1&gt;
+   The detectEr binaries compiled <a href="setting-up-detecter.html#compiling-detecter">earlier</a> are also included.</p>
+<div class="highlight"><pre><span></span><code><span class="hll"><span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>erl -pa ebin ../../detecter/ebin
+</span><span class="go">Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe] [dtrace]</span>
+<span class="go">Eshell V11.2.1  (abort with ^G)</span>
+<span class="go">1&gt;</span>
 </code></pre></div>
 </li>
 <li>
 <p>Compile the sample <code>hello_prop.hml</code> property script to generate the corresponding analyser binary.</p>
 <div class="highlight"><pre><span></span><code><span class="mi">1</span><span class="o">&gt;</span> <span class="nn">hml_eval</span><span class="p">:</span><span class="nf">compile</span><span class="p">(</span><span class="s">&quot;props/hello_prop.hml&quot;</span><span class="p">,</span> <span class="p">[{</span><span class="n">outdir</span><span class="p">,</span><span class="s">&quot;ebin&quot;</span><span class="p">},</span> <span class="n">v</span><span class="p">]).</span>
 </code></pre></div>
-<p>This procedure, known as the <em>synthesis</em>, translates <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications written in <code>*.hml</code>  script files to their analyser equivalents.
-For now, it suffices to know that <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>--the logic used by detectEr--expresses properties of the system one wishes to runtime verify.
-We focus on synthesising the analyser from <code>props/hello_prop.hml</code>; expressing properties in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> is treated at length in <a href="../using-detecter/the-specification-logic">The Specification Logic</a> and <a href="../using-detecter/system-properties">Properties</a>.  <br />
-The analyser Erlang binary generated from our sample property is placed in <code>/detecter/examples/erlang/ebin</code> and automatically loaded for use in the shell code path.</p>
+<p>This compilation procedure, known as the <em>synthesis</em>, translates <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications written in <code>*.hml</code>  script files to their analyser equivalents.
+For now, it suffices to know that <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;the <em>logic</em> used by detectEr&mdash;expresses properties of the system one wishes to runtime verify.
+Our analyser Erlang binary generated from the sample property is placed in <code>/detecter/examples/erlang/ebin</code> and automatically loaded for use in the shell code path.</p>
 <div class="highlight"><pre><span></span><code><span class="mi">2</span><span class="o">&gt;</span> <span class="n">ls</span><span class="p">(</span><span class="s">&quot;ebin&quot;</span><span class="p">).</span>                                                   
 <span class="n">hello</span><span class="p">.</span><span class="n">beam</span>                  
-<span class="n">hello_prop</span><span class="p">.</span><span class="n">beam</span>
-<span class="p">...</span>
+<span class="hll"><span class="n">hello_prop</span><span class="p">.</span><span class="n">beam</span>
+</span><span class="p">...</span>
 </code></pre></div>
-<p>The synthesised analyser <code class="highlight"><span class="n">hello_prop</span></code> exposes a single function, <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code>, that accepts the <abbr title="Module, Function, Arguments">MFArgs</abbr> tuple <code class="highlight"><span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}</span></code> designating the Erlang process to be analysed.
+<!-- We focus on synthesising the analyser from <code>props/hello_prop.hml</code>; expressing properties in sHML is treated at length in <a href="../using-detecter/the-specification-logic">The Specification Logic</a> and <a href="../using-detecter/system-properties">Properties</a> sections.     -->
+<p>The analyser <code class="highlight"><span class="n">hello_prop</span></code> exposes a single function, <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code>, that accepts the <abbr title="Module, Function, Arguments">MFArgs</abbr> triple <code class="highlight"><span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}</span></code> designating the Erlang process to be analysed.
 Specifically, <code class="highlight"><span class="nv">Mod</span></code>, <code class="highlight"><span class="nv">Fun</span></code> and <code class="highlight"><span class="nv">Args</span></code> are the components of the function passed as arguments to <code class="highlight"><span class="nb">spawn</span><span class="o">/</span><span class="mi">3</span></code>.
 For our hello world example, <code class="highlight"><span class="nv">Mod</span></code> is the atom <code class="highlight"><span class="n">hello</span></code>, <code class="highlight"><span class="nv">Fun</span></code> is the function name <code class="highlight"><span class="n">greet</span></code>, and <code class="highlight"><span class="nv">Args</span></code>, the singleton argument list containing the name of the person to be greeted.
-You can test <code class="highlight"><span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> function by providing the triple <code class="highlight"><span class="p">{</span><span class="n">hello</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]}</span></code>.</p>
+You can test <code class="highlight"><span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> analyser function by providing the triple <code class="highlight"><span class="p">{</span><span class="n">hello</span><span class="p">,</span> <span class="n">greet</span><span class="p">,</span> <span class="p">[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]}</span></code>.</p>
 <div class="highlight"><pre><span></span><code><span class="mi">3</span><span class="o">&gt;</span> <span class="nn">hello_prop</span><span class="p">:</span><span class="nf">mfa_spec</span><span class="p">({</span><span class="n">hello</span><span class="p">,</span><span class="n">greet</span><span class="p">,[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]}).</span>
 <span class="o">***</span> <span class="p">[</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">]</span> <span class="nv">Instrumenting</span> <span class="nb">monitor</span> <span class="n">for</span> <span class="nv">MFA</span> <span class="n">pattern</span> <span class="n">&#39;{hello,greet,[&quot;Duncan&quot;]}&#39;</span><span class="p">.</span>
 <span class="o">***</span> <span class="p">[</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">]</span> <span class="nv">Reached</span> <span class="n">verdict</span> <span class="n">&#39;no&#39;</span><span class="p">.</span>
@@ -608,14 +610,16 @@ You can test <code class="highlight"><span class="nn">hello_prop</span><span cla
 </li>
 <li>
 <p>Launch the monitored system.</p>
-<div class="highlight"><pre><span></span><code><span class="mi">4</span><span class="o">&gt;</span> <span class="nb">monitor</span><span class="p">:</span><span class="nf">start_online</span><span class="p">({</span><span class="n">hello</span><span class="p">,</span><span class="n">start_greet</span><span class="p">,[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]},</span> <span class="k">fun</span> <span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[]).</span>
+<div class="annotate highlight"><pre><span></span><code><span class="mi">4</span><span class="o">&gt;</span> <span class="nb">monitor</span><span class="p">:</span><span class="nf">start_online</span><span class="p">({</span><span class="n">hello</span><span class="p">,</span><span class="n">start_greet</span><span class="p">,[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]},</span> <span class="k">fun</span> <span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[]).</span> <span class="c">% <ins class="critic">(1)</ins></span>
 </code></pre></div>
-<p>The function <code class="highlight"><span class="nb">monitor</span><span class="p">:</span><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code> accepts three arguments: a <abbr title="Module, Function, Arguments">MFArgs</abbr> tuple describing the function that is to be spawned as an Erlang process, the analyser function, and a list of <a href="">options</a>.
-Setting <abbr title="Module, Function, Arguments">MFArgs</abbr> to <code class="highlight"><span class="p">{</span><span class="n">hello</span><span class="p">,</span><span class="n">start_greet</span><span class="p">,[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]}</span></code> and the analyser to <code class="highlight"><span class="k">fun</span> <span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> launches the hello world system and analyser process to execute concurrently.</p>
+<p>The function <code class="highlight"><span class="nb">monitor</span><span class="p">:</span><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code> accepts three arguments: a <abbr title="Module, Function, Arguments">MFArgs</abbr> describing the function that is to be spawned as an Erlang process, the analyser function, and a list of <a href="../using-detecter/instrumentation.html#online-instrumentation">options</a>.
+Setting <abbr title="Module, Function, Arguments">MFArgs</abbr> to <code class="highlight"><span class="p">{</span><span class="n">hello</span><span class="p">,</span><span class="n">start_greet</span><span class="p">,[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]}</span></code> and the analyser to <code class="highlight"><span class="k">fun</span> <span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> launches the hello world and analyser processes to execute concurrently.</p>
 </li>
 </ol>
-<p>In the simple case of <code class="highlight"><span class="nn">hello_prop</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code>, our monitor terminates promptly with the verdict <code class="verdict-no">no</code> to inform us that the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specification in <code>hello_prop.hml</code> is violated. 
-We next learn how <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> is used to express more useful properties that <em>precisely and unambiguously</em> describe the behaviour we want our systems to comply with.</p>
+<p>In the simple instance of the analyser <code class="highlight"><span class="n">hello_prop</span></code>, monitoring terminates promptly with the verdict <code class="verdict-no">no</code> as soon as the system starts executing.
+This <code class="verdict-no">no</code> verdict informs us that our hello world program violated the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specification in <code>hello_prop.hml</code>.
+We next learn how <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> can be used to express useful properties that <em>precisely and unambiguously</em> describe the behaviour we want our systems <em>not to</em> infringe.</p>
+<!-- --8<-- "includes/footer.md" -->
                 
               
               

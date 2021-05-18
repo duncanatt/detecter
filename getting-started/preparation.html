@@ -16,7 +16,7 @@
     
     
       
-        <title>Perparation - detectEr Tutorial</title>
+        <title>Preparation - detectEr Tutorial</title>
       
     
     
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Perparation
+              Preparation
             
           </span>
         </div>
@@ -275,12 +275,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          Perparation
+          Preparation
           <span class="md-nav__icon md-icon"></span>
         </label>
       
       <a href="preparation.html" class="md-nav__link md-nav__link--active">
-        Perparation
+        Preparation
       </a>
       
         
@@ -438,7 +438,7 @@
   
     <li class="md-nav__item">
       <a href="../using-detecter/the-example-system.md" class="md-nav__link">
-        The Example Systems
+        A Client-Server System
       </a>
     </li>
   
@@ -449,8 +449,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../properties.md" class="md-nav__link">
-        Properties
+      <a href="../using-detecter/system-properties.html" class="md-nav__link">
+        System Properties
       </a>
     </li>
   
@@ -461,7 +461,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../instrumentation.md" class="md-nav__link">
+      <a href="../using-detecter/instrumentation.html" class="md-nav__link">
         Instrumentation
       </a>
     </li>
@@ -497,7 +497,7 @@
 <p>This tutorial assumes that users are running Ubuntu/Debian, macOS or Windows 10.
 Windows 10 users may either install the <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">Windows Subsystem for Linux</a> and follow the instructions given below for <em>Ubuntu/Debian</em>, or alternatively, configure <a href="https://chocolatey.org">Chocolatey</a> and install the software packages mentioned via <code>choco install</code>.
 However, our instructions will not detail how detectEr is installed and used on Windows systems.</p>
-<p>Please install the software package management system available your particular operating system before proceeding with the rest of the guide.</p>
+<p>Please install the software package management system available for your particular operating system before proceeding with the rest of the guide.</p>
 <table>
 <thead>
 <tr>
@@ -548,7 +548,7 @@ sudo dpkg -i erlang-solutions_2.0_all.deb
 <p>macOS users can install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite using Homebrew by running: <code>brew install erlang</code>.</p>
 </div>
 <input id="__tabbed_1_3" name="__tabbed_1" type="radio" /><label for="__tabbed_1_3">Windows 10</label><div class="tabbed-content">
-<p>Windows 10 users not using WSL can install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite using Chocolatey by running: <code>choco install erlang</code>.</p>
+<p>Windows 10 users not using <abbr title="Windows Subsystem for Linux">WSL</abbr> can install the entire Erlang/<abbr title="Open Telecom Platform">OTP</abbr> suite using Chocolatey by running: <code>choco install erlang</code>.</p>
 </div>
 <input id="__tabbed_1_4" name="__tabbed_1" type="radio" /><label for="__tabbed_1_4">Others</label><div class="tabbed-content">
 <p>Refer to the Erlang Solutions <a href="https://www.erlang-solutions.com/downloads">guide</a> for installing Erlang/<abbr title="Open Telecom Platform">OTP</abbr> on other operating systems.</p>
@@ -568,7 +568,7 @@ We already installed the Erlang ecosystem, and need only install the Elixir lang
 <p>macOS users can install Elixir using Homebrew by running: <code>brew install elixir</code>.</p>
 </div>
 <input id="__tabbed_2_3" name="__tabbed_2" type="radio" /><label for="__tabbed_2_3">Windows 10</label><div class="tabbed-content">
-<p>Windows 10 users not using WSL can install Elixir using Chocolatey by running: <code>choco install elixir</code>.</p>
+<p>Windows 10 users not using <abbr title="Windows Subsystem for Linux">WSL</abbr> can install Elixir using Chocolatey by running: <code>choco install elixir</code>.</p>
 </div>
 <input id="__tabbed_2_4" name="__tabbed_2" type="radio" /><label for="__tabbed_2_4">Others</label><div class="tabbed-content">
 <p>Refer to the Elixir Lang <a href="https://elixir-lang.org/install.html">guide</a> for installing Elixir on other operating systems. </p>
@@ -595,7 +595,7 @@ Check the version of Python available on your operating system by executing <cod
 <p>Install the Python package manager <abbr title="PIP Installs Packages">PIP</abbr>: <code>sudo apt install python3-pip</code>.</p>
 </li>
 <li>
-<p>Install also the core development support tools: <code>sudo apt install -y build-essential libssl-dev libffi-dev python3-dev</code>.</p>
+<p>Also install the core development support tools: <code>sudo apt install -y build-essential libssl-dev libffi-dev python3-dev</code>.</p>
 </li>
 </ol>
 </div>
@@ -605,7 +605,7 @@ Check the version of Python available on your operating system by executing <cod
 The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 is bundled in the recent versions of Python.</p>
 </div>
 <input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><label for="__tabbed_3_3">Windows 10</label><div class="tabbed-content">
-<p>Windows 10 users not using WSL can install Python 3 via Chocolatey by typing: <code>choco install python</code>.
+<p>Windows 10 users not using <abbr title="Windows Subsystem for Linux">WSL</abbr> can install Python 3 via Chocolatey by typing: <code>choco install python</code>.
 The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 is bundled in the recent versions of Python.</p>
 </div>
 <input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><label for="__tabbed_3_4">Others</label><div class="tabbed-content">
@@ -652,7 +652,7 @@ It can also be installed using the respective operating system package manager.<
 <p>macOS users can install VS Code using Homebrew by running: <code>brew install --cask visual-studio-code</code>.</p>
 </div>
 <input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><label for="__tabbed_4_3">Windows 10</label><div class="tabbed-content">
-<p>Windows 10 users not using WSL can install VS Code using Chocolatey by running: <code>choco install vscode</code>.</p>
+<p>Windows 10 users not using <abbr title="Windows Subsystem for Linux">WSL</abbr> can install VS Code using Chocolatey by running: <code>choco install vscode</code>.</p>
 </div>
 <input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><label for="__tabbed_4_4">Others</label><div class="tabbed-content">
 <p>Refer to the Visual Studio Code <a href="https://code.visualstudio.com/download">guide</a> for installing it on other operating systems. </p>

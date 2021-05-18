@@ -58,3 +58,25 @@
   color: var(--md-typeset-color) !important;
   cursor: default !important;
 }
+
+@keyframes heart {
+  0%, 40%, 80%, 100% {
+    transform: scale(1);
+  }
+  20%, 60% {
+    transform: scale(1.15);
+  }
+}
+.heart {
+  animation: heart 1000ms infinite;
+  color: var(--md-code-hl-number-color);
+}
+
+.center {
+  text-align: center;
+}
+
+p.footer {
+  text-align: center;
+  color: var(--md-code-hl-number-color);
+}

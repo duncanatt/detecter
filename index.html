@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#detecter-tutorial" class="md-skip">
+        <a href="#welcome-to-the-detecter-tutorial" class="md-skip">
           Skip to content
         </a>
       
@@ -236,9 +236,60 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="index.html" class="md-nav__link md-nav__link--active">
         Home
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-detecter" class="md-nav__link">
+    What is detectEr?
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#publications" class="md-nav__link">
+    Publications
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#our-group" class="md-nav__link">
+    Our group
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#help-us" class="md-nav__link">
+    Help us
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -274,7 +325,7 @@
   
     <li class="md-nav__item">
       <a href="getting-started/preparation.html" class="md-nav__link">
-        Perparation
+        Preparation
       </a>
     </li>
   
@@ -352,7 +403,7 @@
   
     <li class="md-nav__item">
       <a href="using-detecter/the-example-system.md" class="md-nav__link">
-        The Example Systems
+        A Client-Server System
       </a>
     </li>
   
@@ -363,8 +414,8 @@
   
   
     <li class="md-nav__item">
-      <a href="properties.md" class="md-nav__link">
-        Properties
+      <a href="using-detecter/system-properties.html" class="md-nav__link">
+        System Properties
       </a>
     </li>
   
@@ -375,7 +426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="instrumentation.md" class="md-nav__link">
+      <a href="using-detecter/instrumentation.html" class="md-nav__link">
         Instrumentation
       </a>
     </li>
@@ -405,23 +456,38 @@
                   </a>
                 
                 
-                <h1 id="detecter-tutorial">detectEr Tutorial</h1>
+                <h1 id="welcome-to-the-detecter-tutorial">Welcome to the detectEr tutorial!</h1>
+<hr />
 <p><img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/duncanatt/detecter/Build?logo=GitHub&amp;logoColor=white" />
 <img alt="GitHub last commit" src="https://img.shields.io/github/last-commit/duncanatt/detecter" />
 <img alt="GitHub" src="https://img.shields.io/badge/version-0.9-yellow" />
 <img alt="GitHub" src="https://img.shields.io/github/license/duncanatt/detecter" /></p>
-<p><img alt="GitHub issues" src="https://img.shields.io/github/issues/duncanatt/detecter" />
-<img alt="GitHub closed issues" src="https://img.shields.io/github/issues-closed/duncanatt/detecter" /></p>
-<h1 id="welcome-to-the-detecter-tutorial">Welcome to the detectEr tutorial!</h1>
+<!-- ![GitHub issues](https://img.shields.io/github/issues/duncanatt/detecter) -->
+<!-- ![GitHub closed issues](https://img.shields.io/github/issues-closed/duncanatt/detecter) -->
+
 <h2 id="what-is-detecter">What is detectEr?</h2>
 <p>detectEr is a runtime verification tool for asynchronous component systems.</p>
-<p>Detecter outline</p>
+<p>It is the product of five years of theoretical and practical development.</p>
+<!-- We introduce DetectEr, a runtime verification tool developed over the last 5 years with the aim of monitoring concurrent systems written for the Erlang ecosystem. DetectEr supports three types of monitoring methods: inline, outline, and offline monitoring. In inline monitoring, the tool statically instruments the system under scrutiny by weaving the monitoring instructions via code injection. The ensuing runtime analysis is performed as the weaved system components execute. Outline monitoring allows DetectEr to take a dynamic approach that treats the system as a black box. It leverages the tracing infrastructure provided by the Erlang Virtual Machine to gather trace events that are analysed by independent component monitors. DetectEr also extends outline monitoring to the offline case, where events read from a trace dump are replayed to emulate the interaction between concurrent system components. In this tutorial, we discuss the inline, outline, and offline monitoring functionality of the tool, demonstrating how each can be employed to monitor systems that are subject to specific deployment and runtime constraints.  -->
+
 <h2 id="publications">Publications</h2>
 <p>List of publications.</p>
-<h2 id="our-team">Our team</h2>
-<p>The team.</p>
+<h2 id="our-group">Our group</h2>
+<p>Our research group, ICE-TCS, resides at Reykjavík University, and consists of these members who actively contribute towards the theoretical and practical developments of detectEr:</p>
+<ul>
+<li><a href="http://www.ru.is/faculty/luca">Luca Aceto</a></li>
+<li><a href="https://sites.google.com/view/antonisachilleos/home">Antonis Achilleos</a></li>
+<li><a href="http://duncanatt.github.io">Duncan Paul Attard</a></li>
+<li><a href="http://staff.um.edu.mt/afra1">Adrian Francalanza</a></li>
+<li><a href="http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen">Karoliina Lehtinen</a></li>
+<li><a href="http://www.ru.is/kennarar/annai">Anna Ingólfsdóttir</a></li>
+</ul>
+<p>detectEr is part of the <a href="http://icetcs.ru.is/theofomon">TheoFoMon</a> and <a href="https://sites.google.com/view/antonisachilleos/movemnt">MoVeMnt</a> projects funded by the <a href="https://en.rannis.is">Icelandic Research Fund</a>.
+Duncan Paul Attard&mdash;the principal developer of the detectEr&mdash;has worked as a software developer in the Telecoms and Online payment industry for seven years prior to joining the academia.</p>
 <h2 id="help-us">Help us</h2>
-<p>Typos and bugs.</p>
+<p>Please help us improve this tutorial and the tool detectEr!
+We would appreciate if any typos or bugs found are reported on the <a href="https://github.com/duncanatt/detecter/issues">issues</a> page on GitHub.</p>
+<p class="center"><span class="twemoji heart"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m12 21.35-1.45-1.32C5.4 15.36 2 12.27 2 8.5 2 5.41 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.08C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.41 22 8.5c0 3.77-3.4 6.86-8.55 11.53L12 21.35z"/></svg></span></p>
                 
               
               
@@ -451,7 +517,7 @@
               <span class="md-footer__direction">
                 Next
               </span>
-              Perparation
+              Preparation
             </div>
           </div>
           <div class="md-footer__button md-icon">

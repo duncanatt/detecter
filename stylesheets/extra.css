@@ -49,3 +49,12 @@
   top: 2px;
   margin: 0 -2px;
 }
+
+.verdict-no {
+  color: var(--md-code-hl-number-color) !important;
+}
+
+.toclink {
+  color: var(--md-typeset-color) !important;
+  cursor: default !important;
+}

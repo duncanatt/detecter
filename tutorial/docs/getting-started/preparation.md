@@ -10,7 +10,7 @@ This tutorial assumes that users are running Ubuntu/Debian, macOS or Windows 10.
 Windows 10 users may either install the [Windows Subsystem for Linux](https://docs.microsoft.com/en-us/windows/wsl/install-win10) and follow the instructions given below for *Ubuntu/Debian*, or alternatively, configure [Chocolatey](https://chocolatey.org) and install the software packages mentioned via `choco install`.
 However, our instructions will not detail how detectEr is installed and used on Windows systems.
 
-Please install the software package management system available your particular operating system before proceeding with the rest of the guide.
+Please install the software package management system available for your particular operating system before proceeding with the rest of the guide.
 
 | Operating System | Package Manager | Installation |
 | :--------------: | :-------------: | :----------- |
@@ -100,7 +100,7 @@ We also make use of Python 3, that can be installed as explained below.
 
     3. Install the Python package manager PIP: `sudo apt install python3-pip`.
 
-    4. Install also the core development support tools: `sudo apt install -y build-essential libssl-dev libffi-dev python3-dev`.
+    4. Also install the core development support tools: `sudo apt install -y build-essential libssl-dev libffi-dev python3-dev`.
 
 === "macOS"
 

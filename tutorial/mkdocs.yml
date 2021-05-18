@@ -10,6 +10,7 @@ markdown_extensions:
   - attr_list # Attribute lists.
   - abbr # Abbreviation definitions and hover help tooltip.
   - admonition # Admonitions.
+  - smarty # Smarty pants.
   - pymdownx.snippets # Insert content from other files.
   - pymdownx.superfences # Nestable code and content blocks inside admonitions.
   - pymdownx.highlight # Block code syntax highlighting.
@@ -34,6 +35,10 @@ markdown_extensions:
       custom_checkbox: true
   - toc:
       permalink: false
+      # baselevel: 3
+      # anchorlink: true
+      # anchorlink_class: section-header 
+      # toc_depth: 3
 
 extra_javascript:
   - https://polyfill.io/v3/polyfill.min.js?features=es6 # Polyfills.
@@ -44,7 +49,8 @@ extra_css:
 
 plugins:
   - search
-  - macros
+  - macros:
+      include_dir: includes
 
 extra:
   generator: true
@@ -102,11 +108,11 @@ theme:
 nav:
   - Home: index.md
   - Getting Started:
-    - Perparation: getting-started/preparation.md
-    - Setting up detectEr: getting-started/setting-up-detecter.md  # Cloning from Github
+    - Preparation: getting-started/preparation.md
+    - Setting up detectEr: getting-started/setting-up-detecter.md 
     - Quickstart: getting-started/quickstart.md
   - Using detectEr:
     - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.
-    - The Example Systems: using-detecter/the-example-system.md
-    - Properties: properties.md # The properties in the paper.
-    - Instrumentation: instrumentation.md # Synthesis Inline outline and offline. on one system.
+    - A Client-Server System: using-detecter/the-example-system.md
+    - System Properties: using-detecter/system-properties.md # The properties in the paper.
+    - Instrumentation: using-detecter/instrumentation.md # Synthesis Inline outline and offline. on one system.

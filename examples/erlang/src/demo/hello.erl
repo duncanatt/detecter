@@ -43,4 +43,5 @@ start_greet(Name) when is_list(Name) ->
 %%% ----------------------------------------------------------------------------
 
 greet(Name) ->
+  timer:sleep(5000),
   io:format("Hello there, ~s!~n", [Name]).

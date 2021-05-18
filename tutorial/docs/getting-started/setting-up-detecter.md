@@ -33,7 +33,7 @@ Both of these actions should result in the creation of the directory `detecter` 
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`src`                                             | Erlang module sources                                          |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`test`                                            | Unit tests                                                     |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`include`                                         | Supporting macros                                              |
-| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`Makefile`                                        | Makefile with targets for compiling detectEr                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`Makefile`                                        | Makefile with targets for compiling and testing detectEr       |
 | &nbsp;&nbsp;&nbsp;&nbsp;:material-chevron-right:{.material-icon}`examples`                        | *Tutorial examples*                                            |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;:material-chevron-right:{.material-icon}`erlang`  | *Calculator server implementation in Erlang*                   |
 | &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;`src`                     | Erlang module sources                                          |
@@ -61,7 +61,7 @@ For this tutorial, we do not use sophisticated code building mechanisms such as 
 
     2. Install make: `sudo apt install make`.
 
-    Alternatively, you may choose to install the full `build-essential` which includes `make`. 
+    Alternatively, you may choose to install the full `build-essential` package which includes `make`. 
 
 === "macOS"
 
@@ -83,7 +83,8 @@ detectEr and its accompanying code examples comes bundled with the necessary mak
 
 2. Execute `make`.
 
-A new `ebin` directory is created, containing the compiled Erlang source modules in `*.beam` representation. The `detecter` directory now looks as follows:
+A new `ebin` directory is created, containing the compiled Erlang source modules as `*.beam` executables. 
+The `detecter` directory now looks as follows:
 
 | Directory name                     | Description                                                   |
 | :---------                         | :------------------------------------------------------------ |
@@ -92,6 +93,6 @@ A new `ebin` directory is created, containing the compiled Erlang source modules
 | &nbsp;&nbsp;&nbsp;&nbsp;`src`      | Erlang module sources                                         |
 | &nbsp;&nbsp;&nbsp;&nbsp;`test`     | Unit tests                                                    |
 | &nbsp;&nbsp;&nbsp;&nbsp;`include`  | Supporting macros                                             |
-| &nbsp;&nbsp;&nbsp;&nbsp;`ebin`     | ==Compiled detectEr files==                                   |
+| &nbsp;&nbsp;&nbsp;&nbsp;`ebin`     | {==Compiled detectEr files==}                                 |
 | &nbsp;&nbsp;&nbsp;&nbsp;`Makefile` | Makefile with targets for compiling and testing detectEr      |
 

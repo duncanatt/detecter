@@ -1,6 +1,9 @@
 # The Specification Logic
 
 
+Start by saying the the contents of the hello_world prop are simple ff that cannot be satisfied by any ssytem.
+
+
 * Discuss the four constructs of the logic.
 
 * EG: Simple necessities.

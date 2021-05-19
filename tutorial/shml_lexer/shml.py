@@ -20,7 +20,7 @@ this program. If not, see <https://www.gnu.org/licenses/>.
 import re
 
 from pygments.lexer import RegexLexer, bygroups, words, include
-from pygments.token import Text, Comment, Operator, Keyword, Name, String, \
+from pygments.token import Generic, Text, Comment, Operator, Keyword, Name, String, \
     Number, Punctuation
 
 __all__ = ['ShmlLexer']
@@ -40,7 +40,11 @@ class ShmlLexer(RegexLexer):
 
     keywords = (
         'with', 'when', 'monitor',  # Meta operators.
-        'ff', 'tt', 'max'  # sHML keywords.
+        'max', 'and'  # sHML keywords.
+    )
+
+    special_variables = (
+      'sHML', 'Act', 'P', 'C'
     )
 
     builtins = (
@@ -74,6 +78,10 @@ class ShmlLexer(RegexLexer):
 
     tokens = {
         'root': [
+            (words(special_variables, suffix=r'\b'), Name.Function),
+            (r'ff', Number.Integer),
+            (r'tt', String.Char),
+            (r'\(\d+\)', Comment), # Bubble numbering.
             (r'\s+', Text),
             (r'%.*\n', Comment),
             (words(keywords, suffix=r'\b'), Keyword),

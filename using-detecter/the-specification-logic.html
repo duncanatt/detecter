@@ -12,7 +12,7 @@
       
       
       <link rel="icon" href="../assets/images/favicon.png">
-      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.3">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.5">
     
     
       
@@ -20,7 +20,7 @@
       
     
     
-      <link rel="stylesheet" href="../assets/stylesheets/main.e35208c4.min.css">
+      <link rel="stylesheet" href="../assets/stylesheets/main.bde7dde4.min.css">
       
         
         <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
@@ -329,6 +329,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="a-client-server-system.html" class="md-nav__link">
+        A Client-Server System
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -340,22 +352,61 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          The Specification Logic
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="the-specification-logic.html" class="md-nav__link md-nav__link--active">
         The Specification Logic
       </a>
       
-    </li>
-  
-
-          
-            
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
   
   
   
-    <li class="md-nav__item">
-      <a href="the-example-system.md" class="md-nav__link">
-        A Client-Server System
-      </a>
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#constraint-expressions" class="md-nav__link">
+    Constraint expressions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#suppressing-program-actions" class="md-nav__link">
+    Suppressing program actions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#shml-script-files" class="md-nav__link">
+    sHML script files
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -367,6 +418,18 @@
     <li class="md-nav__item">
       <a href="system-properties.html" class="md-nav__link">
         System Properties
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="the-example-system.md" class="md-nav__link">
+        A Client-Server System in other languages
       </a>
     </li>
   
@@ -408,7 +471,463 @@
                 
                 
                 <h1 id="the-specification-logic">The Specification Logic</h1>
-<p>Start by saying the the contents of the hello_world prop are simple ff that cannot be satisfied by any ssytem.</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>For the sake of simplicity, the script <code>hello_prop.hml</code> used in our hello world example specifies a <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property that every system necessarily violates, namely, the formula <code class="highlight"><span class="mi">ff</span></code> that denotes falsity.
+We now look at the full <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> grammar that enables us to express more interesting and useful properties <em>about programs</em>.
+Specifications in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> (also called formulae) are interpreted over the <em>states</em> of transition models of programs we wish to analyse.
+<abbr title="Safety Hennessy-Milner Logic">sHML</abbr> is a syntactic subset of the more expressive Hennessy-Milner Logic with recursion, and is used to specify <em>safety properties</em>, <em>i.e.</em>, properties stating that &ldquo;something bad never happens&rdquo;.
+<abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formulae are generated from the following grammar:</p>
+<div class="annotate highlight"><pre><span></span><code><span class="nf">sHML</span> <span class="p">::</span><span class="o">=</span>  <span class="mi">ff</span>  <span class="p">|</span>  <span class="sc">tt</span>   <span class="c">(1)</span> 
+       <span class="p">|</span>  <span class="nv">X</span>   <span class="c">(2)</span>
+       <span class="p">|</span>  <span class="k">max</span><span class="p">(</span><span class="nv">X</span><span class="p">.</span> <span class="nf">sHML</span><span class="p">)</span>   <span class="c">(3)</span> 
+       <span class="p">|</span>  <span class="k">and</span><span class="p">([</span><span class="nf">Act</span><span class="p">]</span><span class="nf">sHML</span><span class="p">,</span> <span class="p">...,</span> <span class="p">[</span><span class="nf">Act</span><span class="p">]</span><span class="nf">sHML</span><span class="p">)</span>   <span class="c">(4)</span>
+</code></pre></div>
+<ol>
+<li>
+<p>Formula <code class="highlight"><span class="mi">ff</span></code> and <code class="highlight"><span class="sc">tt</span></code> denote <em>falsity</em> and <em>truth</em> respectively,</p>
+</li>
+<li>
+<p><code class="highlight"><span class="nv">X</span></code> is a <em>logical variable</em>,</p>
+</li>
+<li>
+<p>The <em>maximal fix-point</em> construct specifies <em>recursion</em> via the logical variable <code class="highlight"><span class="nv">X</span></code> and <em>binds</em> the free occurrences of <code class="highlight"><span class="nv">X</span></code> in the sub-formula <code class="highlight"><span class="nf">sHML</span></code>, and,</p>
+</li>
+<li>
+<p><code class="highlight"><span class="k">and</span><span class="p">(...)</span></code> is a sequence of comma-separated <em>conjunctions</em> where each conjunct is a sub-formula <code class="highlight"><span class="nf">sHML</span></code> <em>guarded</em> by the universal modal operator <code class="highlight"><span class="p">[</span><span class="nf">Act</span><span class="p">]</span></code> (also called a <em>necessity</em>).</p>
+</li>
+</ol>
+<p>To handle reasoning over <a href="trace-events">trace event</a> data, the modal operator is equipped with <em>symbolic actions</em> <code class="highlight"><span class="nf">Act</span></code> of the form <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code>, where <code class="highlight"><span class="nf">P</span></code> is an <em>event pattern</em> and <code class="highlight"><span class="nf">C</span></code>, a <em>decidable Boolean constraint</em>.
+Patterns correspond to trace events that the program under analysis exhibits. 
+These patterns contain <em>data variables</em> that are instantiated with values learnt at runtime from <em>matched</em> events.
+Pattern variables <em>bind</em> the free variables in constraints <code class="highlight"><span class="nf">C</span></code>, and this binding scope <em>extends</em> to the continuation formula <code class="highlight"><span class="nf">sHML</span></code>.
+Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the &lsquo;don&rsquo;t care&rsquo; pattern <code>_</code> matches any data value.
+We say that a program (or a program state) satisfies the formula <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">sHML</span></code> <em>whenever</em> it exhibits an event that matches pattern <code class="highlight"><span class="nf">P</span></code>, fulfils the constraint <code class="highlight"><span class="nf">C</span></code>, <em>and</em> the ensuing program behaviour then satisfies <code class="highlight"><span class="nf">sHML</span></code>. 
+When the constraint is <code class="highlight"><span class="n">true</span></code>, the expression <code class="highlight"><span class="k">when</span> <span class="nf">C</span></code> may be omitted for readability.</p>
+<p>detectEr supports five event patterns describing the lifecycle of processes.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Program event</th>
+<th align="center">Event pattern</th>
+<th align="center">Pattern variables</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code>fork</code></td>
+<td align="center">P<sub>1</sub> <strong>&rarr;</strong> P<sub>2</sub>, M:F(Args)</td>
+<td align="center">P<sub>1</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>1</sub> of the parent process spawning P<sub>2</sub></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">P<sub>2</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>2</sub> of the child process spawned by P<sub>1</sub></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">Mod:Fun(Args)</td>
+<td align="left">Function signature consisting of the module, function and arguments</td>
+</tr>
+<tr>
+<td align="center"><code>init</code></td>
+<td align="center">P<sub>1</sub> <strong>&larr;</strong> P<sub>2</sub>, M:F(Args)</td>
+<td align="center">P<sub>1</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>1</sub> of the parent process spawning P<sub>2</sub></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">P<sub>2</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>2</sub> of the child process spawned by P<sub>1</sub></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">M:F(Args)</td>
+<td align="left">Function signature consisting of the module, function and arguments</td>
+</tr>
+<tr>
+<td align="center"><code>exit</code></td>
+<td align="center">P<sub>1</sub> <strong>**</strong> Data</td>
+<td align="center">P<sub>1</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>1</sub> of the terminated process</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">Data</td>
+<td align="left">Termination data, <em>e.g.</em> integers, tuples, <em>etc.</em></td>
+</tr>
+<tr>
+<td align="center"><code>send</code></td>
+<td align="center">P<sub>1</sub> <strong>:</strong> P<sub>2</sub> <strong>!</strong> Resp</td>
+<td align="center">P<sub>1</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>1</sub> of the process issuing the request</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">P<sub>2</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>2</sub> of the recipient process</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">Resp</td>
+<td align="left">Response payload consisting of data, <em>e.g.</em> integers, tuples, <em>etc.</em></td>
+</tr>
+<tr>
+<td align="center"><code>recv</code></td>
+<td align="center">P<sub>2</sub> <strong>?</strong> Req</td>
+<td align="center">P<sub>1</sub></td>
+<td align="left"><abbr title="Process ID">PID</abbr> P<sub>2</sub> of the recipient process</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="center"></td>
+<td align="center">Req</td>
+<td align="left">Request payload consisting of data, <em>e.g.</em> integers, tuples, <em>etc.</em></td>
+</tr>
+</tbody>
+</table>
+<h2 id="constraint-expressions">Constraint expressions</h2>
+<p>Constraint definitions on pattern variables used by detectEr correspond to Erlang <a href="https://erlang.org/doc/reference_manual/expressions.html#guard-sequences">guard sequences</a> consisting of <a href="https://erlang.org/doc/reference_manual/expressions.html#guard-sequences">guard expressions</a>.
+The set of valid Erlang guards supported by detectEr are the following:</p>
+<ul>
+<li>Variables.</li>
+<li>Constants (atoms, integer, floats, lists, and tuples).</li>
+<li>Expressions constructing atoms, integer, floats, lists, and tuples.</li>
+<li>
+<p>Invocations to the type test <abbr title="Built-in Function">BIF</abbr> predicates.</p>
+<table>
+<thead>
+<tr>
+<th align="left"><abbr title="Built-in Function">BIF</abbr></th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_atom</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is atom</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_boolean</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is Boolean</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_float</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is floating point number</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_function</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is function</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_function</span><span class="o">/</span><span class="mi">2</span></code></td>
+<td align="left">Is function with N parameters</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_integer</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is integer</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_list</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is list</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_number</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is number</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_pid</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is <abbr title="Process ID">PID</abbr></td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_port</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is port</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_reference</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is reference</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">is_tuple</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Is tuple</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Invocations to the <abbr title="Built-in Functions">BIFs</abbr> allowed in guards.</p>
+<table>
+<thead>
+<tr>
+<th align="left"><abbr title="Built-in Function">BIF</abbr></th>
+<th align="left">Description</th>
+<th align="center">Argument Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">abs</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Absolute</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">element</span><span class="o">/</span><span class="mi">2</span></code></td>
+<td align="left">N<sup>th</sup> tuple element</td>
+<td align="center">Integer, Tuple</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">float</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Floating point number</td>
+<td align="center">Term</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">hd</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">List head</td>
+<td align="center">List</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">length</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">List length</td>
+<td align="center">List</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">node</span><span class="o">/</span><span class="mi">0</span></code></td>
+<td align="left"><abbr title="Erlang Virtual Machine">EVM</abbr> node</td>
+<td align="center">&mdash;</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">node</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left"><abbr title="Erlang Virtual Machine">EVM</abbr> node of expression</td>
+<td align="center">Pid, Ref or Port</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">round</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Round</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="n">self</span><span class="o">/</span><span class="mi">0</span></code></td>
+<td align="left">Calling process <abbr title="Process ID">PID</abbr></td>
+<td align="center">&mdash;</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">size</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Tuple size</td>
+<td align="center">Tuple</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">tl</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">List tail</td>
+<td align="center">List</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">trunc</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Truncate</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="left"><code class="highlight"><span class="nb">tuple_size</span><span class="o">/</span><span class="mi">1</span></code></td>
+<td align="left">Tuple size</td>
+<td align="center">Tuple</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Term comparisons.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Operator</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code class="highlight"><span class="o">==</span></code></td>
+<td align="left">Equal to</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">/=</span></code></td>
+<td align="left">Not equal to</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">=&lt;</span></code></td>
+<td align="left">Less than or equal to</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">&lt;</span></code></td>
+<td align="left">Less than</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">&gt;=</span></code></td>
+<td align="left">Greater than or equal to</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">&gt;</span></code></td>
+<td align="left">Greater than</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">=:=</span></code></td>
+<td align="left">Exactly equal to</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">=/=</span></code></td>
+<td align="left">Exactly not equal to</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Arithmetic expressions.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Operator</th>
+<th align="left">Description</th>
+<th align="center">Argument Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code class="highlight"><span class="o">+</span></code></td>
+<td align="left">Unary addition</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="p">-</span></code></td>
+<td align="left">Unary subtraction</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">+</span></code></td>
+<td align="left">Addition</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="p">-</span></code></td>
+<td align="left">Subtraction</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">*</span></code></td>
+<td align="left">Multiplication</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="o">/</span></code></td>
+<td align="left">Floating point division</td>
+<td align="center">Number</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">bnot</span></code></td>
+<td align="left">Unary bitwise NOT</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">div</span></code></td>
+<td align="left">Integer division</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">rem</span></code></td>
+<td align="left">Integer remainder of X/Y</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">band</span></code></td>
+<td align="left">Bitwise AND</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">bor</span></code></td>
+<td align="left">Bitwise OR</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">bxor</span></code></td>
+<td align="left">Arithmetic bitwise XOR</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">bsl</span></code></td>
+<td align="left">Arithmetic bitshift left</td>
+<td align="center">Integer</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">bsr</span></code></td>
+<td align="left">Bitshift right</td>
+<td align="center">Integer</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Boolean expressions.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Operator</th>
+<th align="center">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">not</span></code></td>
+<td align="center">Unary logical NOT</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">and</span></code></td>
+<td align="center">Logical AND</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">or</span></code></td>
+<td align="center">Logical OR</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="ow">xor</span></code></td>
+<td align="center">Logical XOR</td>
+</tr>
+</tbody>
+</table>
+</li>
+<li>
+<p>Short-circuit expressions <code class="highlight"><span class="ow">andalso</span></code>, <code class="highlight"><span class="ow">orelse</span></code>.</p>
+</li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Data expressions</p>
+<p>Our current detectEr implementation does not handle Erlang (or Elixir) map, record and binary expressions; these will be added in future releases of the tool.
+<!-- When the constraint in a universal modality is <code class="highlight"><span class="n">true</span></code>, it can be omitted. --></p>
+</div>
+<h2 id="suppressing-program-actions">Suppressing program actions</h2>
+<p>Let us try to specify a safety requirement on the behaviour of our <a href="a-client-server-system.html#calculator-program">calculator program</a>.
+The <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula with symbolic action <code>Srv:Clt ! {bye,Tot} when Tot &lt; 0</code> describes the property requiring that &ldquo;the program state does <em>not</em> exhibit the send event whose payload consists of <code class="highlight"><span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span></code> with a negative total.</p>
+<div class="highlight"><pre><span></span><code><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="mi">ff</span>
+</code></pre></div>
+<p>Recall that the universal modality states that for any program event satisfying the symbolic action <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code> in <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">sHML</span></code>, the ensuing program behaviour must then satisfy the continuation formula <code class="highlight"><span class="nf">sHML</span></code>.
+However, <em>no</em> program state can satisfy the continuation <code class="highlight"><span class="mi">ff</span></code>! 
+This means that the formula <code class="highlight"><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="mi">ff</span></code> can only be satisfied when  our calculator program does not exhibit the event described by the symbolic action <code class="highlight"><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code>.</p>
+<p>Note that a universal </p>
+<div class="admonition note">
+<p class="admonition-title">Cheat sheet</p>
+<p>The formula <code class="highlight"><span class="p">[</span><span class="nf">Act</span><span class="p">]</span><span class="mi">ff</span></code> means that the program must not exhibit the symbolic action <code class="highlight"><span class="nf">Act</span></code>.</p>
+</div>
+<p>But no state can satisfy </p>
+<p>Now consider the formula [Act]ff, and suppose that Act is satisfied. </p>
+<p>Since ff </p>
+<p>Consider the formula []ff</p>
+<h2 id="shml-script-files"><abbr title="Safety Hennessy-Milner Logic">sHML</abbr> script files</h2>
+<p>Discuss the script file, how it is formatted and the <code>monitor</code> keyword and the constraint language that uses erlang guards.</p>
 <ul>
 <li>
 <p>Discuss the four constructs of the logic.</p>
@@ -434,7 +953,7 @@
           </div>
         </div>
         
-          <a href="#" class="md-top md-icon" data-md-component="top" data-md-state="hidden">
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
           </a>
         
@@ -445,7 +964,7 @@
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="../getting-started/quickstart.html" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="a-client-server-system.html" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -454,7 +973,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              Quickstart
+              A Client-Server System
             </div>
           </div>
         </a>
@@ -527,10 +1046,10 @@
     <div class="md-dialog" data-md-component="dialog">
       <div class="md-dialog__inner md-typeset"></div>
     </div>
-    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "header.autohide", "navigation.expand", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.fe42c31b.min.js", "version": null}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "header.autohide", "navigation.expand", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
     
     
-      <script src="../assets/javascripts/bundle.4ea5477f.min.js"></script>
+      <script src="../assets/javascripts/bundle.a1609d9a.min.js"></script>
       
         <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
       

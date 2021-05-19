@@ -6,7 +6,9 @@
 *[sHML]: Safety Hennessy-Milner Logic
 *[EVM]: Erlang Virtual Machine
 *[BIF]: Built-in Function
+*[BIFs]: Built-in Functions
 *[PID]: Process ID
+*[PIDs]: Process IDs
 *[HTTP]: Hypertext Transfer Protocol
 *[SMTP]: Simple Mail Transfer Protocol
 *[DNS]: Domain Name System

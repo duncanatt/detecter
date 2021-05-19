@@ -11,6 +11,7 @@ markdown_extensions:
   - abbr # Abbreviation definitions and hover help tooltip.
   - admonition # Admonitions.
   - smarty # Smarty pants.
+  - codehilite
   - pymdownx.snippets # Insert content from other files.
   - pymdownx.superfences # Nestable code and content blocks inside admonitions.
   - pymdownx.highlight # Block code syntax highlighting.
@@ -53,6 +54,7 @@ plugins:
       include_dir: includes
 
 extra:
+  # font: false
   generator: true
   social:
     - icon: fontawesome/solid/user-circle
@@ -112,7 +114,8 @@ nav:
     - Setting up detectEr: getting-started/setting-up-detecter.md 
     - Quickstart: getting-started/quickstart.md
   - Using detectEr:
-    - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.
-    - A Client-Server System: using-detecter/the-example-system.md
+    - A Client-Server System: using-detecter/a-client-server-system.md
+    - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.    
     - System Properties: using-detecter/system-properties.md # The properties in the paper.
+    - A Client-Server System in other languages: using-detecter/the-example-system.md
     - Instrumentation: using-detecter/instrumentation.md # Synthesis Inline outline and offline. on one system.

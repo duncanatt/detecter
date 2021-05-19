@@ -27,14 +27,14 @@ List of publications.
 
 ## Our group
 
-Our research group, ICE-TCS, resides at Reykjavík University, and consists of these members who actively contribute towards the theoretical and practical developments of detectEr:
+<!-- Our research group, ICE-TCS, resides at Reykjavík University, and consists of these members who actively contribute towards the theoretical and practical developments of detectEr:
 
 * [Luca Aceto](http://www.ru.is/faculty/luca)
 * [Antonis Achilleos](https://sites.google.com/view/antonisachilleos/home)
 * [Duncan Paul Attard](http://duncanatt.github.io)
 * [Adrian Francalanza](http://staff.um.edu.mt/afra1)
 * [Karoliina Lehtinen](http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen)
-* [Anna Ingólfsdóttir](http://www.ru.is/kennarar/annai)
+* [Anna Ingólfsdóttir](http://www.ru.is/kennarar/annai) -->
 
 detectEr is part of the [TheoFoMon](http://icetcs.ru.is/theofomon) and [MoVeMnt](https://sites.google.com/view/antonisachilleos/movemnt) projects funded by the [Icelandic Research Fund](https://en.rannis.is).
 Duncan Paul Attard---the principal developer of the detectEr---has worked as a software developer in the Telecoms and Online payment industry for seven years prior to joining the academia.

@@ -10,7 +10,7 @@ The lexer caters for sHML script version 0.9.0.
 
 ## Set up on macOS or Linux
 
-    $ python ./setup.py install 
+    $ python ./setup.py install  # To remove pip uninstall shml_lexer
 
 ## Testing Locally via Command Line
 

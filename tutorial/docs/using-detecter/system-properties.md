@@ -16,3 +16,7 @@
 
 
 
+
+# Inconclusive verdicts
+
+List the possible traces

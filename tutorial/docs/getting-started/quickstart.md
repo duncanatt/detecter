@@ -76,6 +76,7 @@ Launch a new terminal emulator window (*e.g.* Terminal on Ubuntu or macOS), navi
     In Erlang (and Elixir), functions are uniquely identified via the triple `#!erlang mod:fun/arity`, where `#!erlang mod` is the *module* name, `#!erlang fun`, the name of the *function* contained in the module, and `#!erlang arity`, the number of *arguments* that the function accepts.
     This reference format is commonly known as MFA.
     For example, our `#!erlang greet` function inside the module `#!erlang hello` can be concisely referred to as `#!erlang hello:greet/1`.
+    We refer to functions in the same module simply as `#!erlang fun/arity`.
 
 ## Hello world, the asynchronous way
 
@@ -99,7 +100,7 @@ In Erlang, the function return value is the result of the *last expression* in t
     This mode of interaction is common to many standard communication protocols such as HTTP, SMTP, DNS, *etc.*
 
 Unwanted synchrony can be easily avoided by launching functions to execute as *independent* processes that run *concurrently* with other processes in the system.
-To this end, Erlang provides the Built-in Functions `#!erlang spawn/{1-4}`, and their variations.
+To this end, Erlang provides the Built-in Functions `#!erlang spawn/{1-4}`, and their [variations](https://erlang.org/doc/man/erlang.html#spawn_link-1).
 We slightly tweak our hello world example to *spawn* `#!erlang hello:greet/1` as a separate process that executes concurrently with the Erlang shell process.
 
 ```erlang linenums="4" hl_lines="2"
@@ -107,27 +108,25 @@ start_greet(Name) when is_list(Name) ->
   spawn(?MODULE, greet, [Name]).
 ```
 
-The function `#!erlang hello:start_greet/1` implements this modification.
-It uses the BIF `#!erlang spawn/3` (line `2`) to launch the `#!erlang hello:greet/1` function as a process, returning its process ID.
-The Process ID (also called the PID) is a triple that uniquely identifies an Erlang process executing on the EVM.
-Function `#!erlang start_greet` makes use of the predefined macro `#!erlang ?MODULE`, that gets replaced with the name of the module it appears in when the source code of the `#!erlang hello` module is *preprocessed* by the Erlang compiler. 
+The function `#!erlang start_greet/1` implements this modification.
+It uses the BIF `#!erlang spawn/3` (line `5`) to launch `#!erlang hello:greet/1` as a process, returning the new process ID.
+Process IDs (PIDs for short) are triples of the form `#!erlang <A.B.C>` that *uniquely* identify Erlang processes executing on the EVM.
+`#!erlang spawn/3` is parametrised by the *module* name, the name of the *function* to spawn, and the list of *arguments* accepted by the function.
+Function `#!erlang start_greet/1` makes use of the predefined macro `#!erlang ?MODULE`, that gets replaced with the name of the module it appears in when the source code of the `#!erlang hello` module is *preprocessed* by the Erlang compiler. 
 Concretely, the invocation to `spawn/3` on line `5` yields the source code `#!erlang spawn(hello, greet, [Name])` prior to compilation.
-
-
-
 
 Restart the Erlang shell and invoke `#!erlang hello:start_greet/1`.
 
 ```erlang
 1> hello:start_greet("Duncan").
-<0.84.0>
+<0.97.0>
 Hello there, Duncan! % Shown after a slight pause.
 2> 
 ```
 
 Observe that now:
 
-1. The return value of `#!erlang start_greet` is the PID `<0.84.0>` instead of the atom `#!erlang ok`;
+1. The return value of `#!erlang start_greet` is the PID of the spawned process `#!erlang <0.97.0>` instead of the atom `#!erlang ok`;
 
 2. The Erlang shell does not block, but returns immediately;
 

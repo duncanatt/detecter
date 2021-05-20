@@ -40,11 +40,11 @@ class ShmlLexer(RegexLexer):
 
     keywords = (
         'with', 'when', 'monitor',  # Meta operators.
-        'max', 'and'  # sHML keywords.
+        'max', 'and', 'ff', 'tt'  # sHML keywords.
     )
 
     special_variables = (
-      'sHML', 'Act', 'P', 'C'
+      'sHML', 'P', 'C'
     )
 
     builtins = (
@@ -79,8 +79,9 @@ class ShmlLexer(RegexLexer):
     tokens = {
         'root': [
             (words(special_variables, suffix=r'\b'), Name.Function),
-            (r'ff', Number.Integer),
-            (r'tt', String.Char),
+            # (r'ff', Number.Integer),
+            # (r'tt', String.Char),
+            (r'Act', String.Char),
             (r'\(\d+\)', Comment), # Bubble numbering.
             (r'\s+', Text),
             (r'%.*\n', Comment),

@@ -340,46 +340,9 @@
         
       
       
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          A Client-Server System
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
       <a href="a-client-server-system.html" class="md-nav__link md-nav__link--active">
         A Client-Server System
       </a>
-      
-        
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#calculator-program" class="md-nav__link">
-    Calculator program
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#trace-events" class="md-nav__link">
-    Trace events
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
       
     </li>
   
@@ -457,25 +420,77 @@
                 
                 
                 <h1 id="a-client-server-system">A Client-Server System</h1>
+<h1 id="concurrent-programs">Concurrent programs</h1>
 <hr />
-<h2 id="calculator-program">Calculator program</h2>
-<ul>
+<h2 id="calculator-program-in-erlang">Calculator program in Erlang</h2>
+<p>Let us consider an archetypal calculator program consisting of a single server process that handles client requests for arithmetic computation.
+The calculator server blocks and waits for requests sent as <em>asynchronous</em> messages.
+These messages are addressed to the server using its <abbr title="Process ID">PID</abbr>, and deposited in the server mailbox that buffers multiple client requests.
+The calculator server unblocks upon reading a message from its mailbox.
+In our client-server protocol, messages contain the <em>type</em> of operation to be executed on the server side, its <em>arguments</em> (if applicable), and the client <abbr title="Process ID">PID</abbr> to whom the corresponding server reply is addressed.</p>
+<p>Our calculator program is implemented as the Erlang module <code class="highlight"><span class="n">calc_server</span></code> that can be found under <code>examples/erlang/src</code>.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">start</span><span class="p">()</span> <span class="o">-&gt;</span>
+  <span class="nb">spawn</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]).</span>
+
+<span class="nf">loop</span><span class="p">(</span><span class="nv">Tot</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="k">receive</span>
+    <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}}</span> <span class="o">-&gt;</span>
+      <span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span><span class="p">},</span>
+      <span class="n">loop</span><span class="p">(</span><span class="nv">Tot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="p">{</span><span class="n">mul</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}}</span> <span class="o">-&gt;</span>
+      <span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">A</span> <span class="o">*</span> <span class="nv">B</span><span class="p">},</span>
+      <span class="n">loop</span><span class="p">(</span><span class="nv">Tot</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+
+    <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span> <span class="o">-&gt;</span> <span class="c">% Stop service.</span>
+      <span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span>
+  <span class="k">end</span><span class="p">.</span>
+</code></pre></div>
+</td></tr></table>
+<p><code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> encapsulates the calculator server logic that is <a href="../getting-started/quickstart.html#hello-world-the-asynchronous-way">spawned</a> by some other launcher process (<em>e.g.</em> the Erlang shell) that invokes <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span></code>.</p>
+<p>The spawned server consumes one message request from its mailbox via the <code class="highlight"><span class="k">receive</span></code> expression on lines <code>5-16</code>, and pattern matches against the three types of operations requested by clients:</p>
+<ol>
 <li>
-<p>Explain the calculator program in erlang</p>
+<p>Addition (<code class="highlight"><span class="n">add</span></code>) and multiplication (<code class="highlight"><span class="n">mul</span></code>) requests that carry the operands <code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code> (lines <code>6</code> and <code>10</code>), and,</p>
 </li>
 <li>
-<p>how it works</p>
+<p>stop (<code class="highlight"><span class="n">stp</span></code>) requests that carries no arguments (line <code>14</code>).</p>
 </li>
-<li>
-<p>explain the properties we want to hold from the paper</p>
-</li>
-</ul>
-<h2 id="trace-events">Trace events</h2>
+</ol>
+<p>Pattern matching instantiates the variables <code class="highlight"><span class="nv">Clt</span></code>, <code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code> to <em>concrete data</em> in client request messages.
+Every request fulfilled by the server results in a corresponding reply that it sends to the <abbr title="Process ID">PID</abbr> of the client instantiated in variable <code class="highlight"><span class="nv">Clt</span></code>, lines <code>6</code>, <code>10</code>, and <code>14</code>.
+Server replies carry the status <em>tag</em> (an atom) <code class="highlight"><span class="n">ok</span></code> or <code class="highlight"><span class="n">bye</span></code>, and the result of the requested operation.
+The server uses the parameter <code class="highlight"><span class="nv">Tot</span></code> of <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> to track the number of requests serviced, and is returned in reply to a <code class="highlight"><span class="n">stp</span></code> operation.
+After handling <code class="highlight"><span class="n">add</span></code> and <code class="highlight"><span class="n">mul</span></code> requests, the server executes <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> to recommence the process loop and service the next client request, incrementing the request count accordingly (lines <code>8</code> and <code>12</code>); the tail recursive call to <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> is not made for <code class="highlight"><span class="n">stp</span></code> requests, and the calculator server process terminates naturally.</p>
+<p>The logic of <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> induces a server runtime behaviour that can be abstractly described by the transition</p>
+<p>Keywords:
+Transition system, states</p>
+<p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="313px" viewBox="-0.5 -0.5 313 371" style="max-width:100%;max-height:371px;"><defs><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);&#xa;@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style></defs><g><ellipse cx="292" cy="20" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="92" cy="350" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="92" cy="130" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="92" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="292" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><path d="M 92 90 L 92 103.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 92 108.88 L 90.33 103.88 L 93.67 103.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 92 150 L 92 213.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 92 218.88 L 90.33 213.88 L 93.67 213.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 43px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt, stp}</div></div></div></foreignObject><text x="43" y="187" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt, stp}</text></switch></g><path d="M 92 260 L 92 323.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 92 328.88 L 90.33 323.88 L 93.67 323.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 296px; margin-left: 153px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {bye, Tot}</div></div></div></foreignObject><text x="153" y="298" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {bye, Tot}</text></switch></g><path d="M 277.86 34.14 L 117.3 126.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 112.97 129.44 L 116.46 125.5 L 118.13 128.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 277.86 225.86 L 117.3 133.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 112.97 130.56 L 118.13 131.62 L 116.46 134.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 202.68403825214705 88.18116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 203px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A+B}}</div></div></div></foreignObject><text x="203" y="91" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text></switch></g><path d="M 106.14 115.86 L 267.79 22.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 271.03 20.56 L 267.95 25.23 L 267.79 22.44 L 265.45 20.9 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 182.68403825214716 60.181162744111816)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 60px; margin-left: 183px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; "><font color="var(--md-code-hl-string-color)">Srv</font> ? {<font color="var(--md-code-hl-number-color)">Clt</font>,{A,B}}</div></div></div></foreignObject><text x="183" y="63" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g><path d="M 106.14 144.14 L 267.79 237.56" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 271.03 239.44 L 265.45 239.1 L 267.79 237.56 L 267.95 234.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(30 202.18403825214705 170.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 202px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A*B}}</div></div></div></foreignObject><text x="202" y="173" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text></switch></g><g transform="translate(-0.5 -0.5)rotate(30 182.18403825214716 200.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 182px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{A,B}}</div></div></div></foreignObject><text x="182" y="203" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg></p>
+<h2 id="safety-properties-guarantees">Safety Properties = Guarantees</h2>
+<p>The guarantees we want to hold = properties from the paper.</p>
+<h2 id="trace-events-from-model-to-trace-events">Trace events - From model to trace events</h2>
+<p>While the program is a transition system where each program state can simultaneously branch into more than one state, at runtime we only get to observe the program actions in the form of linear sequences of events called traces.</p>
 <p>Actions but say they we use event henceforth since this sounds more natural.</p>
 <p>Explain how trace events capture the computation of the system.</p>
 <p>Give an example of trace events in Erlang</p>
 <p>Say that they carry data</p>
 <p>List the 5 trace events that we support</p>
+<p>Often, post-deployment verification techniques such as RV, do not have access to the entire execution graph of a SuS, e.g. the transition model in fig. 1b. Instead, these are limited to the trace of (program) events that is generated by the cur- rent execution of the SuS. For instance, an execution might generate the trace of events ‘pid1 ?⟨pid2 ,stp⟩.pid1:pid2 !⟨bye,−1⟩’, that corresponds to the (finite) path traversal Q0 →Srv?⟨Clt,stp⟩→Q3 →Srv:Clt!⟨bye,Tot⟩→Q4 in the transi- tion model of fig. 1b. In traces, events consist of concrete values instead of vari- able placeholders, e.g. pid1 instead of Srv, etc. </p>
                 
               
               

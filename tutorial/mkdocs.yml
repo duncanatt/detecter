@@ -11,10 +11,11 @@ markdown_extensions:
   - abbr # Abbreviation definitions and hover help tooltip.
   - admonition # Admonitions.
   - smarty # Smarty pants.
-  - codehilite
+  # - codehilite
   - pymdownx.snippets # Insert content from other files.
   - pymdownx.superfences # Nestable code and content blocks inside admonitions.
-  - pymdownx.highlight # Block code syntax highlighting.
+  - pymdownx.highlight: # Block code syntax highlighting.
+      code_attr_on_pre: true
   - pymdownx.inlinehilite # Inline code syntax highlighting.
   - pymdownx.smartsymbols
   - pymdownx.keys # Icon keyboard keys.

@@ -151,10 +151,10 @@ In this quickstart demo, we monitor the execution of our asynchronous hello worl
     1>
     ```
 
-2. Compile the sample `hello_prop.hml` property script to generate the corresponding analyser binary.
+2. Compile the sample `prop_hello.hml` property script to generate the corresponding analyser binary.
 
     ```erlang
-    1> hml_eval:compile("props/hello_prop.hml", [{outdir,"ebin"}, v]).
+    1> hml_eval:compile("props/prop_hello.hml", [{outdir,"ebin"}, v]).
     ```
 
     This compilation procedure, known as the *synthesis*, translates sHML specifications written in `*.hml`  script files to their analyser equivalents.
@@ -164,19 +164,17 @@ In this quickstart demo, we monitor the execution of our asynchronous hello worl
     ```erlang hl_lines="3"
     2> ls("ebin").                                                   
     hello.beam                  
-    hello_prop.beam
+    prop_hello.beam
     ...
     ```
 
-    <!-- We focus on synthesising the analyser from `props/hello_prop.hml`; expressing properties in sHML is treated at length in [The Specification Logic](../using-detecter/the-specification-logic) and [Properties](../using-detecter/system-properties) sections.     -->
-
-    The analyser `#!erlang hello_prop` exposes a single function, `#!erlang mfa_spec/1`, that accepts the MFArgs triple `#!erlang {Mod, Fun, Args}` designating the Erlang process to be analysed.
+    The analyser `#!erlang prop_hello` exposes a single function, `#!erlang mfa_spec/1`, that accepts the MFArgs triple `#!erlang {Mod, Fun, Args}` designating the Erlang process to be analysed.
     Specifically, `#!erlang Mod`, `#!erlang Fun` and `#!erlang Args` are the components of the function passed as arguments to `#!erlang spawn/3`.
     For our hello world example, `#!erlang Mod` is the atom `#!erlang hello`, `#!erlang Fun` is the function name `#!erlang greet`, and `#!erlang Args`, the singleton argument list containing the name of the person to be greeted.
-    You can test `#!erlang hello_prop:mfa_spec/1` analyser function by providing the triple `#!erlang {hello, greet, ["Duncan"]}`.
+    You can test `#!erlang prop_hello:mfa_spec/1` analyser function by providing the triple `#!erlang {hello, greet, ["Duncan"]}`.
 
     ```erlang
-    3> hello_prop:mfa_spec({hello,greet,["Duncan"]}).
+    3> prop_hello:mfa_spec({hello,greet,["Duncan"]}).
     *** [<0.82.0>] Instrumenting monitor for MFA pattern '{hello,greet,["Duncan"]}'.
     *** [<0.82.0>] Reached verdict 'no'.
     ```
@@ -184,15 +182,15 @@ In this quickstart demo, we monitor the execution of our asynchronous hello worl
 4. Launch the monitored system.
 
     ```{ .erlang .annotate}
-    4> monitor:start_online({hello,start_greet,["Duncan"]}, fun hello_prop:mfa_spec/1, []). % {++(1)++}
+    4> monitor:start_online({hello,start_greet,["Duncan"]}, fun prop_hello:mfa_spec/1, []).
     ```
 
     The function `#!erlang monitor:start_online/3` accepts three arguments: a MFArgs describing the function that is to be spawned as an Erlang process, the analyser function, and a list of [options](../using-detecter/instrumentation.md#online-instrumentation).
-    Setting MFArgs to `#!erlang {hello,start_greet,["Duncan"]}` and the analyser to `#!erlang fun hello_prop:mfa_spec/1` launches the hello world and analyser processes to execute concurrently.
+    Setting MFArgs to `#!erlang {hello,start_greet,["Duncan"]}` and the analyser to `#!erlang fun prop_hello:mfa_spec/1` launches the hello world and analyser processes to execute concurrently.
     
 
-In the simple instance of the analyser `#!erlang hello_prop`, monitoring terminates promptly with the verdict `no`{.verdict-no} as soon as the system starts executing.
-This `no`{.verdict-no} verdict informs us that our hello world program violated the sHML specification in `hello_prop.hml`.
+In the simple instance of the analyser `#!erlang prop_hello`, monitoring terminates promptly with the verdict `no`{.verdict-no} as soon as the system starts executing.
+This `no`{.verdict-no} verdict informs us that our hello world program violated the sHML specification in `prop_hello.hml`.
 We next learn how sHML can be used to express useful properties that *precisely and unambiguously* describe the behaviour we want our systems *not to* infringe.
 
 

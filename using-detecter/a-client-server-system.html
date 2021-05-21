@@ -444,8 +444,8 @@ In our client-server protocol, messages contain the <em>type</em> of operation t
 <span class="normal">13</span>
 <span class="normal">14</span>
 <span class="normal">15</span>
-<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">start</span><span class="p">()</span> <span class="o">-&gt;</span>
-  <span class="nb">spawn</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]).</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="nf">start</span><span class="p">(</span><span class="nv">N</span><span class="p">)</span> <span class="o">-&gt;</span>
+  <span class="nb">spawn</span><span class="p">(</span><span class="o">?</span><span class="nv">MODULE</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="p">[</span><span class="nv">N</span><span class="p">]).</span>
 
 <span class="nf">loop</span><span class="p">(</span><span class="nv">Tot</span><span class="p">)</span> <span class="o">-&gt;</span>
   <span class="k">receive</span>
@@ -462,8 +462,8 @@ In our client-server protocol, messages contain the <em>type</em> of operation t
   <span class="k">end</span><span class="p">.</span>
 </code></pre></div>
 </td></tr></table>
-<p><code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> encapsulates the calculator server logic that is <a href="../getting-started/quickstart.html#hello-world-the-asynchronous-way">spawned</a> by some other launcher process (<em>e.g.</em> the Erlang shell) that invokes <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">0</span></code>.</p>
-<p>The spawned server consumes one message request from its mailbox via the <code class="highlight"><span class="k">receive</span></code> expression on lines <code>5-16</code>, and pattern matches against the three types of operations requested by clients:</p>
+<p><code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> encapsulates the calculator server logic that is <a href="../getting-started/quickstart.html#hello-world-the-asynchronous-way">spawned</a> by some other launcher process (<em>e.g.</em> the Erlang shell) that invokes <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> for some integer argument <code class="highlight"><span class="nv">N</span></code>.</p>
+<p>The spawned server consumes a message request from its mailbox via the <code class="highlight"><span class="k">receive</span></code> expression on lines <code>5-16</code>, and pattern matches against <em>one</em> of the three types of operations requested by clients:</p>
 <ol>
 <li>
 <p>Addition (<code class="highlight"><span class="n">add</span></code>) and multiplication (<code class="highlight"><span class="n">mul</span></code>) requests that carry the operands <code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code> (lines <code>6</code> and <code>10</code>), and,</p>
@@ -477,13 +477,237 @@ Every request fulfilled by the server results in a corresponding reply that it s
 Server replies carry the status <em>tag</em> (an atom) <code class="highlight"><span class="n">ok</span></code> or <code class="highlight"><span class="n">bye</span></code>, and the result of the requested operation.
 The server uses the parameter <code class="highlight"><span class="nv">Tot</span></code> of <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> to track the number of requests serviced, and is returned in reply to a <code class="highlight"><span class="n">stp</span></code> operation.
 After handling <code class="highlight"><span class="n">add</span></code> and <code class="highlight"><span class="n">mul</span></code> requests, the server executes <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> to recommence the process loop and service the next client request, incrementing the request count accordingly (lines <code>8</code> and <code>12</code>); the tail recursive call to <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> is not made for <code class="highlight"><span class="n">stp</span></code> requests, and the calculator server process terminates naturally.</p>
-<p>The logic of <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> induces a server runtime behaviour that can be abstractly described by the transition</p>
-<p>Keywords:
-Transition system, states</p>
-<p><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="313px" viewBox="-0.5 -0.5 313 371" style="max-width:100%;max-height:371px;"><defs><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);&#xa;@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style></defs><g><ellipse cx="292" cy="20" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="92" cy="350" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="92" cy="130" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="92" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><ellipse cx="292" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><path d="M 92 90 L 92 103.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 92 108.88 L 90.33 103.88 L 93.67 103.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 92 150 L 92 213.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 92 218.88 L 90.33 213.88 L 93.67 213.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 43px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt, stp}</div></div></div></foreignObject><text x="43" y="187" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt, stp}</text></switch></g><path d="M 92 260 L 92 323.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 92 328.88 L 90.33 323.88 L 93.67 323.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 296px; margin-left: 153px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {bye, Tot}</div></div></div></foreignObject><text x="153" y="298" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {bye, Tot}</text></switch></g><path d="M 277.86 34.14 L 117.3 126.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 112.97 129.44 L 116.46 125.5 L 118.13 128.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 277.86 225.86 L 117.3 133.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 112.97 130.56 L 118.13 131.62 L 116.46 134.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 202.68403825214705 88.18116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 203px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A+B}}</div></div></div></foreignObject><text x="203" y="91" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text></switch></g><path d="M 106.14 115.86 L 267.79 22.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 271.03 20.56 L 267.95 25.23 L 267.79 22.44 L 265.45 20.9 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 182.68403825214716 60.181162744111816)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 60px; margin-left: 183px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; "><font color="var(--md-code-hl-string-color)">Srv</font> ? {<font color="var(--md-code-hl-number-color)">Clt</font>,{A,B}}</div></div></div></foreignObject><text x="183" y="63" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g><path d="M 106.14 144.14 L 267.79 237.56" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 271.03 239.44 L 265.45 239.1 L 267.79 237.56 L 267.95 234.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(30 202.18403825214705 170.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 202px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A*B}}</div></div></div></foreignObject><text x="202" y="173" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text></switch></g><g transform="translate(-0.5 -0.5)rotate(30 182.18403825214716 200.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 182px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{A,B}}</div></div></div></foreignObject><text x="182" y="203" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg></p>
+<p>The logic of <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> induces a server runtime behaviour that can be <em>abstractly</em> described by the transition system model below.</p>
+<p class="svg"><svg
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="330px" viewBox="-0.5 -0.5 330 371" style="max-width:100%;max-height:371px;">
+    <defs>
+        <style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);&#xa;@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style>
+    </defs>
+    <g>
+        <ellipse cx="309" cy="20" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 20px; margin-left: 290px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q1</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="309" y="23" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q1</text>
+            </switch>
+        </g>
+        <ellipse cx="109" cy="350" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 350px; margin-left: 90px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q4</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="109" y="353" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q4</text>
+            </switch>
+        </g>
+        <ellipse cx="109" cy="130" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 130px; margin-left: 90px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q0</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="109" y="133" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q0</text>
+            </switch>
+        </g>
+        <ellipse cx="109" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 90px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q3</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="109" y="243" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q3</text>
+            </switch>
+        </g>
+        <ellipse cx="309" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 290px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q2</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="309" y="243" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q2</text>
+            </switch>
+        </g>
+        <path d="M 109 90 L 109 103.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 109 108.88 L 107.33 103.88 L 110.67 103.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 109 150 L 109 213.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 109 218.88 L 107.33 213.88 L 110.67 213.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 50px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,stp}</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="50" y="188" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,stp}</text>
+            </switch>
+        </g>
+        <path d="M 109 260 L 109 323.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 109 328.88 L 107.33 323.88 L 110.67 323.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 291px; margin-left: 180px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {bye,Tot}</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="180" y="294" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {bye,Tot}</text>
+            </switch>
+        </g>
+        <path d="M 294.86 34.14 L 134.3 126.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 129.97 129.44 L 133.46 125.5 L 135.13 128.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <path d="M 294.86 225.86 L 134.3 133.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 129.97 130.56 L 135.13 131.62 L 133.46 134.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)rotate(-30 219.68403825214705 88.18116274411182)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 220px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A+B}}</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="220" y="91" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text>
+            </switch>
+        </g>
+        <path d="M 123.14 115.86 L 283.7 23.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 288.03 20.56 L 284.54 24.5 L 282.87 21.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)rotate(-30 199.68403825214716 58.181162744111816)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 58px; margin-left: 200px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">
+                                <font style="font-size: 11px">Srv</font> ? {
+                                <font style="font-size: 11px">Clt</font>,{A,B}}
+                            </div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="200" y="61" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{A,B}}</text>
+            </switch>
+        </g>
+        <path d="M 123.14 144.14 L 283.7 236.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+        <path d="M 288.03 239.44 L 282.87 238.38 L 284.54 235.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+        <g transform="translate(-0.5 -0.5)rotate(30 219.18403825214705 170.68116274411182)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 219px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A*B}}</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="219" y="174" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text>
+            </switch>
+        </g>
+        <g transform="translate(-0.5 -0.5)rotate(30 199.18403825214716 200.68116274411182)">
+            <switch>
+                <foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+                    <div
+                        xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 199px;">
+                        <div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+                            <div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{A,B}}</div>
+                        </div>
+                    </div>
+                </foreignObject>
+                <text x="199" y="204" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{A,B}}</text>
+            </switch>
+        </g>
+    </g>
+    <switch>
+        <g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+        <a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+            <text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text>
+        </a>
+    </switch>
+</svg></p>
+<p><em>States</em> of the model capture the internal state that the server process can be in at any point during its execution.
+<em>Transitions</em> between states denote the computational steps of the program that produce <em>visible program events</em>.
+For instance, the <em>symbolic event</em> <code class="highlight"><span class="nv">Srv</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> is exhibited by the server loop when the calculator at its initial state <code>Q0</code> reads a <code>stp</code> request from its mailbox and transitions to <code>Q3</code>.
+This transition depicts the computation that <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> performs to <code class="highlight"><span class="k">receive</span></code> the <code class="highlight"><span class="n">stp</span></code> request, line <code>5</code>, and subsequently pattern match it to <code class="highlight"><span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> on line <code>14</code>.
+Note that symbolic events in the model capture the <em>set of possible concrete events</em> that the running program can exhibit, <em>e.g.</em>, <code class="highlight"><span class="nv">Srv</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> describes all events where <code class="highlight"><span class="nv">Srv</span></code> and <code class="highlight"><span class="nv">Clt</span></code> range over <abbr title="Process IDs">PIDs</abbr>, and <code class="highlight"><span class="n">stp</span></code> is the atom denoting the stop operation requested by clients.</p>
+<h2 id="safety-properties">Safety properties</h2>
+<p>There are a number of properties we would like the server behaviour to observe.
+For example, the server loop does not control the initial value of <code class="highlight"><span class="nv">Tot</span></code> that an invocation to <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> provides.
+We could, therefore, require that:</p>
+<blockquote>
+<p>(P<sub>1</sub>)&nbsp;&nbsp;&nbsp;&nbsp;The service request count returned on shutdown is <em>never</em> negative.</p>
+</blockquote>
+<p>Similarly, we would expect the <em>safety properties</em></p>
+<blockquote>
+<p>(P<sub>2</sub>)&nbsp;&nbsp;&nbsp;&nbsp;Replies are <em>always</em> sent to the client indicated in the request,</p>
+</blockquote>
+<p>and &ldquo;A request for adding two numbers <em>always</em> returns their sum&rdquo; to hold, amongst many others.
+These properties are <em>data-dependent</em>, which makes them hard to ascertain using static techniques such as type systems.
+Besides properties that reason about data, our server logic is expected to comply with control properties, such as,</p>
+<blockquote>
+<p>(P<sub>3</sub>)&nbsp;&nbsp;&nbsp;&nbsp; Client requests are <em>never</em> serviced more than once.</p>
+</blockquote>
+<p>These properties phrase the correctness requirement as a guarantee that the program <em>must</em> provide.
+Wording such as <em>never</em> and <em>always</em> implies <em>safety</em>, <em>i.e.</em> &ldquo;that for <em>any</em> sort of behaviour the program can perform, nothing bad ever happens.&rdquo;
+In consequence, to show that a property is <em>violated</em> by a program, it suffices for us to find one instance of program execution that contains bad behaviour.
+Producing this evidence is enough of a proof that the program under scrutiny is not safe with respect to the property in question.</p>
+<!-- This means that to show that a property is violated by a program, it suffices for us to find one instance of a program execution that contains the bad behaviour. -->
+
+<!-- Producing this evidence -->
+
+<!-- and is the proof needed to ascertain that the program under analysis is not safe with respect to the property under consideration. -->
+
+<!-- Words like *never* and *always* imply safety that "for any sort of behaviour, something bad never happens". -->
+
+<!-- The means that  -->
+
+<!-- This means that to show that a property is violated -->
+
+<!-- Let us take a moment to examine these properties -->
+
+<!-- Words like never and always imply for all quantification, -->
+
+<!-- meaning that all we need to disprove that a property does not hold is to observe just one instance of a bad behaviour to show that our program is not safe, meaning that it infringes the guarantee that we were hoping that it holds! -->
+
 <h2 id="safety-properties-guarantees">Safety Properties = Guarantees</h2>
 <p>The guarantees we want to hold = properties from the paper.</p>
+<p>Trace events.</p>
+<p>From its initial state Q0, the server can follow differnt transtions, corresponding to the branching structure induced by the receive clause.</p>
 <h2 id="trace-events-from-model-to-trace-events">Trace events - From model to trace events</h2>
+<p>Full model in the diagram, but partial model at runtime.</p>
 <p>While the program is a transition system where each program state can simultaneously branch into more than one state, at runtime we only get to observe the program actions in the form of linear sequences of events called traces.</p>
 <p>Actions but say they we use event henceforth since this sounds more natural.</p>
 <p>Explain how trace events capture the computation of the system.</p>

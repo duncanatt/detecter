@@ -81,6 +81,10 @@ p.footer {
   color: var(--md-code-hl-number-color);
 }
 
+p.svg {
+  text-align: center;
+}
+
 :root .annotate * {
   --md-code-hl-comment-color: var(--md-code-hl-keyword-color);
 }

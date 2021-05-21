@@ -81,6 +81,14 @@ p.footer {
   color: var(--md-code-hl-number-color);
 }
 
+.center {
+  text-align: center;
+}
+
+.img {
+  background-color: var(--md-code-bg-color);
+}
+
 :root .annotate * {
   --md-code-hl-comment-color: var(--md-code-hl-keyword-color);
 }

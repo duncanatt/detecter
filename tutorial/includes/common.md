@@ -16,3 +16,4 @@
 *[MFArgs]: Module, Function, Arguments
 *[BEAM]: Bogdan's Erlang Abstract Machine
 *[WSL]: Windows Subsystem for Linux
+*[RV]: Runtime Verification

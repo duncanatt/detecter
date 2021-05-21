@@ -188,9 +188,8 @@ In this quickstart demo, we monitor the execution of our asynchronous hello worl
     Setting MFArgs to `#!erlang {hello,start_greet,["Duncan"]}` and the analyser to `#!erlang fun prop_hello:mfa_spec/1` launches the hello world and analyser processes to execute concurrently.
     
 
-In the simple instance of the analyser `#!erlang prop_hello`, monitoring terminates promptly with the verdict `no`{.verdict-no} as soon as the system starts executing.
-This `no`{.verdict-no} verdict informs us that our hello world program violated the sHML specification in `prop_hello.hml`.
-We next learn how sHML can be used to express useful properties that *precisely and unambiguously* describe the behaviour we want our systems *not to* infringe.
+In this introductory example, the analyser `#!erlang prop_hello` promptly terminates with the verdict `no`{.verdict-no} as soon as our hello world program starts executing.
+The `no`{.verdict-no} verdict informs us that a program has violated the specification of `prop_hello.hml`.
 
-
-<!-- --8<-- "includes/footer.md" -->
+---
+We next look at a typical concurrent program where processes interact, and study what kind of useful properties one might want such systems to observe.

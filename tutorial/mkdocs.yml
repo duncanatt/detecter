@@ -38,7 +38,7 @@ markdown_extensions:
   - toc:
       permalink: true
       # baselevel: 3
-      anchorlink: false
+      # anchorlink: false
       # anchorlink_class: section-header 
       # toc_depth: 3
 
@@ -115,8 +115,10 @@ nav:
     - Setting up detectEr: getting-started/setting-up-detecter.md 
     - Quickstart: getting-started/quickstart.md
   - Using detectEr:
-    - A Client-Server System: using-detecter/a-client-server-system.md
-    - The Specification Logic: using-detecter/the-specification-logic.md # Recap SHML from the paper.    
-    - System Properties: using-detecter/system-properties.md # The properties in the paper.
-    - A Client-Server System in other languages: using-detecter/the-example-system.md
+    - Getting Started: using-detecter/getting-started.md
+    - The Specification Logic: using-detecter/the-specification-logic.md
+    - Formalising Properties: using-detecter/formalising-properties.md
+    - Runtime Verification: using-detecter/runtime-verification.md
+    - Synthesising Monitors: using-detecter/synthesising-monitors.md
+    # - A Client-Server System in other languages: using-detecter/the-example-system.md
     - Instrumentation: using-detecter/instrumentation.md # Synthesis Inline outline and offline. on one system.

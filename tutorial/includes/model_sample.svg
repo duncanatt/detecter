@@ -1,0 +1,114 @@
+<svg
+	xmlns="http://www.w3.org/2000/svg"
+	xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="313px" viewBox="-0.5 -0.5 313 371" style="max-width:100%;max-height:371px;">
+	<defs>
+		<style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);&#xa;@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style>
+	</defs>
+	<g>
+		<ellipse cx="292" cy="20" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+		<ellipse cx="92" cy="350" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+		<ellipse cx="92" cy="130" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+		<ellipse cx="92" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+		<ellipse cx="292" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/>
+		<path d="M 92 90 L 92 103.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 92 108.88 L 90.33 103.88 L 93.67 103.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<path d="M 92 150 L 92 213.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 92 218.88 L 90.33 213.88 L 93.67 213.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<g transform="translate(-0.5 -0.5)">
+			<switch>
+				<foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+					<div
+						xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 43px;">
+						<div style="box-sizing: border-box; font-size: 11px; text-align: center; font-family: var(--md-code-font-family,_); line-height: 1.2;">
+							<span style="color: var(--md-code-hl-variable-color);">Srv</span><span style="color: var(--md-code-hl-punctuation-color);"> ? </span><span style="color: var(--md-code-hl-punctuation-color);">{</span><span style="color: var(--md-code-hl-variable-color);">Clt</span><span style="color: var(--md-code-hl-punctuation-color);">,</span><span style="color: var(--md-code-hl-name-color);">stp</span><span style="color: var(--md-code-hl-punctuation-color);">}</span>
+						</div>
+					</div>
+				</foreignObject>
+			</switch>
+		</g>
+		<path d="M 92 260 L 92 323.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 92 328.88 L 90.33 323.88 L 93.67 323.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<g transform="translate(-0.5 -0.5)">
+			<switch>
+				<foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+					<div
+						xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 296px; margin-left: 153px;">
+						<div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+							<div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {bye, Tot}</div>
+						</div>
+					</div>
+				</foreignObject>
+				<text x="153" y="298" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {bye, Tot}</text>
+			</switch>
+		</g>
+		<path d="M 277.86 34.14 L 117.3 126.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 112.97 129.44 L 116.46 125.5 L 118.13 128.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<path d="M 277.86 225.86 L 117.3 133.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 112.97 130.56 L 118.13 131.62 L 116.46 134.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<g transform="translate(-0.5 -0.5)rotate(-30 202.68403825214705 88.18116274411182)">
+			<switch>
+				<foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+					<div
+						xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 203px;">
+						<div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+							<div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A+B}}</div>
+						</div>
+					</div>
+				</foreignObject>
+				<text x="203" y="91" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text>
+			</switch>
+		</g>
+		<path d="M 106.14 115.86 L 267.79 22.44" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 271.03 20.56 L 267.95 25.23 L 267.79 22.44 L 265.45 20.9 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<g transform="translate(-0.5 -0.5)rotate(-30 182.68403825214716 60.181162744111816)">
+			<switch>
+				<foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+					<div
+						xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 60px; margin-left: 183px;">
+						<div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+							<div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">
+								<font color="var(--md-code-hl-string-color)">Srv</font> ? {
+								<font color="var(--md-code-hl-number-color)">Clt</font>,{A,B}}
+							</div>
+						</div>
+					</div>
+				</foreignObject>
+				<text x="183" y="63" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt,{A,B}}</text>
+			</switch>
+		</g>
+		<path d="M 106.14 144.14 L 267.79 237.56" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/>
+		<path d="M 271.03 239.44 L 265.45 239.1 L 267.79 237.56 L 267.95 234.77 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/>
+		<g transform="translate(-0.5 -0.5)rotate(30 202.18403825214705 170.68116274411182)">
+			<switch>
+				<foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+					<div
+						xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 202px;">
+						<div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+							<div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A*B}}</div>
+						</div>
+					</div>
+				</foreignObject>
+				<text x="202" y="173" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text>
+			</switch>
+		</g>
+		<g transform="translate(-0.5 -0.5)rotate(30 182.18403825214716 200.68116274411182)">
+			<switch>
+				<foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility">
+					<div
+						xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 182px;">
+						<div style="box-sizing: border-box; font-size: 0; text-align: center; ">
+							<div style="display: inline-block; font-size: 9px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{A,B}}</div>
+						</div>
+					</div>
+				</foreignObject>
+				<text x="182" y="203" fill="#000000" font-family="Fira Code" font-size="9px" text-anchor="middle">Srv ? {Clt,{A,B}}</text>
+			</switch>
+		</g>
+	</g>
+	<switch>
+		<g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/>
+		<a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank">
+			<text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text>
+		</a>
+	</switch>
+</svg>

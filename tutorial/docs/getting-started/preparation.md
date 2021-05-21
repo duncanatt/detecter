@@ -196,3 +196,6 @@ To enable syntax highlighting and language support for the languages used in thi
     | Python     | `3.9.4`   |
     | PIP        | `21.0.1`  |
     | VS Code    | `1.56.0`  |
+
+---
+LINK TO NEXT SECTION

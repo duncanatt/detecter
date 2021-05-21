@@ -1,5 +1,5 @@
 --8<-- "includes/common.md"
-# System Properties
+# Formalising Properties
 ---
 
 ## Explain each property
@@ -20,3 +20,4 @@
 # Inconclusive verdicts
 
 List the possible traces
+

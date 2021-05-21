@@ -81,8 +81,12 @@ p.footer {
   color: var(--md-code-hl-number-color);
 }
 
-p.svg {
+.center {
   text-align: center;
+}
+
+.img {
+  background-color: var(--md-code-bg-color);
 }
 
 :root .annotate * {

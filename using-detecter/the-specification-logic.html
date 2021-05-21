@@ -331,8 +331,8 @@
   
   
     <li class="md-nav__item">
-      <a href="a-client-server-system.html" class="md-nav__link">
-        A Client-Server System
+      <a href="getting-started.html" class="md-nav__link">
+        Getting Started
       </a>
     </li>
   
@@ -396,13 +396,6 @@
   
 </li>
       
-        <li class="md-nav__item">
-  <a href="#monitoring-processes" class="md-nav__link">
-    Monitoring processes
-  </a>
-  
-</li>
-      
     </ul>
   
 </nav>
@@ -416,8 +409,8 @@
   
   
     <li class="md-nav__item">
-      <a href="system-properties.html" class="md-nav__link">
-        System Properties
+      <a href="runtime-verification.html" class="md-nav__link">
+        Runtime Verification
       </a>
     </li>
   
@@ -428,8 +421,20 @@
   
   
     <li class="md-nav__item">
-      <a href="the-example-system.md" class="md-nav__link">
-        A Client-Server System in other languages
+      <a href="formalising-properties.html" class="md-nav__link">
+        Formalising Properties
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="synthesising-monitors.md" class="md-nav__link">
+        Synthesising Monitors
       </a>
     </li>
   
@@ -476,7 +481,8 @@
 <p>For the sake of simplicity, the script <code>hello_prop.hml</code> used in our hello world example specifies a <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property that every system necessarily violates, namely, the formula <code class="highlight"><span class="k">ff</span></code> that denotes falsity.
 We now look at the full <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> grammar that enables us to express more interesting and useful properties <em>about programs</em> (not traces).
 Specifications in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;also called <em>formulae</em>&mdash;are interpreted over the <em>states</em> of transition models of programs we wish to analyse.
-<abbr title="Safety Hennessy-Milner Logic">sHML</abbr> is a syntactic subset of the more expressive Hennessy-Milner Logic with recursion, and is used to specify <em>safety properties</em>, <em>i.e.</em>, properties stating that &ldquo;something bad never happens&rdquo;.
+<abbr title="Safety Hennessy-Milner Logic">sHML</abbr> is a syntactic subset of the more expressive Hennessy-Milner Logic with recursion, and is used to specify <a href="getting-started.html#safety-properties">safety properties</a>.
+Recall safety properties state that &ldquo;something bad should never happen&rdquo;.
 <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formulae are generated from the following grammar:</p>
 <div class="annotate highlight"><pre><span></span><code><span class="nf">sHML</span> <span class="p">::</span><span class="o">=</span>  <span class="k">ff</span>  <span class="p">|</span>  <span class="k">tt</span>                        <span class="c">(1)</span> 
        <span class="p">|</span>  <span class="nv">X</span>                                <span class="c">(2)</span>
@@ -497,8 +503,8 @@ Specifications in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;a
 <p><code class="highlight"><span class="k">and</span><span class="p">(...)</span></code> is a sequence of comma-separated <em>conjunctions</em> where each conjunct is a sub-formula <code class="highlight"><span class="nf">sHML</span></code> <em>guarded</em> by the universal modal operator <code class="highlight"><span class="p">[</span><span class="sc">Act</span><span class="p">]</span></code> (also called a <em>necessity</em>).</p>
 </li>
 </ol>
-<p>To handle reasoning over <a href="trace-events">trace event</a> data, the modal operator is equipped with <em>symbolic actions</em> <code class="highlight"><span class="sc">Act</span></code> of the form <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code>, where <code class="highlight"><span class="nf">P</span></code> is an <em>event pattern</em> and <code class="highlight"><span class="nf">C</span></code>, a <em>decidable Boolean constraint</em>.
-Patterns correspond to trace events that the program under analysis exhibits. 
+<p>To handle reasoning over program event data, the modal operator is equipped with <em>symbolic actions</em> <code class="highlight"><span class="sc">Act</span></code> of the form <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code>, where <code class="highlight"><span class="nf">P</span></code> is an <em>event pattern</em> and <code class="highlight"><span class="nf">C</span></code>, a <em>decidable Boolean constraint</em>.
+Patterns correspond to events that the program under analysis exhibits. 
 These patterns contain <em>data variables</em> that are instantiated with values learnt at runtime from <em>matched</em> events.
 Pattern variables <em>bind</em> the free variables in constraints <code class="highlight"><span class="nf">C</span></code>, and this binding scope <em>extends</em> to the continuation formula <code class="highlight"><span class="nf">sHML</span></code>.
 Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the &lsquo;don&rsquo;t care&rsquo; pattern <code>_</code> matches any data value.
@@ -812,14 +818,14 @@ The set of valid Erlang guards supported by detectEr are the following:</p>
     | `#!erlang tuple_size/1` | Tuple size             | Tuple            | -->
 
 <h2 id="suppressing-program-actions">Suppressing program actions<a class="headerlink" href="#suppressing-program-actions" title="Permanent link">&para;</a></h2>
-<p>Let us try to specify a safety requirement on the behaviour of our <a href="a-client-server-system.html#calculator-program">calculator program</a>.
+<p>Let us try to specify a safety requirement on the behaviour of our <a href="getting-started.html#calculator-program">calculator program</a>.
 The <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula with symbolic action <code>Srv:Clt ! {bye,Tot} when Tot &lt; 0</code> describes the property requiring that &ldquo;the program state does <em>not</em> exhibit the send event whose payload consists of <code class="highlight"><span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span></code> with a negative total:</p>
 <div class="highlight"><pre><span></span><code><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span>
 </code></pre></div>
 <p>Recall that the universal modality states that, for any program event satisfying the symbolic action <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code> in <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">sHML</span></code>, the ensuing program behaviour must then satisfy the continuation formula <code class="highlight"><span class="nf">sHML</span></code>.
 However, <em>no</em> program state can satisfy the continuation <code class="highlight"><span class="k">ff</span></code>! 
 This means that the formula <code class="highlight"><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span></code> can only be satisfied when  our calculator program does not exhibit the event described by the symbolic action <code class="highlight"><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code>.</p>
-<p>Suppose our server with <abbr title="Process ID">PID</abbr> <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code> exhibits the <code>send</code> trace event <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span></code> in response to a request issued by a client with <abbr title="Process ID">PID</abbr> <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code>.
+<p>Suppose our server with <abbr title="Process ID">PID</abbr> <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code> exhibits the <code>send</code> event <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">}</span></code> in response to a request issued by a client with <abbr title="Process ID">PID</abbr> <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code>.
 It matches pattern <code class="highlight"><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span></code>, instantiating the variables <code class="highlight"><span class="nv">Srv</span> <span class="o">=</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code>, <code class="highlight"><span class="nv">Clt</span> <span class="o">=</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code>, and <code class="highlight"><span class="nv">Tot</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span></code>.
 The constraint <code class="highlight"><span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code> is also satisfied by <code class="highlight"><span class="nv">Tot</span></code>, leading to a violation, <em>i.e.</em>, <code class="highlight"><span class="k">ff</span></code>.
 For a different <code>send</code> event <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span></code>, the symbolic action in the modality <code class="highlight"><span class="p">[</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span></code> is not satisfied, and consequently, <code class="highlight"><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span></code> is not violated.
@@ -828,18 +834,8 @@ Analogously, the <code>exit</code> event <code class="highlight"><span class="o"
 <p class="admonition-title">Cheat sheet</p>
 <p>The formula <code class="highlight"><span class="p">[</span><span class="sc">Act</span><span class="p">]</span><span class="k">ff</span></code> means that the program must not exhibit the symbolic action <code class="highlight"><span class="sc">Act</span></code>.</p>
 </div>
-<h2 id="monitoring-processes">Monitoring processes<a class="headerlink" href="#monitoring-processes" title="Permanent link">&para;</a></h2>
-<p>detectEr provides the keywords <code class="highlight"><span class="k">with</span></code> and <code class="highlight"><span class="k">monitor</span></code> to target program processes for a particular <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specification.
-The <code class="highlight"><span class="k">with</span></code> keyword picks out the signature of the function that is spawned as a process, whereas the <code class="highlight"><span class="k">monitor</span></code> keyword defines the property to be runtime analysed.
-For example, to verify the behaviour of our calculator process against the <a href="#__code_1">formula above</a>, we write:</p>
-<div class="highlight"><pre><span></span><code><span class="k">with</span>
-  <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)</span>
-<span class="k">monitor</span>
-  <span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span>
-</code></pre></div>
-<p>From an <a href="instrumentation.html">instrumentation</a> standpoint, <code class="highlight"><span class="k">with</span></code> establishes the set of trace event corresponding to the program process it targets, thus enabling the specification to <em>abstract</em> from the events that are generated by other processes.
-This helps maintain the size of <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications compact whenever possible.
-In using <code class="highlight"><span class="k">with</span></code>, our formula need not account for superfluous trace events (<em>e.g.</em> of another calculator process) that tend to make the specification exercise tedious and error-prone.</p>
+<hr />
+<p>LINK TO NEXT SECTION</p>
                 
               
               
@@ -862,7 +858,7 @@ In using <code class="highlight"><span class="k">with</span></code>, our formula
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="a-client-server-system.html" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="getting-started.html" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -871,19 +867,19 @@ In using <code class="highlight"><span class="k">with</span></code>, our formula
               <span class="md-footer__direction">
                 Previous
               </span>
-              A Client-Server System
+              Getting Started
             </div>
           </div>
         </a>
       
       
-        <a href="system-properties.html" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="runtime-verification.html" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              System Properties
+              Runtime Verification
             </div>
           </div>
           <div class="md-footer__button md-icon">

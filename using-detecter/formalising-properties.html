@@ -16,7 +16,7 @@
     
     
       
-        <title>System Properties - detectEr Tutorial</title>
+        <title>Formalising Properties - detectEr Tutorial</title>
       
     
     
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#system-properties" class="md-skip">
+        <a href="#formalising-properties" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              System Properties
+              Formalising Properties
             
           </span>
         </div>
@@ -331,8 +331,8 @@
   
   
     <li class="md-nav__item">
-      <a href="a-client-server-system.html" class="md-nav__link">
-        A Client-Server System
+      <a href="getting-started.html" class="md-nav__link">
+        Getting Started
       </a>
     </li>
   
@@ -353,6 +353,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="runtime-verification.html" class="md-nav__link">
+        Runtime Verification
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -365,12 +377,12 @@
       
       
         <label class="md-nav__link md-nav__link--active" for="__toc">
-          System Properties
+          Formalising Properties
           <span class="md-nav__icon md-icon"></span>
         </label>
       
-      <a href="system-properties.html" class="md-nav__link md-nav__link--active">
-        System Properties
+      <a href="formalising-properties.html" class="md-nav__link md-nav__link--active">
+        Formalising Properties
       </a>
       
         
@@ -388,15 +400,36 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#explain-each-property" class="md-nav__link">
-    Explain each property
+  <a href="#choosing-what-to-analyse" class="md-nav__link">
+    Choosing what to analyse
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#show-how-to-synthesise-one-and-discuss-the-generated-code" class="md-nav__link">
-    Show how to synthesise one and discuss the generated code.
+  <a href="#formalising-p1" class="md-nav__link">
+    Formalising P1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#an-alternative-to-p1" class="md-nav__link">
+    An alternative to P1
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formalising-p2" class="md-nav__link">
+    Formalising P2
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#formalising-p3" class="md-nav__link">
+    Formalising P3
   </a>
   
 </li>
@@ -414,8 +447,8 @@
   
   
     <li class="md-nav__item">
-      <a href="the-example-system.md" class="md-nav__link">
-        A Client-Server System in other languages
+      <a href="synthesising-monitors.md" class="md-nav__link">
+        Synthesising Monitors
       </a>
     </li>
   
@@ -451,19 +484,30 @@
             <article class="md-content__inner md-typeset">
               
                 
-                  <a href="https://github.com/duncanatt/detecter/edit/master/docs/using-detecter/system-properties.md" title="Edit this page" class="md-content__button md-icon">
+                  <a href="https://github.com/duncanatt/detecter/edit/master/docs/using-detecter/formalising-properties.md" title="Edit this page" class="md-content__button md-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
                   </a>
                 
                 
-                <h1 id="system-properties">System Properties<a class="headerlink" href="#system-properties" title="Permanent link">&para;</a></h1>
+                <h1 id="formalising-properties">Formalising Properties<a class="headerlink" href="#formalising-properties" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="explain-each-property">Explain each property<a class="headerlink" href="#explain-each-property" title="Permanent link">&para;</a></h2>
-<h2 id="show-how-to-synthesise-one-and-discuss-the-generated-code">Show how to synthesise one and discuss the generated code.<a class="headerlink" href="#show-how-to-synthesise-one-and-discuss-the-generated-code" title="Permanent link">&para;</a></h2>
+<h2 id="choosing-what-to-analyse">Choosing what to analyse<a class="headerlink" href="#choosing-what-to-analyse" title="Permanent link">&para;</a></h2>
+<p>detectEr provides the keywords <code class="highlight"><span class="k">with</span></code> and <code class="highlight"><span class="k">monitor</span></code> to target program processes for a particular <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specification.
+The <code class="highlight"><span class="k">with</span></code> keyword picks out the signature of the function that is spawned as a process, whereas the <code class="highlight"><span class="k">monitor</span></code> keyword defines the property to be runtime analysed.
+For example, to verify the behaviour of our calculator process against the <a href="#__code_1">formula above</a>, we write:</p>
+<p>against the formula from earlier, xxxx</p>
+<div class="highlight"><pre><span></span><code><span class="k">with</span>
+  <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)</span>
+<span class="k">monitor</span>
+  <span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span>
+</code></pre></div>
+<p>From an <a href="instrumentation.html">instrumentation</a> standpoint, <code class="highlight"><span class="k">with</span></code> establishes the set of trace event corresponding to the program process it targets, thus enabling the specification to <em>abstract</em> from the events that are generated by other processes.
+This helps maintain the size of <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications compact whenever possible.
+In using <code class="highlight"><span class="k">with</span></code>, our formula need not account for superfluous trace events (<em>e.g.</em> of another calculator process) that tend to make the specification exercise tedious and error-prone.</p>
+<p>Explain the init event that every process performs.</p>
+<p>INSERT MODEL.</p>
+<h2 id="formalising-p1">Formalising P<sub>1</sub><a class="headerlink" href="#formalising-p1" title="Permanent link">&para;</a></h2>
 <ul>
-<li>
-<p>The property of request count, but instead of the <code>exit</code> event use the <code>init</code> event of the process.</p>
-</li>
 <li>
 <p>Specify a simple property and explain the synthesised code, giving an example of how the events are consumed and processed.</p>
 </li>
@@ -471,8 +515,12 @@
 <p>Probably it will be the first property in the paper or else, the second one for which we have the automaton and we can show the corresponding code generated in Erlang.</p>
 </li>
 </ul>
-<h1 id="inconclusive-verdicts">Inconclusive verdicts<a class="headerlink" href="#inconclusive-verdicts" title="Permanent link">&para;</a></h1>
-<p>List the possible traces</p>
+<h2 id="an-alternative-to-p1">An alternative to P<sub>1</sub><a class="headerlink" href="#an-alternative-to-p1" title="Permanent link">&para;</a></h2>
+<ul>
+<li>The property of request count, but instead of the <code>exit</code> event use the <code>init</code> event of the process.</li>
+</ul>
+<h2 id="formalising-p2">Formalising P<sub>2</sub><a class="headerlink" href="#formalising-p2" title="Permanent link">&para;</a></h2>
+<h2 id="formalising-p3">Formalising P<sub>3</sub><a class="headerlink" href="#formalising-p3" title="Permanent link">&para;</a></h2>
                 
               
               
@@ -495,7 +543,7 @@
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="the-specification-logic.html" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="runtime-verification.html" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -504,7 +552,7 @@
               <span class="md-footer__direction">
                 Previous
               </span>
-              The Specification Logic
+              Runtime Verification
             </div>
           </div>
         </a>

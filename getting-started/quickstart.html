@@ -392,8 +392,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../using-detecter/a-client-server-system.html" class="md-nav__link">
-        A Client-Server System
+      <a href="../using-detecter/getting-started.html" class="md-nav__link">
+        Getting Started
       </a>
     </li>
   
@@ -416,8 +416,8 @@
   
   
     <li class="md-nav__item">
-      <a href="../using-detecter/system-properties.html" class="md-nav__link">
-        System Properties
+      <a href="../using-detecter/runtime-verification.html" class="md-nav__link">
+        Runtime Verification
       </a>
     </li>
   
@@ -428,8 +428,20 @@
   
   
     <li class="md-nav__item">
-      <a href="../using-detecter/the-example-system.md" class="md-nav__link">
-        A Client-Server System in other languages
+      <a href="../using-detecter/formalising-properties.html" class="md-nav__link">
+        Formalising Properties
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/synthesising-monitors.md" class="md-nav__link">
+        Synthesising Monitors
       </a>
     </li>
   
@@ -629,10 +641,10 @@ You can test <code class="highlight"><span class="nn">prop_hello</span><span cla
 Setting <abbr title="Module, Function, Arguments">MFArgs</abbr> to <code class="highlight"><span class="p">{</span><span class="n">hello</span><span class="p">,</span><span class="n">start_greet</span><span class="p">,[</span><span class="s">&quot;Duncan&quot;</span><span class="p">]}</span></code> and the analyser to <code class="highlight"><span class="k">fun</span> <span class="nn">prop_hello</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> launches the hello world and analyser processes to execute concurrently.</p>
 </li>
 </ol>
-<p>In the simple instance of the analyser <code class="highlight"><span class="n">prop_hello</span></code>, monitoring terminates promptly with the verdict <code class="verdict-no">no</code> as soon as the system starts executing.
-This <code class="verdict-no">no</code> verdict informs us that our hello world program violated the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specification in <code>prop_hello.hml</code>.
-We next learn how <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> can be used to express useful properties that <em>precisely and unambiguously</em> describe the behaviour we want our systems <em>not to</em> infringe.</p>
-<!-- --8<-- "includes/footer.md" -->
+<p>In this introductory example, the analyser <code class="highlight"><span class="n">prop_hello</span></code> promptly terminates with the verdict <code class="verdict-no">no</code> as soon as our hello world program starts executing.
+The <code class="verdict-no">no</code> verdict informs us that a program has violated the specification of <code>prop_hello.hml</code>.</p>
+<hr />
+<p>We next look at a typical concurrent program where processes interact, and study what kind of useful properties one might want such systems to observe.</p>
                 
               
               
@@ -670,13 +682,13 @@ We next learn how <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> can be 
         </a>
       
       
-        <a href="../using-detecter/a-client-server-system.html" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="../using-detecter/getting-started.html" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              A Client-Server System
+              Getting Started
             </div>
           </div>
           <div class="md-footer__button md-icon">

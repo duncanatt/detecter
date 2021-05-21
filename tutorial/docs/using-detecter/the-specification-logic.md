@@ -27,8 +27,8 @@ sHML ::=  ff  |  tt                        (1)
 
 4. `#!shml and(...)` is a sequence of comma-separated *conjunctions* where each conjunct is a sub-formula `#!shml sHML` *guarded* by the universal modal operator `#!shml [Act]` (also called a *necessity*).
 
-To handle reasoning over [trace event](trace-events) data, the modal operator is equipped with *symbolic actions* `#!shml Act` of the form `#!shml P when C`, where `#!shml P` is an *event pattern* and `#!shml C`, a *decidable Boolean constraint*.
-Patterns correspond to trace events that the program under analysis exhibits. 
+To handle reasoning over program event data, the modal operator is equipped with *symbolic actions* `#!shml Act` of the form `#!shml P when C`, where `#!shml P` is an *event pattern* and `#!shml C`, a *decidable Boolean constraint*.
+Patterns correspond to events that the program under analysis exhibits. 
 These patterns contain *data variables* that are instantiated with values learnt at runtime from *matched* events.
 Pattern variables *bind* the free variables in constraints `#!shml C`, and this binding scope *extends* to the continuation formula `#!shml sHML`.
 Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the 'don't care' pattern `_` matches any data value.
@@ -166,7 +166,7 @@ Recall that the universal modality states that, for any program event satisfying
 However, *no* program state can satisfy the continuation `#!shml ff`! 
 This means that the formula `#!shml and([Srv:Clt ! {bye,Tot} when Tot < 0])ff` can only be satisfied when  our calculator program does not exhibit the event described by the symbolic action `#!erlang Srv:Clt ! {bye,Tot} when Tot < 0`.
 
-Suppose our server with PID `#!erlang <0.10.0>` exhibits the `send` trace event `#!erlang <0.10.0>:<0.16.0> ! {bye,-1}` in response to a request issued by a client with PID `#!erlang <0.16.0>`.
+Suppose our server with PID `#!erlang <0.10.0>` exhibits the `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye,-1}` in response to a request issued by a client with PID `#!erlang <0.16.0>`.
 It matches pattern `#!shml Srv:Clt ! {bye,Tot}`, instantiating the variables `#!erlang Srv = <0.10.0>`, `#!erlang Clt = <0.16.0>`, and `#!erlang Tot = -1`.
 The constraint `#!erlang when Tot < 0` is also satisfied by `#!erlang Tot`, leading to a violation, *i.e.*, `#!shml ff`.
 For a different `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye,1}`, the symbolic action in the modality `#!shml [Srv:Clt ! {bye,Tot} when Tot < 0]` is not satisfied, and consequently, `#!shml and([Srv:Clt ! {bye,Tot} when Tot < 0])ff` is not violated.

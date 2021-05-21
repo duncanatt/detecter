@@ -117,8 +117,8 @@ nav:
   - Using detectEr:
     - Getting Started: using-detecter/getting-started.md
     - The Specification Logic: using-detecter/the-specification-logic.md
-    - Formalising Properties: using-detecter/formalising-properties.md
     - Runtime Verification: using-detecter/runtime-verification.md
+    - Formalising Properties: using-detecter/formalising-properties.md
     - Synthesising Monitors: using-detecter/synthesising-monitors.md
     # - A Client-Server System in other languages: using-detecter/the-example-system.md
     - Instrumentation: using-detecter/instrumentation.md # Synthesis Inline outline and offline. on one system.

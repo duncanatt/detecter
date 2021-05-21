@@ -419,10 +419,10 @@
                   </a>
                 
                 
-                <h1 id="a-client-server-system">A Client-Server System</h1>
-<h1 id="concurrent-programs">Concurrent programs</h1>
+                <h1 id="a-client-server-system">A Client-Server System<a class="headerlink" href="#a-client-server-system" title="Permanent link">&para;</a></h1>
+<h1 id="concurrent-programs">Concurrent programs<a class="headerlink" href="#concurrent-programs" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="calculator-program-in-erlang">Calculator program in Erlang</h2>
+<h2 id="calculator-program-in-erlang">Calculator program in Erlang<a class="headerlink" href="#calculator-program-in-erlang" title="Permanent link">&para;</a></h2>
 <p>Let us consider an archetypal calculator program consisting of a single server process that handles client requests for arithmetic computation.
 The calculator server blocks and waits for requests sent as <em>asynchronous</em> messages.
 These messages are addressed to the server using its <abbr title="Process ID">PID</abbr>, and deposited in the server mailbox that buffers multiple client requests.
@@ -663,7 +663,7 @@ After handling <code class="highlight"><span class="n">add</span></code> and <co
 For instance, the <em>symbolic event</em> <code class="highlight"><span class="nv">Srv</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> is exhibited by the server loop when the calculator at its initial state <code>Q0</code> reads a <code>stp</code> request from its mailbox and transitions to <code>Q3</code>.
 This transition depicts the computation that <code class="highlight"><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> performs to <code class="highlight"><span class="k">receive</span></code> the <code class="highlight"><span class="n">stp</span></code> request, line <code>5</code>, and subsequently pattern match it to <code class="highlight"><span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> on line <code>14</code>.
 Note that symbolic events in the model capture the <em>set of possible concrete events</em> that the running program can exhibit, <em>e.g.</em>, <code class="highlight"><span class="nv">Srv</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> describes all events where <code class="highlight"><span class="nv">Srv</span></code> and <code class="highlight"><span class="nv">Clt</span></code> range over <abbr title="Process IDs">PIDs</abbr>, and <code class="highlight"><span class="n">stp</span></code> is the atom denoting the stop operation requested by clients.</p>
-<h2 id="safety-properties">Safety properties</h2>
+<h2 id="safety-properties">Safety properties<a class="headerlink" href="#safety-properties" title="Permanent link">&para;</a></h2>
 <p>There are a number of properties we would like the server behaviour to observe.
 For example, the server loop does not control the initial value of <code class="highlight"><span class="nv">Tot</span></code> that an invocation to <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> provides.
 We could, therefore, require that:</p>
@@ -702,11 +702,11 @@ Producing this evidence is enough of a proof that the program under scrutiny is 
 
 <!-- meaning that all we need to disprove that a property does not hold is to observe just one instance of a bad behaviour to show that our program is not safe, meaning that it infringes the guarantee that we were hoping that it holds! -->
 
-<h2 id="safety-properties-guarantees">Safety Properties = Guarantees</h2>
+<h2 id="safety-properties-guarantees">Safety Properties = Guarantees<a class="headerlink" href="#safety-properties-guarantees" title="Permanent link">&para;</a></h2>
 <p>The guarantees we want to hold = properties from the paper.</p>
 <p>Trace events.</p>
 <p>From its initial state Q0, the server can follow differnt transtions, corresponding to the branching structure induced by the receive clause.</p>
-<h2 id="trace-events-from-model-to-trace-events">Trace events - From model to trace events</h2>
+<h2 id="trace-events-from-model-to-trace-events">Trace events - From model to trace events<a class="headerlink" href="#trace-events-from-model-to-trace-events" title="Permanent link">&para;</a></h2>
 <p>Full model in the diagram, but partial model at runtime.</p>
 <p>While the program is a transition system where each program state can simultaneously branch into more than one state, at runtime we only get to observe the program actions in the form of linear sequences of events called traces.</p>
 <p>Actions but say they we use event henceforth since this sounds more natural.</p>

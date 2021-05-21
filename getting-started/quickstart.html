@@ -470,9 +470,9 @@
                   </a>
                 
                 
-                <h1 id="quickstart">Quickstart</h1>
+                <h1 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="launching-detecter-from-the-shell">Launching detectEr from the shell</h2>
+<h2 id="launching-detecter-from-the-shell">Launching detectEr from the shell<a class="headerlink" href="#launching-detecter-from-the-shell" title="Permanent link">&para;</a></h2>
 <p>The <code>detecter/ebin</code> directory created <a href="setting-up-detecter.html#compiling-detecter">previously</a> needs to be included in the Erlang runtime path to preload all the binaries required to be able to use detectEr.
 This is done by using the <code>-pa</code> switch when launching the Erlang shell.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:$ </span>erl -pa /path/to/detecter/ebin
@@ -481,7 +481,7 @@ This is done by using the <code>-pa</code> switch when launching the Erlang shel
 It also supports the monitoring of systems that run outside of the <abbr title="Erlang Virtual Machine">EVM</abbr>, provided that these record their logs in files following a predetermined formatting that enables detectEr to extract runtime information.
 This topic is covered in more depth in the <a href="../using-detecter/instrumentation.html">Instrumentation</a> section.
 For now, we establish the workflow required to use detectEr by way of the traditional &lsquo;hello world&rsquo; example.</p>
-<h2 id="hello-world">Hello world</h2>
+<h2 id="hello-world">Hello world<a class="headerlink" href="#hello-world" title="Permanent link">&para;</a></h2>
 <p>Before using detectEr, you should get an intuitive grasp of what monitoring is, and the steps one needs to follow to initialise and start the monitoring process.
 If this is your first time using Erlang, the following wil help you get acquainted with the Erlang shell.</p>
 <p>Launch a new terminal emulator window (<em>e.g.</em> Terminal on Ubuntu or macOS), navigate to the <em>root</em> detectEr directory, and:</p>
@@ -534,7 +534,7 @@ This reference format is commonly known as <abbr title="Module, Function, Arity"
 For example, our <code class="highlight"><span class="n">greet</span></code> function inside the module <code class="highlight"><span class="n">hello</span></code> can be concisely referred to as <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code>.
 We refer to functions in the same module simply as <code class="highlight"><span class="k">fun</span><span class="o">/</span><span class="n">arity</span></code>.</p>
 </div>
-<h2 id="hello-world-the-asynchronous-way">Hello world, the asynchronous way</h2>
+<h2 id="hello-world-the-asynchronous-way">Hello world, the asynchronous way<a class="headerlink" href="#hello-world-the-asynchronous-way" title="Permanent link">&para;</a></h2>
 <p>You might have noticed that <code class="highlight"><span class="nn">hello</span><span class="p">:</span><span class="n">greet</span><span class="o">/</span><span class="mi">1</span></code> pauses the Erlang shell momentarily before the greeting is displayed.
 During this interval, the shell is inoperable and cannot accept user input. 
 Such function calls are called <em>synchronous</em> invocations, since they block the caller until the called function returns, <em>i.e.</em> the body of the called function is executed in its <em>entirety</em> and a value is returned to the caller.
@@ -586,7 +586,7 @@ Concretely, the invocation to <code>spawn/3</code> on line <code>5</code> yields
 <p>After the predefined sleep time elapses, the greeting is printed to the shell.</p>
 </li>
 </ol>
-<h2 id="outline-runtime-monitoring">Outline runtime monitoring</h2>
+<h2 id="outline-runtime-monitoring">Outline runtime monitoring<a class="headerlink" href="#outline-runtime-monitoring" title="Permanent link">&para;</a></h2>
 <p>In this quickstart demo, we monitor the execution of our asynchronous hello world example using the <a href="../using-detecter/instrumentation.html#outline-instrumentation">outline</a> form of instrumentation. </p>
 <!-- Outline monitoring is operates asynchronously as well, and is described at length in XXX. -->
 

@@ -503,9 +503,9 @@
                   </a>
                 
                 
-                <h1 id="preparation">Preparation</h1>
+                <h1 id="preparation">Preparation<a class="headerlink" href="#preparation" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="prerequisites">Prerequisites</h2>
+<h2 id="prerequisites">Prerequisites<a class="headerlink" href="#prerequisites" title="Permanent link">&para;</a></h2>
 <p>This tutorial assumes that users are running Ubuntu/Debian, macOS or Windows 10.
 Windows 10 users may either install the <a href="https://docs.microsoft.com/en-us/windows/wsl/install-win10">Windows Subsystem for Linux</a> and follow the instructions given below for <em>Ubuntu/Debian</em>, or alternatively, configure <a href="https://chocolatey.org">Chocolatey</a> and install the software packages mentioned via <code>choco install</code>.
 However, our instructions will not detail how detectEr is installed and used on Windows systems.</p>
@@ -536,7 +536,7 @@ However, our instructions will not detail how detectEr is installed and used on 
 </tr>
 </tbody>
 </table>
-<h2 id="installing-erlang">Installing Erlang</h2>
+<h2 id="installing-erlang">Installing Erlang<a class="headerlink" href="#installing-erlang" title="Permanent link">&para;</a></h2>
 <p>Erlang can be installed on multiple platforms by compiling it from <a href="https://github.com/erlang/otp">source</a> or  downloading one of the pre-compiled distributions hosted on <a href="https://www.erlang-solutions.com/downloads">erlang-solutions.com</a>.
 We however follow the simpler route and install Erlang using the package managers mentioned above.</p>
 <div class="tabbed-set" data-tabs="1:4"><input checked="checked" id="__tabbed_1_1" name="__tabbed_1" type="radio" /><label for="__tabbed_1_1">Ubuntu/Debian</label><div class="tabbed-content">
@@ -570,7 +570,7 @@ sudo dpkg -i erlang-solutions_2.0_all.deb
 <p class="admonition-title">Quick check</p>
 <p>Confirm that Erlang/<abbr title="Open Telecom Platform">OTP</abbr> distribution has been successfully installed and that the system <code>PATH</code> variable is properly configured by typing <code>erl --version</code>.</p>
 </div>
-<h2 id="installing-elixir">Installing Elixir</h2>
+<h2 id="installing-elixir">Installing Elixir<a class="headerlink" href="#installing-elixir" title="Permanent link">&para;</a></h2>
 <p>Elixir runs on the Erlang virtual machine and uses the same <abbr title="Open Telecom Platform">OTP</abbr> libraries.
 We already installed the Erlang ecosystem, and need only install the Elixir language libraries.</p>
 <div class="tabbed-set" data-tabs="2:4"><input checked="checked" id="__tabbed_2_1" name="__tabbed_2" type="radio" /><label for="__tabbed_2_1">Ubuntu/Debian</label><div class="tabbed-content">
@@ -590,7 +590,7 @@ We already installed the Erlang ecosystem, and need only install the Elixir lang
 <p class="admonition-title">Quick check</p>
 <p>Confirm that Elixir has been successfully installed and that the system <code>PATH</code> variable is properly configured by typing <code>elixir --version</code>.</p>
 </div>
-<h2 id="installing-python">Installing Python</h2>
+<h2 id="installing-python">Installing Python<a class="headerlink" href="#installing-python" title="Permanent link">&para;</a></h2>
 <p>We also make use of Python 3, that can be installed as explained below.</p>
 <div class="tabbed-set" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><label for="__tabbed_3_1">Ubuntu/Debian</label><div class="tabbed-content">
 <p>Most distributions of Ubuntu and Debian come with Python pre-installed.
@@ -629,11 +629,11 @@ The Python package manager <abbr title="PIP Installs Packages">PIP</abbr> for Py
 <p>Confirm that Python 3 has been successfully installed and that the system <code>PATH</code> variable is properly configured by typing <code>python3 --version</code>.
 Also check that <abbr title="PIP Installs Packages">PIP</abbr> for Python 3 has been installed, <code>pip3 --version</code>.</p>
 </div>
-<h3 id="installing-the-virtual-environment-management-tool">Installing the virtual environment management tool</h3>
+<h3 id="installing-the-virtual-environment-management-tool">Installing the virtual environment management tool<a class="headerlink" href="#installing-the-virtual-environment-management-tool" title="Permanent link">&para;</a></h3>
 <p><a href="https://virtualenv.pypa.io/en/latest">Virtualenv</a> is a tool used to create isolated Python environments.
 The environment it creates has its own installation directory, and does not share libraries with other Virtualenv environments.
 Virtualenv can be installed via <abbr title="PIP Installs Packages">PIP</abbr>: <code>pip3 install virtualenv</code>.</p>
-<h2 id="configuring-visual-studio-code">Configuring Visual Studio Code</h2>
+<h2 id="configuring-visual-studio-code">Configuring Visual Studio Code<a class="headerlink" href="#configuring-visual-studio-code" title="Permanent link">&para;</a></h2>
 <p>Any plain text editor can be used, but for this tutorial we opt for Visual Studio Code that can be downloaded from <a href="https://code.visualstudio.com">https://code.visualstudio.com</a>.
 It can also be installed using the respective operating system package manager.</p>
 <div class="tabbed-set" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><label for="__tabbed_4_1">Ubuntu/Debian</label><div class="tabbed-content">
@@ -670,7 +670,7 @@ It can also be installed using the respective operating system package manager.<
 <p>Refer to the Visual Studio Code <a href="https://code.visualstudio.com/download">guide</a> for installing it on other operating systems. </p>
 </div>
 </div>
-<h3 id="adding-extensions">Adding extensions</h3>
+<h3 id="adding-extensions">Adding extensions<a class="headerlink" href="#adding-extensions" title="Permanent link">&para;</a></h3>
 <p>To enable syntax highlighting and language support for the languages used in this tutorial, VS Code can be configured with these extensions. </p>
 <ul>
 <li>

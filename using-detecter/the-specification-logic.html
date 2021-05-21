@@ -470,9 +470,9 @@
                   </a>
                 
                 
-                <h1 id="the-specification-logic">The Specification Logic</h1>
+                <h1 id="the-specification-logic">The Specification Logic<a class="headerlink" href="#the-specification-logic" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="overview">Overview</h2>
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>For the sake of simplicity, the script <code>hello_prop.hml</code> used in our hello world example specifies a <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property that every system necessarily violates, namely, the formula <code class="highlight"><span class="k">ff</span></code> that denotes falsity.
 We now look at the full <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> grammar that enables us to express more interesting and useful properties <em>about programs</em> (not traces).
 Specifications in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;also called <em>formulae</em>&mdash;are interpreted over the <em>states</em> of transition models of programs we wish to analyse.
@@ -504,7 +504,7 @@ Pattern variables <em>bind</em> the free variables in constraints <code class="h
 Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the &lsquo;don&rsquo;t care&rsquo; pattern <code>_</code> matches any data value.
 We say that a program (or a program state) satisfies the formula <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">sHML</span></code> <em>whenever</em> it exhibits an event that matches pattern <code class="highlight"><span class="nf">P</span></code>, fulfils the constraint <code class="highlight"><span class="nf">C</span></code>, <em>and</em> the ensuing program behaviour then satisfies <code class="highlight"><span class="nf">sHML</span></code>. 
 When the constraint is <code class="highlight"><span class="n">true</span></code>, the expression <code class="highlight"><span class="k">when</span> <span class="nf">C</span></code> may be omitted for readability.</p>
-<h2 id="pattern-and-constraint-expressions">Pattern and constraint expressions</h2>
+<h2 id="pattern-and-constraint-expressions">Pattern and constraint expressions<a class="headerlink" href="#pattern-and-constraint-expressions" title="Permanent link">&para;</a></h2>
 <p>detectEr supports five event patterns describing the lifecycle of processes.
 A <code>fork</code> action is exhibited by a process when it spawns a new child process; its dual, <code>init</code>, is exhibited by the corresponding child upon initialisation.
 Process <code>exit</code> actions signal termination, while <code>send</code> and <code>recv</code> describe process interaction.</p>
@@ -811,7 +811,7 @@ The set of valid Erlang guards supported by detectEr are the following:</p>
     | `#!erlang trunc/1`      | Truncate               | Number           |
     | `#!erlang tuple_size/1` | Tuple size             | Tuple            | -->
 
-<h2 id="suppressing-program-actions">Suppressing program actions</h2>
+<h2 id="suppressing-program-actions">Suppressing program actions<a class="headerlink" href="#suppressing-program-actions" title="Permanent link">&para;</a></h2>
 <p>Let us try to specify a safety requirement on the behaviour of our <a href="a-client-server-system.html#calculator-program">calculator program</a>.
 The <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula with symbolic action <code>Srv:Clt ! {bye,Tot} when Tot &lt; 0</code> describes the property requiring that &ldquo;the program state does <em>not</em> exhibit the send event whose payload consists of <code class="highlight"><span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span></code> with a negative total:</p>
 <div class="highlight"><pre><span></span><code><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span>
@@ -828,7 +828,7 @@ Analogously, the <code>exit</code> event <code class="highlight"><span class="o"
 <p class="admonition-title">Cheat sheet</p>
 <p>The formula <code class="highlight"><span class="p">[</span><span class="sc">Act</span><span class="p">]</span><span class="k">ff</span></code> means that the program must not exhibit the symbolic action <code class="highlight"><span class="sc">Act</span></code>.</p>
 </div>
-<h2 id="monitoring-processes">Monitoring processes</h2>
+<h2 id="monitoring-processes">Monitoring processes<a class="headerlink" href="#monitoring-processes" title="Permanent link">&para;</a></h2>
 <p>detectEr provides the keywords <code class="highlight"><span class="k">with</span></code> and <code class="highlight"><span class="k">monitor</span></code> to target program processes for a particular <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specification.
 The <code class="highlight"><span class="k">with</span></code> keyword picks out the signature of the function that is spawned as a process, whereas the <code class="highlight"><span class="k">monitor</span></code> keyword defines the property to be runtime analysed.
 For example, to verify the behaviour of our calculator process against the <a href="#__code_1">formula above</a>, we write:</p>

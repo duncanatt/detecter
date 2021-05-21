@@ -36,9 +36,9 @@ markdown_extensions:
   - pymdownx.tasklist:
       custom_checkbox: true
   - toc:
-      permalink: false
+      permalink: true
       # baselevel: 3
-      # anchorlink: true
+      anchorlink: false
       # anchorlink_class: section-header 
       # toc_depth: 3
 

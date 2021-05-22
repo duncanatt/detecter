@@ -13,28 +13,27 @@ Recall safety properties state that "something bad should never happen".
 sHML formulae are generated from the following grammar:
 
 ```{ .shml .annotate }
-sHML ::=  ff  |  tt                        (1) 
-       |  X                                (2)
-       |  max(X. sHML)                     (3) 
-       |  and([Act]sHML, ..., [Act]sHML)   (4)
+φ ∈ sHML ::=  ff  |  tt          (1)
+       |  X                      (2)
+       |  max(X. φ)              (3) 
+       |  and([α]φ, ..., [α]φ)   (4)
 ```
 
 1. Formula `#!shml ff` and `#!shml tt` denote *falsity* and *truth* respectively,
 
 2. `#!shml X` is a *logical variable*,
 
-3. The *maximal fix-point* construct specifies *recursion* via the logical variable `#!shml X` and *binds* the free occurrences of `#!shml X` in the sub-formula `#!shml sHML`, and,
+3. The *maximal fix-point* construct specifies *recursion* via the logical variable `#!shml X` and *binds* the free occurrences of `#!shml X` in the sub-formula `#!shml φ`, and,
 
-4. `#!shml and(...)` is a sequence of comma-separated *conjunctions* where each conjunct is a sub-formula `#!shml sHML` *guarded* by the universal modal operator `#!shml [Act]` (also called a *necessity*).
+4. `#!shml and(...)` is a sequence of comma-separated *conjunctions* where each conjunct is a sub-formula `#!shml φ` *guarded* by the universal modal operator `#!shml [α]` (also called a *necessity*).
 
-To handle reasoning over program event data, the modal operator is equipped with *symbolic actions* `#!shml Act` of the form `#!shml P when C`, where `#!shml P` is an *event pattern* and `#!shml C`, a *decidable Boolean constraint*.
+To handle reasoning over program event data, the modal operator is equipped with *symbolic actions* `#!shml α` of the form `#!shml P when C`, where `#!shml P` is an *event pattern* and `#!shml C`, a *decidable Boolean constraint*.
 Patterns correspond to events that the program under analysis exhibits. 
 These patterns contain *data variables* that are instantiated with values learnt at runtime from *matched* events.
-Pattern variables *bind* the free variables in constraints `#!shml C`, and this binding scope *extends* to the continuation formula `#!shml sHML`.
+Pattern variables *bind* the free variables in constraints `#!shml C`, and this binding scope *extends* to the continuation formula `#!shml φ`.
 Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the 'don't care' pattern `_` matches any data value.
-We say that a program (or a program state) satisfies the formula `#!shml [P when C]sHML` *whenever* it exhibits an event that matches pattern `#!shml P`, fulfils the constraint `#!shml C`, *and* the ensuing program behaviour then satisfies `#!shml sHML`. 
+We say that a program (or a program state) satisfies the formula `#!shml [P when C]φ` *whenever* it exhibits an event that matches pattern `#!shml P`, fulfils the constraint `#!shml C`, *and* the ensuing program behaviour then satisfies `#!shml φ`. 
 When the constraint is `#!shml true`, the expression `#!shml when C` may be omitted for readability.
-
 
 ## Pattern and constraint expressions
 
@@ -156,24 +155,24 @@ The set of valid Erlang guards supported by detectEr are the following:
 ## Suppressing program actions
 
 Let us try to specify a safety requirement on the behaviour of our [calculator program](getting-started.md#calculator-program).
-The sHML formula with symbolic action `Srv:Clt ! {bye,Tot} when Tot < 0` describes the property requiring that "the program state does *not* exhibit the send event whose payload consists of `#!erlang {bye, Tot}` with a negative total:
+The sHML formula with symbolic action `#!shml Srv:Clt ! {bye, Tot} when Tot < 0` describes the property requiring that "the program state does *not* exhibit the send event whose payload consists of `#!erlang {bye, Tot}` with a negative total:
 
 ```shml
-and([Srv:Clt ! {bye,Tot} when Tot < 0])ff
+and([Srv:Clt ! {bye, Tot} when Tot < 0])ff
 ```
 
-Recall that the universal modality states that, for any program event satisfying the symbolic action `#!shml P when C` in `#!shml [P when C]sHML`, the ensuing program behaviour must then satisfy the continuation formula `#!shml sHML`.
+Recall that the universal modality states that, for any program event satisfying the symbolic action `#!shml P when C` in `#!shml [P when C]φ`, the ensuing program behaviour must then satisfy the continuation formula `#!shml φ`.
 However, *no* program state can satisfy the continuation `#!shml ff`! 
-This means that the formula `#!shml and([Srv:Clt ! {bye,Tot} when Tot < 0])ff` can only be satisfied when  our calculator program does not exhibit the event described by the symbolic action `#!erlang Srv:Clt ! {bye,Tot} when Tot < 0`.
+This means that the formula `#!shml and([Srv:Clt ! {bye, Tot} when Tot < 0])ff` can only be satisfied when  our calculator program does not exhibit the event described by the symbolic action `#!erlang Srv:Clt ! {bye, Tot} when Tot < 0`.
 
-Suppose our server with PID `#!erlang <0.10.0>` exhibits the `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye,-1}` in response to a request issued by a client with PID `#!erlang <0.16.0>`.
-It matches pattern `#!shml Srv:Clt ! {bye,Tot}`, instantiating the variables `#!erlang Srv = <0.10.0>`, `#!erlang Clt = <0.16.0>`, and `#!erlang Tot = -1`.
+Suppose our server with PID `#!erlang <0.10.0>` exhibits the `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye, -1}` in response to a request issued by a client with PID `#!erlang <0.16.0>`.
+It matches pattern `#!shml Srv:Clt ! {bye, Tot}`, instantiating the variables `#!erlang Srv = <0.10.0>`, `#!erlang Clt = <0.16.0>`, and `#!erlang Tot = -1`.
 The constraint `#!erlang when Tot < 0` is also satisfied by `#!erlang Tot`, leading to a violation, *i.e.*, `#!shml ff`.
-For a different `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye,1}`, the symbolic action in the modality `#!shml [Srv:Clt ! {bye,Tot} when Tot < 0]` is not satisfied, and consequently, `#!shml and([Srv:Clt ! {bye,Tot} when Tot < 0])ff` is not violated.
-Analogously, the `exit` event `#!erlang <0.10.0> ** killed` does not lead to a violation of the formula since the pattern `#!shml Srv:Clt ! {bye,Tot}` fails to match the event shape.
+For a different `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye, 1}`, the symbolic action in the modality `#!shml [Srv:Clt ! {bye, Tot} when Tot < 0]` is not satisfied, and consequently, `#!shml and([Srv:Clt ! {bye, Tot} when Tot < 0])ff` is not violated.
+Analogously, the `exit` event `#!erlang <0.10.0> ** killed` does not lead to a violation of the formula since the pattern `#!shml Srv:Clt ! {bye, Tot}` fails to match the event shape.
 
 !!! note "Cheat sheet"
-    The formula `#!shml [Act]ff` means that the program must not exhibit the symbolic action `#!shml Act`.
+    The formula `#!shml [α]ff` means that the program must not exhibit the symbolic action `#!shml α`.
 
 ---
-LINK TO NEXT SECTION
+Despite the fact that the runtime setting limits what one observes at runtime, we next outline how this does not prevent us from verifying properties expressed in sHML.

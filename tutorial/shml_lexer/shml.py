@@ -44,7 +44,7 @@ class ShmlLexer(RegexLexer):
     )
 
     special_variables = (
-      'sHML', 'P', 'C'
+      'sHML', 'P', 'C', 'φ'
     )
 
     builtins = (
@@ -81,7 +81,7 @@ class ShmlLexer(RegexLexer):
             (words(special_variables, suffix=r'\b'), Name.Function),
             # (r'ff', Number.Integer),
             # (r'tt', String.Char),
-            (r'Act', String.Char),
+            (r'(Act|α)', String.Char),
             (r'\(\d+\)', Comment), # Bubble numbering.
             (r'\s+', Text),
             (r'%.*\n', Comment),

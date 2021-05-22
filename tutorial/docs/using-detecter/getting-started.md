@@ -38,9 +38,9 @@ The logic of `#!erlang loop/1` induces a server runtime behaviour that can be *a
 
 *States* of the model capture the internal state that the server process can be in at any point during its execution.
 *Transitions* between states denote the computational steps of the program that produce *visible program events*.
-For instance, the *symbolic event* `#!erlang Srv ? {Clt, stp}` is exhibited by the server loop when the calculator at its initial state `Q0` reads a `stp` request from its mailbox and transitions to `Q3`.
+For instance, the event `#!erlang Srv ? {Clt, stp}` is exhibited by the server loop when the calculator at its initial state `Q0` reads a `stp` request from its mailbox and transitions to `Q3`.
 This transition depicts the computation that `#!erlang loop/1` performs to `#!erlang receive` the `#!erlang stp` request, line `5`, and subsequently pattern match it to `#!erlang {Clt, stp}` on line `14`.
-Note that symbolic events in the model capture the *set of possible concrete events* that the running program can exhibit, *e.g.*, `#!erlang Srv ? {Clt, stp}` describes all events where `#!erlang Srv` and `#!erlang Clt` range over PIDs, and `#!erlang stp` is the atom denoting the stop operation requested by clients.
+Note that events in the model capture the *set of all possible concrete events* that the running program can exhibit, *e.g.*, `#!erlang Srv ? {Clt, stp}` describes all receive events where the *variable placeholders* `#!erlang Srv` and `#!erlang Clt` range over PIDs, and `#!erlang stp` is the atom denoting the stop operation requested by clients.
 
 ## Safety properties
 

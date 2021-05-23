@@ -13,25 +13,28 @@ Recall safety properties state that "something bad should never happen".
 sHML formulae are generated from the following grammar:
 
 ```{ .shml .annotate }
-φ ∈ sHML ::=  ff  |  tt          (1)
-       |  X                      (2)
-       |  max(X. φ)              (3) 
-       |  and([α]φ, ..., [α]φ)   (4)
+φ ∈ sHML ::=  ff  |  tt             (1)
+       |  X                         (2)
+       |  max(X. φ)                 (3) 
+       |  and([α₁]φ₁, ..., [αₙ]φₙ)   (4)
 ```
 
-1. Formula `#!shml ff` and `#!shml tt` denote *falsity* and *truth* respectively,
+1. Formulae `#!shml ff` and `#!shml tt` denote *falsity* and *truth* respectively,
 
 2. `#!shml X` is a *logical variable*,
 
 3. The *maximal fix-point* construct specifies *recursion* via the logical variable `#!shml X` and *binds* the free occurrences of `#!shml X` in the sub-formula `#!shml φ`, and,
 
-4. `#!shml and(...)` is a sequence of comma-separated *conjunctions* where each conjunct is a sub-formula `#!shml φ` *guarded* by the universal modal operator `#!shml [α]` (also called a *necessity*).
+4. `#!shml and(...)` is a sequence of comma-separated *conjunctions* where each conjunct is a sub-formula `#!shml φᵢ` *guarded* by the universal modal operator `#!shml [αᵢ]` (also called a *necessity*).
 
 To handle reasoning over program event data, the modal operator is equipped with *symbolic actions* `#!shml α` of the form `#!shml P when C`, where `#!shml P` is an *event pattern* and `#!shml C`, a *decidable Boolean constraint*.
 Patterns correspond to events that the program under analysis exhibits. 
 These patterns contain *data variables* that are instantiated with values learnt at runtime from *matched* events.
 Pattern variables *bind* the free variables in constraints `#!shml C`, and this binding scope *extends* to the continuation formula `#!shml φ`.
 Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the 'don't care' pattern `_` matches any data value.
+Central to the conjuncted necessities construct, `#!shml and([α₁]φ₁, ..., [αₙ]φₙ)`, is the constraint that at any one point in time, *at most one* conjunct `#!shml [αᵢ]φᵢ` may be satisfied.
+This enables detectEr to [synthesise](synthesising-analysers.md) deterministic analyser code [Refs:Antoins,IAN,TutPaper].
+
 We say that a program (or a program state) satisfies the formula `#!shml [P when C]φ` *whenever* it exhibits an event that matches pattern `#!shml P`, fulfils the constraint `#!shml C`, *and* the ensuing program behaviour then satisfies `#!shml φ`. 
 When the constraint is `#!shml true`, the expression `#!shml when C` may be omitted for readability.
 
@@ -43,22 +46,22 @@ Process `exit` actions signal termination, while `send` and `recv` describe proc
 
 | Program event  | Event pattern                             | Pattern variable    | Description                                                         |
 | :-----------: | :----------------------------------------: | :-----------------: | :------------------------------------------------------------------ |
-| `fork`        | *P~1~* **-->** *P~2~*, *Mod*:*Fun*(*Args*) | *P~1~*              | PID of the parent process spawning *P~2~*                           |
-|               |                                            | *P~2~*              | PID of the child process spawned by *P~1~*                          |
-|               |                                            | *Mod*:*Fun*(*Args*) | Function signature consisting of the module, function and arguments |
-| `init`        | *P~1~* **<--** *P~2~*, *Mod*:*Fun*(*Args*) | *P~1~*              | PID of the parent process spawning *P~2~*                           |
-|               |                                            | *P~2~*              | PID of the child process spawned by *P~1~*                          |
-|               |                                            | *Mod*:*Fun*(*Args*) | Function signature consisting of the module, function and arguments |
-| `exit`        | *P~1~* __**__ *Data*                       | *P~1~*              | PID of the terminated process                                       |
-|               |                                            | *Data*              | Termination data                                                    |
-| `send`        | *P~1~* **:** *P~2~* **!** *Msg*            | *P~1~*              | PID of the process issuing the message                              |
-|               |                                            | *P~2~*              | PID of the recipient process                                        |
-|               |                                            | *Msg*               | Message payload                                                     |
-| `recv`        | *P~2~* **?** *Msg*                         | *P~2~*              | PID of the recipient process                                        |
-|               |                                            | *Msg*               | Request payload consisting of data                                  |
+| `fork`        | `P₁` **-->** `P₂`, `Mod`:`Fun`(`Args`)     | `P₁`                | PID of the parent process spawning `P₂`                             |
+|               |                                            | `P₂`                | PID of the child process spawned by `P₁`                            |
+|               |                                            | `Mod`:`Fun`(`Args`) | Function signature consisting of the module, function and arguments |
+| `init`        | `P₁` **<--** `P₂`, `Mod`:`Fun`(`Args`)     | `P₁`                | PID of the parent process spawning `P₂`                             |
+|               |                                            | `P₂`                | PID of the child process spawned by `P₁`                            |
+|               |                                            | `Mod`:`Fun`(`Args`) | Function signature consisting of the module, function and arguments |
+| `exit`        | `P₁` __**__ `Data`                         | `P₁`                | PID of the terminated process                                       |
+|               |                                            | `Data`              | Termination data                                                    |
+| `send`        | `P₁` **:** `P₂` **!** `Msg`                | `P₁`                | PID of the process issuing the message                              |
+|               |                                            | `P₂`                | PID of the recipient process                                        |
+|               |                                            | `Msg`               | Message payload                                                     |
+| `recv`        | `P₂` **?** `Msg`                           | `P₂`                | PID of the recipient process                                        |
+|               |                                            | `Msg`               | Request payload consisting of data                                  |
 
-The variables *P~1~* and *P~2~* in event patterns must be a port ID or PID, whereas *Data* and *Msg* may be any [Erlang data type](http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html), *i.e.*, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, PID, tuple, map, and list.
-*Mod* and *Fun* must be atoms, and *Args*, an arbitrary list comprised of the aforementioned data types.
+The variables `P₁` and `P₂` in event patterns must be a port ID or PID, whereas `Data` and `Msg` may be any [Erlang data type](http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html), *i.e.*, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, PID, tuple, map, and list.
+`Mod` and `Fun` must be atoms, and `Args`, an arbitrary list comprised of the aforementioned data types.
 
 !!! note "Pattern matching"
     Our current detectEr syntax does not yet implement full Erlang pattern matching, including $, map, record and bit string expressions; these will be added in future releases of the tool.
@@ -152,10 +155,10 @@ The set of valid Erlang guards supported by detectEr are the following:
     | `#!erlang trunc/1`      | Truncate               | Number           |
     | `#!erlang tuple_size/1` | Tuple size             | Tuple            | -->
 
-## Suppressing program actions
+## A simple example
 
 Let us try to specify a safety requirement on the behaviour of our [calculator program](getting-started.md#calculator-program).
-The sHML formula with symbolic action `#!shml Srv:Clt ! {bye, Tot} when Tot < 0` describes the property requiring that "the program state does *not* exhibit the send event whose payload consists of `#!erlang {bye, Tot}` with a negative total:
+The sHML formula with symbolic action `#!shml Srv:Clt ! {bye, Tot} when Tot < 0` describes the property requiring that "the program state does *not* exhibit a send event whose payload consists of `#!erlang {bye, Tot}` with a negative total:
 
 ```shml
 and([Srv:Clt ! {bye, Tot} when Tot < 0])ff
@@ -172,7 +175,7 @@ For a different `send` event `#!erlang <0.10.0>:<0.16.0> ! {bye, 1}`, the symbol
 Analogously, the `exit` event `#!erlang <0.10.0> ** killed` does not lead to a violation of the formula since the pattern `#!shml Srv:Clt ! {bye, Tot}` fails to match the event shape.
 
 !!! note "Cheat sheet"
-    The formula `#!shml [α]ff` means that the program must not exhibit the symbolic action `#!shml α`.
+    The formula `#!shml [α]ff` means that the program must not perform the symbolic action `#!shml α`.
 
 ---
 Despite the fact that the runtime setting limits what one observes at runtime, we next outline how this does not prevent us from verifying properties expressed in sHML.

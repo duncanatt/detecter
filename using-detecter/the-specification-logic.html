@@ -390,8 +390,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#suppressing-program-actions" class="md-nav__link">
-    Suppressing program actions
+  <a href="#a-simple-example" class="md-nav__link">
+    A simple example
   </a>
   
 </li>
@@ -484,14 +484,14 @@ Specifications in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;a
 <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> is a syntactic subset of the more expressive Hennessy-Milner Logic with recursion, and is used to specify <a href="getting-started.html#safety-properties">safety properties</a>.
 Recall safety properties state that &ldquo;something bad should never happen&rdquo;.
 <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formulae are generated from the following grammar:</p>
-<div class="annotate highlight"><pre><span></span><code><span class="nf">φ</span> <span class="err">∈</span> <span class="nf">sHML</span> <span class="p">::</span><span class="o">=</span>  <span class="k">ff</span>  <span class="p">|</span>  <span class="k">tt</span>          <span class="c">(1)</span>
-       <span class="p">|</span>  <span class="nv">X</span>                      <span class="c">(2)</span>
-       <span class="p">|</span>  <span class="k">max</span><span class="p">(</span><span class="nv">X</span><span class="p">.</span> <span class="nf">φ</span><span class="p">)</span>              <span class="c">(3)</span> 
-       <span class="p">|</span>  <span class="k">and</span><span class="p">([</span><span class="sc">α</span><span class="p">]</span><span class="nf">φ</span><span class="p">,</span> <span class="p">...,</span> <span class="p">[</span><span class="sc">α</span><span class="p">]</span><span class="nf">φ</span><span class="p">)</span>   <span class="c">(4)</span>
+<div class="annotate highlight"><pre><span></span><code><span class="nf">φ</span> <span class="err">∈</span> <span class="nf">sHML</span> <span class="p">::</span><span class="o">=</span>  <span class="k">ff</span>  <span class="p">|</span>  <span class="k">tt</span>             <span class="c">(1)</span>
+       <span class="p">|</span>  <span class="nv">X</span>                         <span class="c">(2)</span>
+       <span class="p">|</span>  <span class="k">max</span><span class="p">(</span><span class="nv">X</span><span class="p">.</span> <span class="nf">φ</span><span class="p">)</span>                 <span class="c">(3)</span> 
+       <span class="p">|</span>  <span class="k">and</span><span class="p">([</span><span class="sc">α₁</span><span class="p">]</span><span class="nf">φ₁</span><span class="p">,</span> <span class="p">...,</span> <span class="p">[</span><span class="sc">αₙ</span><span class="p">]</span><span class="nf">φₙ</span><span class="p">)</span>   <span class="c">(4)</span>
 </code></pre></div>
 <ol>
 <li>
-<p>Formula <code class="highlight"><span class="k">ff</span></code> and <code class="highlight"><span class="k">tt</span></code> denote <em>falsity</em> and <em>truth</em> respectively,</p>
+<p>Formulae <code class="highlight"><span class="k">ff</span></code> and <code class="highlight"><span class="k">tt</span></code> denote <em>falsity</em> and <em>truth</em> respectively,</p>
 </li>
 <li>
 <p><code class="highlight"><span class="nv">X</span></code> is a <em>logical variable</em>,</p>
@@ -500,7 +500,7 @@ Recall safety properties state that &ldquo;something bad should never happen&rdq
 <p>The <em>maximal fix-point</em> construct specifies <em>recursion</em> via the logical variable <code class="highlight"><span class="nv">X</span></code> and <em>binds</em> the free occurrences of <code class="highlight"><span class="nv">X</span></code> in the sub-formula <code class="highlight"><span class="nf">φ</span></code>, and,</p>
 </li>
 <li>
-<p><code class="highlight"><span class="k">and</span><span class="p">(...)</span></code> is a sequence of comma-separated <em>conjunctions</em> where each conjunct is a sub-formula <code class="highlight"><span class="nf">φ</span></code> <em>guarded</em> by the universal modal operator <code class="highlight"><span class="p">[</span><span class="sc">α</span><span class="p">]</span></code> (also called a <em>necessity</em>).</p>
+<p><code class="highlight"><span class="k">and</span><span class="p">(...)</span></code> is a sequence of comma-separated <em>conjunctions</em> where each conjunct is a sub-formula <code class="highlight"><span class="nf">φᵢ</span></code> <em>guarded</em> by the universal modal operator <code class="highlight"><span class="p">[</span><span class="sc">αᵢ</span><span class="p">]</span></code> (also called a <em>necessity</em>).</p>
 </li>
 </ol>
 <p>To handle reasoning over program event data, the modal operator is equipped with <em>symbolic actions</em> <code class="highlight"><span class="sc">α</span></code> of the form <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code>, where <code class="highlight"><span class="nf">P</span></code> is an <em>event pattern</em> and <code class="highlight"><span class="nf">C</span></code>, a <em>decidable Boolean constraint</em>.
@@ -508,7 +508,9 @@ Patterns correspond to events that the program under analysis exhibits.
 These patterns contain <em>data variables</em> that are instantiated with values learnt at runtime from <em>matched</em> events.
 Pattern variables <em>bind</em> the free variables in constraints <code class="highlight"><span class="nf">C</span></code>, and this binding scope <em>extends</em> to the continuation formula <code class="highlight"><span class="nf">φ</span></code>.
 Symbolic action patterns follow the pattern-matching syntax of Erlang and Elixir, where atoms are matched directly, and the &lsquo;don&rsquo;t care&rsquo; pattern <code>_</code> matches any data value.
-We say that a program (or a program state) satisfies the formula <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">φ</span></code> <em>whenever</em> it exhibits an event that matches pattern <code class="highlight"><span class="nf">P</span></code>, fulfils the constraint <code class="highlight"><span class="nf">C</span></code>, <em>and</em> the ensuing program behaviour then satisfies <code class="highlight"><span class="nf">φ</span></code>. 
+Central to the conjuncted necessities construct, <code class="highlight"><span class="k">and</span><span class="p">([</span><span class="sc">α₁</span><span class="p">]</span><span class="nf">φ₁</span><span class="p">,</span> <span class="p">...,</span> <span class="p">[</span><span class="sc">αₙ</span><span class="p">]</span><span class="nf">φₙ</span><span class="p">)</span></code>, is the constraint that at any one point in time, <em>at most one</em> conjunct <code class="highlight"><span class="p">[</span><span class="sc">αᵢ</span><span class="p">]</span><span class="nf">φᵢ</span></code> may be satisfied.
+This enables detectEr to <a href="synthesising-analysers.html">synthesise</a> deterministic analyser code [Refs:Antoins,IAN,TutPaper].</p>
+<p>We say that a program (or a program state) satisfies the formula <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">φ</span></code> <em>whenever</em> it exhibits an event that matches pattern <code class="highlight"><span class="nf">P</span></code>, fulfils the constraint <code class="highlight"><span class="nf">C</span></code>, <em>and</em> the ensuing program behaviour then satisfies <code class="highlight"><span class="nf">φ</span></code>. 
 When the constraint is <code class="highlight"><span class="n">true</span></code>, the expression <code class="highlight"><span class="k">when</span> <span class="nf">C</span></code> may be omitted for readability.</p>
 <h2 id="pattern-and-constraint-expressions">Pattern and constraint expressions<a class="headerlink" href="#pattern-and-constraint-expressions" title="Permanent link">&para;</a></h2>
 <p>detectEr supports five event patterns describing the lifecycle of processes.
@@ -526,86 +528,86 @@ Process <code>exit</code> actions signal termination, while <code>send</code> an
 <tbody>
 <tr>
 <td align="center"><code>fork</code></td>
-<td align="center"><em>P<sub>1</sub></em> <strong>&rarr;</strong> <em>P<sub>2</sub></em>, <em>Mod</em>:<em>Fun</em>(<em>Args</em>)</td>
-<td align="center"><em>P<sub>1</sub></em></td>
-<td align="left"><abbr title="Process ID">PID</abbr> of the parent process spawning <em>P<sub>2</sub></em></td>
+<td align="center"><code>P₁</code> <strong>&rarr;</strong> <code>P₂</code>, <code>Mod</code>:<code>Fun</code>(<code>Args</code>)</td>
+<td align="center"><code>P₁</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the parent process spawning <code>P₂</code></td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>P<sub>2</sub></em></td>
-<td align="left"><abbr title="Process ID">PID</abbr> of the child process spawned by <em>P<sub>1</sub></em></td>
+<td align="center"><code>P₂</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the child process spawned by <code>P₁</code></td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>Mod</em>:<em>Fun</em>(<em>Args</em>)</td>
+<td align="center"><code>Mod</code>:<code>Fun</code>(<code>Args</code>)</td>
 <td align="left">Function signature consisting of the module, function and arguments</td>
 </tr>
 <tr>
 <td align="center"><code>init</code></td>
-<td align="center"><em>P<sub>1</sub></em> <strong>&larr;</strong> <em>P<sub>2</sub></em>, <em>Mod</em>:<em>Fun</em>(<em>Args</em>)</td>
-<td align="center"><em>P<sub>1</sub></em></td>
-<td align="left"><abbr title="Process ID">PID</abbr> of the parent process spawning <em>P<sub>2</sub></em></td>
+<td align="center"><code>P₁</code> <strong>&larr;</strong> <code>P₂</code>, <code>Mod</code>:<code>Fun</code>(<code>Args</code>)</td>
+<td align="center"><code>P₁</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the parent process spawning <code>P₂</code></td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>P<sub>2</sub></em></td>
-<td align="left"><abbr title="Process ID">PID</abbr> of the child process spawned by <em>P<sub>1</sub></em></td>
+<td align="center"><code>P₂</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the child process spawned by <code>P₁</code></td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>Mod</em>:<em>Fun</em>(<em>Args</em>)</td>
+<td align="center"><code>Mod</code>:<code>Fun</code>(<code>Args</code>)</td>
 <td align="left">Function signature consisting of the module, function and arguments</td>
 </tr>
 <tr>
 <td align="center"><code>exit</code></td>
-<td align="center"><em>P<sub>1</sub></em> <strong>**</strong> <em>Data</em></td>
-<td align="center"><em>P<sub>1</sub></em></td>
+<td align="center"><code>P₁</code> <strong>**</strong> <code>Data</code></td>
+<td align="center"><code>P₁</code></td>
 <td align="left"><abbr title="Process ID">PID</abbr> of the terminated process</td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>Data</em></td>
+<td align="center"><code>Data</code></td>
 <td align="left">Termination data</td>
 </tr>
 <tr>
 <td align="center"><code>send</code></td>
-<td align="center"><em>P<sub>1</sub></em> <strong>:</strong> <em>P<sub>2</sub></em> <strong>!</strong> <em>Msg</em></td>
-<td align="center"><em>P<sub>1</sub></em></td>
+<td align="center"><code>P₁</code> <strong>:</strong> <code>P₂</code> <strong>!</strong> <code>Msg</code></td>
+<td align="center"><code>P₁</code></td>
 <td align="left"><abbr title="Process ID">PID</abbr> of the process issuing the message</td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>P<sub>2</sub></em></td>
+<td align="center"><code>P₂</code></td>
 <td align="left"><abbr title="Process ID">PID</abbr> of the recipient process</td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>Msg</em></td>
+<td align="center"><code>Msg</code></td>
 <td align="left">Message payload</td>
 </tr>
 <tr>
 <td align="center"><code>recv</code></td>
-<td align="center"><em>P<sub>2</sub></em> <strong>?</strong> <em>Msg</em></td>
-<td align="center"><em>P<sub>2</sub></em></td>
+<td align="center"><code>P₂</code> <strong>?</strong> <code>Msg</code></td>
+<td align="center"><code>P₂</code></td>
 <td align="left"><abbr title="Process ID">PID</abbr> of the recipient process</td>
 </tr>
 <tr>
 <td align="center"></td>
 <td align="center"></td>
-<td align="center"><em>Msg</em></td>
+<td align="center"><code>Msg</code></td>
 <td align="left">Request payload consisting of data</td>
 </tr>
 </tbody>
 </table>
-<p>The variables <em>P<sub>1</sub></em> and <em>P<sub>2</sub></em> in event patterns must be a port ID or <abbr title="Process ID">PID</abbr>, whereas <em>Data</em> and <em>Msg</em> may be any <a href="http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html">Erlang data type</a>, <em>i.e.</em>, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, <abbr title="Process ID">PID</abbr>, tuple, map, and list.
-<em>Mod</em> and <em>Fun</em> must be atoms, and <em>Args</em>, an arbitrary list comprised of the aforementioned data types.</p>
+<p>The variables <code>P₁</code> and <code>P₂</code> in event patterns must be a port ID or <abbr title="Process ID">PID</abbr>, whereas <code>Data</code> and <code>Msg</code> may be any <a href="http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html">Erlang data type</a>, <em>i.e.</em>, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, <abbr title="Process ID">PID</abbr>, tuple, map, and list.
+<code>Mod</code> and <code>Fun</code> must be atoms, and <code>Args</code>, an arbitrary list comprised of the aforementioned data types.</p>
 <div class="admonition note">
 <p class="admonition-title">Pattern matching</p>
 <p>Our current detectEr syntax does not yet implement full Erlang pattern matching, including $, map, record and bit string expressions; these will be added in future releases of the tool.
@@ -817,9 +819,9 @@ The set of valid Erlang guards supported by detectEr are the following:</p>
     | `#!erlang trunc/1`      | Truncate               | Number           |
     | `#!erlang tuple_size/1` | Tuple size             | Tuple            | -->
 
-<h2 id="suppressing-program-actions">Suppressing program actions<a class="headerlink" href="#suppressing-program-actions" title="Permanent link">&para;</a></h2>
+<h2 id="a-simple-example">A simple example<a class="headerlink" href="#a-simple-example" title="Permanent link">&para;</a></h2>
 <p>Let us try to specify a safety requirement on the behaviour of our <a href="getting-started.html#calculator-program">calculator program</a>.
-The <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula with symbolic action <code class="highlight"><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code> describes the property requiring that &ldquo;the program state does <em>not</em> exhibit the send event whose payload consists of <code class="highlight"><span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span></code> with a negative total:</p>
+The <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula with symbolic action <code class="highlight"><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code> describes the property requiring that &ldquo;the program state does <em>not</em> exhibit a send event whose payload consists of <code class="highlight"><span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span></code> with a negative total:</p>
 <div class="highlight"><pre><span></span><code><span class="k">and</span><span class="p">([</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">])</span><span class="k">ff</span>
 </code></pre></div>
 <p>Recall that the universal modality states that, for any program event satisfying the symbolic action <code class="highlight"><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span></code> in <code class="highlight"><span class="p">[</span><span class="nf">P</span> <span class="k">when</span> <span class="nf">C</span><span class="p">]</span><span class="nf">φ</span></code>, the ensuing program behaviour must then satisfy the continuation formula <code class="highlight"><span class="nf">φ</span></code>.
@@ -832,7 +834,7 @@ For a different <code>send</code> event <code class="highlight"><span class="o">
 Analogously, the <code>exit</code> event <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="o">**</span> <span class="n">killed</span></code> does not lead to a violation of the formula since the pattern <code class="highlight"><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span></code> fails to match the event shape.</p>
 <div class="admonition note">
 <p class="admonition-title">Cheat sheet</p>
-<p>The formula <code class="highlight"><span class="p">[</span><span class="sc">α</span><span class="p">]</span><span class="k">ff</span></code> means that the program must not exhibit the symbolic action <code class="highlight"><span class="sc">α</span></code>.</p>
+<p>The formula <code class="highlight"><span class="p">[</span><span class="sc">α</span><span class="p">]</span><span class="k">ff</span></code> means that the program must not perform the symbolic action <code class="highlight"><span class="sc">α</span></code>.</p>
 </div>
 <hr />
 <p>Despite the fact that the runtime setting limits what one observes at runtime, we next outline how this does not prevent us from verifying properties expressed in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>.</p>

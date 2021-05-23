@@ -43,8 +43,12 @@ class ShmlLexer(RegexLexer):
         'max', 'and', 'ff', 'tt'  # sHML keywords.
     )
 
-    special_variables = (
-      'sHML', 'P', 'C', 'φ'
+    special_variables_1 = (
+      'sHML', 'P', 'C', 'φ', 'φ₁', 'φₙ', 'φᵢ'
+    )
+
+    special_variables_2 = (
+      'Act', 'α', 'α₁', 'αₙ', 'αᵢ'
     )
 
     builtins = (
@@ -78,10 +82,11 @@ class ShmlLexer(RegexLexer):
 
     tokens = {
         'root': [
-            (words(special_variables, suffix=r'\b'), Name.Function),
+            (words(special_variables_1, suffix=r'\b'), Name.Function),
+            (words(special_variables_2, suffix=r'\b'), String.Char),
             # (r'ff', Number.Integer),
             # (r'tt', String.Char),
-            (r'(Act|α)', String.Char),
+            # (r'(Act|α|(α₁)|(αₙ)|(αᵢ))', String.Char),
             (r'\(\d+\)', Comment), # Bubble numbering.
             (r'\s+', Text),
             (r'%.*\n', Comment),

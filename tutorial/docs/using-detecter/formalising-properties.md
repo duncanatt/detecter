@@ -132,12 +132,19 @@ with
   calc_server:loop(_)
 monitor
   and([_ <- _, calc_server:loop(_)]
-
-  TO BE CONTINUED TOMO!
+    max(X.
+      and([Srv_1 ? {Clt_1, _}]
+        max(Y.
+          and(
+            [Srv_2:Clt_2 ! _ when Srv_1 =:= Srv_2 andalso Clt_1 =/= Clt_2]ff,
+            [Srv_2:Clt_2 ! _ when Srv_1 =:= Srv_2 andalso Clt_1 =:= Clt_2]X,
+            [_ ? _ ]Y
+          )
+        )
+      )
+    )
+  ).
 ```
-
-
-
 
 ## Formalising P~3~
 

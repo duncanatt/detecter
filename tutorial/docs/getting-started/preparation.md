@@ -198,4 +198,4 @@ To enable syntax highlighting and language support for the languages used in thi
     | VS Code    | `1.56.0`  |
 
 ---
-LINK TO NEXT SECTION
+Now that your system is set up, we can proceed to download and compile detectEr.

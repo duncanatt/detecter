@@ -97,4 +97,4 @@ The `detecter` directory now looks as follows:
 | &nbsp;&nbsp;&nbsp;&nbsp;`Makefile` | Makefile with targets for compiling and testing detectEr      |
 
 ---
-LINK TO NEXT SECTION
+With detectEr compiled, let us move on to our first 'hello world' example!

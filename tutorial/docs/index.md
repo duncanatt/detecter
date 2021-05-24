@@ -60,7 +60,7 @@ The research group consists of these members who actively contribute towards the
 * [Karoliina Lehtinen](http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen)
 * [Anna Ingólfsdóttir](http://www.ru.is/kennarar/annai)
 
-We would like to thank X, Y and Z for their help and insights.
+We would like to thank X, Y and Z for their comments and feedback.
 
 
 <!-- :material-heart:{ .heart } -->

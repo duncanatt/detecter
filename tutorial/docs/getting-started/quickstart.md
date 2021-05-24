@@ -173,15 +173,15 @@ In this quickstart demo, we monitor the execution of our asynchronous hello worl
     You can test `#!erlang prop_hello:mfa_spec/1` analyser function by providing the triple `#!erlang {hello, greet, ["Duncan"]}`.
 
     ```erlang
-    3> prop_hello:mfa_spec({hello,greet,["Duncan"]}).
-    *** [<0.82.0>] Instrumenting monitor for MFA pattern '{hello,greet,["Duncan"]}'.
+    3> prop_hello:mfa_spec({hello, greet, ["Duncan"]}).
+    *** [<0.82.0>] Instrumenting monitor for MFA pattern '{hello, greet, ["Duncan"]}'.
     *** [<0.82.0>] Reached verdict 'no'.
     ```
 
 4. Launch the monitored system.
 
     ```{ .erlang .annotate}
-    4> monitor:start_online({hello,start_greet,["Duncan"]}, fun prop_hello:mfa_spec/1, []).
+    4> monitor:start_online({hello, start_greet, ["Duncan"]}, fun prop_hello:mfa_spec/1, []).
     ```
 
     The function `#!erlang monitor:start_online/3` accepts three arguments: a MFArgs describing the function that is to be spawned as an Erlang process, the analyser function, and a list of [options](../using-detecter/instrumentation.md#online-instrumentation).

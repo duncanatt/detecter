@@ -473,24 +473,26 @@
 <p>It is the product of five years of theoretical and practical development.</p>
 <!-- We introduce DetectEr, a runtime verification tool developed over the last 5 years with the aim of monitoring concurrent systems written for the Erlang ecosystem. DetectEr supports three types of monitoring methods: inline, outline, and offline monitoring. In inline monitoring, the tool statically instruments the system under scrutiny by weaving the monitoring instructions via code injection. The ensuing runtime analysis is performed as the weaved system components execute. Outline monitoring allows DetectEr to take a dynamic approach that treats the system as a black box. It leverages the tracing infrastructure provided by the Erlang Virtual Machine to gather trace events that are analysed by independent component monitors. DetectEr also extends outline monitoring to the offline case, where events read from a trace dump are replayed to emulate the interaction between concurrent system components. In this tutorial, we discuss the inline, outline, and offline monitoring functionality of the tool, demonstrating how each can be employed to monitor systems that are subject to specific deployment and runtime constraints.  -->
 
-<h1 id="how-it-works">How it works.<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h1>
+<h1 id="how-it-works">How it works<a class="headerlink" href="#how-it-works" title="Permanent link">&para;</a></h1>
 <p>Specification</p>
-<p>Synthesis of analysers</p>
-<p>Instrumentation</p>
+<p>Synthesis of analysers.</p>
+<p>Instrumentation and the three instrumentation methods it supports.</p>
 <h2 id="publications">Publications<a class="headerlink" href="#publications" title="Permanent link">&para;</a></h2>
 <p>List of publications.</p>
 <h2 id="our-group">Our group<a class="headerlink" href="#our-group" title="Permanent link">&para;</a></h2>
-<!-- Our research group, ICE-TCS, resides at Reykjavík University, and consists of these members who actively contribute towards the theoretical and practical developments of detectEr:
-
-* [Luca Aceto](http://www.ru.is/faculty/luca)
-* [Antonis Achilleos](https://sites.google.com/view/antonisachilleos/home)
-* [Duncan Paul Attard](http://duncanatt.github.io)
-* [Adrian Francalanza](http://staff.um.edu.mt/afra1)
-* [Karoliina Lehtinen](http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen)
-* [Anna Ingólfsdóttir](http://www.ru.is/kennarar/annai) -->
-
 <p>detectEr is part of the <a href="http://icetcs.ru.is/theofomon">TheoFoMon</a> and <a href="https://sites.google.com/view/antonisachilleos/movemnt">MoVeMnt</a> projects funded by the <a href="https://en.rannis.is">Icelandic Research Fund</a>.
-Duncan Paul Attard&mdash;the principal developer of the detectEr&mdash;has worked as a software developer in the Telecoms and Online payment industry for seven years prior to joining the academia.</p>
+Duncan Paul Attard&mdash;the principal developer of the detectEr&mdash;is a researcher with the ICE-TCS research group at Reykjavík University.
+He has worked as a software developer in the Telecoms and Online payment industry for seven years prior to joining the academia.</p>
+<p>The research group consists of these members who actively contribute towards the theoretical and practical developments of detectEr:</p>
+<ul>
+<li><a href="http://www.ru.is/faculty/luca">Luca Aceto</a></li>
+<li><a href="https://sites.google.com/view/antonisachilleos/home">Antonis Achilleos</a></li>
+<li><a href="http://duncanatt.github.io">Duncan Paul Attard</a></li>
+<li><a href="http://staff.um.edu.mt/afra1">Adrian Francalanza</a></li>
+<li><a href="http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen">Karoliina Lehtinen</a></li>
+<li><a href="http://www.ru.is/kennarar/annai">Anna Ingólfsdóttir</a></li>
+</ul>
+<p>We would like to thank X, Y and Z for their help and insights.</p>
 <h2 id="help-us">Help us<a class="headerlink" href="#help-us" title="Permanent link">&para;</a></h2>
 <p>Please help us improve this tutorial and the tool detectEr!
 We would appreciate if any typos or bugs found are reported on the <a href="https://github.com/duncanatt/detecter/issues">issues</a> page on GitHub.</p>

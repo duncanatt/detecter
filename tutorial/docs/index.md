@@ -11,28 +11,39 @@
 
 ## What is detectEr?
 
-detectEr is a runtime verification tool for asynchronous component systems.
+detectEr is a runtime verification tool for asynchronous component systems that run on the Erlang Virtual Machine.
+It also supports monitoring systems that can execute outside of the EVM, so long as these can produce traces that are formatted in a way that is parsable by detectEr.
+The tool itself is developed in Erlang, and is the product of five years of theoretical and practical development.
 
-It is the product of five years of theoretical and practical development.
+## How it works
 
+There are two ingredients required for detectEr to work.
+The first one is a script file containing specifications of the properties one would like to monitor.
+Properties in detectEr are expressed in sHML---a runtime monitorable syntactic subset of the more expressive modal μ-calculus---used to specify *safety properties*.
+detectEr compiles these specifications down to executable Erlang code that analyses program events to reach monitoring verdicts that correspond to property violations.
 
-<!-- We introduce DetectEr, a runtime verification tool developed over the last 5 years with the aim of monitoring concurrent systems written for the Erlang ecosystem. DetectEr supports three types of monitoring methods: inline, outline, and offline monitoring. In inline monitoring, the tool statically instruments the system under scrutiny by weaving the monitoring instructions via code injection. The ensuing runtime analysis is performed as the weaved system components execute. Outline monitoring allows DetectEr to take a dynamic approach that treats the system as a black box. It leverages the tracing infrastructure provided by the Erlang Virtual Machine to gather trace events that are analysed by independent component monitors. DetectEr also extends outline monitoring to the offline case, where events read from a trace dump are replayed to emulate the interaction between concurrent system components. In this tutorial, we discuss the inline, outline, and offline monitoring functionality of the tool, demonstrating how each can be employed to monitor systems that are subject to specific deployment and runtime constraints.  -->
+The second ingredient detectEr requires is the program to be monitored, also called the program under scrutiny.
+detectEr instruments the program with the aforementioned analyser code.
+detectEr supports three instrumentation methods: inline, outline and offline.
+In inline instrumentation, detectEr statically instruments the program under scrutiny by weaving the executable analyser instructions via code injection.
+The ensuing runtime analysis then takes place as the weaved program components execute.
+Outline monitors enables detectEr to take a dynamic instrumentation approach that treats the system as a black box.
+It leverages the tracing infrastructure provided by the EVM to gather trace events that are reported to independent component analysers.
+detectEr also extends outline instrumentation to the offline case, where events read from a trace dump are replayed to emulate the interaction between concurrent system components.
 
-
-# How it works
-
-Specification
-
-Synthesis of analysers.
-
-Instrumentation and the three instrumentation methods it supports.
-
-
-
+This tutorial overviews the inner workings of detectEr.
+It showcases the inline, outline, and offline monitoring functionality of the tool, demonstrating how each can be employed to monitor programs that are subject to specific deployment and runtime constraints.
+We highly encourage you to consult the [paper]() that accompanies this tutorial, since it complements many of the concepts covered here.
+Interested readers are also referred to the list of publications that follows.
 
 ## Publications
 
 List of publications.
+
+## Help us
+
+Please help us improve this tutorial and the tool detectEr!
+We would appreciate if any typos or bugs found are reported on the [issues](https://github.com/duncanatt/detecter/issues) page on GitHub.
 
 ## Our group
 
@@ -51,10 +62,6 @@ The research group consists of these members who actively contribute towards the
 
 We would like to thank X, Y and Z for their help and insights.
 
-## Help us
 
-Please help us improve this tutorial and the tool detectEr!
-We would appreciate if any typos or bugs found are reported on the [issues](https://github.com/duncanatt/detecter/issues) page on GitHub.
-
-:material-heart:{ .heart }
-{: .center }
+<!-- :material-heart:{ .heart } -->
+<!-- {: .center } -->

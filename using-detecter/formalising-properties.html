@@ -628,17 +628,37 @@ It disregards the possibility of interleaved execution, which is inherent to con
 For instance, while the sub-formula <code class="highlight"><span class="p">[</span><span class="nv">Srv_1</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt_1</span><span class="p">,</span> <span class="p">_}]</span></code> on line <code>6</code> matches an initial <code>recv</code> event, an ensuing <code>recv</code> event (<em>e.g.</em> due to a second client that happens to interact with the server) satisfies neither of the necessities on lines <code>8</code> and <code>9</code>.
 This does not reflect the requirement of our original property P<sub>2</sub>, and is yet another manifestation of the issue encountered <a href="#formalising-p1">earlier</a>, <em>i.e.</em> formalising a property must be done in connection to the context in which the program operates.
 We handle this inconvenience by augmenting the formula to filter non-relevant events, as previous.</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
-<span class="normal">2</span>
-<span class="normal">3</span>
-<span class="normal">4</span>
-<span class="normal">5</span>
-<span class="normal">6</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">with</span>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">with</span>
   <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)</span>
 <span class="k">monitor</span>
   <span class="k">and</span><span class="p">([_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)]</span>
-
-  <span class="nv">TO</span> <span class="nv">BE</span> <span class="nv">CONTINUED</span> <span class="nv">TOMO</span><span class="o">!</span>
+    <span class="k">max</span><span class="p">(</span><span class="nv">X</span><span class="p">.</span>
+      <span class="k">and</span><span class="p">([</span><span class="nv">Srv_1</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt_1</span><span class="p">,</span> <span class="p">_}]</span>
+        <span class="k">max</span><span class="p">(</span><span class="nv">Y</span><span class="p">.</span>
+          <span class="k">and</span><span class="p">(</span>
+            <span class="p">[</span><span class="nv">Srv_2</span><span class="p">:</span><span class="nv">Clt_2</span> <span class="o">!</span> <span class="p">_</span> <span class="k">when</span> <span class="nv">Srv_1</span> <span class="o">=:=</span> <span class="nv">Srv_2</span> <span class="ow">andalso</span> <span class="nv">Clt_1</span> <span class="o">=/=</span> <span class="nv">Clt_2</span><span class="p">]</span><span class="k">ff</span><span class="p">,</span>
+            <span class="p">[</span><span class="nv">Srv_2</span><span class="p">:</span><span class="nv">Clt_2</span> <span class="o">!</span> <span class="p">_</span> <span class="k">when</span> <span class="nv">Srv_1</span> <span class="o">=:=</span> <span class="nv">Srv_2</span> <span class="ow">andalso</span> <span class="nv">Clt_1</span> <span class="o">=:=</span> <span class="nv">Clt_2</span><span class="p">]</span><span class="nv">X</span><span class="p">,</span>
+            <span class="p">[_</span> <span class="o">?</span> <span class="p">_</span> <span class="p">]</span><span class="nv">Y</span>
+          <span class="p">)</span>
+        <span class="p">)</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">).</span>
 </code></pre></div>
 </td></tr></table>
 <h2 id="formalising-p3">Formalising P<sub>3</sub><a class="headerlink" href="#formalising-p3" title="Permanent link">&para;</a></h2>

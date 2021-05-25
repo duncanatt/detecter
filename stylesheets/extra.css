@@ -93,11 +93,19 @@ p.footer {
   --md-code-hl-comment-color: var(--md-code-hl-keyword-color);
 }
 
-article, label, nav, h1, h2, h3 {
-  /* color: green !important; */
-  font-weight: 300;
+article, label, nav, h1, h2, h3, table, td {
+  font-weight: 300 !important;
 }
 
 code * {
   font-weight: 300 !important;
+}
+
+em, th {
+  /* font-style: normal !important; */
+  font-weight: 400;
+}
+
+label.md-nav__title, p.admonition-title {
+  font-weight: 400 !important;
 }

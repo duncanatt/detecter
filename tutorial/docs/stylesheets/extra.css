@@ -92,3 +92,30 @@ p.footer {
 :root .annotate * {
   --md-code-hl-comment-color: var(--md-code-hl-keyword-color);
 }
+
+article, label, nav, h1, h2, h3, table, td {
+  font-weight: 300 !important;
+}
+
+code * {
+  font-weight: 300 !important;
+}
+
+em, th {
+  /* font-style: normal !important; */
+  font-weight: 400;
+}
+
+label.md-nav__title, p.admonition-title {
+  font-weight: 400 !important;
+}
+
+/* :root {
+  --md-primary-bg-color:        #EE0F0F;
+  --md-primary-bg-color--light: #ECB7B7;
+  --md-primary-bg-color--dark:  #90030C;
+}
+
+body {
+  background-color: #F7F5F6;
+} */

@@ -55,12 +55,13 @@ The research group consists of these members who actively contribute towards the
 
 * [Luca Aceto](http://www.ru.is/faculty/luca)
 * [Antonis Achilleos](https://sites.google.com/view/antonisachilleos/home)
+* [Elli Anastasiadi](https://github.com/l0e42)
 * [Duncan Paul Attard](http://duncanatt.github.io)
 * [Adrian Francalanza](http://staff.um.edu.mt/afra1)
 * [Karoliina Lehtinen](http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen)
 * [Anna Ingólfsdóttir](http://www.ru.is/kennarar/annai)
 
-We would like to thank X, Y and Z for their comments and feedback.
+<!-- We would like to thank Matthew Alan Le Brun and Jasmine Xuereb for their comments and feedback. -->
 
 
 <!-- :material-heart:{ .heart } -->

@@ -22,28 +22,14 @@
 -module(calc_server).
 -author("Duncan Paul Attard").
 
+%%% Includes.
+-include_lib("stdlib/include/assert.hrl").
+
 %%% Public API.
 -export([start/1, stop/0]).
 
 %%% Internal callbacks.
 -export([loop/1]).
-
-
-%%% ----------------------------------------------------------------------------
-%%% Macro and record definitions.
-%%% ----------------------------------------------------------------------------
-
-%% Normal and buggy operation constants.
--define(MODE_OK, ok).
--define(MODE_BUGGY, buggy).
-
-
-%%% ----------------------------------------------------------------------------
-%%% Type definitions.
-%%% ----------------------------------------------------------------------------
-
--type mode() :: ?MODE_OK | ?MODE_BUGGY.
-%% Server operation mode.
 
 
 %%% ----------------------------------------------------------------------------
@@ -53,21 +39,14 @@
 %% @doc Starts server.
 %%
 %% {@params
-%%   {@name Mode}
-%%   {@desc Server operation mode}
-%% }
-%%
-%% {@par The server operates in one of two modes: `ok', where it handles
-%%       calculations correctly, and `buggy', to return incorrect results.
+%%   {@name N}
+%%   {@desc The request number to start the server with.}
 %% }
 %%
 %% {@returns Server PID.}
--spec start(Mode :: mode()) -> pid().
-start(Mode) ->
-  register(?MODULE, Pid = spawn(?MODULE, loop, [
-    if Mode =:= ?MODE_OK -> 0; Mode =:= ?MODE_BUGGY -> 1 end
-  ])),
-  Pid.
+-spec start(N :: integer()) -> pid().
+start(N) ->
+  spawn(?MODULE, loop, [N]).
 
 %% @doc Stops server.
 %%
@@ -79,40 +58,34 @@ stop() ->
 
 
 %%% ----------------------------------------------------------------------------
-%%% Internal callbacks.
+%%% Private helper functions.
 %%% ----------------------------------------------------------------------------
 
 %% @private Main server loop.
 %%
 %% {@params
-%%   {@name ErrFact}
-%%   {@desc Error factor used to displace and return the correct or incorrect
-%%          result of the calculation.
-%%   }
+%%   {@name Tut}
+%%   {@desc Total number of serviced requests. }
 %% }
 %%
 %% {@returns Does not return.}
--spec loop(ErrFact :: number()) -> no_return().
-loop(ErrFact) ->
+-spec loop(Tot :: integer()) -> no_return().
+loop(Tot) ->
   receive
-    {From, {add, A, B}} ->
+    {Clt, {add, A, B}} ->
 
       % Handle addition request from client.
-      From ! {add, A + B + ErrFact},
-      loop(ErrFact);
+      Clt ! {ok, A + B},
+      loop(Tot + 1);
 
-    {From, {mul, A, B}} ->
+    {Clt, {mul, A, B}} ->
 
       % Handle multiplication request from client.
-      From ! {mul, A * B + ErrFact},
-      loop(ErrFact);
+      Clt ! {ok, A * B},
+      loop(Tot + 1);
 
-    {From, stop} ->
+    {Clt, stp} ->
 
       % Handle stop request. Server does not loop again.
-      From ! {ok, stopped};
-
-    Any ->
-      io:format("WARN: unknown request ~w.~n", [Any]),
-      loop(ErrFact)
+      Clt ! {bye, Tot}
   end.

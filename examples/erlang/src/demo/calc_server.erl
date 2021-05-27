@@ -26,7 +26,7 @@
 -include_lib("stdlib/include/assert.hrl").
 
 %%% Public API.
--export([start/1, stop/0]).
+-export([start/1]).
 
 %%% Internal callbacks.
 -export([loop/1]).
@@ -47,14 +47,6 @@
 -spec start(N :: integer()) -> pid().
 start(N) ->
   spawn(?MODULE, loop, [N]).
-
-%% @doc Stops server.
-%%
-%% {@returns `stopped' to indicate successful termination.}
--spec stop() -> ok.
-stop() ->
-  {ok, Status} = calc_client:rpc(?MODULE, stop),
-  Status.
 
 
 %%% ----------------------------------------------------------------------------

@@ -44,10 +44,10 @@ recv                      : {token, {recv, TokenLine}}.
 {LOWER}{ALPHA}*           : {token, {atom, TokenLine, ?to_atom(TokenChars)}}.
 
 % Integer token.
-{DIGIT}+                  : {token, {int, TokenLine, ?to_integer(TokenChars)}}.
+-?{DIGIT}+                  : {token, {int, TokenLine, ?to_integer(TokenChars)}}.
 
 % Float token.
-{DIGIT}+\.{DIGIT}+        : {token, {float, TokenLine, ?to_float(TokenChars)}}.
+-?{DIGIT}+\.{DIGIT}+        : {token, {float, TokenLine, ?to_float(TokenChars)}}.
 
 % PID token.
 <{DIGIT}+\.{DIGIT}+\.{DIGIT}+> : {token, {pid, TokenLine, ?to_pid(TokenChars)}}.

@@ -98,6 +98,11 @@ clean:
 
 # Running the Outline example.
 
+## 1. Start the erlang shell.
+# Start directory: detecter/examples/python
+# erl -pa ../../detecter/ebin
+
+
 ## 2. Run the outline monitor from the Erlang console (start dir: examples/erlang).
 # It's ok for the log file not to exist. The file poller will pick it automatically once it does.
 # monitor:start_offline("../../trace.log", pid(0,102,0), fun server_props:mfa_spec/1, []).

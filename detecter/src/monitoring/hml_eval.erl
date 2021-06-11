@@ -656,12 +656,6 @@ visit_act({exit, _, Var, Clause}) ->
   ]),
   {[Pattern0], erl_syntax:clause_guard(Clause)};
 
-%%visit_act({send, _, Var, Clause}) ->
-%%  [Pattern] = erl_syntax:clause_patterns(Clause),
-%%  Pattern0 = erl_syntax:tuple([erl_syntax:atom(trace), Var,
-%%    erl_syntax:atom('send'), Pattern, erl_syntax:underscore()
-%%  ]),
-%%  {[Pattern0], erl_syntax:clause_guard(Clause)};
 visit_act({send, _, Var1, Var2, Clause}) ->
   [Pattern] = erl_syntax:clause_patterns(Clause),
   Pattern0 = erl_syntax:tuple([erl_syntax:atom(trace), Var1,

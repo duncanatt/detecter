@@ -254,7 +254,6 @@ nec -> '[' act ']' shml                               : {nec, ?anno('$1'), '$2',
 
 
 % Process in var performed a send of msg.
-%%act -> var '!' clause                         : {send, ?anno('$1'), '$1', '$3'}.
 act -> var ':' var '!' clause                         : {send, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process in var performed a receive of msg.

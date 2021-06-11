@@ -13,7 +13,7 @@ endef
 all: compile
 
 clean:
-	rm -f $(BIN)/*.beam $(BIN)/*.E $(BIN)/*.tmp erl_crash.dump $(BIN)/*.app
+	rm -f $(BIN)/*.beam $(BIN)/*.E $(BIN)/*.erl $(BIN)/*.tmp $(BIN)/*.app erl_crash.dump
 	rm -df $(BIN)
 
 compile: clean
@@ -41,4 +41,8 @@ compile: clean
 # 4. hello_prop:mfa_spec({hello, greet, ["Duncan"]}).
 
 # 4. monitor:start_online({hello,start_greet, ["Duncan"]}, fun hello_prop:mfa_spec/1, []).
+
+# {ok, _, Pid} = monitor:start_online({calc_server,start,[0]}, fun prop_add:mfa_spec/1, []).
+# {ok, _, Pid} = monitor:start_online({calc_server_bug,start,[0]}, fun prop_add:mfa_spec/1, []).
+# {ok, _, Pid} = monitor:start_online({calc_server_dbl_add,start,[0]}, fun prop_add:mfa_spec/1, []).
 

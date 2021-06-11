@@ -14,7 +14,7 @@ endef
 all: compile
 
 clean:
-	rm -rf $(BIN)/*.beam $(BIN)/*.E $(BIN)/*.tmp erl_crash.dump $(BIN)/*.app
+	rm -f $(BIN)/*.beam $(BIN)/*.E $(BIN)/*.erl $(BIN)/*.tmp $(BIN)/*.app erl_crash.dump
 
 compile: clean
 	mkdir -p $(BIN)
@@ -95,7 +95,7 @@ test-loop: compile-test
 # :monitor.start_online({Elixir.Demo.CalcServer,:start,[:buggy]}, &:server_props.mfa_spec/1, [{:analysis,:external}])
 
 
-# Running the Outline example.
+# Running the offline example.
 
 ## 2. Run the outline monitor from the Erlang console (start dir: examples/erlang).
 # It's ok for the log file not to exist. The file poller will pick it automatically once it does.

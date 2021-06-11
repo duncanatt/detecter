@@ -56,8 +56,8 @@ start(N) ->
 %% @private Main server loop.
 %%
 %% {@params
-%%   {@name Tut}
-%%   {@desc Total number of serviced requests. }
+%%   {@name Tot}
+%%   {@desc Total number of serviced requests.}
 %% }
 %%
 %% {@returns Does not return.}

@@ -148,7 +148,11 @@ weave(SrcDir, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
       % Recursively obtain list of source files and apply AST transformation.
       Files = filelib:fold_files(
         SrcDir, ?EXT_REGEX, true, fun(F, Acc) -> [F | Acc] end, []),
-      [write_file(File, MfaSpec, Opts) || File <- Files];
+      Compiled = [write_file(File, MfaSpec, Opts) || File <- Files],
+
+      % Load successfully compiled modules in code path.
+      load_mods(compiled_mods(Compiled)),
+      Compiled;
 
     {error, Reason} ->
       erlang:raise(error, Reason, erlang:get_stacktrace())
@@ -188,7 +192,12 @@ weave_file(File, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
     ok ->
 
       % Apply AST transformation.
-      write_file(File, MfaSpec, Opts);
+      Compiled = write_file(File, MfaSpec, Opts),
+
+      % Load compiled module in code path if successful.
+      load_mods(compiled_mods([Compiled])),
+      Compiled;
+
     {error, Reason} ->
       erlang:raise(error, Reason, erlang:get_stacktrace())
   end.
@@ -268,6 +277,15 @@ write_file(File, MfaSpec, Opts) ->
 
   % Return compiler result.
   Ret.
+
+%%load_module(Mod) ->
+%%  ok.
+
+load_mods(Mods) ->
+  [begin code:purge(M), code:load_file(M) end || M <- Mods].
+
+compiled_mods(Compiled) ->
+  lists:filtermap(fun({ok, Mod, _}) -> {true, Mod}; (_) -> false end, Compiled).
 
 %% @private Transforms a list of forms. Only functions are currently handled;
 %% any other form is left as is.

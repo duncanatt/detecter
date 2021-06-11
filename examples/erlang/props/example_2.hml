@@ -16,4 +16,17 @@ monitor
         )
       )
     )
+  ),
+with
+  calc_server:loop(_)
+monitor
+  and([_ <- _, calc_server:loop(_)]
+    max(X.
+      and([_ ? {_, {add, A, B}}]
+        and(
+          [_:_ ! {ok, Res} when Res =/= A + B]ff,
+          [_:_ ! {ok, Res} when Res =:= A + B]X
+        )
+      )
+    )
   ).

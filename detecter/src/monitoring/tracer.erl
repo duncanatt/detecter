@@ -168,7 +168,7 @@ start(PidS, MfaSpec, AMode, Parent)
   when is_pid(PidS), is_function(MfaSpec, 1),
   is_pid(Parent); Parent =:= self ->
 
-  ?exec_if_test(io:format("TESTING~n"), io:format("NOT TESTING~n")),
+%%  ?exec_if_test(io:format("TESTING~n"), io:format("NOT TESTING~n")), % TODO: Reenable this!
   ?exec_if_test(
     % Create and initialize tracer-process mapping ETS tables.
     init_mon_info_tbls(), ok

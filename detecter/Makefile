@@ -27,11 +27,17 @@ compile-test: clean
 
 test: compile-test
 	erl -noshell -pa $(BIN) -eval 'case eunit:test(log_tracer_test, [verbose]) of error -> init:stop(1); Result -> Result end.' -s init stop
-	erl -noshell -pa $(BIN) -eval 'case eunit:test(tracer_test, [verbose]) of error -> init:stop(1); Result -> Result end.' -s init stop
+	#erl -noshell -pa $(BIN) -eval 'case eunit:test(tracer_test, [verbose]) of error -> init:stop(1); Result -> Result end.' -s init stop
 
 analyze:
 	 dialyzer -pa $(BIN) -I $(INCLUDE) $(call recursive,$(SRC),erl)
 
+test-loop: compile-test
+	number=1 ; while [[ $$number -le 100 ]] ; do \
+        echo "------------------------------------------------------------------------------------------> Running test #$$number" ; \
+        erl -noshell -pa $(BIN) -eval 'case eunit:test(tracer_test, [verbose]) of error -> init:stop(1); Result -> Result end.' -s init stop ; \
+        ((number = number + 1)) ; \
+    done
 
 
 #weave: compile

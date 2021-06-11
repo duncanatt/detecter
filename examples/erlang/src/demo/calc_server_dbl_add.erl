@@ -1,7 +1,7 @@
 %%% ----------------------------------------------------------------------------
 %%% @author Duncan Paul Attard
 %%%
-%%% @doc Module description (becomes module heading).
+%%% @doc Example buggy calculator service that expects two addition requests.
 %%%
 %%% @end
 %%% 

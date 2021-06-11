@@ -3,7 +3,7 @@
 %%% @copyright (C) 2019 Duncan Paul Attard
 %%% @version 0.9
 %%%
-%%% Lexer specification.
+%%% A request for adding two numbers always returns their sum (recursive).
 %%%
 %%% Created: 19. Nov 2019
 %%%
@@ -26,18 +26,12 @@
 with
   'Elixir.Demo.CalcServer':loop(_)
 monitor
-  and([_Launcher <- _Server, 'Elixir.Demo.CalcServer':loop(_)]
+  and([_ <- _, 'Elixir.Demo.CalcServer':loop(_)]
     max(X.
-      and(
-        [_Server ? {_, {add, A, B}}] and(
-          [_Server ! {add, Res} when Res =/= A + B]ff,
-          [_Server ! {add, Res} when Res =:= A + B]X
-          ),
-        [_Server ? {_, {_, _, _}}] and(
-          [_Server ! {_, _}]X
-        ),
-        [_Server ? {_, stop}] and(
-          [_Server ! {ok, stopped}]X
+      and([_ ? {_, {add, A, B}}]
+        and(
+          [_:_ ! {ok, Res} when Res =/= A + B]ff,
+          [_:_ ! {ok, Res} when Res =:= A + B]X
         )
       )
     )

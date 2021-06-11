@@ -1,4 +1,4 @@
-""" Example calculator service over TCP.
+""" Example buggy calculator service over TCP.
 
 Issuing commands to the server can be done using a utility such as telnet. The
 following commands are supported:
@@ -111,7 +111,7 @@ def loop(tot):
 
                 # Perform calculation.
                 if cmd == 'add':
-                    res = a + b
+                    res = a - b # Bug!!
                 elif cmd == 'mul':
                     res = a * b
 

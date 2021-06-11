@@ -1,6 +1,6 @@
 defmodule Demo.CalcServerBug do
   @moduledoc """
-  Example calculator service.
+  Example buggy calculator service.
 
   Copyright (c) 2021, Duncan Paul Attard <duncanatt@gmail.com>
 

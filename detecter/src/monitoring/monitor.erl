@@ -93,7 +93,8 @@ start_online({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
       ?TRACE("Started bootstrapping process.."),
 
       util:syn(Self),
-      apply(Mod, Fun, Args),
+      Return = apply(Mod, Fun, Args),
+      util:rpc_async(Self, {return, Return}),
 
       ?TRACE("Bootstrapping process terminated.")
     end),
@@ -104,7 +105,9 @@ start_online({Mod, Fun, Args}, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
   % Ack root monitor and system, now that the former has been fully started.
   util:syn_ack(Root),
   util:syn_ack(PidS),
-  Root.
+
+  % Obtain return result of applied function.
+  {ok, Root, receive {_, _, {return, Return}} -> Return end}.
 
 %% @doc Loads the offline trace from the specified file and replay it with offline
 %% monitors.

@@ -19,61 +19,22 @@ defmodule Demo.CalcServer do
   """
 
   ### --------------------------------------------------------------------------
-  ### Macro and record definitions.
-  ### --------------------------------------------------------------------------
-
-  ## Normal and buggy operation constants.
-  @mode_ok :ok
-  @mode_buggy :buggy
-
-
-  ### --------------------------------------------------------------------------
-  ### Type definitions.
-  ### --------------------------------------------------------------------------
-
-  @type mode() :: :ok | :buggy
-
-
-  ### --------------------------------------------------------------------------
   ### Public API.
   ### --------------------------------------------------------------------------
 
   @doc """
-  Starts server
+  Starts server.
 
   ## Parameters
-  - mode: Server operation mode.
-
-  The server operates in one of two modes: `ok`, where it handles calculations
-  correctly, and `buggy`, to return incorrect results.
+  - n: The request number to start the server with.
 
   Returns: Server PID.
   """
-  @spec start(mode :: mode()) :: pid()
-  def start(mode) do
-    Process.register pid =
-                       spawn(
-                         __MODULE__,
-                         :loop,
-                         [
-                           cond do
-                             mode === @mode_ok -> 0;
-                             mode === @mode_buggy -> 1 end
-                         ]
-                       ), __MODULE__
-    pid
+  @spec start(n :: integer()) :: pid()
+  def start(n) do
+    spawn __MODULE__, :loop, [n]
   end
 
-  @doc """
-  Stops server.
-
-  Returns: `stopped` to indicate successful termination.
-  """
-  @spec stop() :: :ok
-  def stop() do
-    {:ok, status} = Demo.CalcClient.rpc __MODULE__, :stop
-    status
-  end
 
   ### --------------------------------------------------------------------------
   ### Internal callbacks.
@@ -83,34 +44,29 @@ defmodule Demo.CalcServer do
   Main server loop.
 
   ## Parameters
-  - err_fact: Error factor used to displace and return the correct or incorrect
-              result of the calculation.
+  - tot: Total number of serviced requests.
 
   Returns: Does not return.
   """
-  @spec loop(err_fact :: number()) :: no_return()
-  def loop(err_fact) do
+  @spec loop(tot :: integer()) :: no_return()
+  def loop(tot) do
     receive do
-      x = {from, {:add, a, b}} ->
+      {clt, {:add, a, b}} ->
 
         # Handle addition request from client.
-        send from, {:add, a + b + err_fact}
-        loop err_fact
+        send clt, {:ok, a + b}
+        loop tot + 1
 
-      {from, {:mul, a, b}} ->
+      {clt, {:mul, a, b}} ->
 
         # Handle multiplication request from client.
-        send from, {:mul, a * b + err_fact}
-        loop err_fact
+        send clt, {:ok, a * b}
+        loop tot + 1
 
-      {from, :stop} ->
+      {clt, :stp} ->
 
         # Handle stop request. Server does not loop again.
-        send from, {:ok, :stopped}
-
-      any ->
-        IO.puts "WARN: unknown request #{inspect any}."
-        loop err_fact
+        send clt, {:bye, tot}
     end
   end
 

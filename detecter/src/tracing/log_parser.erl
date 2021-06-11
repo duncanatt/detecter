@@ -4,7 +4,7 @@
 
 %% keep track of annotation info in tokens
 -define(anno(Tup), element(2, Tup)).
--file("/usr/local/Cellar/erlang/23.2.2/lib/erlang/lib/parsetools-2.2/include/yeccpre.hrl", 0).
+-file("/usr/local/Cellar/erlang/23.3.2/lib/erlang/lib/parsetools-2.2/include/yeccpre.hrl", 0).
 %%
 %% %CopyrightBegin%
 %%

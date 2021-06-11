@@ -1,0 +1,32 @@
+
+
+% A request for adding two numbers,
+% always returns their sum
+
+
+with
+  calc_server_bug:loop(_)
+monitor
+  and([_ <- _, calc_server_bug:loop(_)]
+    max(X.
+      and([_ ? {_, {add, A, B}}]
+        and(
+          [_:_ ! {ok, Res} when Res =/= A + B]ff,
+          [_:_ ! {ok, Res} when Res =:= A + B]X
+        )
+      )
+    )
+  ),
+with
+  calc_server:loop(_)
+monitor
+  and([_ <- _, calc_server:loop(_)]
+    max(X.
+      and([_ ? {_, {add, A, B}}]
+        and(
+          [_:_ ! {ok, Res} when Res =/= A + B]ff,
+          [_:_ ! {ok, Res} when Res =:= A + B]X
+        )
+      )
+    )
+  ).

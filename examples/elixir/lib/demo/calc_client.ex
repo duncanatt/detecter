@@ -63,12 +63,13 @@ defmodule Demo.CalcClient do
   """
   @spec rpc(to :: pid() | atom(), req :: any()) :: any()
   def rpc(to, req) do
-    send to, {self, req}
+    send to, {self(), req}
     receive do
       resp ->
         resp
     end
   end
+
 end
 
 

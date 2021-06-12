@@ -124,6 +124,7 @@ This *lexical scoping* is what allows us to refer to the variables `#!erlang A` 
 
 Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile `prop_add_rec.hml` script, this time replacing the `#!erlang erl` option for `#!erlang v`.
 Verbose analysers print the events they analyse on the Erlang shell.
+Of course, the resulting analyser binary must be included in the code path of the program we are running, together with the detectEr binaries.
 This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server.
 
 ```erl
@@ -132,4 +133,4 @@ ok
 ```
 
 ---
-We start with the first instrumentation method, inlining, that requires access to the program source code.
+Now we look at the kinds of instrumentation methods detectEr offers.

@@ -12,6 +12,7 @@ markdown_extensions:
   - admonition # Admonitions.
   - smarty # Smarty pants.
   # - codehilite
+  - footnotes
   - pymdownx.snippets # Insert content from other files.
   - pymdownx.superfences # Nestable code and content blocks inside admonitions.
   - pymdownx.highlight: # Block code syntax highlighting.
@@ -117,8 +118,10 @@ nav:
   - Using detectEr:
     - Getting Started: using-detecter/getting-started.md
     - The Specification Logic: using-detecter/the-specification-logic.md
-    - Runtime Verification: using-detecter/runtime-verification.md
     - Formalising Properties: using-detecter/formalising-properties.md
-    - Synthesising Analysers: using-detecter/synthesising-monitors.md
-    # - A Client-Server System in other languages: using-detecter/the-example-system.md
+    - Runtime Verification: using-detecter/runtime-verification.md
+    - Synthesising Analysers: using-detecter/synthesising-analysers.md
     - Instrumentation: using-detecter/instrumentation.md # Synthesis Inline outline and offline. on one system.
+    - Inline Instrumentation: using-detecter/inline-instrumentation.md
+    - Outline Instrumentation: using-detecter/outline-instrumentation.md
+    - Offline Instrumentation: using-detecter/offline-instrumentation.md

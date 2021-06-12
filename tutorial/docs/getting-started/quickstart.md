@@ -70,7 +70,7 @@ Launch a new terminal emulator window (*e.g.* Terminal on Ubuntu or macOS), navi
     ok
     2> 
     ```
-5. Quit the Erlang shell by typing `q().`
+5. Quit the Erlang shell by typing `#!erlang q().`
 
 !!! note "Function signatures"
     In Erlang (and Elixir), functions are uniquely identified via the triple `#!erlang mod:fun/arity`, where `#!erlang mod` is the *module* name, `#!erlang fun`, the name of the *function* contained in the module, and `#!erlang arity`, the number of *arguments* that the function accepts.

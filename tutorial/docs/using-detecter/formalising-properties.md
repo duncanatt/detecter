@@ -50,24 +50,22 @@ monitor
 ```
 
 Using `#!shml with` .. `#!shml monitor`, we designate the spawned calculator server loop function `#!erlang calc_server:loop/1` as the process to be analysed against the formalisation of property P~1~ (lines `1`-`3`).
-Our formalisation of P~1~ consists of two conjuncted [necessities](the-specification-logic.md#overview), *i.e.* `#!shml and(...)`.
+Our formalisation of P~1~ consists of two conjuncted [necessities](the-specification-logic.md#overview), *i.e.*, `#!shml and(...)`.
 The first conjuncted necessity on line `4` handles the `init` event exhibited by every process upon initialisation (we remark that `init` was elided in the transition model of our calculator server to simplify our discussion, but we *need* to account for it!).
 The second nested `#!shml and(...)` on line `6` includes the additional necessities that cover the other possible events produced by the transition system above, recursing on the fix-point variable `#!shml X` (lines `7` and `9`).
 Line `8` shows our earlier formula `#!shml [Srv:Clt ! {bye, Tot} when Tot < 0]ff` that then checks for the condition imposed by P~1~.
 
 There are a couple of comments that are in order.
-First, the constraints on lines `8` and `9` ensure *[mutual exclusivity](the-specification-logic.md#overview)* between the two necessities, *i.e.* either `#!shml Tot < 0` or, `#!shml Ans >= 0`  *only* when the acknowledgement is the atom `#!shml bye`.
+First, the constraints on lines `8` and `9` ensure *[mutual exclusivity](the-specification-logic.md#overview)* between the two necessities, *i.e.*, either `#!shml Tot < 0` or, `#!shml Ans >= 0`  *only when* the acknowledgement is the atom `#!shml bye`.
 Second, you may observe that the sub-formula on line `8` alone seems to capture the core requirement of property P~1~.
 This line of reasoning is partially right.
 However, to interpret the requirement stated informally (in English) by P~1~ and formalise it *unambiguously*, one must take the transition model into account.
 In fact, formalising P~1~ for a different transition system potentially yields a specification that is altogether unlike the one above for our calculator server.
-Specific to our transition model, the necessities lines `7` and `9` 'eat up' our non-relevant program events.
+Specific to our transition model, the necessities on lines `7` and `9` act as filters that 'eat up' the non-relevant program events.
 
 !!! note
     Variables `#!shml Lnc`, `#!shml Srv`, and `#!shml Clt` in our formalisation of P~1~ are included assist in our explanation, but can be replaced with the don't care pattern `#!shml _` since these are unused in constraints.
-    We omit such variables in the sequel.
-    <!-- The atoms X, Y and Y indicating the module, function and arguments can likewise be omitted with _. -->
-    <!-- Crucially, the pattern `#!shml calc_server:loop(_)` is required on line xx is needed to identify the spawned calculator server loop. -->
+    We omit such variables going forward.
 
 ## Reformulating P~1~
 
@@ -76,7 +74,7 @@ An [examination](getting-started.md#a-calculator-program-in-erlang) of `#!erlang
 In fact, starting the server loop with any number other than 0 will always yield an incorrect request total.
 Let us rectify this oversight by reformulating P~1~.
 
-> (P'~1~)&nbsp;&nbsp;&nbsp;&nbsp;The service request count upon initialisation is *never* negative.
+> (P'~1~)&nbsp;&nbsp;&nbsp;&nbsp;The initial service request count *must be* 0.
 
 Its corresponding formalisation leverages the `init` event pattern, simplifying the formula considerably:
 
@@ -84,11 +82,11 @@ Its corresponding formalisation leverages the `init` event pattern, simplifying 
 with
   calc_server:loop(_)
 monitor
-  and([_ <- _, calc_server:loop([Tot]) where Tot < 0]ff).
+  and([_ <- _, calc_server:loop([Tot]) where Tot =/= 0]ff).
 ```
 
 Line `4` consists of the singleton conjuncted necessity where the event pattern matches the spawned function against the module and function name atoms, `#!erlang calc_server` and `#!erlang loop`, respectively.
-The list pattern `#!erlang []` matches the argument list containing exactly one argument whose value is not negative, *i.e.* `#!shml when Tot < 0`.
+The list pattern `#!erlang []` matches the argument list containing exactly one argument whose must be `0`.
 
 ## Formalising P~2~
 
@@ -96,7 +94,6 @@ The list pattern `#!erlang []` matches the argument list containing exactly one 
 
 P~2~ describes a fragment of the client-server protocol, asserting that server replies are always addressed to the clients issuing them.
 Unlike the properties seen thus far, this requirement induces *data dependency* between client requests and server responses.
-<!-- This dependency is reflected in the nested formulae below. -->
 
 ```shml linenums="1"
 with
@@ -115,7 +112,7 @@ monitor
 ```
 
 Our formalisation of P~2~ expresses this data dependency in the nested formulae above via the binders `#!shml Srv_1` and `#!shml Clt_1`, that are used in the constraint of the sub-formulae on lines `8` and `9`.
-`#!shml Srv_1 =:= Srv_2` scopes our reasoning to single server instance, *i.e.* the same calculator server process.
+`#!shml Srv_1 =:= Srv_2` scopes our reasoning to single server instance, *i.e.*, the same calculator server process.
 The formula is violated when `#!shml Clt_1 =/= Clt_2` (since the continuation would need to satisfy `#!shml ff`), and recurs on variable `#!shml X` otherwise.
 Recall that the comparisons between the different variable instantiations is possible since the binding scope of the event pattern variables `#!shml Srv_1` and `#!shml Clt_1` in the outer necessity *extends* to the context of the inner `#!shml and(...)` on lines `7`-`10`.
 
@@ -124,7 +121,7 @@ Recall that the comparisons between the different variable instantiations is pos
 The formalisation of P~2~ above does not account for the case where the server interacts with more than one client.
 It disregards the possibility of interleaved execution, which is inherent to concurrent settings where processes are *unable to control* when messages are received.
 For instance, while the sub-formula `#!shml [Srv_1 ? {Clt_1, _}]` on line `6` matches an initial `recv` event, an ensuing `recv` event (*e.g.* due to a second client that happens to interact with the server) satisfies neither of the necessities on lines `8` and `9`.
-This does not reflect the requirement of our original property P~2~, and is yet another manifestation of the issue encountered [earlier](#formalising-p1), *i.e.* formalising a property must be done in connection to the context in which the program operates.
+This does not reflect the requirement of our original property P~2~, and is yet another manifestation of the issue encountered [earlier](#formalising-p1), *i.e.*, formalising a property must be done in connection to the context in which the program operates.
 We handle this inconvenience by augmenting the formula to filter non-relevant events, as previous.
 
 ```shml linenums="1"
@@ -138,7 +135,7 @@ monitor
           and(
             [Srv_2:Clt_2 ! _ when Srv_1 =:= Srv_2 andalso Clt_1 =/= Clt_2]ff,
             [Srv_2:Clt_2 ! _ when Srv_1 =:= Srv_2 andalso Clt_1 =:= Clt_2]X,
-            [_ ? _ ]Y
+            [_ ? _]Y
           )
         )
       )
@@ -148,11 +145,38 @@ monitor
 
 ## Formalising P~3~
 
-> (P~3~)&nbsp;&nbsp;&nbsp;&nbsp;Client requests are *never* serviced more than once.
+> (P~3~)&nbsp;&nbsp;&nbsp;&nbsp;A request for adding two numbers *always* returns their sum.
+ 
+P~3~ demonstrates how we can use constraints to perform more complex reasoning on program event data, besides equality and range checks. 
 
-P~3~ specifies a control aspect of the client-server interaction.
+```shml linenums="1"
+with
+  calc_server:loop(_)
+monitor
+  and([_ <- _, calc_server:loop(_)]
+    max(X.
+      and([_ ? {_, {add, A, B}}]
+        and(
+          [_:_ ! {ok, Res} when Res =/= A + B]ff,
+          [_:_ ! {ok, Res} when Res =:= A + B]X
+        )
+      )
+    )
+  )
+```
+
+This sHML formula compares the result issued by the server, instantiated in the variable `#!erlang Res`, against the sum of the values instantiated in `#!erlang A` and `#!erlang B`.
+Necessity `#!shml [_ ? {_, {add, A, B}}]` on line `6` corresponds to the server receiving and addition request from a client, consisting of the payload `#!erlang {add, A, B}`.
+`#!erlang A` and `#!erlang B` are added and compared to the server result embedded in the payload of the send event exhibited by the server in the nested necessities on lines `8` and `9`.
+The first sub-formula (line `8`) handles the case where the addition is incorrectly executed by the server, whereas the second sub-formula (line `9`) is satisfied when the addition is correct, unfolding the formula via recursion on variable `#!shml X`.
+
+## Formalising P~4~
+
+> (P~4~)&nbsp;&nbsp;&nbsp;&nbsp;Client requests are *never* serviced more than once.
+
+P~4~ specifies a control aspect of the client-server interaction.
 The corresponding sHML formula expresses this requirement via a guarded fix-point that recurs on `#!shml X` for sequences of `send`-`recv` events. 
-This recursion captures normal server operation that corresponds to the sub-formula on line `5` followed by the one on line `7`, and then `#!shml [_ ? _]X` on line `4` followed thereafter by the sub-formula of line `7`.
+This recursion captures normal server operation that corresponds to the sub-formula on line `5` followed by the one on line `7`, and then `#!shml [_ ? _]X` on line `10` followed thereafter by the sub-formula of line `7`.
 
 ```shml linenums="1"
 with
@@ -176,4 +200,7 @@ Our formula is violated when a send event matched by `#!shml [Srv_1:Clt_1 ! _]` 
 The constraint `#!shml Clt_1 =:= Clt_2` of the necessity on line `9` ensures that duplicate `send` events concern the same recipient.
 
 ---
-Having formalised properties P~1~, P~2~ and P~3~, we are now in a position to use detectEr and synthesise the corresponding analysers in Erlang code.
+Having formalised properties P~1~, P~2~, P~3~, and P~4~, we are now in a position to use detectEr and synthesise the corresponding analysers in Erlang code.
+But before doing that, we need to discuss how the runtime setting limits our view of program behaviour, and how analysers fit in the picture. 
+
+[comment]: <> (Despite the fact that the runtime setting limits what one observes at runtime, we next outline how this does not prevent us from verifying properties expressed in sHML.)

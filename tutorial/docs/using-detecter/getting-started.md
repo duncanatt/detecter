@@ -55,14 +55,16 @@ Similarly, we would expect that
 
 > (P~2~)&nbsp;&nbsp;&nbsp;&nbsp;Replies are *always* sent to the client indicated in the request,
 
-<!-- > (P~2~)&nbsp;&nbsp;&nbsp;&nbsp;Replies are *never* sent to a client other than the one indicated in the request, -->
+and that 
 
-and that "A request for adding two numbers *always* returns their sum" both hold, amongst others.
+> (P~3~)&nbsp;&nbsp;&nbsp;&nbsp;A request for adding two numbers *always* returns their sum
+
+both hold, amongst others.
 <!-- and "A request for adding two numbers *never* returns an incorrect sum" hold, amongst many others. -->
 These properties are *data-dependent*, which makes them hard to ascertain using static techniques such as type systems.
 Besides properties that reason about data, our server logic is expected to comply with control properties, such as,
 
-> (P~3~)&nbsp;&nbsp;&nbsp;&nbsp;Client requests are *never* serviced more than once.
+> (P~4~)&nbsp;&nbsp;&nbsp;&nbsp;Client requests are *never* serviced more than once.
 
 The properties mentioned thus far phrase the correctness requirement as a guarantee that the program *must always* provide.
 Such properties are called *safety properties*, since they stipulate that "for *any* sort of behaviour that the program *can* do, nothing bad ever happens."

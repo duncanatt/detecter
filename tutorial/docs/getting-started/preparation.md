@@ -176,13 +176,11 @@ It can also be installed using the respective operating system package manager.
 
 To enable syntax highlighting and language support for the languages used in this tutorial, VS Code can be configured with these extensions. 
 
-* [Erlang](https://marketplace.visualstudio.com/items?itemName=pgourlain.erlang).
+* [Erlang](https://marketplace.visualstudio.com/items?itemName=pgourlain.erlang)
 
-* [Elixir](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls).
+* [Elixir](https://marketplace.visualstudio.com/items?itemName=JakeBecker.elixir-ls)
 
-* [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python).
-
-* sHML syntax highlighting?
+* [Python](https://marketplace.visualstudio.com/items?itemName=ms-python.python)
 
 ??? info "Versions"
 

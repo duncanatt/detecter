@@ -680,7 +680,11 @@ The second clause on line <code>12</code> corresponds to the necessity <code cla
 Note that the body of the latter function is just the invocation of the outer function <code class="highlight"><span class="nv">X</span></code>, which emulates looping via recursion.</p>
 <h2 id="executable-analysers">Executable analysers<a class="headerlink" href="#executable-analysers" title="Permanent link">&para;</a></h2>
 <p>Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile <code>prop_add_rec.hml</code> script, this time replacing the <code class="highlight"><span class="n">erl</span></code> option for <code class="highlight"><span class="n">v</span></code>.
-This will serve us in the next sections where we instrument the correct and buggy version of our calculator server using the different approaches supported by detectEr.</p>
+Verbose analysers print the events they analyse on the Erlang shell.
+This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">2&gt;</span> <span class="nn">hml_eval</span><span class="p">:</span><span class="nf">compile</span><span class="p">(</span><span class="s">&quot;props/prop_add_rec.hml&quot;</span><span class="p">,</span> <span class="p">[{</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;ebin&quot;</span><span class="p">},</span> <span class="n">v</span><span class="p">]).</span>
+<span class="go">ok</span>
+</code></pre></div>
 <hr />
 <p>We start with the first instrumentation method, inlining, that requires access to the program source code.</p>
                 

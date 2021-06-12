@@ -3,6 +3,10 @@
 # Instrumentation
 ---
 
+
+Say the role of the instrumentation from the introduction of the part 3 slides where there are the gray and blackbox approaches.
+
+
 Types of instrumentation detecter supports.
 
 

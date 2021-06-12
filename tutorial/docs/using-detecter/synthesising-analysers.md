@@ -100,7 +100,7 @@ Our examples packaged with the detectEr distribution include a second implementa
 `prop_add_rec.hml` specifies the same formalisation of P~3~ for this buggy version, the corresponding synthesised analyser code is given on lines `24`-`27` (omitted).
 We will use this second analyser to show how a rejection verdict is reached when incorrect program behaviour is detected.
 
-Our analysers behave similar to state machines that analyse events and transition to the next state that corresponds to the continuation formula.
+Our analysers behave similar to *state machines* that analyse events and transition to the next state that corresponds to the continuation formula.
 In the analyser code above, the necessity with the `init` symbolic action, `#!shml and([_ <- _, calc_server:loop(_)]`, in our sHML formula corresponds to the function clause on line `7`.
 Next comes the maximal fix-point construct that is translated to the named function `#!erlang X`, line `8`.
 The name `#!erlang X` is used to recurse when the `send` event pattern matches to the correct reply consisting of the addition of the variables `#!erlang A` and `#!erlang B`.
@@ -110,6 +110,15 @@ This function consists of two clauses.
 The constraint `#!shml when Res =/= A + B` in the first clause is satisfied when the reply payload sent by the server contains anything other than the sum of `#!erlang A` and `#!erlang B`, leading to a rejection verdict `no` (line `11`).
 The second clause on line `12` corresponds to the necessity `#!shml [_:_ ! {ok, Res} when Res =:= A + B]`, handling the case when the addition is correctly executed by the server.
 Note that the body of the latter function is just the invocation of the outer function `#!erlang X`, which emulates looping via recursion.
+
+The functions we discussed each have an extra 'catch all' clause that is inserted by the synthesiser (*e.g.*, lines `14`, `17`) to cater for the case where the event reported to the analyser is not the one expected.
+This clause matches any other event, hence the use of the don't care pattern `_`.
+In such instances, the analyser is unable to decide whether that event leads to a rejection verdict, *i.e.*, a violation of the property.
+Not also that since the functions are nested withing each other, the variables in the outer functions bind the ones in the inner functions.
+This *lexical scoping* is what allows us to refer to the variables `#!erlang A` and `#!erlang B` of the receive pattern `#!shml _ ? {_, {add, A, B}}` in the first necessity, from the constraints of the second necessities, `#!shml when Res =/= A + B` and `#!shml when Res =:= A + B`.
+
+
+
 
 ## Executable analysers
 

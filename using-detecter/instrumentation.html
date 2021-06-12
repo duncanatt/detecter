@@ -400,9 +400,39 @@
         
       
       
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Instrumentation
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
       <a href="instrumentation.html" class="md-nav__link md-nav__link--active">
         Instrumentation
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#different-approaches" class="md-nav__link">
+    Different approaches
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -469,7 +499,21 @@
                 
                 <h1 id="instrumentation">Instrumentation<a class="headerlink" href="#instrumentation" title="Permanent link">&para;</a></h1>
 <hr />
-<p>Types of instrumentation detecter supports.</p>
+<h2 id="different-approaches">Different approaches<a class="headerlink" href="#different-approaches" title="Permanent link">&para;</a></h2>
+<p>Instrumentation is the second ingredient that lies at the heart of runtime monitoring.
+It refers to the extraction of information from executing software, following one of two approaches.
+In the <em>grey box</em> approach, instrumentation is implemented by <em>weaving</em> instructions that extract information, directly into the program under scrutiny.
+Alternatively, instrumentation can leverage an existing tracing infrastructure to collect information externally.
+In this manner, the program we want to observe is treated as a <em>black box</em>.
+As you might have guessed, the kind of information that we want extracted from programs is the sequence of events, <em>i.e.</em>, the execution trace.
+Besides extracting the trace, the instrumentation reports the events to the analysis that then processes them to reach the monitoring verdicts we introduced <a href="runtime-verification">previously</a>.</p>
+<p>detectEr implements three instrumentation methods: <em>inline</em>, <em>outline</em>, and <em>offline</em> instrumentation.
+Inline instrumentation, adopts the weaving approach, and is therefore the more invasive of the three.
+Outlining makes use of the native tracing infrastructure provided by the <abbr title="Erlang Virtual Machine">EVM</abbr>, whereas offline instrumentation emulates this tracing set-up via the use of log files that act as a trace storage that can be replayed.
+detectEr preserves the separation of concerns that exists between the analysis and instrumentation.
+Indeed, the analysers that we generate via the function <code class="highlight"><span class="nn">hml_eval</span><span class="p">:</span><span class="n">compile</span><span class="o">/</span><span class="mi">2</span></code> can be readily used with any of the three instrumentation approaches, unless of course, the targeted function spawning processes differs.</p>
+<hr />
+<p>Now we detail how these may be used via three different implementations of our calculator server example, starting with the inline approach.</p>
 <ul>
 <li>
 <p>Diagram of the system architecture.</p>

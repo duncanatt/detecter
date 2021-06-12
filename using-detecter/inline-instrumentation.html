@@ -436,6 +436,13 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
+  <a href="#overview" class="md-nav__link">
+    Overview
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
   <a href="#the-example-system" class="md-nav__link">
     The example system
   </a>
@@ -443,8 +450,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#rejection" class="md-nav__link">
-    Rejection
+  <a href="#inlining-in-action" class="md-nav__link">
+    Inlining in action
   </a>
   
 </li>
@@ -506,11 +513,31 @@
                 
                 <h1 id="inline-instrumentation">Inline Instrumentation<a class="headerlink" href="#inline-instrumentation" title="Permanent link">&para;</a></h1>
 <hr />
+<h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>Inlining is the most efficient instrumentation approach detectEr offers.
+While it assumes access to the program source code, it carries benefits such as low runtime overhead and immediate detections.
+There are various other <abbr title="Runtime Verification">RV</abbr> tools, especially those targeting the JVM, that adopt inlining as their instrumentation method of choice, using libraries such as <a href="https://www.eclipse.org/aspectj/">AspectJ</a> and <a href="https://asm.ow2.io">ASM</a>.
+One drawback of inlining is that it tends to be invasive, and cannot be used in scenarios where the program code is not available (<em>e.g.</em> compiled versions of the program, licensing agreements, <em>etc.</em>).</p>
+<p>detectEr employs a custom-built weaver to instrument invocations to analysers via code injection, by manipulating the program abstract syntax tree.
+This procedure is detailed in the <a href="https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf">companion paper</a>; readers are encouraged to consult this resource for more details.
+Here, we will learn how to employ detectEr to inline and analyse programs for which the source code <em>is</em> available.
+Once more, we rely on our Erlang implementation of the calculator server from the <a href="getting-started.html">Getting Started</a> section to show how this is done.</p>
 <h2 id="the-example-system">The example system<a class="headerlink" href="#the-example-system" title="Permanent link">&para;</a></h2>
+<p>Let us run the calculator server program with no instrumentation applied, to familiarise ourselves with the basic workflow.</p>
+<p>make</p>
+<p>launch the erlang shell</p>
+<p>explain the protocol from the slides of section one</p>
+<p>launch the server with Pid, isprocessalive</p>
+<p>demonstrate addition, and flush</p>
+<p>multiplication and flush</p>
+<p>shutdown.
+isprocessalive</p>
+<p>Launch the Erlang shell, including the de</p>
 <p>Mention the correct implementation</p>
 <p>The incorrect implementation</p>
 <p>Running the system</p>
-<h2 id="rejection">Rejection<a class="headerlink" href="#rejection" title="Permanent link">&para;</a></h2>
+<h2 id="inlining-in-action">Inlining in action<a class="headerlink" href="#inlining-in-action" title="Permanent link">&para;</a></h2>
+<p>Show how the correct and incorrect operates.</p>
                 
               
               

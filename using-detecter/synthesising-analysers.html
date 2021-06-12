@@ -16,7 +16,7 @@
     
     
       
-        <title>Explains how to generate analysers using the tool - detectEr Tutorial</title>
+        <title>Synthesising Analysers - detectEr Tutorial</title>
       
     
     
@@ -54,7 +54,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#explains-how-to-generate-analysers-using-the-tool" class="md-skip">
+        <a href="#synthesising-analysers" class="md-skip">
           Skip to content
         </a>
       
@@ -97,7 +97,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Explains how to generate analysers using the tool
+              Synthesising Analysers
             
           </span>
         </div>
@@ -108,7 +108,7 @@
         
           
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple" type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple" type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
@@ -306,12 +306,14 @@
 
   
   
+    
+  
   
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
       
       
-        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" data-md-state="indeterminate" type="checkbox" id="__nav_3" checked>
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" checked>
       
       <label class="md-nav__link" for="__nav_3">
         Using detectEr
@@ -353,18 +355,6 @@
   
   
     <li class="md-nav__item">
-      <a href="runtime-verification.html" class="md-nav__link">
-        Runtime Verification
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
       <a href="formalising-properties.html" class="md-nav__link">
         Formalising Properties
       </a>
@@ -377,9 +367,75 @@
   
   
     <li class="md-nav__item">
-      <a href="synthesising-monitors.md" class="md-nav__link">
+      <a href="runtime-verification.html" class="md-nav__link">
+        Runtime Verification
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Synthesising Analysers
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="synthesising-analysers.html" class="md-nav__link md-nav__link--active">
         Synthesising Analysers
       </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#trace-events-in-practice" class="md-nav__link">
+    Trace events, in practice
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#from-specification-to-analyser" class="md-nav__link">
+    From specification to analyser
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#executable-analysers" class="md-nav__link">
+    Executable analysers
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -391,6 +447,42 @@
     <li class="md-nav__item">
       <a href="instrumentation.html" class="md-nav__link">
         Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inline-instrumentation.html" class="md-nav__link">
+        Inline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="outline-instrumentation.html" class="md-nav__link">
+        Outline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="offline-instrumentation.html" class="md-nav__link">
+        Offline Instrumentation
       </a>
     </li>
   
@@ -419,19 +511,178 @@
                   </a>
                 
                 
-                <h1 id="explains-how-to-generate-analysers-using-the-tool">Explains how to generate analysers using the tool<a class="headerlink" href="#explains-how-to-generate-analysers-using-the-tool" title="Permanent link">&para;</a></h1>
-<h1 id="explains-the-code-and-events-and-also-the-code-that-handles-inconclusivity">Explains the code and events (and also the code that handles inconclusivity)<a class="headerlink" href="#explains-the-code-and-events-and-also-the-code-that-handles-inconclusivity" title="Permanent link">&para;</a></h1>
-<ul>
-<li>
-<p>Specify a simple property and explain the synthesised code, giving an example of how the events are consumed and processed.</p>
-</li>
-<li>
-<p>Probably it will be the first property in the paper or else, the second one for which we have the automaton and we can show the corresponding code generated in Erlang.</p>
-</li>
-</ul>
-<h1 id="must-come-after-the-rv-section">Must come after the RV section.<a class="headerlink" href="#must-come-after-the-rv-section" title="Permanent link">&para;</a></h1>
-<h1 id="inconclusive-verdicts-and-how-they-work">Inconclusive verdicts and how they work<a class="headerlink" href="#inconclusive-verdicts-and-how-they-work" title="Permanent link">&para;</a></h1>
-<p>List the possible traces</p>
+                <h1 id="synthesising-analysers">Synthesising Analysers<a class="headerlink" href="#synthesising-analysers" title="Permanent link">&para;</a></h1>
+<hr />
+<h2 id="trace-events-in-practice">Trace events, in practice<a class="headerlink" href="#trace-events-in-practice" title="Permanent link">&para;</a></h2>
+<p>When it comes to tooling, the representation of trace events tends to be implementation-specific and is often tied to the chosen language framework.
+To disentangle the specification and analysis concepts, detectEr employs the <em>intermediate representation</em> seen <a href="the-specification-logic.html#pattern-and-constraint-expressions">earlier</a>, consisting of the program events, <code>fork</code>, <code>init</code>, <code>exit</code>, <code>send</code> and <code>recv</code>.
+These intermediate events are internally translated to the ones that the native Erlang tracing infrastructure uses.
+We adopt this approach since it simplifies the implementation of analysers. </p>
+<h2 id="from-specification-to-analyser">From specification to analyser<a class="headerlink" href="#from-specification-to-analyser" title="Permanent link">&para;</a></h2>
+<p>To demonstrate how you can use detectEr to synthesise analysers, we use the formalisation of property P<sub>3</sub> as a vehicle.
+detectEr provides the <code class="highlight"><span class="nn">hml_eval</span><span class="p">:</span><span class="n">compile</span><span class="o">/</span><span class="mi">2</span></code> function that compiles <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications to executable Erlang code.
+The <code class="highlight"><span class="n">compile</span></code> function accepts two arguments, the path that points to the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> script file, and a list of options that control how the resulting analyser is generated.
+<abbr title="Safety Hennessy-Milner Logic">sHML</abbr> script files are plain text formatted files with a <code>.hml</code> extension, and must at least contain one specification.
+Multiple specifications are separated with comma, and every file must be terminated with a full-stop.
+The configuration options that <code class="highlight"><span class="nn">hml_eval</span><span class="p">:</span><span class="n">compile</span><span class="o">/</span><span class="mi">2</span></code> are as follows.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Option</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code class="highlight"><span class="n">outdir</span></code></td>
+<td align="left">Directory where the synthesised analyser file should be written. If left unspecified, defaults to the current directory <code>.</code>.</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="n">v</span></code></td>
+<td align="left">Inserts logging statements into the synthesised output analyser file. Only use for debugging purposes.</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="n">erl</span></code></td>
+<td align="left">Instructs <code class="highlight"><span class="n">compile</span></code> function to output the synthesised analyser as Erlang source code rather than in <code>beam</code> format. If left unspecified, defaults to <code>beam</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Analysers are synthesised from the Erlang shell, which needs to have the detectEr binaries loaded in its code path.
+This is done by launching the shell with the <code>-pa</code> flag.
+For this example, we change the directory to <code>examples/erlang</code> and launch the Erlang shell, of course assuming that the detectEr source files have already been compiled.
+Refer to the section <a href="../getting-started/setting-up-detecter.html">Setting up detectEr</a> if you need to do this.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:$ </span><span class="nb">cd</span> examples/erlang
+<span class="gp">[duncan@local]:$ </span>erl -pa ../../detecter/ebin
+<span class="go">Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe] [dtrace]</span>
+<span class="go">Eshell V11.2.1  (abort with ^G)</span>
+<span class="go">1&gt;</span>
+</code></pre></div>
+<p>With the Erlang shell loaded, compile the <code>prop_add_rec.hml</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">1&gt;</span> <span class="nn">hml_eval</span><span class="p">:</span><span class="nf">compile</span><span class="p">(</span><span class="s">&quot;props/prop_add_rec.hml&quot;</span><span class="p">,</span> <span class="p">[{</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;ebin&quot;</span><span class="p">},</span> <span class="n">erl</span><span class="p">]).</span>
+<span class="go">ok</span>
+</code></pre></div>
+<p>We have specified the <code class="highlight"><span class="n">erl</span></code> option to generate the analyser source code in order to overview the internal workings of analysers.
+You may skip this section if you want just learn how to to use the tool.
+The analyser is written in the file <code>ebin/prop_add_rec.erl</code>, an excerpt of which is shown below.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span>
+<span class="normal">16</span>
+<span class="normal">17</span>
+<span class="normal">18</span>
+<span class="normal">19</span>
+<span class="normal">20</span>
+<span class="normal">21</span>
+<span class="normal">22</span>
+<span class="normal">23</span>
+<span class="normal">24</span>
+<span class="normal">25</span>
+<span class="normal">26</span>
+<span class="normal">27</span>
+<span class="normal">28</span>
+<span class="normal">29</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">prop_add_rec</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">author</span><span class="p">(</span><span class="s">&quot;detectEr&quot;</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">generated</span><span class="p">(</span><span class="s">&quot;2021/6/12 16:51:08&quot;</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">]).</span>
+<span class="nf">mfa_spec</span><span class="p">({</span><span class="n">calc_server</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="p">[_]})</span> <span class="o">-&gt;</span>
+  <span class="p">{</span><span class="n">ok</span><span class="p">,</span>
+    <span class="k">fun</span><span class="p">({</span><span class="nb">trace</span><span class="p">,</span> <span class="p">_,</span> <span class="n">spawned</span><span class="p">,</span> <span class="p">_,</span> <span class="p">{</span><span class="n">calc_server</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="p">[_]}})</span> <span class="o">-&gt;</span>
+      <span class="k">fun</span> <span class="nv">X</span><span class="p">()</span> <span class="o">-&gt;</span>
+        <span class="k">fun</span><span class="p">({</span><span class="nb">trace</span><span class="p">,</span> <span class="p">_,</span> <span class="n">&#39;receive&#39;</span><span class="p">,</span> <span class="p">{_,</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}}})</span> <span class="o">-&gt;</span>
+          <span class="k">fun</span><span class="p">({</span><span class="nb">trace</span><span class="p">,</span> <span class="p">_,</span> <span class="nb">send</span><span class="p">,</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Res</span><span class="p">},</span> <span class="p">_})</span> <span class="k">when</span> <span class="nv">Res</span> <span class="o">=/=</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span> <span class="o">-&gt;</span>
+            <span class="n">no</span><span class="p">;</span>
+            <span class="p">({</span><span class="nb">trace</span><span class="p">,</span> <span class="p">_,</span> <span class="nb">send</span><span class="p">,</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Res</span><span class="p">},</span> <span class="p">_})</span> <span class="k">when</span> <span class="nv">Res</span> <span class="o">=:=</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span> <span class="o">-&gt;</span>
+              <span class="nv">X</span><span class="p">();</span>
+            <span class="p">(_)</span> <span class="o">-&gt;</span>
+              <span class="n">&#39;end&#39;</span>
+          <span class="k">end</span><span class="p">;</span>
+          <span class="p">(_)</span> <span class="o">-&gt;</span>
+            <span class="n">&#39;end&#39;</span>
+        <span class="k">end</span>
+      <span class="k">end</span><span class="p">();</span>
+      <span class="p">(_)</span> <span class="o">-&gt;</span>
+        <span class="n">&#39;end&#39;</span>
+    <span class="k">end</span><span class="p">};</span>
+    <span class="n">mfa_spec</span><span class="p">({</span><span class="n">calc_server_bug</span><span class="p">,</span> <span class="n">loop</span><span class="p">,</span> <span class="p">[_]})</span> <span class="o">-&gt;</span>
+    <span class="p">...</span>
+    <span class="p">...</span>
+    <span class="k">end</span><span class="p">};</span>
+<span class="nf">mfa_spec</span><span class="p">(_)</span> <span class="o">-&gt;</span>
+  <span class="n">undefined</span><span class="p">.</span>
+</code></pre></div>
+</td></tr></table>
+<p>So the first thing that we should note is that the analyser is one higher-order function returns other functions or atoms in turn.
+The <code>init</code>, <code>send</code>, <code>recv</code> event patterns in the specification are translated by <code class="highlight"><span class="nn">hml_eval</span><span class="p">:</span><span class="n">compile</span><span class="o">/</span><span class="mi">2</span></code> to the event format that the <abbr title="Erlang Virtual Machine">EVM</abbr> uses for tracing.
+These event mappings are tabled below.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Event</th>
+<th align="center">Pattern</th>
+<th align="center"><abbr title="Erlang Virtual Machine">EVM</abbr> trace event translation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code>fork</code></td>
+<td align="center"><code>P₁</code> <strong>&rarr;</strong> <code>P₂</code>, <code>Mod</code>:<code>Fun</code>(<code>Args</code>)</td>
+<td align="center"><code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span> <span class="nv">P₁</span><span class="p">,</span> <span class="nb">spawn</span><span class="p">,</span> <span class="nv">P₂</span><span class="p">,</span> <span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}}</span></code></td>
+</tr>
+<tr>
+<td align="center"><code>init</code></td>
+<td align="center"><code>P₁</code> <strong>&larr;</strong> <code>P₂</code>, <code>Mod</code>:<code>Fun</code>(<code>Args</code>)</td>
+<td align="center"><code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span> <span class="nv">P₁</span><span class="p">,</span> <span class="n">spawned</span><span class="p">,</span> <span class="nv">P₂</span><span class="p">,</span> <span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}}</span></code></td>
+</tr>
+<tr>
+<td align="center"><code>exit</code></td>
+<td align="center"><code>P₁</code> <strong>**</strong> <code>Reason</code></td>
+<td align="center"><code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span> <span class="nv">P₁</span><span class="p">,</span> <span class="nb">exit</span><span class="p">,</span> <span class="nv">Reason</span><span class="p">}</span></code></td>
+</tr>
+<tr>
+<td align="center"><code>send</code></td>
+<td align="center"><code>P₁</code> <strong>:</strong> <code>P₂</code> <strong>!</strong> <code>Msg</code></td>
+<td align="center"><code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span> <span class="nv">P₁</span><span class="p">,</span> <span class="nb">send</span><span class="p">,</span> <span class="nv">Msg</span><span class="p">,</span> <span class="nv">P₂</span><span class="p">}</span></code></td>
+</tr>
+<tr>
+<td align="center"><code>recv</code></td>
+<td align="center"><code>P₂</code> <strong>?</strong> <code>Msg</code></td>
+<td align="center"><code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span> <span class="nv">P₁</span><span class="p">,</span> <span class="n">&#39;receive&#39;</span><span class="p">,</span> <span class="nv">Msg</span><span class="p">}</span></code></td>
+</tr>
+</tbody>
+</table>
+<p>The entry point to analysers is the hardcoded function <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> that accepts as an argument the function that we designated with the keyword <code class="highlight"><span class="k">with</span></code>, line <code>5</code>.
+We revisit <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> when we discuss the instrumentation.
+In the specific case of our calculator server example, the targeted function on line <code>5</code> is <code class="highlight"><span class="n">loop</span></code> in the <code class="highlight"><span class="n">calc_server</span></code> module.
+Our examples packaged with the detectEr distribution include a second implementation of a buggy calculator server, <code class="highlight"><span class="n">calc_server_bug</span></code>, which we will use to show how analysers flag rejection verdicts.
+<code>prop_add_rec.hml</code> specifies the same formalisation of P<sub>3</sub> for this buggy version, the corresponding synthesised analyser code is given on lines <code>24</code>-<code>27</code> (omitted).
+We will use this second analyser to show how a rejection verdict is reached when incorrect program behaviour is detected.</p>
+<p>Our analysers behave similar to state machines that analyse events and transition to the next state that corresponds to the continuation formula.
+In the analyser code above, the necessity with the <code>init</code> symbolic action, <code class="highlight"><span class="k">and</span><span class="p">([_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)]</span></code>, in our <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula corresponds to the function clause on line <code>7</code>.
+Next comes the maximal fix-point construct that is translated to the named function <code class="highlight"><span class="nv">X</span></code>, line <code>8</code>.
+The name <code class="highlight"><span class="nv">X</span></code> is used to recurse when the <code>send</code> event pattern matches to the correct reply consisting of the addition of the variables <code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code>.
+Nested inside <code class="highlight"><span class="nv">X</span></code> is the function on lines <code>9</code>-<code>19</code> that corresponds to the first necessity containing the receive process pattern <code class="highlight"><span class="p">_</span> <span class="o">?</span> <span class="p">{_,</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}}</span></code>.
+Finally, we have the analyser code for the two necessities that handle the incorrect and correct cases of addition, both enclosed in the parent function that handles <code>recv</code>.
+This function consists of two clauses. 
+The constraint <code class="highlight"><span class="k">when</span> <span class="nv">Res</span> <span class="o">=/=</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span></code> in the first clause is satisfied when the reply payload sent by the server contains anything other than the sum of <code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code>, leading to a rejection verdict <code>no</code> (line <code>11</code>).
+The second clause on line <code>12</code> corresponds to the necessity <code class="highlight"><span class="p">[_:_</span> <span class="o">!</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Res</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Res</span> <span class="o">=:=</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span><span class="p">]</span></code>, handling the case when the addition is correctly executed by the server.
+Note that the body of the latter function is just the invocation of the outer function <code class="highlight"><span class="nv">X</span></code>, which emulates looping via recursion.</p>
+<h2 id="executable-analysers">Executable analysers<a class="headerlink" href="#executable-analysers" title="Permanent link">&para;</a></h2>
+<p>Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile <code>prop_add_rec.hml</code> script, this time replacing the <code class="highlight"><span class="n">erl</span></code> option for <code class="highlight"><span class="n">v</span></code>.
+This will serve us in the next sections where we instrument the correct and buggy version of our calculator server using the different approaches supported by detectEr.</p>
+<hr />
+<p>We start with the first instrumentation method, inlining, that requires access to the program source code.</p>
                 
               
               
@@ -451,6 +702,39 @@
       
         
 <footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="runtime-verification.html" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Runtime Verification
+            </div>
+          </div>
+        </a>
+      
+      
+        <a href="instrumentation.html" class="md-footer__link md-footer__link--next" rel="next">
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              Instrumentation
+            </div>
+          </div>
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+          </div>
+        </a>
+      
+    </nav>
   
   <div class="md-footer-meta md-typeset">
     <div class="md-footer-meta__inner md-grid">

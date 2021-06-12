@@ -54,7 +54,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
@@ -108,7 +108,7 @@
         
           
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple" type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple" type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
@@ -409,18 +409,6 @@
   
   
     <li class="md-nav__item">
-      <a href="runtime-verification.html" class="md-nav__link">
-        Runtime Verification
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
       <a href="formalising-properties.html" class="md-nav__link">
         Formalising Properties
       </a>
@@ -433,7 +421,19 @@
   
   
     <li class="md-nav__item">
-      <a href="synthesising-monitors.md" class="md-nav__link">
+      <a href="runtime-verification.html" class="md-nav__link">
+        Runtime Verification
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="synthesising-analysers.html" class="md-nav__link">
         Synthesising Analysers
       </a>
     </li>
@@ -447,6 +447,42 @@
     <li class="md-nav__item">
       <a href="instrumentation.html" class="md-nav__link">
         Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inline-instrumentation.html" class="md-nav__link">
+        Inline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="outline-instrumentation.html" class="md-nav__link">
+        Outline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="offline-instrumentation.html" class="md-nav__link">
+        Offline Instrumentation
       </a>
     </li>
   
@@ -564,7 +600,7 @@ Process <code>exit</code> actions signal termination, while <code>send</code> an
 </tr>
 <tr>
 <td align="center"><code>exit</code></td>
-<td align="center"><code>P₁</code> <strong>**</strong> <code>Data</code></td>
+<td align="center"><code>P₁</code> <strong>**</strong> <code>Reason</code></td>
 <td align="center"><code>P₁</code></td>
 <td align="left"><abbr title="Process ID">PID</abbr> of the terminated process</td>
 </tr>
@@ -572,7 +608,7 @@ Process <code>exit</code> actions signal termination, while <code>send</code> an
 <td align="center"></td>
 <td align="center"></td>
 <td align="center"><code>Data</code></td>
-<td align="left">Termination data</td>
+<td align="left">Termination reason</td>
 </tr>
 <tr>
 <td align="center"><code>send</code></td>
@@ -606,7 +642,7 @@ Process <code>exit</code> actions signal termination, while <code>send</code> an
 </tr>
 </tbody>
 </table>
-<p>The variables <code>P₁</code> and <code>P₂</code> in event patterns must be a port ID or <abbr title="Process ID">PID</abbr>, whereas <code>Data</code> and <code>Msg</code> may be any <a href="http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html">Erlang data type</a>, <em>i.e.</em>, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, <abbr title="Process ID">PID</abbr>, tuple, map, and list.
+<p>The variables <code>P₁</code> and <code>P₂</code> in event patterns must be a port ID or <abbr title="Process ID">PID</abbr>, whereas <code>Reason</code> and <code>Msg</code> may be any <a href="http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html">Erlang data type</a>, <em>i.e.</em>, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, <abbr title="Process ID">PID</abbr>, tuple, map, and list.
 <code>Mod</code> and <code>Fun</code> must be atoms, and <code>Args</code>, an arbitrary list comprised of the aforementioned data types.</p>
 <div class="admonition note">
 <p class="admonition-title">Pattern matching</p>
@@ -837,7 +873,7 @@ Analogously, the <code>exit</code> event <code class="highlight"><span class="o"
 <p>The formula <code class="highlight"><span class="p">[</span><span class="sc">α</span><span class="p">]</span><span class="k">ff</span></code> means that the program must not perform the symbolic action <code class="highlight"><span class="sc">α</span></code>.</p>
 </div>
 <hr />
-<p>Despite the fact that the runtime setting limits what one observes at runtime, we next outline how this does not prevent us from verifying properties expressed in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>.</p>
+<p>We next learn how the <a href="getting-started.html#safety-properties">safety properties P<sub>1</sub>, P<sub>2</sub>, P<sub>3</sub>, and P<sub>4</sub></a> stated informally can be expressed in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>.</p>
                 
               
               
@@ -875,13 +911,13 @@ Analogously, the <code>exit</code> event <code class="highlight"><span class="o"
         </a>
       
       
-        <a href="runtime-verification.html" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="formalising-properties.html" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Runtime Verification
+              Formalising Properties
             </div>
           </div>
           <div class="md-footer__button md-icon">

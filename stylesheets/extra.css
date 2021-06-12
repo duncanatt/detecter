@@ -110,7 +110,7 @@ label.md-nav__title, p.admonition-title {
   font-weight: 400 !important;
 }
 
-:root {
+/* :root {
   --md-primary-bg-color:        #EE0F0F;
   --md-primary-bg-color--light: #ECB7B7;
   --md-primary-bg-color--dark:  #90030C;
@@ -118,4 +118,4 @@ label.md-nav__title, p.admonition-title {
 
 body {
   background-color: #F7F5F6;
-}
+} */

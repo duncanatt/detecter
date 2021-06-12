@@ -54,7 +54,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
@@ -108,7 +108,7 @@
         
           
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple" type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple" type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
@@ -353,6 +353,18 @@
             
   
   
+  
+    <li class="md-nav__item">
+      <a href="formalising-properties.html" class="md-nav__link">
+        Formalising Properties
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
     
   
   
@@ -395,15 +407,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#is-one-trace-enough" class="md-nav__link">
-    Is one trace enough?
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#trace-events-in-practice" class="md-nav__link">
-    Trace events, in practice
+  <a href="#is-one-execution-trace-enough" class="md-nav__link">
+    Is one execution trace enough?
   </a>
   
 </li>
@@ -421,19 +426,7 @@
   
   
     <li class="md-nav__item">
-      <a href="formalising-properties.html" class="md-nav__link">
-        Formalising Properties
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="synthesising-monitors.md" class="md-nav__link">
+      <a href="synthesising-analysers.html" class="md-nav__link">
         Synthesising Analysers
       </a>
     </li>
@@ -447,6 +440,42 @@
     <li class="md-nav__item">
       <a href="instrumentation.html" class="md-nav__link">
         Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inline-instrumentation.html" class="md-nav__link">
+        Inline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="outline-instrumentation.html" class="md-nav__link">
+        Outline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="offline-instrumentation.html" class="md-nav__link">
+        Offline Instrumentation
       </a>
     </li>
   
@@ -479,20 +508,21 @@
 <hr />
 <h2 id="a-partial-view-of-the-program-model">A partial view of the program model<a class="headerlink" href="#a-partial-view-of-the-program-model" title="Permanent link">&para;</a></h2>
 <p>Let us recall the calculator server and its transition model.</p>
-<p class="center img"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="330px" viewBox="-0.5 -0.5 330 371" style="max-width:100%;max-height:371px;"><defs><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);&#xa;@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style></defs><g><ellipse cx="309" cy="20" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 20px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q1</div></div></div></foreignObject><text x="309" y="23" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q1</text></switch></g><ellipse cx="109" cy="350" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 350px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q4</div></div></div></foreignObject><text x="109" y="353" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q4</text></switch></g><ellipse cx="109" cy="130" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 130px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q0</div></div></div></foreignObject><text x="109" y="133" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q0</text></switch></g><ellipse cx="109" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q3</div></div></div></foreignObject><text x="109" y="243" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q3</text></switch></g><ellipse cx="309" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q2</div></div></div></foreignObject><text x="309" y="243" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q2</text></switch></g><path d="M 109 90 L 109 103.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 108.88 L 107.33 103.88 L 110.67 103.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 109 150 L 109 213.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 218.88 L 107.33 213.88 L 110.67 213.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 50px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,stp}</div></div></div></foreignObject><text x="50" y="188" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,stp}</text></switch></g><path d="M 109 260 L 109 323.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 328.88 L 107.33 323.88 L 110.67 323.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 291px; margin-left: 180px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {bye,Tot}</div></div></div></foreignObject><text x="180" y="294" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {bye,Tot}</text></switch></g><path d="M 294.86 34.14 L 134.3 126.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 129.44 L 133.46 125.5 L 135.13 128.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 294.86 225.86 L 134.3 133.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 130.56 L 135.13 131.62 L 133.46 134.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 219.68403825214705 88.18116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 220px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A+B}}</div></div></div></foreignObject><text x="220" y="91" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text></switch></g><path d="M 123.14 115.86 L 283.7 23.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 20.56 L 284.54 24.5 L 282.87 21.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 199.68403825214716 58.181162744111816)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 58px; margin-left: 200px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; "><font style="font-size: 11px">Srv</font> ? {<font style="font-size: 11px">Clt</font>,{A,B}}</div></div></div></foreignObject><text x="200" y="61" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g><path d="M 123.14 144.14 L 283.7 236.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 239.44 L 282.87 238.38 L 284.54 235.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(30 219.18403825214705 170.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 219px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A*B}}</div></div></div></foreignObject><text x="219" y="174" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text></switch></g><g transform="translate(-0.5 -0.5)rotate(30 199.18403825214716 200.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 199px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{A,B}}</div></div></div></foreignObject><text x="199" y="204" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg></p>
+<p class="center img"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="330px" viewBox="-0.5 -0.5 330 371" style="max-width:100%;max-height:371px;"><defs><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style></defs><g><ellipse cx="309" cy="20" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 20px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q1</div></div></div></foreignObject><text x="309" y="23" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q1</text></switch></g><ellipse cx="109" cy="350" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 350px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q4</div></div></div></foreignObject><text x="109" y="353" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q4</text></switch></g><ellipse cx="109" cy="130" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 130px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q0</div></div></div></foreignObject><text x="109" y="133" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q0</text></switch></g><ellipse cx="109" cy="240" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q3</div></div></div></foreignObject><text x="109" y="243" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q3</text></switch></g><ellipse cx="309" cy="240" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q2</div></div></div></foreignObject><text x="309" y="243" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q2</text></switch></g><path d="M 109 90 L 109 103.88" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 108.88 L 107.33 103.88 L 110.67 103.88 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><path d="M 109 150 L 109 213.88" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 218.88 L 107.33 213.88 L 110.67 213.88 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 50px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,<b>stp</b>}</div></div></div></foreignObject><text x="50" y="188" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,stp}</text></switch></g><path d="M 109 260 L 109 323.88" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 328.88 L 107.33 323.88 L 110.67 323.88 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 291px; margin-left: 180px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {<b>bye</b>,Tot}</div></div></div></foreignObject><text x="180" y="294" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {bye,Tot}</text></switch></g><path d="M 294.86 34.14 L 134.3 126.94" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 129.44 L 133.46 125.5 L 135.13 128.38 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><path d="M 294.86 225.86 L 134.3 133.06" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 130.56 L 135.13 131.62 L 133.46 134.5 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 219.68403825214705 88.18116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 220px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {<b>ok</b>,{A+B}}</div></div></div></foreignObject><text x="220" y="91" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text></switch></g><path d="M 123.14 115.86 L 283.7 23.06" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 20.56 L 284.54 24.5 L 282.87 21.62 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 199.68403825214716 58.181162744111816)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 58px; margin-left: 200px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; "><font style="font-size: 11px">Srv</font> ? {<font style="font-size: 11px">Clt</font>,{<b>add</b>,A,B}}</div></div></div></foreignObject><text x="200" y="61" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{add,A,B}}</text></switch></g><path d="M 123.14 144.14 L 283.7 236.94" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 239.44 L 282.87 238.38 L 284.54 235.5 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(30 219.18403825214705 170.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 219px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {<b>ok</b>,{A*B}}</div></div></div></foreignObject><text x="219" y="174" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text></switch></g><g transform="translate(-0.5 -0.5)rotate(30 199.18403825214716 200.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 199px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{<b>mul</b>,A,B}}</div></div></div></foreignObject><text x="199" y="204" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{mul,A,B}}</text></switch></g><ellipse cx="109" cy="350" rx="15" ry="15" fill="none" stroke="#212121" pointer-events="all"/></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg></p>
 <p>From its initial state <code>Q0</code>, the transition system modelling the behaviour of <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> can follow three different paths.
 This <em>branching</em> structure is induced by the <code class="highlight"><span class="k">receive</span></code> expression, that introduces a <em>choice</em> between which clause to execute, depending on the pattern match that succeeds.
 The transition model thus gives us an <em>exhaustive description</em> of the paths that the calculator server can take at runtime, affording us <em>full visibility</em> about what the program is able to do.
 Notably, this information is available prior to runtime, and is what certain static verification techniques such as model checking rely upon.</p>
 <p>There are however cases where static approaches cannot be employed, <em>e.g.</em> the program transition model is not available, or is infeasible to construct.
-<em>Runtime Verification</em> is a post-deployment technique [] that can be used instead of&mdash;or in tandem with&mdash;static techniques to increase correctness assurances about a program under scrutiny.
+<em>Runtime Verification</em> is a post-deployment technique that can be used instead of, or in tandem with, static techniques to increase correctness assurances about a program under scrutiny.
+<abbr title="Runtime Verification">RV</abbr> uses monitors&mdash;computational entities consisting of logically-distinct <em>instrumentation</em> and <em>analyser</em> units&mdash;to observe the <em>execution</em> of the program under scrutiny.
 detectEr is one such <abbr title="Runtime Verification">RV</abbr> tool for asynchronous component systems that can analyse the behaviour of programs running on, or outside the <abbr title="Erlang Virtual Machine">EVM</abbr>.</p>
 <p>Post-deployment verification techniques such as <abbr title="Runtime Verification">RV</abbr> often to not have access to the entire transition model of a program.
 Rather, their view of the system is limited to just to the sequence of events generated by the <em>current</em> program execution.
-This linear sequence of program event is known as the <em>execution trace</em>, or <em>trace</em>, for short.
+This linear sequence of program event is known as the (execution) <em>trace</em>.
 For instance, our calculator program might generate the trace of events &lsquo;<code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="o">?</span> <span class="p">{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code>.<code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">:</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="mi">1</span><span class="p">}</span></code>&rsquo;.
 This corresponds to the (finite) path traversal <code>Q0</code> &rarr; <code class="highlight"><span class="nv">Srv</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt</span><span class="p">,</span> <span class="n">stp</span><span class="p">}</span></code> &rarr; <code>Q3</code> &rarr; <code>Srv:Clt ! {bye, Tot}</code> in the transition model above, where <code class="highlight"><span class="nv">Srv</span> <span class="o">=</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">10</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code>, <code class="highlight"><span class="nv">Clt</span> <span class="o">=</span> <span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">16</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code>, and <code>Tot = 1</code>.  </p>
-<h2 id="is-one-trace-enough">Is one trace enough?<a class="headerlink" href="#is-one-trace-enough" title="Permanent link">&para;</a></h2>
+<h2 id="is-one-execution-trace-enough">Is one execution trace enough?<a class="headerlink" href="#is-one-execution-trace-enough" title="Permanent link">&para;</a></h2>
 <p>One natural question that may occur to you at this point is whether a mere sliver of the (more expressive) program transition model is sufficient for us to conclude anything of value about the program under analysis.
 Answers to this question depend on various aspects:</p>
 <ul>
@@ -502,26 +532,57 @@ Answers to this question depend on various aspects:</p>
 </li>
 <li>
 <p><em>Are the traces we consider finite or infinite?</em>
-  There are logics that can <del class="critic">Adrian fill in</del></p>
+  By and large, a number of logics used for model checking reason about infinite traces.
+  <abbr title="Runtime Verification">RV</abbr> typically produces finite traces, and this means that such logics need to be semantically adapted to the runtime setting, or studied to determine which subsets of them are amenable to runtime monitoring.   </p>
 </li>
 <li>
 <p><em>How many traces do we have available?</em>
   There are cases where more than one trace is available, <em>e.g.</em> the program is executed multiple times, or the program consists of concurrent components that produce different interleaved executions.
-  This produces additional runtime information that we can leverage.</p>
+  This produces additional runtime information that one may leverage.</p>
 </li>
 </ul>
-<p>This field of study is called <em>monitorability</em>, and has been treated at length in various works[REFS].
-For us, it is enough to know that <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;the logic detectEr uses&mdash;is runtime monitorable with respect to <em>violations</em> [REFS].
-This means that any program that violates a property expressed as a <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula can be detected by analysing just one trace <mark class="critic">check</mark>.
-The intuition as to why this is the case is as follows.
-Recall that the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula <code class="highlight"><span class="p">[</span><span class="sc">α</span><span class="p">]</span><span class="nf">φ</span></code> requires that <em>all</em> the outgoing paths from some state of the program transition system satisfy the symbolic action <code class="highlight"><span class="sc">α</span></code>, and the next state then satisfies the continuation <code class="highlight"><span class="nf">φ</span></code>.
-To show that a program transition system (<em>not</em> just one path!) violates the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property, it suffices to find <em>one</em> path in the transition system that goes against the what property stipulates.</p>
-<h2 id="trace-events-in-practice">Trace events, in practice<a class="headerlink" href="#trace-events-in-practice" title="Permanent link">&para;</a></h2>
-<p>When it comes to tooling, the representation of trace events tends to be implementation-specific and is often tied to the chosen language framework.
-To make the specification of <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> properties intuitive, detectEr employs the <em>intermediate representation</em> seen <a href="the-specification-logic.html#pattern-and-constraint-expressions">earlier</a>, consisting of the program events, <code>fork</code>, <code>init</code>, <code>exit</code>, <code>send</code> and <code>recv</code>.
-detectEr translates this intermediate representation to the format used by the native tracing infrastructure of the <abbr title="Erlang Virtual Machine">EVM</abbr>, and is covered in the <a href="synthesising-analysers.html">Synthesising Analysers</a> section.</p>
+<p>This field of study is called <em>monitorability</em>, and has been treated at length in various works<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.
+For us, it is enough to know that <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>&mdash;the logic detectEr uses&mdash;is runtime monitorable with respect to <em>violations</em><sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup>.</p>
+<div class="admonition quote">
+<p class="admonition-title">Violation</p>
+<p>Any program that violates a property expressed as a <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula can be detected by finding an execution trace that contains the violating program behaviour.</p>
+</div>
+<p>The intuition as to why this is the case is as follows.
+Recall that the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula <code class="highlight"><span class="p">[</span><span class="sc">α</span><span class="p">]</span><span class="nf">φ</span></code> requires that <em>all</em> the outgoing paths from some state of the program transition model satisfy the symbolic action <code class="highlight"><span class="sc">α</span></code>, and the next state then satisfies the continuation <code class="highlight"><span class="nf">φ</span></code>.
+To show that a program transition model (<em>not</em> just one path!) violates the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> property, it suffices to find <em>one</em> path in the transition model that goes against the what property stipulates.</p>
+<p>Now, in our runtime setting, the program under scrutiny is sure to follow <em>at least</em> one such path in the model, which is precisely the one it takes as it executes.
+This path, observable as an execution trace, is processed by runtime analysers to yield monitoring <em>verdicts</em>.
+In our case of safety properties, the verdict an analyser gives is either <code>no</code> or <code>end</code>: </p>
+<ul>
+<li><code>no</code> corresponds to a property violation, <code class="highlight"><span class="k">ff</span></code>, </li>
+<li><code>end</code> means that the analyser does not have sufficient information in the trace to be able to conclude whether the program violates the property.
+  This is the case, since there might be other traces (<em>i.e.</em>, other paths in the program transition model) that can contain the violating behaviour.
+  We refer to this type of verdict as an <em>inconclusive verdict</em>.</li>
+</ul>
+<p>The verdicts that runtime analysers flag are <em>irrevocable</em>.
+These are verdicts that once given, cannot be retracted and changed.
+For our purposes, this makes sense.
+Why?
+Because in the case of safety properties, an analyser that changes its verdict, sometimes flagging <code>no</code> and at other times, <code>end</code>, would be useless.
+We want that if the program violates a property, then it stays that way, and the analyser persists its given verdict.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Often it is assumed that the program and model correspond, <em>i.e.</em>, the program model captures the behaviour of the program implementation.
+In the sequel, whenever we say that the program (or program implementation) violates a stipulated property, it also means that the model violates that property.</p>
+</div>
 <hr />
-<p>We next learn how the <a href="getting-started.html#safety-properties">safety properties P<sub>1</sub>, P<sub>2</sub> and P<sub>3</sub></a> stated informally can be expressed in <abbr title="Safety Hennessy-Milner Logic">sHML</abbr>.</p>
+<p>We next learn how runtime analysers from <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications can be synthesised.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Citations needed&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Citations needed&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
                 
               
               
@@ -544,7 +605,7 @@ detectEr translates this intermediate representation to the format used by the n
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="the-specification-logic.html" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="formalising-properties.html" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -553,19 +614,19 @@ detectEr translates this intermediate representation to the format used by the n
               <span class="md-footer__direction">
                 Previous
               </span>
-              The Specification Logic
+              Formalising Properties
             </div>
           </div>
         </a>
       
       
-        <a href="formalising-properties.html" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="synthesising-analysers.html" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Formalising Properties
+              Synthesising Analysers
             </div>
           </div>
           <div class="md-footer__button md-icon">

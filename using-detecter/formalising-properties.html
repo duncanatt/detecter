@@ -54,7 +54,7 @@
     
     
     
-    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple">
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
   
     
     <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
@@ -108,7 +108,7 @@
         
           
           
-          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="deep-purple" type="radio" name="__palette" id="__palette_1">
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple" type="radio" name="__palette" id="__palette_1">
           
             <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
@@ -353,18 +353,6 @@
             
   
   
-  
-    <li class="md-nav__item">
-      <a href="runtime-verification.html" class="md-nav__link">
-        Runtime Verification
-      </a>
-    </li>
-  
-
-          
-            
-  
-  
     
   
   
@@ -441,6 +429,13 @@
   
 </li>
       
+        <li class="md-nav__item">
+  <a href="#formalising-p4" class="md-nav__link">
+    Formalising P4
+  </a>
+  
+</li>
+      
     </ul>
   
 </nav>
@@ -454,7 +449,19 @@
   
   
     <li class="md-nav__item">
-      <a href="synthesising-monitors.md" class="md-nav__link">
+      <a href="runtime-verification.html" class="md-nav__link">
+        Runtime Verification
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="synthesising-analysers.html" class="md-nav__link">
         Synthesising Analysers
       </a>
     </li>
@@ -468,6 +475,42 @@
     <li class="md-nav__item">
       <a href="instrumentation.html" class="md-nav__link">
         Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inline-instrumentation.html" class="md-nav__link">
+        Inline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="outline-instrumentation.html" class="md-nav__link">
+        Outline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="offline-instrumentation.html" class="md-nav__link">
+        Offline Instrumentation
       </a>
     </li>
   
@@ -512,7 +555,7 @@ This helps maintain the size of <abbr title="Safety Hennessy-Milner Logic">sHML<
 In using <code class="highlight"><span class="k">with</span></code>, our formula need not account for superfluous trace events (<em>e.g.</em> of another calculator process) that tend to make the specification exercise tedious and error-prone.</p>
 <p>Let us formalise the properties from the <a href="">Getting Started</a> section; these are specified with respect to the five process events <code>fork</code>, <code>init</code>, <code>exit</code>, <code>send</code>, and <code>recv</code> supported by detectEr.
 We include our calculator server transition model for reference.</p>
-<p class="center img"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="330px" viewBox="-0.5 -0.5 330 371" style="max-width:100%;max-height:371px;"><defs><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Source+Sans+Pro);&#xa;@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style></defs><g><ellipse cx="309" cy="20" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 20px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q1</div></div></div></foreignObject><text x="309" y="23" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q1</text></switch></g><ellipse cx="109" cy="350" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 350px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q4</div></div></div></foreignObject><text x="109" y="353" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q4</text></switch></g><ellipse cx="109" cy="130" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 130px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q0</div></div></div></foreignObject><text x="109" y="133" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q0</text></switch></g><ellipse cx="109" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q3</div></div></div></foreignObject><text x="109" y="243" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q3</text></switch></g><ellipse cx="309" cy="240" rx="20" ry="20" fill="none" stroke="#000000" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; background-color: #FFFFFF; white-space: normal; word-wrap: normal; ">Q2</div></div></div></foreignObject><text x="309" y="243" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Q2</text></switch></g><path d="M 109 90 L 109 103.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 108.88 L 107.33 103.88 L 110.67 103.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 109 150 L 109 213.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 218.88 L 107.33 213.88 L 110.67 213.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 50px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,stp}</div></div></div></foreignObject><text x="50" y="188" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,stp}</text></switch></g><path d="M 109 260 L 109 323.88" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 328.88 L 107.33 323.88 L 110.67 323.88 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 291px; margin-left: 180px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {bye,Tot}</div></div></div></foreignObject><text x="180" y="294" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {bye,Tot}</text></switch></g><path d="M 294.86 34.14 L 134.3 126.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 129.44 L 133.46 125.5 L 135.13 128.38 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><path d="M 294.86 225.86 L 134.3 133.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 130.56 L 135.13 131.62 L 133.46 134.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 219.68403825214705 88.18116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 220px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A+B}}</div></div></div></foreignObject><text x="220" y="91" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text></switch></g><path d="M 123.14 115.86 L 283.7 23.06" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 20.56 L 284.54 24.5 L 282.87 21.62 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 199.68403825214716 58.181162744111816)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 58px; margin-left: 200px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; "><font style="font-size: 11px">Srv</font> ? {<font style="font-size: 11px">Clt</font>,{A,B}}</div></div></div></foreignObject><text x="200" y="61" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g><path d="M 123.14 144.14 L 283.7 236.94" fill="none" stroke="#000000" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 239.44 L 282.87 238.38 L 284.54 235.5 Z" fill="#000000" stroke="#000000" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(30 219.18403825214705 170.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 219px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {ok,{A*B}}</div></div></div></foreignObject><text x="219" y="174" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text></switch></g><g transform="translate(-0.5 -0.5)rotate(30 199.18403825214716 200.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 199px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #000000; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{A,B}}</div></div></div></foreignObject><text x="199" y="204" fill="#000000" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{A,B}}</text></switch></g></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg></p>
+<p class="center img"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="330px" viewBox="-0.5 -0.5 330 371" style="max-width:100%;max-height:371px;"><defs><style type="text/css">@import url(https://fonts.googleapis.com/css?family=Fira+Code);&#xa;</style></defs><g><ellipse cx="309" cy="20" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 20px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q1</div></div></div></foreignObject><text x="309" y="23" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q1</text></switch></g><ellipse cx="109" cy="350" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 350px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q4</div></div></div></foreignObject><text x="109" y="353" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q4</text></switch></g><ellipse cx="109" cy="130" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 130px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q0</div></div></div></foreignObject><text x="109" y="133" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q0</text></switch></g><ellipse cx="109" cy="240" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 90px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q3</div></div></div></foreignObject><text x="109" y="243" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q3</text></switch></g><ellipse cx="309" cy="240" rx="20" ry="20" fill="none" stroke="#212121" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 38px; height: 1px; padding-top: 240px; margin-left: 290px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: normal; word-wrap: normal; ">Q2</div></div></div></foreignObject><text x="309" y="243" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Q2</text></switch></g><path d="M 109 90 L 109 103.88" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 108.88 L 107.33 103.88 L 110.67 103.88 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><path d="M 109 150 L 109 213.88" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 218.88 L 107.33 213.88 L 110.67 213.88 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 185px; margin-left: 50px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,<b>stp</b>}</div></div></div></foreignObject><text x="50" y="188" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,stp}</text></switch></g><path d="M 109 260 L 109 323.88" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 109 328.88 L 107.33 323.88 L 110.67 323.88 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 291px; margin-left: 180px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {<b>bye</b>,Tot}</div></div></div></foreignObject><text x="180" y="294" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {bye,Tot}</text></switch></g><path d="M 294.86 34.14 L 134.3 126.94" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 129.44 L 133.46 125.5 L 135.13 128.38 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><path d="M 294.86 225.86 L 134.3 133.06" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 129.97 130.56 L 135.13 131.62 L 133.46 134.5 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 219.68403825214705 88.18116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 88px; margin-left: 220px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {<b>ok</b>,{A+B}}</div></div></div></foreignObject><text x="220" y="91" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A+B}}</text></switch></g><path d="M 123.14 115.86 L 283.7 23.06" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 20.56 L 284.54 24.5 L 282.87 21.62 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(-30 199.68403825214716 58.181162744111816)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 58px; margin-left: 200px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; "><font style="font-size: 11px">Srv</font> ? {<font style="font-size: 11px">Clt</font>,{<b>add</b>,A,B}}</div></div></div></foreignObject><text x="200" y="61" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{add,A,B}}</text></switch></g><path d="M 123.14 144.14 L 283.7 236.94" fill="none" stroke="#212121" stroke-miterlimit="10" pointer-events="stroke"/><path d="M 288.03 239.44 L 282.87 238.38 L 284.54 235.5 Z" fill="#212121" stroke="#212121" stroke-miterlimit="10" pointer-events="all"/><g transform="translate(-0.5 -0.5)rotate(30 219.18403825214705 170.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 171px; margin-left: 219px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv:Clt ! {<b>ok</b>,{A*B}}</div></div></div></foreignObject><text x="219" y="174" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv:Clt ! {ok,{A*B}}</text></switch></g><g transform="translate(-0.5 -0.5)rotate(30 199.18403825214716 200.68116274411182)"><switch><foreignObject style="overflow: visible; text-align: left;" pointer-events="none" width="100%" height="100%" requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"><div xmlns="http://www.w3.org/1999/xhtml" style="display: flex; align-items: unsafe center; justify-content: unsafe center; width: 1px; height: 1px; padding-top: 201px; margin-left: 199px;"><div style="box-sizing: border-box; font-size: 0; text-align: center; "><div style="display: inline-block; font-size: 11px; font-family: Fira Code; color: #212121; line-height: 1.2; pointer-events: all; white-space: nowrap; ">Srv ? {Clt,{<b>mul</b>,A,B}}</div></div></div></foreignObject><text x="199" y="204" fill="#212121" font-family="Fira Code" font-size="11px" text-anchor="middle">Srv ? {Clt,{mul,A,B}}</text></switch></g><ellipse cx="109" cy="350" rx="15" ry="15" fill="none" stroke="#212121" pointer-events="all"/></g><switch><g requiredFeatures="http://www.w3.org/TR/SVG11/feature#Extensibility"/><a transform="translate(0,-5)" xlink:href="https://www.diagrams.net/doc/faq/svg-export-text-problems" target="_blank"><text text-anchor="middle" font-size="10px" x="50%" y="100%">Viewer does not support full SVG 1.1</text></a></switch></svg></p>
 <h2 id="formalising-p1">Formalising P<sub>1</sub><a class="headerlink" href="#formalising-p1" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>(P<sub>1</sub>)&nbsp;&nbsp;&nbsp;&nbsp;The service request count returned on shutdown is <em>never</em> negative.</p>
@@ -545,23 +588,21 @@ We remedy this by adding clauses that handle these possibilities.</p>
 </code></pre></div>
 </td></tr></table>
 <p>Using <code class="highlight"><span class="k">with</span></code> .. <code class="highlight"><span class="k">monitor</span></code>, we designate the spawned calculator server loop function <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> as the process to be analysed against the formalisation of property P<sub>1</sub> (lines <code>1</code>-<code>3</code>).
-Our formalisation of P<sub>1</sub> consists of two conjuncted <a href="the-specification-logic.html#overview">necessities</a>, <em>i.e.</em> <code class="highlight"><span class="k">and</span><span class="p">(...)</span></code>.
+Our formalisation of P<sub>1</sub> consists of two conjuncted <a href="the-specification-logic.html#overview">necessities</a>, <em>i.e.</em>, <code class="highlight"><span class="k">and</span><span class="p">(...)</span></code>.
 The first conjuncted necessity on line <code>4</code> handles the <code>init</code> event exhibited by every process upon initialisation (we remark that <code>init</code> was elided in the transition model of our calculator server to simplify our discussion, but we <em>need</em> to account for it!).
 The second nested <code class="highlight"><span class="k">and</span><span class="p">(...)</span></code> on line <code>6</code> includes the additional necessities that cover the other possible events produced by the transition system above, recursing on the fix-point variable <code class="highlight"><span class="nv">X</span></code> (lines <code>7</code> and <code>9</code>).
 Line <code>8</code> shows our earlier formula <code class="highlight"><span class="p">[</span><span class="nv">Srv</span><span class="p">:</span><span class="nv">Clt</span> <span class="o">!</span> <span class="p">{</span><span class="n">bye</span><span class="p">,</span> <span class="nv">Tot</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span><span class="k">ff</span></code> that then checks for the condition imposed by P<sub>1</sub>.</p>
 <p>There are a couple of comments that are in order.
-First, the constraints on lines <code>8</code> and <code>9</code> ensure <em><a href="the-specification-logic.html#overview">mutual exclusivity</a></em> between the two necessities, <em>i.e.</em> either <code class="highlight"><span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code> or, <code class="highlight"><span class="nv">Ans</span> <span class="o">&gt;=</span> <span class="mi">0</span></code>  <em>only</em> when the acknowledgement is the atom <code class="highlight"><span class="n">bye</span></code>.
+First, the constraints on lines <code>8</code> and <code>9</code> ensure <em><a href="the-specification-logic.html#overview">mutual exclusivity</a></em> between the two necessities, <em>i.e.</em>, either <code class="highlight"><span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code> or, <code class="highlight"><span class="nv">Ans</span> <span class="o">&gt;=</span> <span class="mi">0</span></code>  <em>only when</em> the acknowledgement is the atom <code class="highlight"><span class="n">bye</span></code>.
 Second, you may observe that the sub-formula on line <code>8</code> alone seems to capture the core requirement of property P<sub>1</sub>.
 This line of reasoning is partially right.
 However, to interpret the requirement stated informally (in English) by P<sub>1</sub> and formalise it <em>unambiguously</em>, one must take the transition model into account.
 In fact, formalising P<sub>1</sub> for a different transition system potentially yields a specification that is altogether unlike the one above for our calculator server.
-Specific to our transition model, the necessities lines <code>7</code> and <code>9</code> &lsquo;eat up&rsquo; our non-relevant program events.</p>
+Specific to our transition model, the necessities on lines <code>7</code> and <code>9</code> act as filters that &lsquo;eat up&rsquo; the non-relevant program events.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>Variables <code class="highlight"><span class="nv">Lnc</span></code>, <code class="highlight"><span class="nv">Srv</span></code>, and <code class="highlight"><span class="nv">Clt</span></code> in our formalisation of P<sub>1</sub> are included assist in our explanation, but can be replaced with the don&rsquo;t care pattern <code class="highlight"><span class="p">_</span></code> since these are unused in constraints.
-We omit such variables in the sequel.
-<!-- The atoms X, Y and Y indicating the module, function and arguments can likewise be omitted with _. -->
-<!-- Crucially, the pattern <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)</span></code> is required on line xx is needed to identify the spawned calculator server loop. --></p>
+We omit such variables going forward.</p>
 </div>
 <h2 id="reformulating-p1">Reformulating P<sub>1</sub><a class="headerlink" href="#reformulating-p1" title="Permanent link">&para;</a></h2>
 <p>P<sub>1</sub> safeguards against the calculator returning a negative request total when shut down.
@@ -569,7 +610,7 @@ An <a href="getting-started.html#a-calculator-program-in-erlang">examination</a>
 In fact, starting the server loop with any number other than 0 will always yield an incorrect request total.
 Let us rectify this oversight by reformulating P<sub>1</sub>.</p>
 <blockquote>
-<p>(P&rsquo;<sub>1</sub>)&nbsp;&nbsp;&nbsp;&nbsp;The service request count upon initialisation is <em>never</em> negative.</p>
+<p>(P&rsquo;<sub>1</sub>)&nbsp;&nbsp;&nbsp;&nbsp;The initial service request count <em>must be</em> 0.</p>
 </blockquote>
 <p>Its corresponding formalisation leverages the <code>init</code> event pattern, simplifying the formula considerably:</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
@@ -578,19 +619,17 @@ Let us rectify this oversight by reformulating P<sub>1</sub>.</p>
 <span class="normal">4</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">with</span>
   <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)</span>
 <span class="k">monitor</span>
-  <span class="k">and</span><span class="p">([_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">([</span><span class="nv">Tot</span><span class="p">])</span> <span class="n">where</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">]</span><span class="k">ff</span><span class="p">).</span>
+  <span class="k">and</span><span class="p">([_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">([</span><span class="nv">Tot</span><span class="p">])</span> <span class="n">where</span> <span class="nv">Tot</span> <span class="o">=/=</span> <span class="mi">0</span><span class="p">]</span><span class="k">ff</span><span class="p">).</span>
 </code></pre></div>
 </td></tr></table>
 <p>Line <code>4</code> consists of the singleton conjuncted necessity where the event pattern matches the spawned function against the module and function name atoms, <code class="highlight"><span class="n">calc_server</span></code> and <code class="highlight"><span class="n">loop</span></code>, respectively.
-The list pattern <code class="highlight"><span class="p">[]</span></code> matches the argument list containing exactly one argument whose value is not negative, <em>i.e.</em> <code class="highlight"><span class="k">when</span> <span class="nv">Tot</span> <span class="o">&lt;</span> <span class="mi">0</span></code>.</p>
+The list pattern <code class="highlight"><span class="p">[]</span></code> matches the argument list containing exactly one argument whose must be <code>0</code>.</p>
 <h2 id="formalising-p2">Formalising P<sub>2</sub><a class="headerlink" href="#formalising-p2" title="Permanent link">&para;</a></h2>
 <blockquote>
 <p>(P<sub>2</sub>)&nbsp;&nbsp;&nbsp;&nbsp;Replies are <em>always</em> sent to the client indicated in the request.</p>
 </blockquote>
 <p>P<sub>2</sub> describes a fragment of the client-server protocol, asserting that server replies are always addressed to the clients issuing them.
 Unlike the properties seen thus far, this requirement induces <em>data dependency</em> between client requests and server responses.</p>
-<!-- This dependency is reflected in the nested formulae below. -->
-
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -619,14 +658,14 @@ Unlike the properties seen thus far, this requirement induces <em>data dependenc
 </code></pre></div>
 </td></tr></table>
 <p>Our formalisation of P<sub>2</sub> expresses this data dependency in the nested formulae above via the binders <code class="highlight"><span class="nv">Srv_1</span></code> and <code class="highlight"><span class="nv">Clt_1</span></code>, that are used in the constraint of the sub-formulae on lines <code>8</code> and <code>9</code>.
-<code class="highlight"><span class="nv">Srv_1</span> <span class="o">=:=</span> <span class="nv">Srv_2</span></code> scopes our reasoning to single server instance, <em>i.e.</em> the same calculator server process.
+<code class="highlight"><span class="nv">Srv_1</span> <span class="o">=:=</span> <span class="nv">Srv_2</span></code> scopes our reasoning to single server instance, <em>i.e.</em>, the same calculator server process.
 The formula is violated when <code class="highlight"><span class="nv">Clt_1</span> <span class="o">=/=</span> <span class="nv">Clt_2</span></code> (since the continuation would need to satisfy <code class="highlight"><span class="k">ff</span></code>), and recurs on variable <code class="highlight"><span class="nv">X</span></code> otherwise.
 Recall that the comparisons between the different variable instantiations is possible since the binding scope of the event pattern variables <code class="highlight"><span class="nv">Srv_1</span></code> and <code class="highlight"><span class="nv">Clt_1</span></code> in the outer necessity <em>extends</em> to the context of the inner <code class="highlight"><span class="k">and</span><span class="p">(...)</span></code> on lines <code>7</code>-<code>10</code>.</p>
 <h2 id="refining-p2">Refining P<sub>2</sub><a class="headerlink" href="#refining-p2" title="Permanent link">&para;</a></h2>
 <p>The formalisation of P<sub>2</sub> above does not account for the case where the server interacts with more than one client.
 It disregards the possibility of interleaved execution, which is inherent to concurrent settings where processes are <em>unable to control</em> when messages are received.
 For instance, while the sub-formula <code class="highlight"><span class="p">[</span><span class="nv">Srv_1</span> <span class="o">?</span> <span class="p">{</span><span class="nv">Clt_1</span><span class="p">,</span> <span class="p">_}]</span></code> on line <code>6</code> matches an initial <code>recv</code> event, an ensuing <code>recv</code> event (<em>e.g.</em> due to a second client that happens to interact with the server) satisfies neither of the necessities on lines <code>8</code> and <code>9</code>.
-This does not reflect the requirement of our original property P<sub>2</sub>, and is yet another manifestation of the issue encountered <a href="#formalising-p1">earlier</a>, <em>i.e.</em> formalising a property must be done in connection to the context in which the program operates.
+This does not reflect the requirement of our original property P<sub>2</sub>, and is yet another manifestation of the issue encountered <a href="#formalising-p1">earlier</a>, <em>i.e.</em>, formalising a property must be done in connection to the context in which the program operates.
 We handle this inconvenience by augmenting the formula to filter non-relevant events, as previous.</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
@@ -653,7 +692,7 @@ We handle this inconvenience by augmenting the formula to filter non-relevant ev
           <span class="k">and</span><span class="p">(</span>
             <span class="p">[</span><span class="nv">Srv_2</span><span class="p">:</span><span class="nv">Clt_2</span> <span class="o">!</span> <span class="p">_</span> <span class="k">when</span> <span class="nv">Srv_1</span> <span class="o">=:=</span> <span class="nv">Srv_2</span> <span class="ow">andalso</span> <span class="nv">Clt_1</span> <span class="o">=/=</span> <span class="nv">Clt_2</span><span class="p">]</span><span class="k">ff</span><span class="p">,</span>
             <span class="p">[</span><span class="nv">Srv_2</span><span class="p">:</span><span class="nv">Clt_2</span> <span class="o">!</span> <span class="p">_</span> <span class="k">when</span> <span class="nv">Srv_1</span> <span class="o">=:=</span> <span class="nv">Srv_2</span> <span class="ow">andalso</span> <span class="nv">Clt_1</span> <span class="o">=:=</span> <span class="nv">Clt_2</span><span class="p">]</span><span class="nv">X</span><span class="p">,</span>
-            <span class="p">[_</span> <span class="o">?</span> <span class="p">_</span> <span class="p">]</span><span class="nv">Y</span>
+            <span class="p">[_</span> <span class="o">?</span> <span class="p">_]</span><span class="nv">Y</span>
           <span class="p">)</span>
         <span class="p">)</span>
       <span class="p">)</span>
@@ -663,11 +702,47 @@ We handle this inconvenience by augmenting the formula to filter non-relevant ev
 </td></tr></table>
 <h2 id="formalising-p3">Formalising P<sub>3</sub><a class="headerlink" href="#formalising-p3" title="Permanent link">&para;</a></h2>
 <blockquote>
-<p>(P<sub>3</sub>)&nbsp;&nbsp;&nbsp;&nbsp;Client requests are <em>never</em> serviced more than once.</p>
+<p>(P<sub>3</sub>)&nbsp;&nbsp;&nbsp;&nbsp;A request for adding two numbers <em>always</em> returns their sum.</p>
 </blockquote>
-<p>P<sub>3</sub> specifies a control aspect of the client-server interaction.
+<p>P<sub>3</sub> demonstrates how we can use constraints to perform more complex reasoning on program event data, besides equality and range checks. </p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">with</span>
+  <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)</span>
+<span class="k">monitor</span>
+  <span class="k">and</span><span class="p">([_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">calc_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_)]</span>
+    <span class="k">max</span><span class="p">(</span><span class="nv">X</span><span class="p">.</span>
+      <span class="k">and</span><span class="p">([_</span> <span class="o">?</span> <span class="p">{_,</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}}]</span>
+        <span class="k">and</span><span class="p">(</span>
+          <span class="p">[_:_</span> <span class="o">!</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Res</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Res</span> <span class="o">=/=</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span><span class="p">]</span><span class="k">ff</span><span class="p">,</span>
+          <span class="p">[_:_</span> <span class="o">!</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Res</span><span class="p">}</span> <span class="k">when</span> <span class="nv">Res</span> <span class="o">=:=</span> <span class="nv">A</span> <span class="o">+</span> <span class="nv">B</span><span class="p">]</span><span class="nv">X</span>
+        <span class="p">)</span>
+      <span class="p">)</span>
+    <span class="p">)</span>
+  <span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+<p>This <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula compares the result issued by the server, instantiated in the variable <code class="highlight"><span class="nv">Res</span></code>, against the sum of the values instantiated in <code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code>.
+Necessity <code class="highlight"><span class="p">[_</span> <span class="o">?</span> <span class="p">{_,</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}}]</span></code> on line <code>6</code> corresponds to the server receiving and addition request from a client, consisting of the payload <code class="highlight"><span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="nv">A</span><span class="p">,</span> <span class="nv">B</span><span class="p">}</span></code>.
+<code class="highlight"><span class="nv">A</span></code> and <code class="highlight"><span class="nv">B</span></code> are added and compared to the server result embedded in the payload of the send event exhibited by the server in the nested necessities on lines <code>8</code> and <code>9</code>.
+The first sub-formula (line <code>8</code>) handles the case where the addition is incorrectly executed by the server, whereas the second sub-formula (line <code>9</code>) is satisfied when the addition is correct, unfolding the formula via recursion on variable <code class="highlight"><span class="nv">X</span></code>.</p>
+<h2 id="formalising-p4">Formalising P<sub>4</sub><a class="headerlink" href="#formalising-p4" title="Permanent link">&para;</a></h2>
+<blockquote>
+<p>(P<sub>4</sub>)&nbsp;&nbsp;&nbsp;&nbsp;Client requests are <em>never</em> serviced more than once.</p>
+</blockquote>
+<p>P<sub>4</sub> specifies a control aspect of the client-server interaction.
 The corresponding <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> formula expresses this requirement via a guarded fix-point that recurs on <code class="highlight"><span class="nv">X</span></code> for sequences of <code>send</code>-<code>recv</code> events. 
-This recursion captures normal server operation that corresponds to the sub-formula on line <code>5</code> followed by the one on line <code>7</code>, and then <code class="highlight"><span class="p">[_</span> <span class="o">?</span> <span class="p">_]</span><span class="nv">X</span></code> on line <code>4</code> followed thereafter by the sub-formula of line <code>7</code>.</p>
+This recursion captures normal server operation that corresponds to the sub-formula on line <code>5</code> followed by the one on line <code>7</code>, and then <code class="highlight"><span class="p">[_</span> <span class="o">?</span> <span class="p">_]</span><span class="nv">X</span></code> on line <code>10</code> followed thereafter by the sub-formula of line <code>7</code>.</p>
 <table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
 <span class="normal"> 2</span>
 <span class="normal"> 3</span>
@@ -702,7 +777,8 @@ This recursion captures normal server operation that corresponds to the sub-form
 <p>Our formula is violated when a send event matched by <code class="highlight"><span class="p">[</span><span class="nv">Srv_1</span><span class="p">:</span><span class="nv">Clt_1</span> <span class="o">!</span> <span class="p">_]</span></code> is followed by a second send that is matched by the sub-formula on line <code>9</code>.
 The constraint <code class="highlight"><span class="nv">Clt_1</span> <span class="o">=:=</span> <span class="nv">Clt_2</span></code> of the necessity on line <code>9</code> ensures that duplicate <code>send</code> events concern the same recipient.</p>
 <hr />
-<p>Having formalised properties P<sub>1</sub>, P<sub>2</sub> and P<sub>3</sub>, we are now in a position to use detectEr and synthesise the corresponding analysers in Erlang code.</p>
+<p>Having formalised properties P<sub>1</sub>, P<sub>2</sub>, P<sub>3</sub>, and P<sub>4</sub>, we are now in a position to use detectEr and synthesise the corresponding analysers in Erlang code.
+But before doing that, we need to discuss how the runtime setting limits our view of program behaviour, and how analysers fit in the picture. </p>
                 
               
               
@@ -725,7 +801,7 @@ The constraint <code class="highlight"><span class="nv">Clt_1</span> <span class
   
     <nav class="md-footer__inner md-grid" aria-label="Footer">
       
-        <a href="runtime-verification.html" class="md-footer__link md-footer__link--prev" rel="prev">
+        <a href="the-specification-logic.html" class="md-footer__link md-footer__link--prev" rel="prev">
           <div class="md-footer__button md-icon">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
           </div>
@@ -734,19 +810,19 @@ The constraint <code class="highlight"><span class="nv">Clt_1</span> <span class
               <span class="md-footer__direction">
                 Previous
               </span>
-              Runtime Verification
+              The Specification Logic
             </div>
           </div>
         </a>
       
       
-        <a href="instrumentation.html" class="md-footer__link md-footer__link--next" rel="next">
+        <a href="runtime-verification.html" class="md-footer__link md-footer__link--next" rel="next">
           <div class="md-footer__title">
             <div class="md-ellipsis">
               <span class="md-footer__direction">
                 Next
               </span>
-              Instrumentation
+              Runtime Verification
             </div>
           </div>
           <div class="md-footer__button md-icon">

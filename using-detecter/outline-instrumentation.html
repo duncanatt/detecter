@@ -543,7 +543,7 @@ The nice thing about Erlang tracing is that is supports any software component t
 For instance, languages like <a href="https://elixir-lang.org">Elixir</a> and <a href="https://www.clojerl.org">Clojerl</a> can benefit from our type of runtime monitoring.
 Detailed information about the outline instrumentation algorithm detectEr uses can be found in the <a href="https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf">companion paper</a>, and our <a href="https://arxiv.org/abs/2104.09433">preprint</a>.</p>
 <h2 id="the-calculator-server-program">The calculator server program<a class="headerlink" href="#the-calculator-server-program" title="Permanent link">&para;</a></h2>
-<p>For this example, we will use an Elixir implementation of our <em>buggy</em> calculator server.
+<p>For this demo, we will use an Elixir implementation of our <em>buggy</em> calculator server that subtracts numbers, rather than adding them.
 This implementation, shown below, is identical to the one in Erlang in every aspect, except for the programming language syntax.
 In particular, function invocations in Elixir may omit the parentheses (<em>e.g.</em>, <code class="highlight"><span class="n">send</span></code>, <code class="highlight"><span class="n">self</span></code>), and atoms are prepended with a colon (<em>e.g.</em>, <code class="highlight"><span class="ss">:add</span></code>).
 Elixir variables are specified in <em>lowercase</em>, as opposed to Erlang, which must be capitalised.

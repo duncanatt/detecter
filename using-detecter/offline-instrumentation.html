@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#inline-instrumentation" class="md-skip">
+        <a href="#offline-instrumentation" class="md-skip">
           Skip to content
         </a>
       
@@ -518,11 +518,124 @@
                   </a>
                 
                 
-                <h1 id="inline-instrumentation">Inline Instrumentation<a class="headerlink" href="#inline-instrumentation" title="Permanent link">&para;</a></h1>
+                <h1 id="offline-instrumentation">Offline Instrumentation<a class="headerlink" href="#offline-instrumentation" title="Permanent link">&para;</a></h1>
 <hr />
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
+<p>The notion of outline instrumentation is extended to the offline case where the program potentially runs outside of the <abbr title="Erlang Virtual Machine">EVM</abbr>.
+detectEr implements a middleware components that emulates the <abbr title="Erlang Virtual Machine">EVM</abbr> tracing infrastructure.
+The enables detectEr to employ the same outline instrumentation algorithm we use in <a href="outline-instrumentation.html">Outline Instrumentation</a> for offline monitoring too.
+Offline set-ups are generally the slowest in terms of verdict detection, by comparison to the inline and outline forms of instrumentation.
+This stems from the dependence outline instrumentation has on the timely availability of pre-recorded runtime traces that are subject to external software entities, such as, files.</p>
+<p>Our outline instrumentation middleware logic is encapsulated in the <code class="highlight"><span class="n">log_tracer</span></code> module that exposes a <code class="highlight"><span class="nb">trace</span><span class="o">/</span><span class="mi">1</span></code> function to dynamically attach to processes.
+The <code class="highlight"><span class="n">log_tracer</span></code> module relies on log files at the medium through which programs can communicate trace events to the offline set-up.
+detectEr can process plain text log files containing <em>complete</em> program runs, or <em>actively</em> monitor files for changes to dynamically dispatch events to analysers while the program is executing and updating the log file.
+Of course, the log file in question must be known to both the program that writes to it and the <code class="highlight"><span class="n">log_tracer</span></code> module reading events.
+Offline instrumentation supports the five events fork, init, exit, send, and recv, but assumes that event entries in the log files are written in a pre-determined format recognisable by detectEr.
+Events must be written one per line, structured as described in the table below.</p>
+<table>
+<thead>
+<tr>
+<th align="center">Program event</th>
+<th align="left">Log entry pattern</th>
+<th align="center">Entry variable</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code>fork</code></td>
+<td align="left"><code>fork(P₁, P₂, {Mod, Fun, Args})</code></td>
+<td align="center"><code>P₁</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the parent process spawning <code>P₂</code></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>P₂</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the child process spawned by <code>P₁</code></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>{Mod, Fun, Args}</code></td>
+<td align="left">Function signature consisting of the module, function and arguments</td>
+</tr>
+<tr>
+<td align="center"><code>init</code></td>
+<td align="left"><code>init(P₂, P₁, {Mod, Fun, Args})</code></td>
+<td align="center"><code>P₁</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the parent process spawning <code>P₂</code></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>P₂</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the child process spawned by <code>P₁</code></td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>{Mod, Fun, Args}</code></td>
+<td align="left">Function signature consisting of the module, function and arguments</td>
+</tr>
+<tr>
+<td align="center"><code>exit</code></td>
+<td align="left"><code>exit(P₁, Reason)</code></td>
+<td align="center"><code>P₁</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the terminated process</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>Reason</code></td>
+<td align="left">Termination reason</td>
+</tr>
+<tr>
+<td align="center"><code>send</code></td>
+<td align="left"><code>send(P₁, P₂, Msg)</code></td>
+<td align="center"><code>P₁</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the process issuing the message</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>P₂</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the recipient process</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>Msg</code></td>
+<td align="left">Message payload</td>
+</tr>
+<tr>
+<td align="center"><code>recv</code></td>
+<td align="left"><code>recv(P₂, Msg)</code></td>
+<td align="center"><code>P₂</code></td>
+<td align="left"><abbr title="Process ID">PID</abbr> of the recipient process</td>
+</tr>
+<tr>
+<td align="center"></td>
+<td align="left"></td>
+<td align="center"><code>Msg</code></td>
+<td align="left">Message payload</td>
+</tr>
+</tbody>
+</table>
 <h2 id="the-calculator-server-program">The calculator server program<a class="headerlink" href="#the-calculator-server-program" title="Permanent link">&para;</a></h2>
+<p>To demonstrate outline instrumentation, we once more use a <em>buggy</em> version of our calculator server that subtracts numbers, rather than adding them.
+This Python implementation, operates similar to the Erlang and Elixir analogues, but messages are exchanged in plain text over <abbr title="Transmission Control Protocol">TCP</abbr> sockets.
+The buggy and correct server implementations may be found in the <code>examples/python</code> directory.</p>
+<p>The server is </p>
+<p>The calculator server relies on the standard Python logging facility to write trace events in a file specified.  </p>
+<p>Interacting  with the server over <abbr title="Transmission Control Protocol">TCP</abbr>.</p>
+<p>Starting</p>
+<p>One add</p>
+<p>Stop</p>
+<p>Look at the trace file using the utility tail.</p>
 <h2 id="offline-instrumentation-in-action">Offline instrumentation in action<a class="headerlink" href="#offline-instrumentation-in-action" title="Permanent link">&para;</a></h2>
+<p>We can copy our synthesised analyser from the erlang or alternatively regenerate it from scratch. </p>
+<p>We use the copy to show that analysers are pluggable.</p>
 <h2 id="testing-the-correct-server-implementation">Testing the correct server implementation<a class="headerlink" href="#testing-the-correct-server-implementation" title="Permanent link">&para;</a></h2>
                 
               

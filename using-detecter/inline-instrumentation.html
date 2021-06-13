@@ -450,8 +450,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#inlining-in-action" class="md-nav__link">
-    Inlining in action
+  <a href="#inline-instrumentation-in-action" class="md-nav__link">
+    Inline instrumentation in action
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#irrevocable-verdicts" class="md-nav__link">
+    Irrevocable verdicts
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#correct-server" class="md-nav__link">
+    Correct server
   </a>
   
 </li>
@@ -520,24 +534,241 @@ There are various other <abbr title="Runtime Verification">RV</abbr> tools, espe
 One drawback of inlining is that it tends to be invasive, and cannot be used in scenarios where the program code is not available (<em>e.g.</em> compiled versions of the program, licensing agreements, <em>etc.</em>).</p>
 <p>detectEr employs a custom-built weaver to instrument invocations to analysers via code injection, by manipulating the program abstract syntax tree.
 This procedure is detailed in the <a href="https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf">companion paper</a>; readers are encouraged to consult this resource for more details.
-Here, we will learn how to employ detectEr to inline and analyse programs for which the source code <em>is</em> available.
+Here, we will learn how to use detectEr to inline and analyse programs for which the source code <em>is</em> available.
 Once more, we rely on our Erlang implementation of the calculator server from the <a href="getting-started.html">Getting Started</a> section to show how this is done.</p>
 <h2 id="the-example-system">The example system<a class="headerlink" href="#the-example-system" title="Permanent link">&para;</a></h2>
-<p>Let us run the calculator server program with no instrumentation applied, to familiarise ourselves with the basic workflow.</p>
-<p>make</p>
-<p>launch the erlang shell</p>
-<p>explain the protocol from the slides of section one</p>
-<p>launch the server with Pid, isprocessalive</p>
-<p>demonstrate addition, and flush</p>
-<p>multiplication and flush</p>
-<p>shutdown.
-isprocessalive</p>
-<p>Launch the Erlang shell, including the de</p>
-<p>Mention the correct implementation</p>
-<p>The incorrect implementation</p>
-<p>Running the system</p>
-<h2 id="inlining-in-action">Inlining in action<a class="headerlink" href="#inlining-in-action" title="Permanent link">&para;</a></h2>
-<p>Show how the correct and incorrect operates.</p>
+<p>Let us run the calculator server program with no instrumentation applied, to familiarise ourselves with its basic operation.
+Launch a new terminal emulator window, navigate to the <em>root</em> detectEr directory, and:</p>
+<ol>
+<li>
+<p>Change the directory to <code>examples/erlang</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter$ </span><span class="nb">cd</span> examples/erlang
+<span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>ls -l
+<span class="go">-rw-rw-r-- 1 duncan duncan  996 May 17 17:16 Makefile</span>
+<span class="go">drwxrwxr-x 2 duncan duncan 4096 May 17 17:16 props</span>
+<span class="go">drwxrwxr-x 3 duncan duncan 4096 May 17 17:16 src</span>
+</code></pre></div>
+</li>
+<li>
+<p>Execute <code>make</code> to compile all of the Erlang source code modules located in <code>examples/erlang/src</code>. 
+    A new <code>ebin</code> directory containing the compiled <code>*.beam</code> files is created.</p>
+</li>
+<li>
+<p>Launch the Erlang shell <code>erl</code>.
+    We add the detectEr binaries and the ones we have just compiled to the shell code path via <code>-pa</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/erlang$ </span>erl -pa ../../detecter/ebin ebin
+<span class="go">Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe] [dtrace]</span>
+<span class="go">Eshell V11.2.1  (abort with ^G)</span>
+<span class="go">1&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>The calculator server is started by invoking <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code>.
+    If you recall from the section <a href="getting-started.html">Getting Started</a>, <code class="highlight"><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> accepts a single argument <code class="highlight"><span class="nv">N</span></code> that it uses to track the number of requests handled.
+    Function <code class="highlight"><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> spawns the server process and returns its <abbr title="Process ID">PID</abbr>.
+    We need to hold on to this <abbr title="Process ID">PID</abbr> in order to use it to communicate with our server.
+    To do this, we store the <abbr title="Process ID">PID</abbr> in the variable <code class="highlight"><span class="nv">Pid</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">1&gt;</span> <span class="nv">Pid</span> <span class="o">=</span> <span class="nn">calc_server</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span>
+<span class="go">&lt;0.86.0&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>We can check that the server process has actually started using the <code>is_process_alive/1</code> <abbr title="Built-in Function">BIF</abbr>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">2&gt;</span> <span class="nb">is_process_alive</span><span class="p">(</span><span class="nv">Pid</span><span class="p">).</span> 
+<span class="go">true</span>
+</code></pre></div>
+</li>
+<li>
+<p>The server is now ready to handle client requests.
+    Messages in Erlang are submitted using the send operator, <code class="highlight"><span class="o">!</span></code>, that takes the <abbr title="Process ID">PID</abbr> of the recipient process and the message to send as arguments.
+    The data in the request message we send must <em>coincide</em> with one of the clauses that the server is able to pattern match in its <code class="highlight"><span class="k">receive</span></code> expression.
+    When this is not the case, the message is not processed, and left queued in the calculator server mailbox.
+    Try instructing the server to add two numbers, <code class="highlight"><span class="mi">10</span></code> and <code class="highlight"><span class="mi">97</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">3&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}.</span>
+<span class="go">{&lt;0.84.0&gt;,{add,10,97}}</span>
+</code></pre></div>
+<p>Let us dissect our request message.
+It consists of the pair containing the <abbr title="Process ID">PID</abbr> of the Erlang shell, which we obtain through the <abbr title="Built-in Function">BIF</abbr> <code class="highlight"><span class="n">self</span><span class="o">/</span><span class="mi">0</span></code>, and the payload, <code class="highlight"><span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}</span></code>.
+Send expressions in Erlang evaluate to the message sent, which is why the shell prints the output <code class="highlight"><span class="p">{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">add</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">97</span><span class="p">}}</span></code>.
+Note that this is <em>not</em> the server reply.</p>
+</li>
+<li>
+<p>To obtain the server reply from the mailbox of the shell, we use another <abbr title="Built-in Function">BIF</abbr>, <code class="highlight"><span class="n">flush</span><span class="o">/</span><span class="mi">0</span></code>, that empties the mailbox contents on the shell.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">4&gt;</span> <span class="n">flush</span><span class="p">().</span>
+<span class="go">Shell got {ok,107}</span>
+<span class="go">ok</span>
+</code></pre></div>
+</li>
+<li>
+<p>Sending a multiplication request is similar to adding two numbers:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">5&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="p">{</span><span class="n">mul</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}.</span>
+<span class="go">{&lt;0.84.0&gt;,{mul,10,97}}</span>
+<span class="gp">6&gt;</span> <span class="n">flush</span><span class="p">().</span>
+<span class="go">Shell got {ok,970}</span>
+<span class="go">ok</span>
+</code></pre></div>
+</li>
+<li>
+<p>To shutdown the server, we issue a <code>stp</code> request.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">7&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="n">stp</span><span class="p">}.</span>
+<span class="go">{&lt;0.84.0&gt;,stp}</span>
+<span class="gp">8&gt;</span> <span class="n">flush</span><span class="p">().</span>
+<span class="go">Shell got {bye,2}</span>
+<span class="go">ok</span>
+<span class="gp">9&gt;</span> <span class="nb">is_process_alive</span><span class="p">(</span><span class="nv">Pid</span><span class="p">).</span>
+<span class="go">false</span>
+</code></pre></div>
+</li>
+</ol>
+<p>Before terminating, our server replies to the sender with <code class="highlight"><span class="p">{</span><span class="n">bye</span><span class="p">,</span><span class="mi">2</span><span class="p">}</span></code>, that contains the total number of requests serviced, <code class="highlight"><span class="n">add</span></code> and <code class="highlight"><span class="n">mul</span></code> in our example.
+   The shell excerpt also confirms that the server process is terminated.
+   We note that at this point, the server <abbr title="Process ID">PID</abbr> value <code class="highlight"><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span></code> is still instantiated in the variable Pid, which is now stale.
+   Sending a message to a non-existing <abbr title="Process ID">PID</abbr> via <code class="highlight"><span class="o">!</span></code> is silently ignored without raising any errors.</p>
+<p>Our buggy implementation of the server in the <code class="highlight"><span class="n">calc_server_bug</span></code> module operates exactly to the correct version, and can be launched by following the steps above.</p>
+<h2 id="inline-instrumentation-in-action">Inline instrumentation in action<a class="headerlink" href="#inline-instrumentation-in-action" title="Permanent link">&para;</a></h2>
+<p>Since in the previous section we executed <code>make</code> that cleans the <code>ebin</code> directory, we have to once more synthesise our analyser.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">10&gt;</span> <span class="nn">hml_eval</span><span class="p">:</span><span class="nf">compile</span><span class="p">(</span><span class="s">&quot;props/prop_add_rec.hml&quot;</span><span class="p">,</span> <span class="p">[{</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;ebin&quot;</span><span class="p">},</span> <span class="n">v</span><span class="p">]).</span>
+<span class="go">ok</span>
+</code></pre></div>
+<p>Now we can instrument the server we want analysed. 
+detectEr provides the <code class="highlight"><span class="n">weaver</span></code> module that offers two functions, <code class="highlight"><span class="n">weave_file</span><span class="o">/</span><span class="mi">3</span></code> that weaves a single file, and <code class="highlight"><span class="n">weave</span><span class="o">/</span><span class="mi">3</span></code> that weaves an entire directory of files.
+We will use <code class="highlight"><span class="n">weave</span><span class="o">/</span><span class="mi">3</span></code> to weave both the correct and buggy implementation of our calculator server.
+The two variants of <code class="highlight"><span class="n">weave</span></code> accept three arguments: </p>
+<ol>
+<li>
+<p>the file where the Erlang source file to be weaved resides (or directory of files, in case of <code class="highlight"><span class="n">weave</span><span class="o">/</span><span class="mi">3</span></code>),</p>
+</li>
+<li>
+<p>the function <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> of the analyser we want weaved, and,</p>
+</li>
+<li>
+<p>an option list.</p>
+</li>
+</ol>
+<p>The options supported by <code class="highlight"><span class="n">weave_file</span><span class="o">/</span><span class="mi">3</span></code> and <code class="highlight"><span class="n">weaver</span><span class="o">/</span><span class="mi">3</span></code> are as follows:</p>
+<table>
+<thead>
+<tr>
+<th align="center">Option</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="center"><code class="highlight"><span class="n">outdir</span></code></td>
+<td align="left">Directory where the generated weaved files should be written. If left unspecified, defaults to the current directory <code>.</code>.</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="n">i</span></code></td>
+<td align="left">Directory containing include files that the source files in the source directory depend on.</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="n">filter</span></code></td>
+<td align="left">Filter function that suppresses events. If left unspecified, defaults to &lsquo;allows any&rsquo;.</td>
+</tr>
+<tr>
+<td align="center"><code class="highlight"><span class="n">erl</span></code></td>
+<td align="left">Instructs the compiler to output the generated files as Erlang source code rather than <code>beam</code>. If left unspecified, defaults to <code>beam</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>For this demo, we use the buggy version of our calculator server to detect property violations.</p>
+<ol>
+<li>
+<p>Weave the <code>src/demo</code> directory by executing:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">11&gt;</span> <span class="nn">weaver</span><span class="p">:</span><span class="nf">weave</span><span class="p">(</span><span class="s">&quot;src/demo&quot;</span><span class="p">,</span> <span class="k">fun</span> <span class="nn">prop_add_rec</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[{</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;ebin&quot;</span><span class="p">}]).</span>
+<span class="go">[{ok,calc_client,[]},</span>
+<span class="go">{ok,calc_server,[]},</span>
+<span class="go">{ok,calc_server_bug,[]},</span>
+<span class="go">{ok,hello,[]}]</span>
+</code></pre></div>
+<p>The weaved files will be automatically loaded for you in the shell.</p>
+</li>
+<li>
+<p>Next, launch the buggy server.
+    We will use the same variable <code>Pid</code> to keep hold of the <abbr title="Process ID">PID</abbr> returned by <code>calc_server_bug:start/1</code>.
+    Since Erlang does not allow variables to be assigned more than once, we have to free the variable <code>Pid</code> before reusing it.
+    We do this using the <code>f/1</code> <abbr title="Built-in Function">BIF</abbr>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">12&gt;</span> <span class="n">f</span><span class="p">(</span><span class="nv">Pid</span><span class="p">).</span>
+<span class="go">ok</span>
+<span class="gp">13&gt;</span> <span class="nv">Pid</span> <span class="o">=</span> <span class="nn">calc_server_bug</span><span class="p">:</span><span class="nf">start</span><span class="p">(</span><span class="mi">0</span><span class="p">).</span>
+<span class="gt">*** [&lt;0.84.0&gt;] Instrumenting monitor for MFA pattern &#39;{calc_server_bug,loop,[0]}&#39;.</span>
+<span class="gt">*** [&lt;0.141.0&gt;] Analyzing event {trace,&lt;0.141.0&gt;,spawned,&lt;0.84.0&gt;,{calc_server_bug,loop,[0]}}.</span>
+<span class="go">&lt;0.141.0&gt;</span>
+</code></pre></div>
+<p>As soon as the calculator server process starts, the analyser immediately enters into action and analyses the first process event <code>init</code>.
+Here we see this as the internal Erlang spawned event (see <a href="synthesising-analysers.html#from-specification-to-analyser">From specification to analyser</a>).</p>
+</li>
+<li>
+<p>Now, let us try an addition request.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">14&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}.</span>
+<span class="gt">*** [&lt;0.141.0&gt;] Analyzing event {trace,&lt;0.141.0&gt;,&#39;receive&#39;,{&lt;0.84.0&gt;,{add,10,97}}}.</span>
+<span class="go">{&lt;0.84.0&gt;,{add,10,97}}</span>
+<span class="gt">*** [&lt;0.141.0&gt;] Analyzing event {trace,&lt;0.141.0&gt;,send,{ok,-87},&lt;0.84.0&gt;}.</span>
+<span class="hll"><span class="gt">*** [&lt;0.141.0&gt;] Reached verdict &#39;no&#39;.</span>
+</span></code></pre></div>
+<p>As expected, this leads to a rejection verdict, <code class="highlight"><span class="n">no</span></code>, that corresponds to a violation of our property P<sub>3</sub>.</p>
+</li>
+<li>
+<p>Stop the server.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">15&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="n">stp</span><span class="p">}.</span>
+<span class="hll"><span class="go">[INFO - &lt;0.141.0&gt; - analyzer:179] - Reached verdict &#39;no&#39; after {recv,&lt;0.141.0&gt;,{&lt;0.84.0&gt;,stp}}.</span>
+</span><span class="hll"><span class="go">[INFO - &lt;0.141.0&gt; - analyzer:174] - Reached verdict &#39;no&#39; after {send,&lt;0.141.0&gt;,&lt;0.84.0&gt;,{bye,1}}.</span>
+</span><span class="go">{&lt;0.84.0&gt;,stp}</span>
+</code></pre></div>
+</li>
+</ol>
+<h2 id="irrevocable-verdicts">Irrevocable verdicts<a class="headerlink" href="#irrevocable-verdicts" title="Permanent link">&para;</a></h2>
+<p>You might have noticed that the <code>recv</code> and <code>send</code> events exhibited by the calculator server process as it terminated (step 4 above) are also analysed by our analyser.
+Both of these analyses yield the same rejection verdict of <code>no</code>.
+Why does this happen?
+In the section <a href="runtime-verification.html#is-one-execution-trace-enough">Is one execution trace enough?</a> we explained that analysers yield irrevocable verdicts (<em>i.e.</em>, ones that cannot be retracted).
+This is one such instance, where the verdict <code>no</code> is flagged, and the analyser will persist its decision, regardless of the events it analyses going forward.</p>
+<h2 id="correct-server">Correct server<a class="headerlink" href="#correct-server" title="Permanent link">&para;</a></h2>
+<p>Try running the correct version of the server, following steps 2-4 above.</p>
+<ol>
+<li>
+<p>Launch the instrumented server.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">16&gt;</span> <span class="n">f</span><span class="p">(</span><span class="nv">Pid</span><span class="p">).</span>
+<span class="go">Pid = calc_server:start(0).</span>
+<span class="gt">*** [&lt;0.84.0&gt;] Instrumenting monitor for MFA pattern &#39;{calc_server,loop,[0]}&#39;.</span>
+<span class="gt">*** [&lt;0.146.0&gt;] Analyzing event {trace,&lt;0.146.0&gt;,spawned,&lt;0.84.0&gt;,{calc_server,loop,[0]}}.</span>
+<span class="go">&lt;0.146.0&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Perform an addition request.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">17&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="p">{</span><span class="n">add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}.</span>
+<span class="gt">*** [&lt;0.146.0&gt;] Analyzing event {trace,&lt;0.146.0&gt;,&#39;receive&#39;,{&lt;0.84.0&gt;,{add,10,97}}}.</span>
+<span class="go">{&lt;0.84.0&gt;,{add,10,97}}</span>
+<span class="gt">*** [&lt;0.146.0&gt;] Analyzing event {trace,&lt;0.146.0&gt;,send,{ok,107},&lt;0.84.0&gt;}.</span>
+<span class="hll"><span class="gt">*** [&lt;0.146.0&gt;] Unfolding rec. var. &#39;X&#39;.</span>
+</span></code></pre></div>
+</li>
+</ol>
+<p>In this case where the addition is correctly executed by the server, the analyser unfolds the recursion via the variable <code class="highlight"><span class="nv">X</span></code>, and resumes its analysis.</p>
+<ol>
+<li>
+<p>Try submitting a multiplication request.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">18&gt;</span> <span class="nv">Pid</span> <span class="o">!</span> <span class="p">{</span><span class="n">self</span><span class="p">(),</span> <span class="p">{</span><span class="n">mul</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}.</span>
+<span class="gt">*** [&lt;0.146.0&gt;] Reached verdict &#39;end&#39; on event {trace,&lt;0.146.0&gt;,&#39;receive&#39;,{&lt;0.84.0&gt;,{mul,10,97}}}.</span>
+<span class="go">{&lt;0.84.0&gt;,{mul,10,97}}</span>
+</code></pre></div>
+<p>The analyser reaches the inconclusive verdict <code>end</code> since given the event <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">146</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">&#39;receive&#39;</span><span class="p">,{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">mul</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">97</span><span class="p">}}}</span></code>, it cannot determine whether these will eventually lead to a violation.
+Furthermore, now that the analyser has reached this point of inconclusiveness, it cannot backtrack, and will always yield the verdict <code>end</code> for every subsequent event it analyses.
+This is another instance of verdict irrevocability.</p>
+</li>
+<li>
+<p>Stopping the server elicits the same behaviour from the analyser.</p>
+<div class="highlight"><pre><span></span><code><span class="go">Pid ! {self(), stp}.</span>
+<span class="go">[INFO - &lt;0.146.0&gt; - analyzer:179] - Reached verdict &#39;end&#39; after {recv,&lt;0.146.0&gt;,{&lt;0.84.0&gt;,stp}}.</span>
+<span class="go">[INFO - &lt;0.146.0&gt; - analyzer:174] - Reached verdict &#39;end&#39; after {send,&lt;0.146.0&gt;,&lt;0.84.0&gt;,{bye,2}}.</span>
+<span class="go">{&lt;0.84.0&gt;,stp}</span>
+</code></pre></div>
+</li>
+</ol>
+<hr />
+<p>The next instrumentation method, outlining, completely externalises the instrumentation and analysis, and does not assume access to the program source code, as inlining does.</p>
                 
               
               

@@ -424,8 +424,8 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#different-approaches" class="md-nav__link">
-    Different approaches
+  <a href="#grey-and-black-box-approaches" class="md-nav__link">
+    Grey and black box approaches
   </a>
   
 </li>
@@ -499,7 +499,7 @@
                 
                 <h1 id="instrumentation">Instrumentation<a class="headerlink" href="#instrumentation" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="different-approaches">Different approaches<a class="headerlink" href="#different-approaches" title="Permanent link">&para;</a></h2>
+<h2 id="grey-and-black-box-approaches">Grey and black box approaches<a class="headerlink" href="#grey-and-black-box-approaches" title="Permanent link">&para;</a></h2>
 <p>Instrumentation is the second ingredient that lies at the heart of runtime monitoring.
 It refers to the extraction of information from executing software, following one of two approaches.
 In the <em>grey box</em> approach, instrumentation is implemented by <em>weaving</em> instructions that extract information, directly into the program under scrutiny.
@@ -514,42 +514,51 @@ detectEr preserves the separation of concerns that exists between the analysis a
 Indeed, the analysers that we generate via the function <code class="highlight"><span class="nn">hml_eval</span><span class="p">:</span><span class="n">compile</span><span class="o">/</span><span class="mi">2</span></code> can be readily used with any of the three instrumentation approaches, unless of course, the targeted function spawning processes differs.</p>
 <hr />
 <p>Now we detail how these may be used via three different implementations of our calculator server example, starting with the inline approach.</p>
-<ul>
-<li>
-<p>Diagram of the system architecture.</p>
-</li>
-<li>
-<p>How the same generated analyzer code is used to instrument the Erlang, Elixir and Python setups. </p>
-</li>
-</ul>
-<h1 id="generating-the-monitor">Generating the monitor<a class="headerlink" href="#generating-the-monitor" title="Permanent link">&para;</a></h1>
-<p>This is a common aspect to all types of instrumentation. Treating it centrally reinforces this fact.</p>
-<h2 id="inline-instrumentation">Inline instrumentation<a class="headerlink" href="#inline-instrumentation" title="Permanent link">&para;</a></h2>
-<p>We reintroduce the erlang system code.</p>
-<p>The erroneous system here is on P1</p>
-<h2 id="outline-instrumentation">Outline instrumentation<a class="headerlink" href="#outline-instrumentation" title="Permanent link">&para;</a></h2>
-<p>We introduce the elixir system code.</p>
-<p>The erroneous system here is on P2.</p>
-<h2 id="outline-instrumentation_1">Outline instrumentation<a class="headerlink" href="#outline-instrumentation_1" title="Permanent link">&para;</a></h2>
-<p>We introduce the python system code.</p>
-<p>The erroneous system here is on P3.</p>
-<hr />
-<p>As system implementations (for the tutorial), we should have:</p>
-<ol>
-<li>
-<p>The good system for all language implementations.</p>
-</li>
-<li>
-<p>The system that violates P1 for just erlang.</p>
-</li>
-<li>
-<p>The system that violates P2 for just elixir.</p>
-</li>
-<li>
-<p>The system that violates P3 for just python, doris!</p>
-</li>
-</ol>
-<p>We also need the updated parser.</p>
+<!-- 
+
+
+* Diagram of the system architecture.
+
+* How the same generated analyzer code is used to instrument the Erlang, Elixir and Python setups. 
+
+
+
+# Generating the monitor 
+
+This is a common aspect to all types of instrumentation. Treating it centrally reinforces this fact.
+
+
+## Inline instrumentation
+
+We reintroduce the erlang system code.
+
+The erroneous system here is on P1
+
+## Outline instrumentation
+
+We introduce the elixir system code.
+
+The erroneous system here is on P2.
+
+## Outline instrumentation
+
+We introduce the python system code.
+
+The erroneous system here is on P3.
+
+
+---
+As system implementations (for the tutorial), we should have:
+
+1. The good system for all language implementations.
+
+2. The system that violates P1 for just erlang.
+
+3. The system that violates P2 for just elixir.
+
+4. The system that violates P3 for just python, doris!
+
+ -->
                 
               
               

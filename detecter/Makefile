@@ -18,7 +18,7 @@ clean:
 
 compile: clean
 	mkdir -p $(BIN)
-	erlc -pa $(BIN) +debug_info -I $(INCLUDE) -o $(BIN) $(call recursive,$(SRC),erl)
+	erlc -pa $(BIN) +debug_info -W0 -I $(INCLUDE) -o $(BIN) $(call recursive,$(SRC),erl)
 
 compile-test: clean
 	mkdir -p $(BIN)

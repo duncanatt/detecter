@@ -137,8 +137,12 @@ The two variants of `#!erlang weave` accept three arguments:
 The options supported by `#!erlang weave_file/3` and `#!erlang weaver/3` are as follows:
 
 
-TABLE
-
+| Option            | Description                                                                                                                             |
+| :---------------: | :-------------------------------------------------------------------------------------------------------------------------------------- |
+| `#!erlang outdir` | Directory where the generated weaved files should be written. If left unspecified, defaults to the current directory `.`.               |
+| `#!erlang i`      | Directory containing include files that the source files in the source directory depend on.                                             |
+| `#!erlang filter` | Filter function that suppresses events. If left unspecified, defaults to 'allows any'.                                                  |
+| `#!erlang erl`    | Instructs the compiler to output the generated files as Erlang source code rather than `beam`. If left unspecified, defaults to `beam`. |
 
 
 For this demo, we use the buggy version of our calculator server to detect property violations.

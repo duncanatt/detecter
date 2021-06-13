@@ -3,7 +3,7 @@
 # Instrumentation
 ---
 
-## Different approaches
+## Grey and black box approaches
 
 Instrumentation is the second ingredient that lies at the heart of runtime monitoring.
 It refers to the extraction of information from executing software, following one of two approaches.
@@ -27,7 +27,7 @@ Now we detail how these may be used via three different implementations of our c
 
 
 
-
+<!-- 
 
 
 * Diagram of the system architecture.
@@ -71,5 +71,4 @@ As system implementations (for the tutorial), we should have:
 
 4. The system that violates P3 for just python, doris!
 
-We also need the updated parser.
-
+ -->

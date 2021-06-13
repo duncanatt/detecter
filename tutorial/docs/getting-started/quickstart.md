@@ -64,7 +64,7 @@ Launch a new terminal emulator window (*e.g.* Terminal on Ubuntu or macOS), navi
    Try invoking the function `#!erlang greet` of the `#!erlang hello` module.
    The function `#!erlang greet` accepts one argument, the name of the person to greet, specified as a string enclosed within double quotes.
    
-    ```erlang
+    ```erl
     1> hello:greet("Duncan").
     Hello there, Duncan!
     ok

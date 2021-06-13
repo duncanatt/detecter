@@ -19,5 +19,3 @@ clean:
 compile: clean
 	mkdir -p $(BIN)
 	erlc -pa $(BIN) +debug_info -I $(INCLUDE) -o $(BIN) $(call recursive,$(SRC),erl)
-
-# make

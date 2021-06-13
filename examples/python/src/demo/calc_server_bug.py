@@ -82,7 +82,7 @@ def loop(tot):
 
         log.debug('init({id},{p_id},{{{mod},{fun},{args}}})'.format(
             id=to_pid(port), p_id=to_pid(P_ID),
-            mod='calc_server', fun='loop', args=[tot]
+            mod='calc_server_bug', fun='loop', args=[tot]
         ))
 
         # Listen for client connections.

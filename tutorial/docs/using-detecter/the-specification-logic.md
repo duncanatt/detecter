@@ -53,12 +53,12 @@ Process `exit` actions signal termination, while `send` and `recv` describe proc
 |               |                                            | `P₂`                | PID of the child process spawned by `P₁`                            |
 |               |                                            | `Mod`:`Fun`(`Args`) | Function signature consisting of the module, function and arguments |
 | `exit`        | `P₁` __**__ `Reason`                       | `P₁`                | PID of the terminated process                                       |
-|               |                                            | `Data`              | Termination reason                                                  |
+|               |                                            | `Reason`            | Termination reason                                                  |
 | `send`        | `P₁` **:** `P₂` **!** `Msg`                | `P₁`                | PID of the process issuing the message                              |
 |               |                                            | `P₂`                | PID of the recipient process                                        |
 |               |                                            | `Msg`               | Message payload                                                     |
 | `recv`        | `P₂` **?** `Msg`                           | `P₂`                | PID of the recipient process                                        |
-|               |                                            | `Msg`               | Request payload consisting of data                                  |
+|               |                                            | `Msg`               | Message payload                                                     |
 
 The variables `P₁` and `P₂` in event patterns must be a port ID or PID, whereas `Reason` and `Msg` may be any [Erlang data type](http://erlang.org/documentation/doc-6.0/doc/reference_manual/data_types.html), *i.e.*, one of atom, Boolean, integer, float, string, bit string, reference, fun, port ID, PID, tuple, map, and list.
 `Mod` and `Fun` must be atoms, and `Args`, an arbitrary list comprised of the aforementioned data types.

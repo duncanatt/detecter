@@ -85,13 +85,13 @@ So the first thing that we should note is that the analyser is one higher-order 
 The `init`, `send`, `recv` event patterns in the specification are translated by `#!erlang hml_eval:compile/2` to the event format that the EVM uses for tracing.
 These event mappings are tabled below.
 
-| Event  | Pattern                                | EVM trace event translation                           |
-| :----: | :------------------------------------: | :---------------------------------------------------: |
-| `fork` | `P₁` **-->** `P₂`, `Mod`:`Fun`(`Args`) | `#!erlang {trace, P₁, spawn, P₂, {Mod, Fun, Args}}`   |
-| `init` | `P₁` **<--** `P₂`, `Mod`:`Fun`(`Args`) | `#!erlang {trace, P₁, spawned, P₂, {Mod, Fun, Args}}` |
-| `exit` | `P₁` __**__ `Reason`                   | `#!erlang {trace, P₁, exit, Reason}`                  |
-| `send` | `P₁` **:** `P₂` **!** `Msg`            | `#!erlang {trace, P₁, send, Msg, P₂}`                 |
-| `recv` | `P₂` **?** `Msg`                       | `#!erlang {trace, P₁, 'receive', Msg}`                |
+| Program event  | Pattern                                | EVM trace event translation                           |
+| :------------: | :------------------------------------: | :---------------------------------------------------: |
+| `fork`         | `P₁` **-->** `P₂`, `Mod`:`Fun`(`Args`) | `#!erlang {trace, P₁, spawn, P₂, {Mod, Fun, Args}}`   |
+| `init`         | `P₁` **<--** `P₂`, `Mod`:`Fun`(`Args`) | `#!erlang {trace, P₁, spawned, P₂, {Mod, Fun, Args}}` |
+| `exit`         | `P₁` __**__ `Reason`                   | `#!erlang {trace, P₁, exit, Reason}`                  |
+| `send`         | `P₁` **:** `P₂` **!** `Msg`            | `#!erlang {trace, P₁, send, Msg, P₂}`                 |
+| `recv`         | `P₂` **?** `Msg`                       | `#!erlang {trace, P₁, 'receive', Msg}`                |
 
 The entry point to analysers is the hardcoded function `#!erlang mfa_spec/1` that accepts as an argument the function that we designated with the keyword `#!shml with`, line `5`.
 We revisit `#!erlang mfa_spec/1` when we discuss the instrumentation.

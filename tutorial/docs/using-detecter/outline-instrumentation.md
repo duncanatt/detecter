@@ -15,7 +15,7 @@ Detailed information about the outline instrumentation algorithm detectEr uses c
 
 ## The calculator server program
 
-For this example, we will use an Elixir implementation of our *buggy* calculator server.
+For this demo, we will use an Elixir implementation of our *buggy* calculator server that subtracts numbers, rather than adding them.
 This implementation, shown below, is identical to the one in Erlang in every aspect, except for the programming language syntax.
 In particular, function invocations in Elixir may omit the parentheses (*e.g.*, `#!elixir send`, `#!elixir self`), and atoms are prepended with a colon (*e.g.*, `#!elixir :add`).
 Elixir variables are specified in *lowercase*, as opposed to Erlang, which must be capitalised.

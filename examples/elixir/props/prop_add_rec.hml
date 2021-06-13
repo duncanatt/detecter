@@ -35,4 +35,17 @@ monitor
         )
       )
     )
+  ),
+with
+  'Elixir.Demo.CalcServerBug':loop(_)
+monitor
+  and([_ <- _, 'Elixir.Demo.CalcServerBug':loop(_)]
+    max(X.
+      and([_ ? {_, {add, A, B}}]
+        and(
+          [_:_ ! {ok, Res} when Res =/= A + B]ff,
+          [_:_ ! {ok, Res} when Res =:= A + B]X
+        )
+      )
+    )
   ).

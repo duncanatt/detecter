@@ -24,9 +24,9 @@
 %%%-------------------------------------------------------------------
 
 with
-  'Elixir.Demo.CalcServer':loop(_)
+  'Demo.CalcServer':loop(_)
 monitor
-  and([_ <- _, 'Elixir.Demo.CalcServer':loop(_)]
+  and([_ <- _, 'Demo.CalcServer':loop(_)]
     max(X.
       and([_ ? {_, {add, A, B}}]
         and(
@@ -37,9 +37,9 @@ monitor
     )
   ),
 with
-  'Elixir.Demo.CalcServerBug':loop(_)
+  'Demo.CalcServerBug':loop(_)
 monitor
-  and([_ <- _, 'Elixir.Demo.CalcServerBug':loop(_)]
+  and([_ <- _, 'Demo.CalcServerBug':loop(_)]
     max(X.
       and([_ ? {_, {add, A, B}}]
         and(

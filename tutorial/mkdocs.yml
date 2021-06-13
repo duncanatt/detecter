@@ -120,7 +120,6 @@ nav:
     - The Specification Logic: using-detecter/the-specification-logic.md
     - Formalising Properties: using-detecter/formalising-properties.md
     - Runtime Verification: using-detecter/runtime-verification.md
-    # - Monitoring: using-detecter/monitoring.md
     - Synthesising Analysers: using-detecter/synthesising-analysers.md
     - Instrumentation: using-detecter/instrumentation.md
     - Inline Instrumentation: using-detecter/inline-instrumentation.md

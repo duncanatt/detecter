@@ -34,7 +34,7 @@ Launch a new terminal emulator window, navigate to the *root* detectEr directory
     A new `ebin` directory containing the compiled `*.beam` files is created.
 
 3.  Launch the Erlang shell `erl`.
-    We ad the detectEr binaries and the ones we have just compiled to the shell code path via `-pa`.
+    We add the detectEr binaries and the ones we have just compiled to the shell code path via `-pa`.
 
     ```console
     [duncan@local]:/detecter/examples/erlang$ erl -pa ../../detecter/ebin ebin
@@ -114,7 +114,7 @@ Launch a new terminal emulator window, navigate to the *root* detectEr directory
 
 Our buggy implementation of the server in the `#!erlang calc_server_bug` module operates exactly to the correct version, and can be launched by following the steps above.
 
-## Inlining in action
+## Inline instrumentation in action
 
 Since in the previous section we executed `make` that cleans the `ebin` directory, we have to once more synthesise our analyser.
 
@@ -130,7 +130,7 @@ The two variants of `#!erlang weave` accept three arguments:
 
 1. the file where the Erlang source file to be weaved resides (or directory of files, in case of `#!erlang weave/3`),
 
-2. the main function `#!erlang mfa_spec/1` of the analyser we want weaved, and,
+2. the function `#!erlang mfa_spec/1` of the analyser we want weaved, and,
 
 3. an option list.
 

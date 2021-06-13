@@ -455,8 +455,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-example-system" class="md-nav__link">
-    The example system
+  <a href="#the-calculator-server-program" class="md-nav__link">
+    The calculator server program
   </a>
   
 </li>
@@ -476,8 +476,15 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#correct-server" class="md-nav__link">
-    Correct server
+  <a href="#the-program-without-analysis" class="md-nav__link">
+    The program without analysis.
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#testing-the-correct-server-implementation" class="md-nav__link">
+    Testing the correct server implementation
   </a>
   
 </li>
@@ -535,9 +542,12 @@ It leverages the native tracing infrastructure the the <abbr title="Erlang Virtu
 The nice thing about Erlang tracing is that is supports any software component that is developed for the <abbr title="Erlang Virtual Machine">EVM</abbr>.
 For instance, languages like <a href="https://elixir-lang.org">Elixir</a> and <a href="https://www.clojerl.org">Clojerl</a> can benefit from our type of runtime monitoring.
 Detailed information about the outline instrumentation algorithm detectEr uses can be found in the <a href="https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf">companion paper</a>, and our <a href="https://arxiv.org/abs/2104.09433">preprint</a>.</p>
-<h2 id="the-example-system">The example system<a class="headerlink" href="#the-example-system" title="Permanent link">&para;</a></h2>
+<h2 id="the-calculator-server-program">The calculator server program<a class="headerlink" href="#the-calculator-server-program" title="Permanent link">&para;</a></h2>
 <p>For this example, we will use an Elixir implementation of our <em>buggy</em> calculator server.
-This implementation, shown below, is identical to the one in Erlang in every aspect, except for the programming language syntax.</p>
+This implementation, shown below, is identical to the one in Erlang in every aspect, except for the programming language syntax.
+In particular, function invocations in Elixir may omit the parentheses (<em>e.g.</em>, <code class="highlight"><span class="n">send</span></code>, <code class="highlight"><span class="n">self</span></code>), and atoms are prepended with a colon (<em>e.g.</em>, <code class="highlight"><span class="ss">:add</span></code>).
+Elixir variables are specified in <em>lowercase</em>, as opposed to Erlang, which must be capitalised.
+Finally, messages in Elixir are sent using the function <code class="highlight"><span class="n">send</span></code>, that accepts the <abbr title="Process ID">PID</abbr> of the recipient process and the message to be sent as arguments, and is the counterpart to <code class="highlight"><span class="o">!</span></code> in Erlang.</p>
 <div class="highlight"><pre><span></span><code><span class="kd">def</span> <span class="n">start</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">do</span>
   <span class="n">spawn</span> <span class="bp">__MODULE__</span><span class="p">,</span> <span class="ss">:loop</span><span class="p">,</span> <span class="p">[</span><span class="n">n</span><span class="p">]</span>
 <span class="k">end</span>
@@ -592,20 +602,18 @@ Launch a new terminal emulator window, navigate to the <em>root</em> detectEr di
 </li>
 <li>
 <p>The buggy calculator server is started by invoking <code class="highlight"><span class="nc">Demo.CalcServerBug</span><span class="o">.</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> that accepts a single argument, <code class="highlight"><span class="n">n</span></code>, that it uses to track the number of requests handled.
-    Like its Erlang counterpart <code class="highlight"><span class="nc">Demo.CalcServerBug</span><span class="o">.</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> returns the server process <abbr title="Process ID">PID</abbr>, which we assign to variable <code class="highlight"><span class="n">pid</span></code>.
-    Note that unlike Erlang, variables in Elixir are specified in <em>lowercase</em> (in this case here, <code class="highlight"><span class="n">pid</span></code> not <code class="highlight"><span class="nv">Pid</span></code>).</p>
+    Like its Erlang counterpart <code class="highlight"><span class="nc">Demo.CalcServerBug</span><span class="o">.</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> returns the server process <abbr title="Process ID">PID</abbr>, which we assign to variable <code class="highlight"><span class="n">pid</span></code>.</p>
 <div class="highlight"><pre><span></span><code><span class="gp">iex(1)&gt; </span><span class="n">pid</span> <span class="o">=</span> <span class="nc">Demo.CalcServerBug</span><span class="o">.</span><span class="n">start</span> <span class="mi">0</span>  
 <span class="go">#PID&lt;0.109.0&gt;</span>
 </code></pre></div>
 </li>
 <li>
-<p>The server is ready for client requests, which we submit using the function <code class="highlight"><span class="n">send</span></code> that accepts the <abbr title="Process ID">PID</abbr> of the recipient process and the message to be sent as arguments.
+<p>The server is ready for client requests, which we submit using via <code class="highlight"><span class="n">send</span></code>.
     To add two numbers:</p>
 <div class="highlight"><pre><span></span><code><span class="gp">iex(2)&gt; </span><span class="n">send</span> <span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="n">self</span><span class="p">,</span> <span class="p">{</span><span class="ss">:add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}</span>
 <span class="go">{#PID&lt;0.106.0&gt;, {:add, 10, 97}}</span>
 </code></pre></div>
 <p>Observe that the request we issued bears the same format as the one used in our Erlang implementation.
-The differences in syntax lie with the fact that functions in Elixir may be invoked without parentheses (<em>e.g.</em>, <code class="highlight"><span class="n">send</span></code>, <code class="highlight"><span class="n">self</span></code>), and that atoms are prepended with a colon (<em>e.g.</em>, <code class="highlight"><span class="ss">:add</span></code>).
 Once again, note that <code class="highlight"><span class="p">{</span><span class="c1">#PID&lt;0.106.0&gt;, {:add, 10, 97}}</span></code>  is not the server reply.
 Multiplying numbers is accomplished analogously.</p>
 </li>
@@ -676,17 +684,59 @@ We use former function, and cover <code class="highlight"><span class="nb">monit
     We pattern match against the return value, and store the <abbr title="Process ID">PID</abbr> inside the variable <code class="highlight"><span class="n">pid</span></code>.
     <code class="highlight"><span class="nc">Demo.CalcServerBug</span><span class="o">.</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> is specified as the tuple <code class="highlight"><span class="p">{</span><span class="nc">Demo.CalcServerBug</span><span class="p">,</span> <span class="ss">:start</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]}</span></code>, the first argument to <code class="highlight"><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code>.
     The second argument is the analyser function <code class="highlight"><span class="ss">:prop_add_rec</span><span class="o">.</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> we synthesised earlier, and the list of options is left empty.</p>
-<div class="highlight"><pre><span></span><code><span class="gp">iex(7)&gt; </span><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="bp">_</span><span class="p">,</span> <span class="n">pid</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:monitor</span><span class="o">.</span><span class="n">start_online</span> <span class="p">{</span><span class="nc">Demo.CalcServerBug</span><span class="p">,</span> <span class="ss">:start</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]},</span> 
-<span class="go">        &amp;:prop_add_rec.mfa_spec/1, []</span>
-<span class="go">*** [&lt;0.144.0&gt;] Instrumenting monitor for MFA pattern &#39;{&#39;Elixir.Demo.CalcServerBug&#39;,loop,[0]}&#39;.</span>
-<span class="go">{:ok, #PID&lt;0.144.0&gt;, #PID&lt;0.145.0&gt;}</span>
-<span class="go">*** [&lt;0.146.0&gt;] Analyzing event {trace,&lt;0.145.0&gt;,spawned,&lt;0.143.0&gt;,{&#39;Elixir.Demo.CalcServerBug&#39;,loop,[0]}}.</span>
+<div class="highlight"><pre><span></span><code><span class="gp">iex(7)&gt; </span><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="bp">_</span><span class="p">,</span> <span class="n">pid</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:monitor</span><span class="o">.</span><span class="n">start_online</span> <span class="p">{</span><span class="nc">Demo.CalcServerBug</span><span class="p">,</span> <span class="ss">:start</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]},</span> <span class="o">&amp;</span><span class="ss">:prop_add_rec</span><span class="o">.</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[]</span>
+<span class="go">*** [&lt;0.109.0&gt;] Instrumenting monitor for MFA pattern &#39;{&#39;Elixir.Demo.CalcServerBug&#39;,loop,[0]}&#39;.</span>
+<span class="go">*** [&lt;0.111.0&gt;] Analyzing event {trace,&lt;0.110.0&gt;,spawned,&lt;0.108.0&gt;,{&#39;Elixir.Demo.CalcServerBug&#39;,loop,[0]}}.</span>
+<span class="go">{:ok, #PID&lt;0.109.0&gt;, #PID&lt;0.110.0&gt;}</span>
+</code></pre></div>
+</li>
+<li>
+<p>As soon as the calculator server process starts, the analyser immediately enters into action and analyses the first process event <code>init</code>.
+    This is translated to the internal Erlang <code class="highlight"><span class="n">spawned</span></code> event (see <a href="synthesising-analysers.html#from-specification-to-analyser">From specification to analyser</a>).</p>
+</li>
+<li>
+<p>Now, let us try adding two numbers.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">iex(8)&gt; </span><span class="n">send</span> <span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="n">self</span><span class="p">,</span> <span class="p">{</span><span class="ss">:add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}</span>
+<span class="go">*** [&lt;0.111.0&gt;] Analyzing event {trace,&lt;0.110.0&gt;,&#39;receive&#39;,{&lt;0.106.0&gt;,{add,10,97}}}.</span>
+<span class="go">*** [&lt;0.111.0&gt;] Analyzing event {trace,&lt;0.110.0&gt;,send,{ok,-87},&lt;0.106.0&gt;}.</span>
+<span class="hll"><span class="go">*** [&lt;0.111.0&gt;] Reached verdict &#39;no&#39;.</span>
+</span><span class="go">{#PID&lt;0.106.0&gt;, {:add, 10, 97}}</span>
+</code></pre></div>
+<p>This leads to a rejection verdict <code class="highlight"><span class="n">no</span></code>, corresponding to a violation of our property P<sub>3</sub>.</p>
+</li>
+<li>
+<p>Stop the server. </p>
+<div class="highlight"><pre><span></span><code><span class="gp">iex(9)&gt; </span><span class="n">send</span> <span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="n">self</span><span class="p">,</span> <span class="p">{</span><span class="ss">:add</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}</span>
+<span class="go">{#PID&lt;0.106.0&gt;, {:add, 10, 97}}</span>
 </code></pre></div>
 </li>
 </ol>
 <h2 id="irrevocable-verdicts">Irrevocable verdicts<a class="headerlink" href="#irrevocable-verdicts" title="Permanent link">&para;</a></h2>
-<h2 id="correct-server">Correct server<a class="headerlink" href="#correct-server" title="Permanent link">&para;</a></h2>
-<p>Try running the correct server <code class="highlight"><span class="nc">Demo.CalcServer</span></code> as an exercise.</p>
+<p>By contrast to the <a href="inline-instrumentation.html">inline</a> case, the <code>recv</code> and <code>send</code> events that were exhibited by the calculator server do not appear when the server terminates in step 4 above.
+The question is why?
+In outlining, analysers are <em>promptly</em> terminated when a verdict is flagged, in an effort to make things efficient.
+This optimisation is possible because the verdicts analysers flag are irrevocable, so an analyser can terminate, safe in the knowledge that whatever verdict it has flagged, it will surely remain so.
+As a byproduct of analyser termination, no event extraction from the program is possible, which is why the <code>recv</code> and <code>send</code> in step 4 are never observed.</p>
+<h2 id="the-program-without-analysis">The program without analysis.<a class="headerlink" href="#the-program-without-analysis" title="Permanent link">&para;</a></h2>
+<p><abbr title="Erlang Virtual Machine">EVM</abbr> tracing permits analysers to dynamically observe processes.
+A terminated analyser or one that is never started means that no events from the program are extracted.
+We can test this by launching the calculator server without going through <code class="highlight"><span class="nb">monitor</span><span class="p">:</span><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">iex(10)&gt; </span><span class="n">pid</span> <span class="o">=</span>  <span class="nc">Demo.CalcServerBug</span><span class="o">.</span><span class="n">start</span> <span class="mi">0</span>
+<span class="go">#PID&lt;0.120.0&gt;</span>
+<span class="gp">iex(11)&gt; </span><span class="n">send</span> <span class="n">pid</span><span class="p">,</span> <span class="p">{</span><span class="n">self</span><span class="p">,</span> <span class="p">{</span><span class="ss">:mul</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">97</span><span class="p">}}</span>
+<span class="go">{#PID&lt;0.106.0&gt;, {:mul, 10, 97}}</span>
+</code></pre></div>
+<p>No analysers are instrumented, nor trace events extracted, since outlining never modifies the program.
+Contrastingly, with inlining, a recompilation of the program is necessary should we want to run that program without instrumentation.
+The flexibility due to outlining enables us to execute the program with no instrumentation by a mere restart without the need of redeployments.
+In principle, analysers can also be attached while the program is operating, similar to how debuggers in Erlang work; this is an avenue left for near future work.</p>
+<h2 id="testing-the-correct-server-implementation">Testing the correct server implementation<a class="headerlink" href="#testing-the-correct-server-implementation" title="Permanent link">&para;</a></h2>
+<p>Try running the correct server <code class="highlight"><span class="nc">Demo.CalcServer</span></code> as an exercise.
+You need to start it as follows.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">iex(12)&gt; </span><span class="p">{</span><span class="ss">:ok</span><span class="p">,</span> <span class="bp">_</span><span class="p">,</span> <span class="n">pid</span><span class="p">}</span> <span class="o">=</span> <span class="ss">:monitor</span><span class="o">.</span><span class="n">start_online</span> <span class="p">{</span><span class="nc">Demo.CalcServer</span><span class="p">,</span> <span class="ss">:start</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">]},</span> <span class="o">&amp;</span><span class="ss">:prop_add_rec</span><span class="o">.</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[]</span>
+</code></pre></div>
+<hr />
+<p>The benefits that outlining offers can be taken a step further with offline instrumentation.</p>
                 
               
               

@@ -443,8 +443,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#the-example-system" class="md-nav__link">
-    The example system
+  <a href="#the-calculator-server-program" class="md-nav__link">
+    The calculator server program
   </a>
   
 </li>
@@ -464,8 +464,8 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#correct-server" class="md-nav__link">
-    Correct server
+  <a href="#testing-the-correct-server-implementation" class="md-nav__link">
+    Testing the correct server implementation
   </a>
   
 </li>
@@ -536,7 +536,7 @@ One drawback of inlining is that it tends to be invasive, and cannot be used in 
 This procedure is detailed in the <a href="https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf">companion paper</a>; readers are encouraged to consult this resource for more details.
 Here, we will learn how to use detectEr to inline and analyse programs for which the source code <em>is</em> available.
 Once more, we rely on our Erlang implementation of the calculator server from the <a href="getting-started.html">Getting Started</a> section to show how this is done.</p>
-<h2 id="the-example-system">The example system<a class="headerlink" href="#the-example-system" title="Permanent link">&para;</a></h2>
+<h2 id="the-calculator-server-program">The calculator server program<a class="headerlink" href="#the-calculator-server-program" title="Permanent link">&para;</a></h2>
 <p>Let us run the calculator server program with no instrumentation applied, to familiarise ourselves with its basic operation.
 Launch a new terminal emulator window, navigate to the <em>root</em> detectEr directory, and:</p>
 <ol>
@@ -697,7 +697,7 @@ The two variants of <code class="highlight"><span class="n">weave</span></code> 
 <span class="go">&lt;0.141.0&gt;</span>
 </code></pre></div>
 <p>As soon as the calculator server process starts, the analyser immediately enters into action and analyses the first process event <code>init</code>.
-Here we see this as the internal Erlang spawned event (see <a href="synthesising-analysers.html#from-specification-to-analyser">From specification to analyser</a>).</p>
+Here we see this as the internal Erlang <code class="highlight"><span class="n">spawned</span></code> event (see <a href="synthesising-analysers.html#from-specification-to-analyser">From specification to analyser</a>).</p>
 </li>
 <li>
 <p>Now, let us try an addition request.</p>
@@ -724,7 +724,7 @@ Both of these analyses yield the same rejection verdict of <code>no</code>.
 Why does this happen?
 In the section <a href="runtime-verification.html#is-one-execution-trace-enough">Is one execution trace enough?</a> we explained that analysers yield irrevocable verdicts (<em>i.e.</em>, ones that cannot be retracted).
 This is one such instance, where the verdict <code>no</code> is flagged, and the analyser will persist its decision, regardless of the events it analyses going forward.</p>
-<h2 id="correct-server">Correct server<a class="headerlink" href="#correct-server" title="Permanent link">&para;</a></h2>
+<h2 id="testing-the-correct-server-implementation">Testing the correct server implementation<a class="headerlink" href="#testing-the-correct-server-implementation" title="Permanent link">&para;</a></h2>
 <p>Try running the correct version of the server, following steps 2-4 above.</p>
 <ol>
 <li>

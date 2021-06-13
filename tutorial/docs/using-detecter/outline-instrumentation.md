@@ -17,6 +17,9 @@ Detailed information about the outline instrumentation algorithm detectEr uses c
 
 For this example, we will use an Elixir implementation of our *buggy* calculator server.
 This implementation, shown below, is identical to the one in Erlang in every aspect, except for the programming language syntax.
+In particular, function invocations in Elixir may omit the parentheses (*e.g.*, `#!elixir send`, `#!elixir self`), and atoms are prepended with a colon (*e.g.*, `#!elixir :add`).
+Elixir variables are specified in *lowercase*, as opposed to Erlang, which must be capitalised.
+Finally, messages in Elixir are sent using the function `#!elixir send`, that accepts the PID of the recipient process and the message to be sent as arguments, and is the counterpart to `#!erlang !` in Erlang.
 
 ```elixir
 def start(n) do
@@ -76,14 +79,13 @@ Launch a new terminal emulator window, navigate to the *root* detectEr directory
 
 4.  The buggy calculator server is started by invoking `#!elixir Demo.CalcServerBug.start/1` that accepts a single argument, `#!elixir n`, that it uses to track the number of requests handled.
     Like its Erlang counterpart `#!elixir Demo.CalcServerBug.start/1` returns the server process PID, which we assign to variable `#!elixir pid`.
-    Note that unlike Erlang, variables in Elixir are specified in *lowercase* (in this case here, `#!elixir pid` not `#!erlang Pid`).
 
     ```iex
     iex(1)> pid = Demo.CalcServerBug.start 0  
     #PID<0.109.0>
     ```
 
-5.  The server is ready for client requests, which we submit using the function `#!elixir send` that accepts the PID of the recipient process and the message to be sent as arguments.
+5.  The server is ready for client requests, which we submit using via `#!elixir send`.
     To add two numbers:
 
     {% raw %}
@@ -94,7 +96,6 @@ Launch a new terminal emulator window, navigate to the *root* detectEr directory
     {% endraw %}
 
     Observe that the request we issued bears the same format as the one used in our Erlang implementation.
-    The differences in syntax lie with the fact that functions in Elixir may be invoked without parentheses (*e.g.*, `#!elixir send`, `#!elixir self`), and that atoms are prepended with a colon (*e.g.*, `#!elixir :add`).
     Once again, note that {% raw %}`#!elixir {#PID<0.106.0>, {:add, 10, 97}}` {% endraw %} is not the server reply.
     Multiplying numbers is accomplished analogously.
 
@@ -160,25 +161,74 @@ Let us instrument the buggy calculator server, `#!iex Demo.CalcServerBug`, to de
     The second argument is the analyser function `#!elixir :prop_add_rec.mfa_spec/1` we synthesised earlier, and the list of options is left empty.
     
     ```iex
-    iex(7)> {:ok, _, pid} = :monitor.start_online {Demo.CalcServerBug, :start, [0]}, 
-            &:prop_add_rec.mfa_spec/1, []
-    *** [<0.144.0>] Instrumenting monitor for MFA pattern '{'Elixir.Demo.CalcServerBug',loop,[0]}'.
-    {:ok, #PID<0.144.0>, #PID<0.145.0>}
-    *** [<0.146.0>] Analyzing event {trace,<0.145.0>,spawned,<0.143.0>,{'Elixir.Demo.CalcServerBug',loop,[0]}}.
+    iex(7)> {:ok, _, pid} = :monitor.start_online {Demo.CalcServerBug, :start, [0]}, &:prop_add_rec.mfa_spec/1, []
+    *** [<0.109.0>] Instrumenting monitor for MFA pattern '{'Elixir.Demo.CalcServerBug',loop,[0]}'.
+    *** [<0.111.0>] Analyzing event {trace,<0.110.0>,spawned,<0.108.0>,{'Elixir.Demo.CalcServerBug',loop,[0]}}.
+    {:ok, #PID<0.109.0>, #PID<0.110.0>}
     ```
 
+2.  As soon as the calculator server process starts, the analyser immediately enters into action and analyses the first process event `init`.
+    This is translated to the internal Erlang `#!erlang spawned` event (see [From specification to analyser](synthesising-analysers.md#from-specification-to-analyser)).
 
+3.  Now, let us try adding two numbers.
 
+    {% raw %}
+    ```iex hl_lines="4"
+    iex(8)> send pid, {self, {:add, 10, 97}}
+    *** [<0.111.0>] Analyzing event {trace,<0.110.0>,'receive',{<0.106.0>,{add,10,97}}}.
+    *** [<0.111.0>] Analyzing event {trace,<0.110.0>,send,{ok,-87},<0.106.0>}.
+    *** [<0.111.0>] Reached verdict 'no'.
+    {#PID<0.106.0>, {:add, 10, 97}}
+    ```
+    {% endraw %}
 
+    This leads to a rejection verdict `#!erlang no`, corresponding to a violation of our property P~3~.
 
+4.  Stop the server. 
 
-
-
+    {% raw %}
+    ```iex
+    iex(9)> send pid, {self, {:add, 10, 97}}
+    {#PID<0.106.0>, {:add, 10, 97}}
+    ```
+    {% endraw %}
 
 ## Irrevocable verdicts
 
+By contrast to the [inline](inline-instrumentation.md) case, the `recv` and `send` events that were exhibited by the calculator server do not appear when the server terminates in step 4 above.
+The question is why?
+In outlining, analysers are *promptly* terminated when a verdict is flagged, in an effort to make things efficient.
+This optimisation is possible because the verdicts analysers flag are irrevocable, so an analyser can terminate, safe in the knowledge that whatever verdict it has flagged, it will surely remain so.
+As a byproduct of analyser termination, no event extraction from the program is possible, which is why the `recv` and `send` in step 4 are never observed.
 
+## The system without analysis.
+
+EVM tracing permits analysers to dynamically observe processes.
+A terminated analyser or one that is never started means that no events from the program are extracted.
+We can test this by launching the calculator server without going through `#!erlang monitor:start_online/3`.
+
+{% raw %}
+```iex
+iex(10)> pid =  Demo.CalcServerBug.start 0
+#PID<0.120.0>
+iex(11)> send pid, {self, {:mul, 10, 97}}
+{#PID<0.106.0>, {:mul, 10, 97}}
+```
+{% endraw %}
+
+No analysers are instrumented, nor trace events extracted, since outlining never modifies the program.
+Contrastingly, with inlining, a recompilation of the program is necessary should we want to run that program without instrumentation.
+The flexibility due to outlining enables us to execute the program with no instrumentation by a mere restart without the need of redeployments.
+In principle, analysers can also be attached while the program is operating, similar to how debuggers in Erlang work; this is an avenue left for near future work.
 
 ## Correct server
 
 Try running the correct server `#!elixir Demo.CalcServer` as an exercise.
+You need to start it as follows.
+
+```iex
+iex(12)> {:ok, _, pid} = :monitor.start_online {Demo.CalcServer, :start, [0]}, &:prop_add_rec.mfa_spec/1, []
+```
+
+---
+The benefits that outlining offers can be taken a step further with offline instrumentation.

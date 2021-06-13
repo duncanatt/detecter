@@ -174,7 +174,7 @@ For this demo, we use the buggy version of our calculator server to detect prope
     ```
 
     As soon as the calculator server process starts, the analyser immediately enters into action and analyses the first process event `init`.
-    Here we see this as the internal Erlang spawned event (see [From specification to analyser](synthesising-analysers.md#from-specification-to-analyser)).
+    Here we see this as the internal Erlang `#!erlang spawned` event (see [From specification to analyser](synthesising-analysers.md#from-specification-to-analyser)).
 
 3.  Now, let us try an addition request.
 

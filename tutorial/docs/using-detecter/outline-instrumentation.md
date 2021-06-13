@@ -13,7 +13,7 @@ The nice thing about Erlang tracing is that is supports any software component t
 For instance, languages like [Elixir](https://elixir-lang.org) and [Clojerl](https://www.clojerl.org) can benefit from our type of runtime monitoring.
 Detailed information about the outline instrumentation algorithm detectEr uses can be found in the [companion paper](https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf), and our [preprint](https://arxiv.org/abs/2104.09433).
 
-## The example system
+## The calculator server program
 
 For this example, we will use an Elixir implementation of our *buggy* calculator server.
 This implementation, shown below, is identical to the one in Erlang in every aspect, except for the programming language syntax.
@@ -201,7 +201,7 @@ In outlining, analysers are *promptly* terminated when a verdict is flagged, in 
 This optimisation is possible because the verdicts analysers flag are irrevocable, so an analyser can terminate, safe in the knowledge that whatever verdict it has flagged, it will surely remain so.
 As a byproduct of analyser termination, no event extraction from the program is possible, which is why the `recv` and `send` in step 4 are never observed.
 
-## The system without analysis.
+## The program without analysis.
 
 EVM tracing permits analysers to dynamically observe processes.
 A terminated analyser or one that is never started means that no events from the program are extracted.
@@ -221,7 +221,7 @@ Contrastingly, with inlining, a recompilation of the program is necessary should
 The flexibility due to outlining enables us to execute the program with no instrumentation by a mere restart without the need of redeployments.
 In principle, analysers can also be attached while the program is operating, similar to how debuggers in Erlang work; this is an avenue left for near future work.
 
-## Correct server
+## Testing the correct server implementation
 
 Try running the correct server `#!elixir Demo.CalcServer` as an exercise.
 You need to start it as follows.

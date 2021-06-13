@@ -15,7 +15,7 @@ This procedure is detailed in the [companion paper](https://link.springer.com/co
 Here, we will learn how to use detectEr to inline and analyse programs for which the source code *is* available.
 Once more, we rely on our Erlang implementation of the calculator server from the [Getting Started](getting-started.md) section to show how this is done.
 
-## The example system
+## The calculator server program
 
 Let us run the calculator server program with no instrumentation applied, to familiarise ourselves with its basic operation.
 Launch a new terminal emulator window, navigate to the *root* detectEr directory, and:
@@ -205,7 +205,7 @@ Why does this happen?
 In the section [Is one execution trace enough?](runtime-verification.md#is-one-execution-trace-enough) we explained that analysers yield irrevocable verdicts (*i.e.*, ones that cannot be retracted).
 This is one such instance, where the verdict `no` is flagged, and the analyser will persist its decision, regardless of the events it analyses going forward.
 
-## Correct server
+## Testing the correct server implementation
 
 Try running the correct version of the server, following steps 2-4 above.
 

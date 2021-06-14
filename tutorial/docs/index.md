@@ -15,6 +15,15 @@ detectEr is a runtime verification tool for asynchronous component systems that 
 It also supports monitoring systems that can execute outside of the EVM, so long as these can produce traces that are formatted in a way that is parsable by detectEr.
 The tool itself is developed in Erlang, and is the product of five years of theoretical and practical development.
 
+## Tutorial videos
+
+We have a three-part tutorial series on YouTube that gives an overview of how to use detectEr.
+Use these videos as a complementary learning material to this tutorial.
+
+[Part 1: Diving In](https://youtu.be/rFuMJAFFxjE){ .md-button .md-button--primary}
+[Part 2: Describing Program Correctness](https://youtu.be/cSCkDl8VsnA){ .md-button .md-button--primary}
+[Part 3: Instrumenting the Program](https://youtu.be/RLMLWz3vwak){ .md-button .md-button--primary}
+
 ## How it works
 
 There are two ingredients required for detectEr to work.
@@ -37,6 +46,8 @@ We highly encourage you to consult the [paper]() that accompanies this tutorial,
 Interested readers are also referred to the list of publications that follows.
 
 ## Publications
+
+[FORTE 2021](https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf){ .md-button .md-button--secondary}
 
 List of publications.
 

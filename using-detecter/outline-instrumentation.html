@@ -67,7 +67,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#inline-instrumentation" class="md-skip">
+        <a href="#outline-instrumentation" class="md-skip">
           Skip to content
         </a>
       
@@ -532,7 +532,7 @@
                   </a>
                 
                 
-                <h1 id="inline-instrumentation">Inline Instrumentation<a class="headerlink" href="#inline-instrumentation" title="Permanent link">&para;</a></h1>
+                <h1 id="outline-instrumentation">Outline Instrumentation<a class="headerlink" href="#outline-instrumentation" title="Permanent link">&para;</a></h1>
 <hr />
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>Outline instrumentation is the non-invasive counterpart to inlining, where no changes are written to the program source code.
@@ -647,7 +647,7 @@ We use former function, and cover <code class="highlight"><span class="nb">monit
 <p><code class="highlight"><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code> accepts three arguments:</p>
 <ol>
 <li>
-<p>the tuple specifying the main function of the program we want instrumented in the format <code class="highlight"><span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}</span></code> where <code class="highlight"><span class="nv">Mod</span></code> is the module name, <code class="highlight"><span class="nv">Fun</span></code> is the main function to be launched, and <code class="highlight"><span class="nv">Args</span></code>, the list of arguments accepted by <code class="highlight"><span class="nv">Fun</span></code>.</p>
+<p>the tuple specifying the main function of the program we want instrumented in the format <code class="highlight"><span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}</span></code> where <code class="highlight"><span class="nv">Mod</span></code> is the module name, <code class="highlight"><span class="nv">Fun</span></code> is the main function to be launched, and <code class="highlight"><span class="nv">Args</span></code>, the list of arguments accepted by <code class="highlight"><span class="nv">Fun</span></code>,</p>
 </li>
 <li>
 <p>the function <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> of the analyser we want to use, and,</p>
@@ -676,7 +676,7 @@ We use former function, and cover <code class="highlight"><span class="nb">monit
 </tbody>
 </table>
 <p><code class="highlight"><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code> returns the triple <code class="highlight"><span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Pid</span><span class="p">,</span> <span class="nv">Return</span><span class="p">}</span></code>, consisting of the atom <code class="highlight"><span class="n">ok</span></code>, the <abbr title="Process ID">PID</abbr> of the root tracer <code class="highlight"><span class="nv">Pid</span></code>, and the <code class="highlight"><span class="nv">Return</span></code> result of the function specified in <code class="highlight"><span class="p">{</span><span class="nv">Mod</span><span class="p">,</span> <span class="nv">Fun</span><span class="p">,</span> <span class="nv">Args</span><span class="p">}</span></code>.</p>
-<p>Let us instrument the buggy calculator server, <code class="highlight"><span class="go">Demo.CalcServerBug</span></code>, to detect property violations.</p>
+<p>Let us instrument the buggy calculator server, <code class="highlight"><span class="nc">Demo.CalcServerBug</span></code>, to detect property violations.</p>
 <ol>
 <li>
 <p>Launch the buggy server via <code class="highlight"><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code>. 

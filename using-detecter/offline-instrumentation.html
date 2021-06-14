@@ -522,21 +522,21 @@
 <hr />
 <h2 id="overview">Overview<a class="headerlink" href="#overview" title="Permanent link">&para;</a></h2>
 <p>The notion of outline instrumentation is extended to the offline case where the program potentially runs outside of the <abbr title="Erlang Virtual Machine">EVM</abbr>.
-detectEr implements a middleware components that emulates the <abbr title="Erlang Virtual Machine">EVM</abbr> tracing infrastructure.
-The enables detectEr to employ the same outline instrumentation algorithm we use in <a href="outline-instrumentation.html">Outline Instrumentation</a> for offline monitoring too.
+detectEr implements a middleware component that emulates the <abbr title="Erlang Virtual Machine">EVM</abbr> tracing infrastructure.
+The enables detectEr to employ the <em>same</em> outline instrumentation algorithm we use in <a href="outline-instrumentation.html">Outline Instrumentation</a> for offline instrumentation too.
 Offline set-ups are generally the slowest in terms of verdict detection, by comparison to the inline and outline forms of instrumentation.
 This stems from the dependence outline instrumentation has on the timely availability of pre-recorded runtime traces that are subject to external software entities, such as, files.</p>
 <p>Our outline instrumentation middleware logic is encapsulated in the <code class="highlight"><span class="n">log_tracer</span></code> module that exposes a <code class="highlight"><span class="nb">trace</span><span class="o">/</span><span class="mi">1</span></code> function to dynamically attach to processes.
 The <code class="highlight"><span class="n">log_tracer</span></code> module relies on log files at the medium through which programs can communicate trace events to the offline set-up.
 detectEr can process plain text log files containing <em>complete</em> program runs, or <em>actively</em> monitor files for changes to dynamically dispatch events to analysers while the program is executing and updating the log file.
 Of course, the log file in question must be known to both the program that writes to it and the <code class="highlight"><span class="n">log_tracer</span></code> module reading events.
-Offline instrumentation supports the five events fork, init, exit, send, and recv, but assumes that event entries in the log files are written in a pre-determined format recognisable by detectEr.
-Events must be written one per line, structured as described in the table below.</p>
+Offline instrumentation supports the five events <code>fork</code>, <code>init</code>, <code>exit</code>, <code>send</code>, and <code>recv</code>, but assumes that event entries in log files are written in a pre-determined format recognisable by detectEr.
+Events must be written <em>one per line</em>, structured as described in the table below.</p>
 <table>
 <thead>
 <tr>
 <th align="center">Program event</th>
-<th align="left">Log entry pattern</th>
+<th align="left">Event entry pattern</th>
 <th align="center">Entry variable</th>
 <th align="left">Description</th>
 </tr>
@@ -624,19 +624,217 @@ Events must be written one per line, structured as described in the table below.
 </table>
 <h2 id="the-calculator-server-program">The calculator server program<a class="headerlink" href="#the-calculator-server-program" title="Permanent link">&para;</a></h2>
 <p>To demonstrate outline instrumentation, we once more use a <em>buggy</em> version of our calculator server that subtracts numbers, rather than adding them.
-This Python implementation, operates similar to the Erlang and Elixir analogues, but messages are exchanged in plain text over <abbr title="Transmission Control Protocol">TCP</abbr> sockets.
+This Python implementation operates similar to the Erlang and Elixir analogues, but messages are exchanged in plain text over <abbr title="Transmission Control Protocol">TCP</abbr> sockets.
 The buggy and correct server implementations may be found in the <code>examples/python</code> directory.</p>
-<p>The server is </p>
-<p>The calculator server relies on the standard Python logging facility to write trace events in a file specified.  </p>
-<p>Interacting  with the server over <abbr title="Transmission Control Protocol">TCP</abbr>.</p>
-<p>Starting</p>
-<p>One add</p>
-<p>Stop</p>
-<p>Look at the trace file using the utility tail.</p>
+<p>Both versions of this server expose the function <code class="highlight"><span class="n">start</span><span class="p">()</span></code> that accepts the argument <code class="highlight"><span class="n">n</span></code>.
+<code class="highlight"><span class="n">start</span><span class="p">()</span></code> launches a thread that initialises and binds to a socket, and then repeatedly listens for incoming client connections on port <code>8080</code>.
+This server loop mirrors the operation of our <a href="inline-instrumentation.html#the-calculator-server-program">Erlang</a> and <a href="outline-instrumentation.html#the-calculator-server-program">Elixir</a> implementations seen earlier.
+Its communication protocol is, however, adapted slightly to suit the <abbr title="Transmission Control Protocol">TCP</abbr> setting.</p>
+<p>In order for us to use offline instrumentation, the server needs to communicate its events externally.
+This, it does by writing events using the standard Python logging facility in a user-specified log file.
+The Python module provides a command line interface that launches the function <code class="highlight"><span class="n">start</span><span class="p">()</span></code>.
+This <abbr title="Command Line Interface">CLI</abbr> accepts two arguments, <code>n</code>, the request count to start the server with, and <code>log</code>, the file path of the log file where program events are written.</p>
+<p>Launch a new terminal emulator window, navigate to the <em>root</em> detectEr directory, and:</p>
+<ol>
+<li>
+<p>Change the directory to <code>example/python</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter$ </span><span class="nb">cd</span> examples/python
+<span class="gp">[duncan@local]:/detecter/examples/python$ </span>ls -l
+<span class="go">-rw-r--r--  1 duncan  duncan  1197 Jun 14 09:22 Makefile</span>
+<span class="go">drwxr-xr-x  4 duncan  duncan   128 Jun 14 09:22 props</span>
+<span class="go">drwxr-xr-x  3 duncan  duncan    96 Jun 14 09:22 src</span>
+</code></pre></div>
+</li>
+<li>
+<p>For the case of Python, we need to create a new virtual environment where all our dependencies can be installed in a sandbox that does not affect the global Python installation on your system.
+    We do this via the <code>virtualenv</code> tool.
+    If you have not already installed <code>virtualenv</code> for Python 3, follow the instructions in the <a href="../getting-started/preparation.html#installing-the-virtual-environment-management-tool">Installing the virtual environment management tool</a> section.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/python$ </span>virtualenv venv
+<span class="go">created virtual environment CPython3.9.4.final.0-64 in 1230ms</span>
+<span class="go">...</span>
+</code></pre></div>
+</li>
+<li>
+<p>Next, we launch the virtual environment, change directory to <code>src</code>, and start the server.
+    The server is started with a <code class="highlight"><span class="n">n</span></code> value of <code class="highlight"><span class="mi">0</span></code>, and set to write logs to the file <code>/detecter/examples/python/trace.log</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/python$ </span><span class="nb">source</span> venv/bin/activate
+<span class="gp">[duncan@local]:/detecter/examples/python (venv)$ </span><span class="nb">cd</span> src
+<span class="gp">[duncan@local]:/examples/python/src (venv)$ </span>python -m demo.calc_server_bug <span class="m">0</span> ../trace.log
+<span class="go">Started server on 0.0.0.0:8080..</span>
+</code></pre></div>
+<p>Now that that server is bound to port <code>8080</code> on <code>localhost</code>, it is ready to accept <abbr title="Transmission Control Protocol">TCP</abbr> requests.</p>
+</li>
+<li>
+<p>Communication with the server can be established via <code>telnet</code>.
+    Launch a new terminal emulator window, and type:</p>
+<div class="highlight"><pre><span></span><code><span class="go">[duncan@local]:/detecter/examples/python telnet localhost 8080</span>
+<span class="go">Trying 127.0.0.1...</span>
+<span class="go">Connected to localhost.</span>
+<span class="go">Escape character is &#39;^]&#39;.</span>
+</code></pre></div>
+<p>The server terminal window should indicate that a client is connected, displaying a message similar to &lsquo;Connected by 127.0.0.1:58576&rsquo;.</p>
+</li>
+<li>
+<p>The calculator server communication protocol is text-based.
+    Request operations start with a forward slash <code>/</code>, followed by the operation name (<em>e.g.</em>, <code>add</code>) and its arguments, separated by spaces.
+    Every command is terminated with a carriage return.
+    Let us try performing an addition request from the <code>telnet</code> <abbr title="Command Line Interface">CLI</abbr> by typing:</p>
+<div class="highlight"><pre><span></span><code><span class="go">/add 10 97</span>
+<span class="go">-87.0</span>
+</code></pre></div>
+<p>We get the incorrect result of addition as expected.
+On the server terminal window, you should be able to see the output:</p>
+<div class="highlight"><pre><span></span><code><span class="go">Received command /add 10.0 97.0.</span>
+</code></pre></div>
+</li>
+<li>
+<p>Having started the server and issued a first request, we are now in a position to examine the events that our Python server writes to <code>trace.log</code>.
+    We can actively monitor this file from the terminal via the <code>tail</code> utility.
+    Launch a third terminal emulator window, make sure you are in <code>examples/python</code>, and tail <code>trace.log</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="go">[duncan@local]:/detecter/examples/python tail -f trace.log</span>
+<span class="go">fork(&lt;0.102.0&gt;,&lt;0.808.0&gt;,{calc_server_bug,loop,[0]})</span>
+<span class="go">exit(&lt;0.102.0&gt;,normal)</span>
+<span class="go">init(&lt;0.808.0&gt;,&lt;0.102.0&gt;,{calc_server_bug,loop,[0]})</span>
+<span class="go">recv(&lt;0.808.0&gt;,{&lt;0.585.0&gt;,{add,10.0,97.0}})</span>
+<span class="go">send(&lt;0.808.0&gt;,&lt;0.585.0&gt;,{ok,-87.0})</span>
+</code></pre></div>
+<p>These events describe the server operation up until this point.
+For instance, <code>fork(&lt;0.102.0&gt;,&lt;0.808.0&gt;,{calc_server_bug,loop,[0]})</code> indicates that the main thread that invokes the function <code class="highlight"><span class="n">start</span><span class="p">()</span></code> launches <code class="highlight"><span class="n">calc_server_bug</span><span class="o">.</span><span class="n">loop</span><span class="p">(</span><span class="n">n</span><span class="p">)</span></code> as a thread with <code class="highlight"><span class="n">n</span> <span class="o">=</span> <span class="mi">0</span></code>.
+Once this operation is completed, the main thread terminates, <code>exit(&lt;0.102.0&gt;,normal)</code>.
+Meanwhile, the calculator server thread exhibits the <code>init</code> event, subsequent to which, produces the <code>recv</code> and <code>send</code> program events following our <code>/add 10 97</code> request issued from the <code>telnet</code> <abbr title="Command Line Interface">CLI</abbr>.
+Here, <code>&lt;0.102.0&gt;</code> is the <abbr title="Process ID">PID</abbr> of the main thread invoking <code class="highlight"><span class="n">start</span><span class="p">()</span></code>, and <code>&lt;0.808.0&gt;</code>, the <abbr title="Process ID">PID</abbr> of the server process.</p>
+</li>
+<li>
+<p>Keeping the <code>tail</code> window open, try issuing a multiplication request to the server:</p>
+<div class="highlight"><pre><span></span><code><span class="go">/mul 10 97</span>
+<span class="go">970.0</span>
+</code></pre></div>
+<p>You should see the recv and send events written to trace.log.</p>
+<div class="highlight"><pre><span></span><code><span class="go">recv(&lt;0.808.0&gt;,{&lt;0.585.0&gt;,{mul,10.0,97.0}})</span>
+<span class="go">send(&lt;0.808.0&gt;,&lt;0.585.0&gt;,{ok,970.0})</span>
+</code></pre></div>
+</li>
+<li>
+<p>We can stop the server by issuing a stop request using <code>telnet</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="go">/stp</span>
+<span class="go">stopped</span>
+<span class="go">Connection closed by foreign host.</span>
+</code></pre></div>
+<p>The corresponding server interaction and termination events are written to <code>trace.log</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="go">recv(&lt;0.808.0&gt;,{&lt;0.585.0&gt;,stp})</span>
+<span class="go">send(&lt;0.808.0&gt;,&lt;0.585.0&gt;,{bye,0})</span>
+<span class="go">exit(&lt;0.808.0&gt;,normal)</span>
+</code></pre></div>
+</li>
+</ol>
+<p>The correct implementation of the server in the <code class="highlight"><span class="n">calc_server</span></code> Python module can be launched following the steps above.</p>
 <h2 id="offline-instrumentation-in-action">Offline instrumentation in action<a class="headerlink" href="#offline-instrumentation-in-action" title="Permanent link">&para;</a></h2>
-<p>We can copy our synthesised analyser from the erlang or alternatively regenerate it from scratch. </p>
-<p>We use the copy to show that analysers are pluggable.</p>
+<p>Since the <abbr title="Safety Hennessy-Milner Logic">sHML</abbr> specifications in the script used for our inline instrumentation demo target the same function names <code class="highlight"><span class="nn">calc_server_bug</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> and <code class="highlight"><span class="nn">calc_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code>, we <em>need not</em> regenerate the respective analysers.
+Close <code>tail</code> by pressing <span class="keys"><kbd class="key-control">Ctrl</kbd><span>+</span><kbd class="key-c">C</kbd></span>.
+Create a new directory <code>ebin</code> inside <code>examples/python</code>, and copy the file <code>examples/erlang/ebin/prop_add_rec.beam</code> to it.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/python (venv)$ </span>mkdir ebin
+<span class="gp">[duncan@local]:/detecter/examples/python (venv)$ </span>cp ../erlang/ebin/prop_add_rec.beam ebin
+<span class="gp">[duncan@local]:/detecter/examples/python (venv)$ </span>ls -l ebin
+<span class="go">-rw-r--r--  1 duncan  duncan  2748 Jun 14 10:52 prop_add_rec.beam</span>
+</code></pre></div>
+<p>To monitor log files, detectEr employs a concept similar to the <code>tail</code> utility we have just used.
+Offline instrumentation is launched using <code class="highlight"><span class="nn">module</span><span class="p">:</span><span class="n">start_offline</span><span class="o">/</span><span class="mi">4</span></code>, that accepts four arguments:</p>
+<ol>
+<li>
+<p>the path of the log file where events are written (the log file need not necessarily exist; it will be automatically opened for parsing when created),</p>
+</li>
+<li>
+<p>the <abbr title="Process ID">PID</abbr> of the root program process,</p>
+</li>
+<li>
+<p>the function <code class="highlight"><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> of the analyser we want to use,</p>
+</li>
+<li>
+<p>an option list.</p>
+</li>
+</ol>
+<p>The options supported by <code class="highlight"><span class="nb">monitor</span><span class="p">:</span><span class="n">start_offline</span><span class="o">/</span><span class="mi">4</span></code> are identical to <a href="outline-instrumentation.html#outline-instrumentation-in-action">those</a> of <code class="highlight"><span class="nb">monitor</span><span class="p">:</span><span class="n">start_online</span><span class="o">/</span><span class="mi">3</span></code>.</p>
+<p>Let us set up outline instrumentation.</p>
+<ol>
+<li>
+<p>Make sure you are in the directory <code>/detecter/examples/python</code>.
+    Delete <code>trace.log</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/python$ </span>rm trace.log
+</code></pre></div>
+</li>
+<li>
+<p>Launch a new Erlang shell, adding the detectEr binaries and the <code>ebin</code> directory containing the copied <code>prop_add_rec.beam</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/detecter/examples/python$ </span>erl -pa ../../detecter/ebin ebin
+<span class="go">Erlang/OTP 23 [erts-11.2.1] [source] [64-bit] [smp:4:4] [ds:4:4:10] [async-threads:1] [hipe] [dtrace]</span>
+<span class="go">Eshell V11.2.1  (abort with ^G)</span>
+<span class="go">1&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Start offline instrumentation by invoking <code class="highlight"><span class="n">start_offline</span><span class="o">/</span><span class="mi">4</span></code>.
+    The first argument points to our yet-to-be-created <code>trace.log</code> file, the second is the <abbr title="Process ID">PID</abbr> of the root program process, third comes the analyser module, and finally, the list of options, which we leave empty.
+    The root <abbr title="Process ID">PID</abbr> is required to bootstrap outline instrumentation.
+    Recall that in our specific case, this is the <abbr title="Process ID">PID</abbr> of main thread that invokes the function <code class="highlight"><span class="n">start</span><span class="p">()</span></code>.
+    We convert the <abbr title="Process ID">PID</abbr> manually from the constituent component parts <code>0</code>, <code>102</code>, <code>0</code> to an Erlang <abbr title="Process ID">PID</abbr> using the <abbr title="Built-in Function">BIF</abbr> <code class="highlight"><span class="n">pid</span><span class="o">/</span><span class="mi">3</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">1&gt;</span> <span class="nb">monitor</span><span class="p">:</span><span class="nf">start_offline</span><span class="p">(</span><span class="s">&quot;trace.log&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="k">fun</span> <span class="nn">prop_add_rec</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[]).</span>
+<span class="go">init_it: Starter=&lt;0.84.0&gt;, Parent=&lt;0.84.0&gt;, Name={local,log_poller}, Mod=log_poller, Args=[&quot;trace.log&quot;], Opts=[]</span>
+<span class="go">&lt;0.86.0&gt;</span>
+</code></pre></div>
+</li>
+<li>
+<p>Launch the buggy calculator server from a separate terminal emulator window, as done previously.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">[duncan@local]:/examples/python/src (venv)$ </span>python -m demo.calc_server_bug <span class="m">0</span> ../trace.log
+<span class="go">Started server on 0.0.0.0:8080..</span>
+</code></pre></div>
+<p>detectEr automatically registers the creation of <code>trace.log</code> and starts analysing events right away.
+It instruments the analyser and promptly analyses the first process event, <code>init</code>.
+This is translated to the internal Erlang <code class="highlight"><span class="n">spawned</span></code> event (see <a href="synthesising-analysers.html#from-specification-to-analyser">From specification to analyser</a>).</p>
+<div class="highlight"><pre><span></span><code><span class="gt">*** [&lt;0.86.0&gt;] Instrumenting monitor for MFA pattern &#39;{calc_server_bug,loop,[0]}&#39;.</span>
+<span class="gt">*** [&lt;0.89.0&gt;] Analyzing event {trace,&lt;0.808.0&gt;,spawned,&lt;0.102.0&gt;,{calc_server_bug,loop,[0]}}.</span>
+</code></pre></div>
+</li>
+<li>
+<p>Let us submit an addition request through <code>telnet</code>.</p>
+<div class="highlight"><pre><span></span><code>[duncan@local]:/detecter/examples/python$ telnet localhost 8080
+Trying 127.0.0.1...
+Connected to localhost.
+Escape character is &#39;^]&#39;.
+/add 10 97
+-87.0
+</code></pre></div>
+<p>The Erlang shell hosting detectEr shows that this leads to the rejection verdict <code>no</code>, corresponding to a violation of property P<sub>3</sub>.</p>
+<div class="highlight"><pre><span></span><code><span class="gt">*** [&lt;0.89.0&gt;] Analyzing event {trace,&lt;0.808.0&gt;,&#39;receive&#39;,{&lt;0.610.0&gt;,{add,10.0,97.0}}}.</span>
+<span class="gt">*** [&lt;0.89.0&gt;] Analyzing event {trace,&lt;0.808.0&gt;,send,{ok,-87.0},&lt;0.610.0&gt;}.</span>
+<span class="hll"><span class="gt">*** [&lt;0.89.0&gt;] Reached verdict &#39;no&#39;.</span>
+</span></code></pre></div>
+</li>
+<li>
+<p>Stop the server:</p>
+<div class="highlight"><pre><span></span><code><span class="go">/stp </span>
+<span class="go">stopped</span>
+<span class="go">Connection closed by foreign host.</span>
+</code></pre></div>
+<p>The output on the Erlang shell is the same as the one we have <a href="outline-instrumentation.html#outline-instrumentation-in-action">seen previously</a> with outline instrumentation, where analysers are terminated promptly upon verdict detection.</p>
+</li>
+</ol>
 <h2 id="testing-the-correct-server-implementation">Testing the correct server implementation<a class="headerlink" href="#testing-the-correct-server-implementation" title="Permanent link">&para;</a></h2>
+<p>Go ahead and test the correct calculator server implementation, <code class="highlight"><span class="n">calc_server</span></code>, following the above steps.
+Remember to remove <code>trace.log</code> prior to starting detectEr in offline mode, otherwise it will process the events from our previous run.
+When executing <code>/add</code> requests, you should be able to see the offline analyser recurse via variable <code class="highlight"><span class="nv">X</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">1&gt;</span> <span class="nb">monitor</span><span class="p">:</span><span class="nf">start_offline</span><span class="p">(</span><span class="s">&quot;trace.log&quot;</span><span class="p">,</span> <span class="n">pid</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">102</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="k">fun</span> <span class="nn">prop_add_rec</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span><span class="p">,</span> <span class="p">[]).</span>
+<span class="go">init_it: Starter=&lt;0.84.0&gt;, Parent=&lt;0.84.0&gt;, Name={local,log_poller}, Mod=log_poller, Args=[&quot;trace.log&quot;], Opts=[]</span>
+<span class="go">&lt;0.86.0&gt;</span>
+<span class="gt">*** [&lt;0.86.0&gt;] Instrumenting monitor for MFA pattern &#39;{calc_server,loop,[0]}&#39;.</span>
+<span class="gt">*** [&lt;0.89.0&gt;] Analyzing event {trace,&lt;0.808.0&gt;,spawned,&lt;0.102.0&gt;,{calc_server,loop,[0]}}.</span>
+<span class="gt">*** [&lt;0.89.0&gt;] Analyzing event {trace,&lt;0.808.0&gt;,&#39;receive&#39;,{&lt;0.612.0&gt;,{add,10.0,97.0}}}.</span>
+<span class="gt">*** [&lt;0.89.0&gt;] Analyzing event {trace,&lt;0.808.0&gt;,send,{ok,107.0},&lt;0.612.0&gt;}.</span>
+<span class="hll"><span class="gt">*** [&lt;0.89.0&gt;] Unfolding rec. var. &#39;X&#39;.</span>
+</span></code></pre></div>
+<p>Issuing both <code>/mul</code> and <code>/stp</code> requests leads to the inconclusive verdict <code>end</code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gt">*** [&lt;0.89.0&gt;] Reached verdict &#39;end&#39; on event {trace,&lt;0.808.0&gt;,&#39;receive&#39;,{&lt;0.612.0&gt;,{mul,10.0,97.0}}}.</span>
+</code></pre></div>
+<hr />
+<p>Congratulations on completing this tutorial! Woohoo!</p>
                 
               
               

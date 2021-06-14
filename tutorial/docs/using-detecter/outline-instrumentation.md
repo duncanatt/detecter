@@ -1,6 +1,6 @@
 --8<-- "includes/common.md"
 
-# Inline Instrumentation
+# Outline Instrumentation
 ---
 
 ## Overview
@@ -137,7 +137,7 @@ We use former function, and cover `#!erlang monitor:start_offline/4` in the next
 
 `#!erlang start_online/3` accepts three arguments:
 
-1. the tuple specifying the main function of the program we want instrumented in the format `#!erlang {Mod, Fun, Args}` where `#!erlang Mod` is the module name, `#!erlang Fun` is the main function to be launched, and `#!erlang Args`, the list of arguments accepted by `#!erlang Fun`.
+1. the tuple specifying the main function of the program we want instrumented in the format `#!erlang {Mod, Fun, Args}` where `#!erlang Mod` is the module name, `#!erlang Fun` is the main function to be launched, and `#!erlang Args`, the list of arguments accepted by `#!erlang Fun`,
 
 2. the function `#!erlang mfa_spec/1` of the analyser we want to use, and,
 
@@ -152,7 +152,7 @@ The options supported by `#!erlang start_online/3` are:
 
 `#!erlang start_online/3` returns the triple `#!erlang {ok, Pid, Return}`, consisting of the atom `#!erlang ok`, the PID of the root tracer `#!erlang Pid`, and the `#!erlang Return` result of the function specified in `#!erlang {Mod, Fun, Args}`.
 
-Let us instrument the buggy calculator server, `#!iex Demo.CalcServerBug`, to detect property violations.
+Let us instrument the buggy calculator server, `#!elixir Demo.CalcServerBug`, to detect property violations.
 
 1.  Launch the buggy server via `#!erlang start_online/3`. 
     As done above, we need to retain the PID of the calculator server process, which is the value returned by `#!elixir Demo.CalcServerBug.loop/1`. 

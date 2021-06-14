@@ -18,3 +18,4 @@
 *[WSL]: Windows Subsystem for Linux
 *[RV]: Runtime Verification
 *[TCP]: Transmission Control Protocol
+*[CLI]: Command Line Interface

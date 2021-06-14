@@ -61,6 +61,8 @@ The research group consists of these members who actively contribute towards the
 * [Karoliina Lehtinen](http://www.pageperso.lif.univ-mrs.fr/~karoliina.lehtinen)
 * [Anna Ingólfsdóttir](http://www.ru.is/kennarar/annai)
 
+# Acknowledgements
+
 We would like to thank [Matthew Alan Le Brun](https://github.com/MatthewAlanLeBrun) for his comments and feedback.
 
 <!-- :material-heart:{ .heart } -->

@@ -59,7 +59,7 @@ def start(n='0'):
 
     log.debug('fork({p_id},{id},{{{mod},{fun},{args}}})'.format(
         p_id=to_pid(P_ID), id=to_pid(PORT),
-        mod='calc_server', fun='loop', args=[n]
+        mod='calc_server_bug', fun='loop', args=[n]
     ))
 
     log.debug('exit({p_id},normal)'.format(p_id=to_pid(P_ID)))

@@ -49,7 +49,7 @@ Interested readers are also referred to the list of publications that follows.
 
 [FORTE 2021](https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf){ .md-button .md-button--secondary}
 
-List of publications.
+List of other publications to be added later :)
 
 ## Help us
 

@@ -710,6 +710,11 @@ We use former function, and cover <code class="highlight"><span class="nb">monit
 <span class="go">{#PID&lt;0.106.0&gt;, {:add, 10, 97}}</span>
 </code></pre></div>
 </li>
+<li>
+<p>Stop the outline instrumentation.</p>
+<div class="highlight"><pre><span></span><code><span class="go">:monitor.stop.</span>
+</code></pre></div>
+</li>
 </ol>
 <h2 id="irrevocable-verdicts">Irrevocable verdicts<a class="headerlink" href="#irrevocable-verdicts" title="Permanent link">&para;</a></h2>
 <p>By contrast to the <a href="inline-instrumentation.html">inline</a> case, the <code>recv</code> and <code>send</code> events that were exhibited by the calculator server do not appear when the server terminates in step 4 above.

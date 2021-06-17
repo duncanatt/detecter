@@ -814,6 +814,11 @@ Escape character is &#39;^]&#39;.
 <span class="go">stopped</span>
 <span class="go">Connection closed by foreign host.</span>
 </code></pre></div>
+</li>
+<li>
+<p>Stop the outline instrumentation. We need to do this since the log is read in a forward-only manner, and rewriting to it disrupts the parsing mechanism. </p>
+<div class="highlight"><pre><span></span><code><span class="go">monitor:stop().</span>
+</code></pre></div>
 <p>The output on the Erlang shell is the same as the one we have <a href="outline-instrumentation.html#outline-instrumentation-in-action">seen previously</a> with outline instrumentation, where analysers are terminated promptly upon verdict detection.</p>
 </li>
 </ol>

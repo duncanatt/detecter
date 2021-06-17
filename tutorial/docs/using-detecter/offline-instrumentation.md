@@ -263,6 +263,12 @@ Let us set up outline instrumentation.
     Connection closed by foreign host.
     ```
 
+5. Stop the outline instrumentation. We need to do this since the log is read in a forward-only manner, and rewriting to it disrupts the parsing mechanism. 
+
+    ```erl
+    monitor:stop().
+    ```
+
     The output on the Erlang shell is the same as the one we have [seen previously](outline-instrumentation.md#outline-instrumentation-in-action) with outline instrumentation, where analysers are terminated promptly upon verdict detection.
 
 

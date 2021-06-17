@@ -193,6 +193,13 @@ Let us instrument the buggy calculator server, `#!elixir Demo.CalcServerBug`, to
     ```
     {% endraw %}
 
+5. Stop the outline instrumentation.
+
+    ```iex
+    :monitor.stop.
+    ```
+
+
 ## Irrevocable verdicts
 
 By contrast to the [inline](inline-instrumentation.md) case, the `recv` and `send` events that were exhibited by the calculator server do not appear when the server terminates in step 4 above.

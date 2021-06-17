@@ -20,9 +20,9 @@ The tool itself is developed in Erlang, and is the product of five years of theo
 We have a three-part tutorial series on YouTube that gives an overview of how to use detectEr.
 Use these videos as a complementary learning material to this tutorial.
 
-[Part 1: Diving In](https://youtu.be/rFuMJAFFxjE){ .md-button .md-button--primary}
-[Part 2: Describing Program Correctness](https://youtu.be/cSCkDl8VsnA){ .md-button .md-button--primary}
-[Part 3: Instrumenting the Program](https://youtu.be/RLMLWz3vwak){ .md-button .md-button--primary}
+[Part 1: Diving In](https://youtu.be/ADc2HM63ppQ){ .md-button .md-button--primary}
+[Part 2: Describing Program Correctness](https://youtu.be/xAml5kLBaBQ){ .md-button .md-button--primary}
+[Part 3: Instrumenting the Program](https://youtu.be/OUwKF38GRbM){ .md-button .md-button--primary}
 
 ## How it works
 

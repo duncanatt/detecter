@@ -1411,7 +1411,7 @@ upd_stats(Stats = #stats{cnt_other = Cnt}, Evt) when element(1, Evt) =:= trace -
 %%   {@desc Event for which the state is to be updated.}
 %% }
 %%
-%% {@return Updated tracer state.}
+%% {@returns Updated tracer state.}
 -spec upd_state(State, Evt) -> state()
   when
   State :: state(),

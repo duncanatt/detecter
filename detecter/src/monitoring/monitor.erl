@@ -62,7 +62,7 @@
 %% @doc Starts and instruments the specified system with online monitors.
 %%
 %% {@params
-%%   {@name {@Mod, Fun, Args@}}
+%%   {@name @{Mod, Fun, Args@}}
 %%   {@desc }
 %%   {@name MfaSpec}
 %%   {@desc Function that determines whether an analyzer is associated with a

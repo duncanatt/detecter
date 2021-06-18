@@ -359,31 +359,6 @@ compile_opts(Opts) ->
 %%  [{i, include_opt(Opts)}, {i, out_dir_opt(Opts)} | ?COMPILER_OPTS].
   [{i, opts:out_dir_opt(Opts)} | ?COMPILER_OPTS].
 
-%% @privat Returns the compiler output directory option if defined. Defaults to
-%% '.'.
-%%-spec out_dir_opt(Opts :: options()) -> Dir :: string().
-%%out_dir_opt(Opts) ->
-%%  proplists:get_value(?OPT_OUT_DIR, Opts, ".").
-
-%% private Returns the compiler include directory option if defined. Defaults
-%% to '.'.
-%%-spec include_opt(Opts :: options()) -> Dir :: string().
-%%include_opt(Opts) ->
-%%  proplists:get_value(?OPT_INCLUDE, Opts, ".").
-
-%% @privat Returns the compiler switch that determines whether Erlang source
-%% code is output instead of beam. Defaults to 'false'.
-%%-spec erl_opt(Opts :: options()) -> Flag :: boolean().
-%%erl_opt(Opts) ->
-%%  proplists:get_value(?OPT_ERL, Opts, false).
-
-%% @privat Returns the compiler switch that determines whether the resulting
-%% monitor includes logging statements for debugging purposes. Defaults to
-%% 'false'.
-%%-spec verbose_opt(Opts :: options()) -> Flag :: boolean().
-%%verbose_opt(Opts) ->
-%%  proplists:get_value(?OPT_VERBOSE, Opts, false).
-
 
 %%% ----------------------------------------------------------------------------
 %%% AST manipulation functions functions.

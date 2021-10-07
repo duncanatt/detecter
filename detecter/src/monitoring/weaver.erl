@@ -282,7 +282,9 @@ write_file(File, MfaSpec, Opts) ->
 %%  ok.
 
 load_mods(Mods) ->
-  [begin code:purge(M), code:load_file(M) end || M <- Mods].
+  [begin
+     if length(M) > 0 -> code:purge(M), code:load_file(M); true -> ok end
+   end || M <- Mods].
 
 compiled_mods(Compiled) ->
   lists:filtermap(fun({ok, Mod, _}) -> {true, Mod}; (_) -> false end, Compiled).

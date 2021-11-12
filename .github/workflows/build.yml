@@ -33,4 +33,5 @@ jobs:
       - name: Test
         run: |
           erl -noshell -pa $BIN -eval 'case eunit:test(log_tracer_test, [verbose]) of error -> init:stop(1); Result -> Result end.' -s init stop
+          # The 'tracer_test' has been disabled until the timing issues have been fixed in every test.
           #erl -noshell -pa $BIN -eval 'case eunit:test(tracer_test, [verbose]) of error -> init:stop(1); Result -> Result end.' -s init stop

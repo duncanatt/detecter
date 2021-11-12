@@ -30,6 +30,21 @@
 
 %%-export([init/0]).
 
+%% TODO: These unit tests are time dependent, which is not the way to go when to
+%% TODO: test. This was done to try and affect the trace event routing algorithm
+%% TODO: as much as possible, since one cannot use messages to influence the
+%% TODO: different interleaved of the offline tracer (responsible for only the
+%% TODO: system process interleaving via the order of trace events) together
+%% TODO: with the trace event routing algorithm, which is itself concurrent. The
+%% TODO: problem with these tests is that they are too fine-grained, and attempt
+%% TODO: check every possible execution step, rather than the final monitored
+%% TODO: system configuration. The assertions used by the test must therefore
+%% TODO: be rewritten to check the monitored system state in a coarser manner.
+%% TODO: I suspect this must be done once at the end of each test run. For this
+%% TODO: reason, these batch of test will be excluded for the main build until
+%% TODO: these are properly rewritten.
+
+
 %%% ----------------------------------------------------------------------------
 %%% Macro and record definitions.
 %%% ----------------------------------------------------------------------------
@@ -45,8 +60,8 @@
 %% to wait until certain trace processing finishes. Timing, though frowned upon
 %% in concurrency, is useful here to avoid complicating the tests tracer module
 %% with added synchronization directives.
--define(small_wait, timer:sleep(700)).
--define(big_wait, timer:sleep(1400)).
+-define(small_wait, timer:sleep(800)).
+%%-define(big_wait, timer:sleep(1400)).
 
 
 %%% ----------------------------------------------------------------------------
@@ -66,6 +81,135 @@
 %%      tracer:show_stats(Stats0, Pid, "ROOT")
 %%  end,
 %%  loop().
+
+problem_solve_test_() -> {"Problem solve example to test timeouts in test.
+                           Delete once the proper tests are resolved",
+  {foreachx,
+    fun({Trace, Monitors}) ->
+
+%%      Controller = spawn(?MODULE, init, []),
+
+      % Start the monitoring system in offline mode. The system under scrutiny
+      % is not run; rather a run simulation is performed by posting trace events
+      % to the underlying log tracer.
+      monitor:start_offline("", ?P1, Monitors, []),
+      log_tracer:post_events(Trace)
+    end,
+    fun(_, _) ->
+      % Stop monitoring system and underlying tracer.
+      monitor:stop()
+    end,
+    [
+      {{[{delay, 0, {fork, ?P1, ?P2, {m2, f2, []}}},
+        {delay, 0, {exit, ?P1, normal}},
+        {delay, 0, {fork, ?P2, ?P3, {m3, f3, []}}},
+        {delay, 0, {fork, ?P3, ?P4, {m4, f4, []}}}],
+        fun({m2, f2, []}) ->
+          {ok, fun(_) -> 'end' end};
+          ({m3, f3, []}) ->
+            {ok, fun(_) -> 'end' end};
+          ({m4, f4, []}) ->
+            {ok, fun(_) -> 'end' end};
+          ({_, _, _}) ->
+            undefined
+        end
+      },
+        fun(_, _) ->
+          {"All processes have dedicated monitors",
+%%            ?_test(
+            {timeout, 5, ?_test(
+            begin
+
+            % Wait until monitoring simulation completes and traces are
+            % collected.
+              ?small_wait,
+%%              timer:sleep(6000),
+
+              % Monitor M1 should be only attached to P1. It should also be
+              % terminated since P1 terminates.
+              {M1, _G1, T1} = tracer:get_mon_info_rev(?P1),
+              ?assertNot(is_process_alive(M1)),
+
+              % Monitor M2 should be only attached to P2. It should also be
+              % alive.
+              {M2, G2, T2} = tracer:get_mon_info_rev(?P2),
+              ?assertEqual([?P2], G2),
+              ?assert(is_process_alive(M2)),
+
+              % Monitor M3 should be only attached to P3. It should also be
+              % alive.
+              {M3, G3, T3} = tracer:get_mon_info_rev(?P3),
+              ?assertEqual([?P3], G3),
+              ?assert(is_process_alive(M3)),
+
+              % Monitor M4 should be only attached to P4. It should also be
+              % alive.
+              {M4, G4, T4} = tracer:get_mon_info_rev(?P4),
+              ?assertEqual([?P4], G4),
+              ?assert(is_process_alive(M4)),
+
+              % Monitor M1 receives trace events for P1 only.
+              ?assertEqual([
+                {trace, ?P1, spawn, ?P2, {m2, f2, []}},
+                {trace, ?P1, exit, normal}
+              ], T1),
+
+              % Monitor M2 receives trace events for P2 only.
+              ?assertEqual([
+                {trace, ?P2, spawn, ?P3, {m3, f3, []}}
+              ], T2),
+
+              % Monitor M3 receives trace events for P3 only.
+              ?assertEqual([
+                {trace, ?P3, spawn, ?P4, {m4, f4, []}}
+              ], T3),
+
+              % Monitor M4 has no events.
+              ?assertEqual([], T4),
+
+              % Post receive events and exit events to terminate P2, P3, P4.
+              log_tracer:post_events([
+                {delay, 0, {recv, ?P2, msg_to_p2}},
+                {delay, 0, {recv, ?P3, msg_to_p3}},
+                {delay, 0, {recv, ?P4, msg_to_p4}},
+                {delay, 0, {exit, ?P2, normal}},
+                {delay, 0, {exit, ?P3, normal}},
+                {delay, 0, {exit, ?P4, normal}}
+              ]),
+              ?small_wait,
+
+              % Monitor M2 receives trace events for P2 only.
+              {_, _, T2_1} = tracer:get_mon_info(M2),
+              ?assertEqual([
+                {trace, ?P2, 'receive', msg_to_p2},
+                {trace, ?P2, exit, normal}
+              ], T2_1 -- T2),
+
+              % Monitor M3 receives trace events for P3 only.
+              {_, _, T3_1} = tracer:get_mon_info(M3),
+              ?assertEqual([
+                {trace, ?P3, 'receive', msg_to_p3},
+                {trace, ?P3, exit, normal}
+              ], T3_1 -- T3),
+
+              % Monitor M4 receives trace events for P4 only.
+              {_, _, T4_1} = tracer:get_mon_info(M4),
+              ?assertEqual([
+                {trace, ?P4, 'receive', msg_to_p4},
+                {trace, ?P4, exit, normal}
+              ], T4_1 -- T4),
+
+              % All monitors should be terminated.
+              ?assertNot(is_process_alive(M2)),
+              ?assertNot(is_process_alive(M3)),
+              ?assertNot(is_process_alive(M4))
+            end
+%%        end
+          )
+          }}
+        end}
+    ]}}.
+
 
 generic_monitor_test_for_testing_to_remove_test_() -> {"Generic dynamic monitor routing algorithm test",
   {foreachx,
@@ -303,12 +447,15 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
         end
       },
         fun(_, _) ->
-          {"Monitor M2 is shared by P2 and P3", ?_test(
+          {"Monitor M2 is shared by P2 and P3 ERROR", ?_test(
             begin
 
             % Wait until monitoring simulation completes and traces are
             % collected.
               ?small_wait,
+              ?small_wait,
+
+%%              timer:sleep(700),
 
               % Monitor M1 should be terminated since P1 terminates.
               X = {M1, _G1, T1} = tracer:get_mon_info_rev(?P1),
@@ -316,17 +463,24 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
 
               % Monitor M2 should be shared by P2 and P3. It should also be
               % alive.
-              {M2, G2, T2} = tracer:get_mon_info_rev(?P2),
-              {M3, G3, T3} = tracer:get_mon_info_rev(?P3),
+              ?small_wait, % Wait for P2 to be detached from M1 and attached to M2.
+              ?small_wait,
+              A = {M2, G2, T2} = tracer:get_mon_info_rev(?P2),
+              io:format(user, "======================== A The tuple is: ~p~n", [A]),
+              B = {M3, G3, T3} = tracer:get_mon_info_rev(?P3),
+              io:format(user, "======================== B The tuple is: ~p~n", [B]),
               ?assertEqual(M2, M3),
-              ?assertEqual(G2, G3),
+              ?assertEqual(G2, G3), % G = group
               ?assertEqual(T2, T3),
               ?assertEqual([?P2, ?P3], lists:sort(G2)),
               ?assert(is_process_alive(M2)),
 
               % Monitor M4 should be only attached to P4. It should also be
               % alive.
-              {M4, G4, T4} = tracer:get_mon_info_rev(?P4),
+              ?small_wait, % Wait for the M4 to attach itself to P4.
+              ?small_wait,
+              X = {M4, G4, T4} = tracer:get_mon_info_rev(?P4),
+              io:format(user, "======================== The tuple is: ~p~n", [X]),
               ?assertEqual([?P4], G4),
               ?assert(is_process_alive(M4)),
 
@@ -487,6 +641,7 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
             % Wait until monitoring simulation completes and traces are
             % collected.
               ?small_wait,
+%%              timer:sleep(200),
 
               % Monitor M1 should be only attached to P1. It should also be
               % terminated since P1 terminates.
@@ -856,7 +1011,7 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
       {{[{delay, 0, {fork, ?P1, ?P2, {m2, f2, []}}},
         {delay, 0, {exit, ?P1, normal}},
         {delay, 0, {fork, ?P2, ?P3, {m3, f3, []}}},
-        {delay, 200, {fork, ?P3, ?P4, {m4, f4, []}}}],
+        {delay, 300, {fork, ?P3, ?P4, {m4, f4, []}}}],
         fun({m3, f3, []}) ->
           {ok, fun(_) -> 'end' end};
           ({m4, f4, []}) ->
@@ -976,7 +1131,7 @@ generic_monitor_test_() -> {"Generic dynamic monitor routing algorithm test",
 }.
 
 %% @doc Tests the dynamic routing logic when a sub-process terminates.
-p3_dies_monitor_test_() -> {"P3 dies when it has a monitor attached test",
+p3_dies_monitor_test_x() -> {"P3 dies when it has a monitor attached test",
   {foreachx,
     fun({Trace, Monitors}) ->
 

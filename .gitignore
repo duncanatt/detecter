@@ -22,6 +22,7 @@
 *.out
 *.so
 *.lib
+*.egg
 
 # Temporary, log and backup files.
 *.dump
@@ -71,3 +72,5 @@ doc/
 venv/
 ebin/
 site/
+out/
+*.egg-info

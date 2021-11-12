@@ -108,8 +108,9 @@ mkdoc() ->
 
 -spec leex() -> any().
 leex() ->
-  leex:file("priv/hml_lexer.xrl", {scannerfile, "src/monitoring/hml_lexer.erl"}),
-  leex:file("priv/log_lexer.xrl", {scannerfile, "src/tracing/log_lexer.erl"}).
+%%  leex:file("priv/hml_lexer.xrl", {scannerfile, "src/monitoring/hml_lexer.erl"}),
+%%  leex:file("priv/log_lexer.xrl", {scannerfile, "src/tracing/log_lexer.erl"}),
+  leex:file("priv/shml_lexer.xrl", {scannerfile, "src/tracing/shml_lexer.erl"}).
 
 %%yecc() ->
 %%  yecc:file("priv/log_parser.yrl", {parserfile, "src/tracing/log_parser.erl"}).

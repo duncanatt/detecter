@@ -248,9 +248,28 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
       log_tracer:stop()
     end,
     [
-      {[{delay, 0, {fork, ?P1, ?P2, {m, f, []}}},
-        {delay, 0, {send, ?P1, ?P2, msg}},
-        {delay, 0, {recv, ?P2, msg}}],
+      {[{delay, 0, {recv, ?P2, msg}},
+        {delay, 0, {fork, ?P1, ?P2, {m, f, []}}},
+        {delay, 0, {send, ?P1, ?P2, msg}}],
+
+        % This test caters for the scenario where the following race condition
+        % arises:
+        % Race 1: P1 forks P2.
+        %         P1 sends msg to P2.
+        %         P2 receives msg.
+        %
+        % Race 2: P2 receives msg.
+        %         P1 forks P2.
+        %         P1 sends msg to P2.
+        %
+        % Race 2 is possible, since P1 and P2 are independent entities, and even
+        % though P2 is forked by (and therefore, starts existing after) P1, P2
+        % manages to record its 'recv' event before P1 records its 'fork' event.
+        % The offline tracing algorithm takes care of handling this case
+        % correctly by buffering as necessary. Note that this same guarantee is
+        % given by the current implementation of the EVM tracing. This race
+        % condition was pointed out in the OOPSLA 2021 submission as a possible
+        % bug, but the offline case handles it correctly.
         fun(Trace, _) ->
           {"A process fork event is queued when no tracer is allocated for the
             process", ?_test(
@@ -271,10 +290,31 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
             end
           )}
         end},
-      {[{delay, 0, {fork, ?P1, ?P2, {m, f, []}}},
+      {[{delay, 0, {recv, ?P2, msg}},
+        {delay, 0, {fork, ?P1, ?P2, {m, f, []}}},
         {delay, 0, {send, ?P1, ?P2, msg}},
-        {delay, 0, {recv, ?P2, msg}},
         {delay, 0, {recv, ?P3, msg}}],
+
+        % This test caters for the scenario where the following race condition
+        % arises:
+        % Race 1: P1 forks P2.
+        %         P1 sends msg to P2.
+        %         P2 receives msg.
+        %         P3 receives msg from some process not recorded in the trace.
+        %
+        % Race 2: P2 receives msg.
+        %         P1 forks P2.
+        %         P1 sends msg to P2.
+        %         P3 receives msg from some process not recorded in the trace.
+        %
+        % Race 2 is possible, since P1 and P2 are independent entities, and even
+        % though P2 is forked by (and therefore, starts existing after) P1, P2
+        % manages to record its 'recv' event before P1 records its 'fork' event.
+        % The offline tracing algorithm takes care of handling this case
+        % correctly by buffering as necessary. Note that this same guarantee is
+        % given by the current implementation of the EVM tracing. This race
+        % condition was pointed out in the OOPSLA 2021 submission as a possible
+        % bug, but the offline case handles it correctly.
         fun(Trace, _) ->
           {"A process fork event is dispatched to the tracer allocated for the
             parent; the same tracer is automatically allocated to the forked
@@ -298,12 +338,12 @@ fork_dispatch_test_() -> {"Fork trace event dispatch test",
               ?assertEqual(self(), log_tracer:get_tracer(?P2)),
 
               % Assert that the events dispatched to the tracer allocated to
-              % P1 and P2are indeed correct and in the expected order.
+              % P1 and P2 are indeed correct and in the expected order.
               % Dispatching in this case is performed incrementally with each
               % posted trace event (P1 is already allocated a tracer prior to
               % posting the trace), and waiting for it complete is not
               % necessary.
-              ?assertEqual(to_evm_events(unwrap_delays(lists:droplast(Trace))), flush()),
+              ?assertEqual(to_evm_events(unwrap_delays([lists:nth(2, Trace), lists:nth(1, Trace), lists:nth(3, Trace)])), flush()),
 
               % Assert that the remaining events in the trace and those queued
               % in the event backlog are identical and in the original order.

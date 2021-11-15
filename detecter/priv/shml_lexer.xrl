@@ -83,8 +83,11 @@ Rules.
 % List operators.
 {LIST_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
 
+% Process actions.
+{PROC_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
+
 % Variables.
-_{ALPHA}*|{UPPER}{ALPHA}+ : {token, {var, TokenLine, ?to_atom(TokenChars)}}.
+_{ALPHA}*|{UPPER}{ALPHA}* : {token, {var, TokenLine, ?to_atom(TokenChars)}}.
 
 % Atoms and keywords.
 {LOWER}{ALPHA}*|'[^\']*'  : Atom = ?to_atom(TokenChars),
@@ -127,4 +130,9 @@ Erlang code.
 is_keyword('when') -> true;
 is_keyword(with) -> true;
 is_keyword(monitor) -> true;
+
+is_keyword(tt) -> true;
+is_keyword(ff) -> true;
+is_keyword(max) -> true;
+
 is_keyword(_) -> false.

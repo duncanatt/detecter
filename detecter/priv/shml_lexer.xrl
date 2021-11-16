@@ -52,6 +52,9 @@ COMP_OP                   = (==|/=|=<|<|>=|>|=:=|=/=)
 % List operators.
 LIST_OP                   = (\||\|\||<-|\+\+|--)
 
+% Binary operators.
+BIN_OP                    = (<<|>>|<=)
+
 % Map operators.
 MAP_OP                    = (#|:=)
 
@@ -85,6 +88,9 @@ Rules.
 
 % List operators.
 {LIST_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
+
+% Binary operators.
+{BIN_OP}                  : {token, {?to_atom(TokenChars), TokenLine}}.
 
 % Map operators.
 {MAP_OP}                  : {token, {?to_atom(TokenChars), TokenLine}}.
@@ -125,14 +131,14 @@ _{ALPHA}*|{UPPER}{ALPHA}* : {token, {var, TokenLine, ?to_atom(TokenChars)}}.
 
 Erlang code.
 
-%% String conversion macros.
+%%% String conversion macros.
 -define(to_atom(String), list_to_atom(String)).
 -define(to_integer(String), list_to_integer(String)).
 -define(to_float(String), list_to_float(String)).
 -define(to_pid(String), list_to_pid(String)).
 -define(no_quotes(String), lists:sublist(String, 2, length(String) - 2)).
 
-%% Keywords.
+%%% Keywords.
 is_keyword('when') -> true;
 is_keyword(with) -> true;
 is_keyword(monitor) -> true;

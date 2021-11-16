@@ -47,10 +47,13 @@ ARIT_OP                   = (\+|-|\*|/|div|rem)
 BITW_OP                   = (bnot|band|bor|bxor|bsl|bsr)
 
 % Relational operators.
-RELA_OP                   = (==|/=|=<|<|>=|>|=:=|=/=)
+COMP_OP                   = (==|/=|=<|<|>=|>|=:=|=/=)
 
 % List operators.
 LIST_OP                   = (\||\|\||<-|\+\+|--)
+
+% Map operators.
+MAP_OP                    = (#|:=)
 
 % Process action operators.
 PROC_OP                   = (->|\*\*|!|\?)
@@ -78,10 +81,13 @@ Rules.
 {BITW_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
 
 % Relational operators.
-{RELA_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
+{COMP_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
 
 % List operators.
 {LIST_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.
+
+% Map operators.
+{MAP_OP}                  : {token, {?to_atom(TokenChars), TokenLine}}.
 
 % Process actions.
 {PROC_OP}                 : {token, {?to_atom(TokenChars), TokenLine}}.

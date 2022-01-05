@@ -26,7 +26,11 @@
 Nonterminals
 
 %%% Maximal HML non-terminals.
-forms form maxhml act maxhml_ pat mfargs
+forms form act pat mfargs
+maxhml_expr maxhml_fact maxhml_term
+
+%%expr_ fact_ term_ pri_
+
 
 %%% Erlang non-terminals.
 
@@ -91,8 +95,9 @@ with 'when' monitor
 % Atomic data types.
 char integer float atom string var.
 
-%%Rootsymbol maxhml.
-Rootsymbol forms.
+Rootsymbol maxhml_expr.
+%%Rootsymbol forms.
+%%Rootsymbol expr_.
 
 %%% ----------------------------------------------------------------------------
 %%% Erlang process monitor attachment grammar definition.
@@ -103,7 +108,7 @@ forms -> form '.'                       : ['$1'].
 forms -> form ',' forms                 : ['$1' | '$3'].
 
 % Process monitor attachment.
-form -> 'with' mfargs monitor maxhml    : {form, ?anno('$1'), '$2', '$4'}.
+form -> 'with' mfargs monitor maxhml_expr    : {form, ?anno('$1'), '$2', '$4'}.
 
 %%% ----------------------------------------------------------------------------
 %%% Maximal HML grammar definition.
@@ -120,34 +125,53 @@ form -> 'with' mfargs monitor maxhml    : {form, ?anno('$1'), '$2', '$4'}.
 %%% * https://www.geeksforgeeks.org/
 %%%   removal-of-ambiguity-converting-an-ambiguos-grammar-into-unambiguos-grammar
 %%% * http://homepage.divms.uiowa.edu/~jones/compiler/spring13/notes/10.shtml
+%%% * https://opendsa-server.cs.vt.edu/OpenDSA/Books/PL/html/Grammars3.html
 
-% Left-associative disjunction and conjunction.
-maxhml -> maxhml 'or' maxhml_           : {'or', ?anno('$1'), '$1', '$3'}.
-maxhml -> maxhml 'and' maxhml_          : {'and', ?anno('$1'), '$1', '$3'}.
-%%maxhml -> maxhml_ 'or' maxhml : {'or', ?anno('$1'), '$1', '$3'}. % Right-associative alternative.
-%%maxhml -> maxhml_ 'and' maxhml : {'and', ?anno('$1'), '$1', '$3'}. % Right-associative alternative.
-maxhml -> maxhml_                       : '$1'.
+
+
+
+%% WORKS GOOD!
+% 1 + 2 + 3
+%%expr_ -> expr_ '+' term_ : {add, '$1', '$3'}.
+%%expr_ -> term_ : '$1'.
+%%
+%%term_ -> term_ '*' fact_ : {mul, '$1', '$3'}.
+%%term_ -> fact_ : '$1'.
+%%
+%%fact_ -> pri_ : {pri, '$1'}.
+%%fact_ -> '(' expr ')' : '$1'.
+%%
+%%pri_ -> integer : '$1'.
+
+
+
+
+maxhml_expr -> maxhml_expr 'or' maxhml_term : {'or', ?anno('$1'), '$1', '$3'}.
+maxhml_expr -> maxhml_term : '$1'.
+
+maxhml_term -> maxhml_term 'and' maxhml_fact : {'and', ?anno('$1'), '$1', '$3'}.
+maxhml_term -> maxhml_fact : '$1'.
 
 % Modal possibility and necessity.
-maxhml_ -> '<' act '>' maxhml_          : {pos, ?anno('$1'), '$2', '$4'}.
-maxhml_ -> '[' act ']' maxhml_          : {nec, ?anno('$1'), '$2', '$4'}.
+maxhml_fact -> '<' act '>' maxhml_fact          : {pos, ?anno('$1'), '$2', '$4'}.
+maxhml_fact -> '[' act ']' maxhml_fact          : {nec, ?anno('$1'), '$2', '$4'}.
 
 % Maximal fix-point.
-maxhml_ -> max '(' var '.' maxhml ')'   : {max, ?anno('$1'), '$3', '$5'}.
+maxhml_fact -> max '(' var '.' maxhml_expr ')'   : {max, ?anno('$1'), '$3', '$5'}.
 
 % Truth, falsity, recursive variables and bracketing.
-maxhml_ -> 'ff'                         : '$1'.
-maxhml_ -> 'tt'                         : '$1'.
-maxhml_ -> var                          : '$1'.
-maxhml_ -> '(' maxhml ')'               : '$2'.
+maxhml_fact -> 'ff'                         : '$1'.
+maxhml_fact -> 'tt'                         : '$1'.
+maxhml_fact -> var                          : '$1'.
+maxhml_fact -> '(' maxhml_expr ')' : '$2'.
 
 %%% Data extensions comprised of symbolic actions and process action patterns.
 %%% Process action patterns include send, receive, fork, initialise and
 %%% termination.
 
 % Symbolic actions.
-act -> '{' pat '}'                      : {act, '$2', []}.
-act -> '{' pat 'when' guard '}'         : {act, '$2', '$4'}.
+act -> '{' pat '}'                      : {act, ?anno('$1'), '$2', []}.
+act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
 
 % Process sending pattern. Process in var_1 sent a message to process in var_2.
 pat -> var ':' var '!' exprs            : {send, ?anno('$1'), '$1', '$3', '$5'}.

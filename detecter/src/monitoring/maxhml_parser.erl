@@ -1,6 +1,6 @@
 -module(maxhml_parser).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("priv/maxhml_parser.yrl", 442).
+-file("priv/maxhml_parser.yrl", 386).
 
 %% Token information extraction macros {token, TokenInfo}.
 -define(anno(Tuple), element(2, Tuple)). % Line number.
@@ -1522,7 +1522,7 @@ yeccpars2_177(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccgoto_expr_600(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
 -dialyzer({nowarn_function, yeccpars2_178/7}).
-yeccpars2_178(S, ',', Ss, Stack, T, Ts, Tzr) ->
+yeccpars2_178(S, with, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 179, Ss, Stack, T, Ts, Tzr);
 yeccpars2_178(_, _, _, _, T, _, _) ->
  yeccerror(T).
@@ -1601,7 +1601,7 @@ yeccpars2_190(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccgoto_pat(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
 -dialyzer({nowarn_function, yeccpars2_191/7}).
-yeccpars2_191(S, ',', Ss, Stack, T, Ts, Tzr) ->
+yeccpars2_191(S, with, Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 192, Ss, Stack, T, Ts, Tzr);
 yeccpars2_191(_, _, _, _, T, _, _) ->
  yeccerror(T).
@@ -3036,7 +3036,7 @@ yeccgoto_tuple(199=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3037).
 -compile({inline,yeccpars2_15_/1}).
--file("priv/maxhml_parser.yrl", 156).
+-file("priv/maxhml_parser.yrl", 133).
 yeccpars2_15_(__Stack0) ->
  [__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3045,7 +3045,7 @@ yeccpars2_15_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3046).
 -compile({inline,yeccpars2_17_/1}).
--file("priv/maxhml_parser.yrl", 145).
+-file("priv/maxhml_parser.yrl", 123).
 yeccpars2_17_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3054,7 +3054,7 @@ yeccpars2_17_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3055).
 -compile({inline,yeccpars2_19_/1}).
--file("priv/maxhml_parser.yrl", 148).
+-file("priv/maxhml_parser.yrl", 125).
 yeccpars2_19_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3063,7 +3063,7 @@ yeccpars2_19_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3064).
 -compile({inline,yeccpars2_35_/1}).
--file("priv/maxhml_parser.yrl", 176).
+-file("priv/maxhml_parser.yrl", 155).
 yeccpars2_35_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3071,7 +3071,7 @@ yeccpars2_35_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_47_/1}).
--file("priv/maxhml_parser.yrl", 375).
+-file("priv/maxhml_parser.yrl", 319).
 yeccpars2_47_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3080,7 +3080,7 @@ yeccpars2_47_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3081).
 -compile({inline,yeccpars2_67_/1}).
--file("priv/maxhml_parser.yrl", 353).
+-file("priv/maxhml_parser.yrl", 297).
 yeccpars2_67_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3089,7 +3089,7 @@ yeccpars2_67_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3090).
 -compile({inline,yeccpars2_68_/1}).
--file("priv/maxhml_parser.yrl", 354).
+-file("priv/maxhml_parser.yrl", 298).
 yeccpars2_68_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3098,7 +3098,7 @@ yeccpars2_68_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3099).
 -compile({inline,yeccpars2_69_/1}).
--file("priv/maxhml_parser.yrl", 392).
+-file("priv/maxhml_parser.yrl", 336).
 yeccpars2_69_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3107,7 +3107,7 @@ yeccpars2_69_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3108).
 -compile({inline,yeccpars2_71_/1}).
--file("priv/maxhml_parser.yrl", 308).
+-file("priv/maxhml_parser.yrl", 252).
 yeccpars2_71_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3116,7 +3116,7 @@ yeccpars2_71_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3117).
 -compile({inline,yeccpars2_72_/1}).
--file("priv/maxhml_parser.yrl", 309).
+-file("priv/maxhml_parser.yrl", 253).
 yeccpars2_72_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3125,7 +3125,7 @@ yeccpars2_72_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3126).
 -compile({inline,yeccpars2_74_/1}).
--file("priv/maxhml_parser.yrl", 311).
+-file("priv/maxhml_parser.yrl", 255).
 yeccpars2_74_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3133,7 +3133,7 @@ yeccpars2_74_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_78_/1}).
--file("priv/maxhml_parser.yrl", 345).
+-file("priv/maxhml_parser.yrl", 289).
 yeccpars2_78_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3142,7 +3142,7 @@ yeccpars2_78_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3143).
 -compile({inline,yeccpars2_82_/1}).
--file("priv/maxhml_parser.yrl", 350).
+-file("priv/maxhml_parser.yrl", 294).
 yeccpars2_82_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3151,7 +3151,7 @@ yeccpars2_82_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3152).
 -compile({inline,yeccpars2_84_/1}).
--file("priv/maxhml_parser.yrl", 349).
+-file("priv/maxhml_parser.yrl", 293).
 yeccpars2_84_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3159,7 +3159,7 @@ yeccpars2_84_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_86_/1}).
--file("priv/maxhml_parser.yrl", 346).
+-file("priv/maxhml_parser.yrl", 290).
 yeccpars2_86_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3168,7 +3168,7 @@ yeccpars2_86_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3169).
 -compile({inline,yeccpars2_87_/1}).
--file("priv/maxhml_parser.yrl", 343).
+-file("priv/maxhml_parser.yrl", 287).
 yeccpars2_87_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3176,7 +3176,7 @@ yeccpars2_87_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_89_/1}).
--file("priv/maxhml_parser.yrl", 312).
+-file("priv/maxhml_parser.yrl", 256).
 yeccpars2_89_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3185,7 +3185,7 @@ yeccpars2_89_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3186).
 -compile({inline,yeccpars2_91_/1}).
--file("priv/maxhml_parser.yrl", 313).
+-file("priv/maxhml_parser.yrl", 257).
 yeccpars2_91_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3193,14 +3193,14 @@ yeccpars2_91_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_94_/1}).
--file("priv/maxhml_parser.yrl", 329).
+-file("priv/maxhml_parser.yrl", 273).
 yeccpars2_94_(__Stack0) ->
  [begin
    default
   end | __Stack0].
 
 -compile({inline,yeccpars2_96_/1}).
--file("priv/maxhml_parser.yrl", 319).
+-file("priv/maxhml_parser.yrl", 263).
 yeccpars2_96_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3209,7 +3209,7 @@ yeccpars2_96_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3210).
 -compile({inline,yeccpars2_97_/1}).
--file("priv/maxhml_parser.yrl", 316).
+-file("priv/maxhml_parser.yrl", 260).
 yeccpars2_97_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3217,7 +3217,7 @@ yeccpars2_97_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_100_/1}).
--file("priv/maxhml_parser.yrl", 320).
+-file("priv/maxhml_parser.yrl", 264).
 yeccpars2_100_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3226,7 +3226,7 @@ yeccpars2_100_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3227).
 -compile({inline,yeccpars2_101_/1}).
--file("priv/maxhml_parser.yrl", 317).
+-file("priv/maxhml_parser.yrl", 261).
 yeccpars2_101_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3234,14 +3234,14 @@ yeccpars2_101_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_102_/1}).
--file("priv/maxhml_parser.yrl", 332).
+-file("priv/maxhml_parser.yrl", 276).
 yeccpars2_102_(__Stack0) ->
  [begin
    default
   end | __Stack0].
 
 -compile({inline,yeccpars2_105_/1}).
--file("priv/maxhml_parser.yrl", 328).
+-file("priv/maxhml_parser.yrl", 272).
 yeccpars2_105_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3250,7 +3250,7 @@ yeccpars2_105_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3251).
 -compile({inline,yeccpars2_106_/1}).
--file("priv/maxhml_parser.yrl", 323).
+-file("priv/maxhml_parser.yrl", 267).
 yeccpars2_106_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3258,7 +3258,7 @@ yeccpars2_106_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_108_/1}).
--file("priv/maxhml_parser.yrl", 331).
+-file("priv/maxhml_parser.yrl", 275).
 yeccpars2_108_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3266,7 +3266,7 @@ yeccpars2_108_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_109_/1}).
--file("priv/maxhml_parser.yrl", 335).
+-file("priv/maxhml_parser.yrl", 279).
 yeccpars2_109_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3274,7 +3274,7 @@ yeccpars2_109_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_110_/1}).
--file("priv/maxhml_parser.yrl", 337).
+-file("priv/maxhml_parser.yrl", 281).
 yeccpars2_110_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3282,7 +3282,7 @@ yeccpars2_110_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_112_/1}).
--file("priv/maxhml_parser.yrl", 338).
+-file("priv/maxhml_parser.yrl", 282).
 yeccpars2_112_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3290,7 +3290,7 @@ yeccpars2_112_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_114_/1}).
--file("priv/maxhml_parser.yrl", 334).
+-file("priv/maxhml_parser.yrl", 278).
 yeccpars2_114_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3299,7 +3299,7 @@ yeccpars2_114_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3300).
 -compile({inline,yeccpars2_117_/1}).
--file("priv/maxhml_parser.yrl", 344).
+-file("priv/maxhml_parser.yrl", 288).
 yeccpars2_117_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3308,7 +3308,7 @@ yeccpars2_117_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3309).
 -compile({inline,yeccpars2_118_/1}).
--file("priv/maxhml_parser.yrl", 325).
+-file("priv/maxhml_parser.yrl", 269).
 yeccpars2_118_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3316,7 +3316,7 @@ yeccpars2_118_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_120_/1}).
--file("priv/maxhml_parser.yrl", 303).
+-file("priv/maxhml_parser.yrl", 247).
 yeccpars2_120_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3325,7 +3325,7 @@ yeccpars2_120_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3326).
 -compile({inline,yeccpars2_121_/1}).
--file("priv/maxhml_parser.yrl", 358).
+-file("priv/maxhml_parser.yrl", 302).
 yeccpars2_121_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3333,7 +3333,7 @@ yeccpars2_121_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_126_/1}).
--file("priv/maxhml_parser.yrl", 365).
+-file("priv/maxhml_parser.yrl", 309).
 yeccpars2_126_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3341,7 +3341,7 @@ yeccpars2_126_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_128_/1}).
--file("priv/maxhml_parser.yrl", 362).
+-file("priv/maxhml_parser.yrl", 306).
 yeccpars2_128_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3349,7 +3349,7 @@ yeccpars2_128_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_130_/1}).
--file("priv/maxhml_parser.yrl", 366).
+-file("priv/maxhml_parser.yrl", 310).
 yeccpars2_130_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3357,7 +3357,7 @@ yeccpars2_130_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_131_/1}).
--file("priv/maxhml_parser.yrl", 363).
+-file("priv/maxhml_parser.yrl", 307).
 yeccpars2_131_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3366,7 +3366,7 @@ yeccpars2_131_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3367).
 -compile({inline,yeccpars2_133_/1}).
--file("priv/maxhml_parser.yrl", 370).
+-file("priv/maxhml_parser.yrl", 314).
 yeccpars2_133_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3374,7 +3374,7 @@ yeccpars2_133_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_135_/1}).
--file("priv/maxhml_parser.yrl", 376).
+-file("priv/maxhml_parser.yrl", 320).
 yeccpars2_135_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3383,7 +3383,7 @@ yeccpars2_135_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3384).
 -compile({inline,yeccpars2_137_/1}).
--file("priv/maxhml_parser.yrl", 255).
+-file("priv/maxhml_parser.yrl", 199).
 yeccpars2_137_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3392,7 +3392,7 @@ yeccpars2_137_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3393).
 -compile({inline,yeccpars2_139_/1}).
--file("priv/maxhml_parser.yrl", 259).
+-file("priv/maxhml_parser.yrl", 203).
 yeccpars2_139_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3401,7 +3401,7 @@ yeccpars2_139_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3402).
 -compile({inline,yeccpars2_149_/1}).
--file("priv/maxhml_parser.yrl", 263).
+-file("priv/maxhml_parser.yrl", 207).
 yeccpars2_149_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3410,7 +3410,7 @@ yeccpars2_149_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3411).
 -compile({inline,yeccpars2_162_/1}).
--file("priv/maxhml_parser.yrl", 272).
+-file("priv/maxhml_parser.yrl", 216).
 yeccpars2_162_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3419,7 +3419,7 @@ yeccpars2_162_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3420).
 -compile({inline,yeccpars2_170_/1}).
--file("priv/maxhml_parser.yrl", 277).
+-file("priv/maxhml_parser.yrl", 221).
 yeccpars2_170_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3428,7 +3428,7 @@ yeccpars2_170_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3429).
 -compile({inline,yeccpars2_171_/1}).
--file("priv/maxhml_parser.yrl", 267).
+-file("priv/maxhml_parser.yrl", 211).
 yeccpars2_171_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3437,7 +3437,7 @@ yeccpars2_171_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3438).
 -compile({inline,yeccpars2_173_/1}).
--file("priv/maxhml_parser.yrl", 359).
+-file("priv/maxhml_parser.yrl", 303).
 yeccpars2_173_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3446,7 +3446,7 @@ yeccpars2_173_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3447).
 -compile({inline,yeccpars2_175_/1}).
--file("priv/maxhml_parser.yrl", 360).
+-file("priv/maxhml_parser.yrl", 304).
 yeccpars2_175_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3455,7 +3455,7 @@ yeccpars2_175_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3456).
 -compile({inline,yeccpars2_177_/1}).
--file("priv/maxhml_parser.yrl", 282).
+-file("priv/maxhml_parser.yrl", 226).
 yeccpars2_177_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3464,7 +3464,7 @@ yeccpars2_177_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3465).
 -compile({inline,yeccpars2_180_/1}).
--file("priv/maxhml_parser.yrl", 183).
+-file("priv/maxhml_parser.yrl", 162).
 yeccpars2_180_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3472,7 +3472,7 @@ yeccpars2_180_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_186_/1}).
--file("priv/maxhml_parser.yrl", 189).
+-file("priv/maxhml_parser.yrl", 168).
 yeccpars2_186_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3480,7 +3480,7 @@ yeccpars2_186_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_187_/1}).
--file("priv/maxhml_parser.yrl", 190).
+-file("priv/maxhml_parser.yrl", 169).
 yeccpars2_187_(__Stack0) ->
  [__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3489,7 +3489,7 @@ yeccpars2_187_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3490).
 -compile({inline,yeccpars2_190_/1}).
--file("priv/maxhml_parser.yrl", 173).
+-file("priv/maxhml_parser.yrl", 152).
 yeccpars2_190_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3498,7 +3498,7 @@ yeccpars2_190_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3499).
 -compile({inline,yeccpars2_193_/1}).
--file("priv/maxhml_parser.yrl", 179).
+-file("priv/maxhml_parser.yrl", 158).
 yeccpars2_193_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3507,7 +3507,7 @@ yeccpars2_193_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3508).
 -compile({inline,yeccpars2_194_/1}).
--file("priv/maxhml_parser.yrl", 186).
+-file("priv/maxhml_parser.yrl", 165).
 yeccpars2_194_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3516,7 +3516,7 @@ yeccpars2_194_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3517).
 -compile({inline,yeccpars2_196_/1}).
--file("priv/maxhml_parser.yrl", 169).
+-file("priv/maxhml_parser.yrl", 148).
 yeccpars2_196_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3524,7 +3524,7 @@ yeccpars2_196_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_198_/1}).
--file("priv/maxhml_parser.yrl", 379).
+-file("priv/maxhml_parser.yrl", 323).
 yeccpars2_198_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3532,7 +3532,7 @@ yeccpars2_198_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_200_/1}).
--file("priv/maxhml_parser.yrl", 380).
+-file("priv/maxhml_parser.yrl", 324).
 yeccpars2_200_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3541,7 +3541,7 @@ yeccpars2_200_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3542).
 -compile({inline,yeccpars2_201_/1}).
--file("priv/maxhml_parser.yrl", 170).
+-file("priv/maxhml_parser.yrl", 149).
 yeccpars2_201_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3550,7 +3550,7 @@ yeccpars2_201_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3551).
 -compile({inline,yeccpars2_203_/1}).
--file("priv/maxhml_parser.yrl", 153).
+-file("priv/maxhml_parser.yrl", 130).
 yeccpars2_203_(__Stack0) ->
  [__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3559,7 +3559,7 @@ yeccpars2_203_(__Stack0) ->
 
 -file("src/monitoring/maxhml_parser.erl", 3560).
 -compile({inline,yeccpars2_206_/1}).
--file("priv/maxhml_parser.yrl", 152).
+-file("priv/maxhml_parser.yrl", 129).
 yeccpars2_206_(__Stack0) ->
  [__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3567,7 +3567,7 @@ yeccpars2_206_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_208_/1}).
--file("priv/maxhml_parser.yrl", 162).
+-file("priv/maxhml_parser.yrl", 139).
 yeccpars2_208_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3575,4 +3575,4 @@ yeccpars2_208_(__Stack0) ->
   end | __Stack].
 
 
--file("priv/maxhml_parser.yrl", 478).
+-file("priv/maxhml_parser.yrl", 422).

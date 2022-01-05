@@ -29,9 +29,6 @@ Nonterminals
 forms form act pat mfargs
 maxhml_expr maxhml_fact maxhml_term
 
-%%expr_ fact_ term_ pri_
-
-
 %%% Erlang non-terminals.
 
 % Clauses.
@@ -97,7 +94,6 @@ char integer float atom string var.
 
 Rootsymbol maxhml_expr.
 %%Rootsymbol forms.
-%%Rootsymbol expr_.
 
 %%% ----------------------------------------------------------------------------
 %%% Erlang process monitor attachment grammar definition.
@@ -118,58 +114,41 @@ form -> 'with' mfargs monitor maxhml_expr    : {form, ?anno('$1'), '$2', '$4'}.
 %%% ----------------------------------------------------------------------------
 
 %%% Maximal HML productions. Ambiguity from the grammar is removed by
-%%% reformulating it into a left-recursive grammar whereby conjunctions
-%%% associate to the left. Bracketed expressions overrides this default left
-%%% association. See the links below on how to refactor grammars to deal with
-%%% ambiguity in terms of associativity and operator precedence.
+%%% reformulating it into a left-recursive grammar whereby disjunctions and
+%%% conjunctions associate to the left. Bracketed expressions overrides this
+%%% default left association. See the links below on how to refactor grammars to
+%%% deal with ambiguity in terms of associativity and operator precedence.
 %%% * https://www.geeksforgeeks.org/
 %%%   removal-of-ambiguity-converting-an-ambiguos-grammar-into-unambiguos-grammar
 %%% * http://homepage.divms.uiowa.edu/~jones/compiler/spring13/notes/10.shtml
 %%% * https://opendsa-server.cs.vt.edu/OpenDSA/Books/PL/html/Grammars3.html
 
-
-
-
-%% WORKS GOOD!
-% 1 + 2 + 3
-%%expr_ -> expr_ '+' term_ : {add, '$1', '$3'}.
-%%expr_ -> term_ : '$1'.
-%%
-%%term_ -> term_ '*' fact_ : {mul, '$1', '$3'}.
-%%term_ -> fact_ : '$1'.
-%%
-%%fact_ -> pri_ : {pri, '$1'}.
-%%fact_ -> '(' expr ')' : '$1'.
-%%
-%%pri_ -> integer : '$1'.
-
-
-
-
-maxhml_expr -> maxhml_expr 'or' maxhml_term : {'or', ?anno('$1'), '$1', '$3'}.
-maxhml_expr -> maxhml_term : '$1'.
-
-maxhml_term -> maxhml_term 'and' maxhml_fact : {'and', ?anno('$1'), '$1', '$3'}.
-maxhml_term -> maxhml_fact : '$1'.
+% Left-associative disjunction and conjunction.
+maxhml_expr -> maxhml_expr 'or' maxhml_term   : {'or', ?anno('$1'), '$1', '$3'}.
+maxhml_expr -> maxhml_term                    : '$1'.
+maxhml_term -> maxhml_term 'and' maxhml_fact  : {'and', ?anno('$1'), '$1', '$3'}.
+maxhml_term -> maxhml_fact                    : '$1'.
 
 % Modal possibility and necessity.
-maxhml_fact -> '<' act '>' maxhml_fact          : {pos, ?anno('$1'), '$2', '$4'}.
-maxhml_fact -> '[' act ']' maxhml_fact          : {nec, ?anno('$1'), '$2', '$4'}.
+maxhml_fact -> '<' act '>' maxhml_fact        : {pos, ?anno('$1'), '$2', '$4'}.
+maxhml_fact -> '[' act ']' maxhml_fact        : {nec, ?anno('$1'), '$2', '$4'}.
 
 % Maximal fix-point.
-maxhml_fact -> max '(' var '.' maxhml_expr ')'   : {max, ?anno('$1'), '$3', '$5'}.
+maxhml_fact -> 'max' '(' var '.' maxhml_expr ')'  : {max, ?anno('$1'), '$3', '$5'}.
 
 % Truth, falsity, recursive variables and bracketing.
-maxhml_fact -> 'ff'                         : '$1'.
-maxhml_fact -> 'tt'                         : '$1'.
-maxhml_fact -> var                          : '$1'.
-maxhml_fact -> '(' maxhml_expr ')' : '$2'.
+maxhml_fact -> 'ff'                           : '$1'.
+maxhml_fact -> 'tt'                           : '$1'.
+maxhml_fact -> var                            : '$1'.
+maxhml_fact -> '(' maxhml_expr ')'            : '$2'.
 
-%%% Data extensions comprised of symbolic actions and process action patterns.
-%%% Process action patterns include send, receive, fork, initialise and
-%%% termination.
+%%% Data extensions with symbolic action pairs comprised of process action
+%%% patterns and decidable constraints. Four process action patterns are
+%%% supported: send, receive, fork, initialisation and termination. The
+%%% constraint language corresponds to the language used in Erlang guards.
 
-% Symbolic actions.
+% Symbolic actions. Constraints (guards) in symbolic actions are optional, and
+% internally interpreted as true when omitted.
 act -> '{' pat '}'                      : {act, ?anno('$1'), '$2', []}.
 act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
 
@@ -180,11 +159,11 @@ pat -> var ':' var '!' exprs            : {send, ?anno('$1'), '$1', '$3', '$5'}.
 pat -> var '?' exprs                    : {recv, ?anno('$1'), '$1', '$3'}.
 
 % Process forking pattern. Process in var_1 forked child in var_2 via MFArgs.
-pat -> var '->' var ',' mfargs          : {fork, ?anno('$1'), '$1', '$3', '$5'}. % consider changing , to 'using'
+pat -> var '->' var 'with' mfargs       : {fork, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process initialization pattern. Child in var_2 was forked by process in var_1
 % via MFArgs.
-pat -> var '<-' var ',' mfargs          : {init, ?anno('$1'), '$3', '$1', '$5'}.
+pat -> var '<-' var 'with' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
 
 % Process termination pattern. Process in var_1 exited with specified reason.
 pat -> var '**' exprs                   : {exit, ?anno('$1'), '$1', '$3'}.
@@ -192,41 +171,6 @@ pat -> var '**' exprs                   : {exit, ?anno('$1'), '$1', '$3'}.
 % MFArgs.
 mfargs -> atom ':' atom '(' ')'         : build_mfa('$1', '$3', []).
 mfargs -> atom ':' atom '(' exprs ')'   : build_mfa('$1', '$3', '$5').
-
-
-
-
-
-
-%%% Process actions. In addition to message sending and receiving, process
-%%% forking, initialization and termination, custom user-defined actions are
-%%% also permitted.
-
-% Process sending. The process in var_1 sent a message to the process in var_2.
-%%act -> var ':' var '!' exprs clause_guard : {send, ?anno('$1'), '$1', '$3', '$5'}.
-
-% Process receiving. The process in var_1 received a message.
-%%act -> var '?' exprs clause_guard         : {recv, ?anno('$1'), '$1', '$3', '$4'}.
-
-% Process forking. The process in var_1 forked the child in var_2 via MFA.
-%%act -> var '->' var ',' mfa                   : {fork, ?anno('$1'), '$1', '$3', '$5'}.
-
-% Process initialization. The process in var_2 was forked by the process in
-% var_1 via MFA.
-%%act -> var '<-' var ',' mfa                   : {init, ?anno('$1'), '$3', '$1', '$5'}.
-
-% Process termination. The process in var_1 exited with the specified reason.
-%%act -> var '**' exprs clause_guard                        : {exit, ?anno('$1'), '$1', '$3'}.
-
-% User-defined action. The clause can be any legal Erlang clause.
-%%act -> clause                                 : {user, ?anno('$1'), '$1'}.
-
-
-%%% MFArgs: Module:function(Args)
-%%mfa -> atom ':' atom '(' ')'                      : build_mfargs('$1', '$3', [], []).
-%%mfa -> atom ':' atom '(' exprs ')' clause_guard   : build_mfargs('$1', '$3', '$5', '$7').
-
-
 
 
 %%% ----------------------------------------------------------------------------

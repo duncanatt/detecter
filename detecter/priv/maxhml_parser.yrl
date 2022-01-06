@@ -28,6 +28,7 @@ Nonterminals
 %%% Maximal HML non-terminals.
 forms form act pat mfargs
 maxhml_expr maxhml_fact maxhml_term
+mfargs_sel
 
 %%% Erlang non-terminals.
 
@@ -59,9 +60,9 @@ prefix_op mult_op add_op list_op comp_op.
 
 Terminals
 
-%%% Max HML terminals.
-ff tt max
-with 'when' monitor
+%%% maxHML and formula sequences terminals.
+'ff' 'tt' 'max'
+'with' 'when' 'check'
 
 %%% Erlang terminals.
 
@@ -92,19 +93,25 @@ with 'when' monitor
 % Atomic data types.
 char integer float atom string var.
 
-Rootsymbol maxhml_expr.
-%%Rootsymbol forms.
+%%Rootsymbol maxhml_expr.
+Rootsymbol forms.
+
 
 %%% ----------------------------------------------------------------------------
-%%% Erlang process monitor attachment grammar definition.
+%%% maxHML formula sequences.
 %%% ----------------------------------------------------------------------------
 
-% Formula sequence.
+% Formula lists.
 forms -> form '.'                       : ['$1'].
 forms -> form ',' forms                 : ['$1' | '$3'].
 
-% Process monitor attachment.
-form -> 'with' mfargs monitor maxhml_expr    : {form, ?anno('$1'), '$2', '$4'}.
+% Designating the process MFArgs on which the maxHML formula is to be checked.
+% Formulae are interpreted w.r.t. to the traces exhibited by the process forked
+% using MFArgs.
+form -> 'with' mfargs_sel 'check' maxhml_expr : {form, ?anno('$1'), '$2', '$4'}.
+mfargs_sel -> mfargs : {sel, ?anno('$1'), '$1', []}.
+mfargs_sel -> mfargs 'when' guard : {sel, ?anno('$1'), '$1', '$3'}.
+
 
 %%% ----------------------------------------------------------------------------
 %%% Maximal HML grammar definition.
@@ -153,10 +160,11 @@ act -> '{' pat '}'                      : {act, ?anno('$1'), '$2', []}.
 act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
 
 % Process sending pattern. Process in var_1 sent a message to process in var_2.
-pat -> var ':' var '!' exprs            : {send, ?anno('$1'), '$1', '$3', '$5'}.
+pat -> var ':' var '!' var              : {send, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process receiving pattern. Process in var_1 receives message.
-pat -> var '?' exprs                    : {recv, ?anno('$1'), '$1', '$3'}.
+%%pat -> var '?' expr                    : {recv, ?anno('$1'), '$1', '$3'}.
+pat -> var '?' var                      : {recv, ?anno('$1'), '$1', '$3'}.
 
 % Process forking pattern. Process in var_1 forked child in var_2 via MFArgs.
 pat -> var '->' var 'with' mfargs       : {fork, ?anno('$1'), '$1', '$3', '$5'}.
@@ -166,11 +174,23 @@ pat -> var '->' var 'with' mfargs       : {fork, ?anno('$1'), '$1', '$3', '$5'}.
 pat -> var '<-' var 'with' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
 
 % Process termination pattern. Process in var_1 exited with specified reason.
-pat -> var '**' exprs                   : {exit, ?anno('$1'), '$1', '$3'}.
+pat -> var '**' var                     : {exit, ?anno('$1'), '$1', '$3'}.
 
 % MFArgs.
-mfargs -> atom ':' atom '(' ')'         : build_mfa('$1', '$3', []).
-mfargs -> atom ':' atom '(' exprs ')'   : build_mfa('$1', '$3', '$5').
+%%mfargs -> atom ':' atom '(' ')'         : build_mfa('$1', '$3', []).
+%%mfargs -> atom ':' atom '(' exprs ')'   : build_mfa('$1', '$3', '$5').
+
+mfargs -> atom ':' atom '(' ')'         : build_mfargs('$1', '$3', []).
+%%mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').
+mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').
+% The argument list exprs should eventually be changed to a list of variables,
+% because exprs lets us create argument patterns such as [A + 10, B > 2], which
+% is illegal in Erlang, as these are invalid patterns.
+
+
+
+%%mfa -> atom ':' atom '(' ')'                      : build_mfa('$1', '$3', [], []).
+%%mfa -> atom ':' atom '(' exprs ')' clause_guard   : build_mfa('$1', '$3', '$5', '$7').
 
 
 %%% ----------------------------------------------------------------------------
@@ -403,19 +423,28 @@ Erlang code.
   end).
 
 %% Builds the MFArgs AST node.
-build_mfargs(Mod, Fun, [], []) ->
-{mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), 0, {clause, ?anno(Mod), [], [], []}};
-build_mfargs(Mod, Fun, Exprs, ClauseGuard) when is_list(Exprs) ->
-Arity = length(Exprs),
-{mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), Arity,
-  {clause, ?anno(hd(Exprs)), Exprs, ClauseGuard, []}}.
+%%build_mfargs(Mod, Fun, [], []) ->
+%%{mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), 0, {clause, ?anno(Mod), [], [], []}};
+%%build_mfargs(Mod, Fun, Exprs, ClauseGuard) when is_list(Exprs) ->
+%%Arity = length(Exprs),
+%%{mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), Arity,
+%%  {clause, ?anno(hd(Exprs)), Exprs, ClauseGuard, []}}.
+
+
+%%build_mfargs(Mod, Fun, []) ->
+%%  {mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), []};
+build_mfargs(Mod, Fun, Exprs) when is_list(Exprs) ->
+  {mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), Exprs}.
 
 
 
-build_mfa(Mod, Fun, Args) when is_list(Args) ->
-  {mfa, ?anno(Mod), ?name(Mod), ?name(Fun), length(Args)}.
+%%build_mfa(Mod, Fun, Args) when is_list(Args) ->
+%%  {mfa, ?anno(Mod), ?name(Mod), ?name(Fun), length(Args)}.
 
 %% TODO:
 %%build_clause(Exprs, ClauseGuard) ->
 %%  {clause, ?anno(hd(Exprs)), Exprs, ClauseGuard, []}}.
 
+
+%%build_clause(Exprs, Guard) when is_list(Exprs), is_list(Guard) ->
+%%  {clause, ?anno(hd(Exprs)), Exprs, Guard, []}.

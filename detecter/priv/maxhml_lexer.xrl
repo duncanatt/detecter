@@ -140,11 +140,11 @@ Erlang code.
 
 %%% Keywords.
 is_keyword('when') -> true;
-is_keyword(with) -> true;
-is_keyword(monitor) -> true;
+is_keyword('with') -> true;
+is_keyword('check') -> true;
 
-is_keyword(tt) -> true;
-is_keyword(ff) -> true;
-is_keyword(max) -> true;
+is_keyword('tt') -> true;
+is_keyword('ff') -> true;
+is_keyword('max') -> true;
 
 is_keyword(_) -> false.

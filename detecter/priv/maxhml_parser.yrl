@@ -176,27 +176,19 @@ pat -> var '<-' var 'with' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
 % Process termination pattern. Process in var_1 exited with specified reason.
 pat -> var '**' var                     : {exit, ?anno('$1'), '$1', '$3'}.
 
-% MFArgs.
-%%mfargs -> atom ':' atom '(' ')'         : build_mfa('$1', '$3', []).
-%%mfargs -> atom ':' atom '(' exprs ')'   : build_mfa('$1', '$3', '$5').
-
 mfargs -> atom ':' atom '(' ')'         : build_mfargs('$1', '$3', []).
-%%mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').
 mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').
-% The argument list exprs should eventually be changed to a list of variables,
-% because exprs lets us create argument patterns such as [A + 10, B > 2], which
-% is illegal in Erlang, as these are invalid patterns.
-
-
-
-%%mfa -> atom ':' atom '(' ')'                      : build_mfa('$1', '$3', [], []).
-%%mfa -> atom ':' atom '(' exprs ')' clause_guard   : build_mfa('$1', '$3', '$5', '$7').
+% TODO: The MFArgs argument list 'exprs' is incorrect: this should be a pattern
+% TODO: consisting of just a list of variables. With this current definition,
+% TODO: one may be able to create argument patterns such as [A + 10], which is
+% TODO: clearly an illegal pattern in Erlang.
 
 
 %%% ----------------------------------------------------------------------------
 %%% Erlang grammar definition.
 %%% ----------------------------------------------------------------------------
 
+% TODO: Remove this once we are finished.
 %%% Clauses.
 
 %% TODO: This is key to process the erlang code and latch it onto its internal parsing mechanism.

@@ -270,22 +270,24 @@ mon_tau() ->
             begin
               ?TRACE("rec (x. (a,a=:=2.no + a,a=/=2.yes) * x)"),
               fun X() ->
-                ?TRACE("(a,a=:=2.no + a,a=/=2.yes) * x"),
-                {'and',
-                  fun(A) when A =:= 2 ->
-                    ?TRACE("a,~w=:=2.no", [A]),
-                    no;
-                    (_A) ->
-                      ?TRACE("a,~w=/=2.yes", [_A]),
-                      yes
-                  end,
-                  {rec,
-                    begin
-                      ?TRACE("x"),
-                      X
-                    end
+                begin
+                  ?TRACE("(a,a=:=2.no + a,a=/=2.yes) * x"),
+                  {'and',
+                    {fun(A) when A =:= 2 ->
+                      ?TRACE("a,~w=:=2.no", [A]),
+                      no;
+                      (_A) ->
+                        ?TRACE("a,~w=/=2.yes", [_A]),
+                        yes
+                     end,
+                      {rec,
+                        begin
+                          ?TRACE("x"),
+                          X
+                        end
+                      }}
                   }
-                }
+                end
               end
             end}}
       }
@@ -513,19 +515,23 @@ rule(Act, M) when is_function(M) ->
 % Axioms.
 sem(Act, Red = {'and', {yes, M}}) ->
   ?INFO(":: Applying axiom mConYL on: ~p.", [Red]),
-  {Act, M};
+  % Action not consumed.
+  {tau, M};
 
 sem(Act, Red = {'and', {no, M}}) ->
   ?INFO(":: Applying axiom mConNL on: ~p.", [Red]),
-  {Act, no};
+  % Action not consumed.
+  {tau, no};
 
 sem(Act, Red = {rec, M}) ->
   ?INFO(":: Applying axiom mRec on: ~p.", [Red]),
-  {Act, M()};
+  % Action not consumed.
+  {tau, M()};
 
 sem(_, V) when V =:= yes; V =:= no ->
   ?INFO(":: Applying axiom mVer on ~p.", [V]),
-  V; % Act is discarded in this case.
+  % Action not consumed.
+  {tau, V};
 
 % Rules.
 % TAUL and TAUR.
@@ -537,23 +543,69 @@ sem(_, V) when V =:= yes; V =:= no ->
 sem(Act, Red = {Op, {M, N}}) when is_function(M, 1), is_function(N, 1) ->
   ?INFO(":: Applying rule mPar on ~p.", [Red]),
 
-  {Op, {sem(Act, M), sem(Act, N)}};
+  % Action consumed.
+  {act, {Op, {sem(Act, M), sem(Act, N)}}};
 
 
-sem(Act, {Op, {{rec, M}, N}}) ->
+% I know I need to unfold a recursion before getting to the subformula within.
+% Note that this might be a function or an and/or.
+sem(Act, Red = {Op, {M = {rec, _}, N}}) ->
+  ?INFO(":: Applying rule mTauL (rec) on ~p to reduce ~p.", [Red, M]),
 
   % I know for sure that this results in a tau.
-%%  {Act, } = sem()
-  ok;
+  % Action not consumed.
 
-sem(Act, {Op, {M, N}}) ->
+  % TODO: Since I know it's a tau, I might as well which rule to apply? Namely mREC? We'll see.
 
-  ok;
+  % Unfold monitor.
+  {tau, MPrime} = sem(Act, M),
+  {tau, {Op, {MPrime, N}}};
+
+sem(Act, Red = {Op, {M, N = {rec, _}}}) ->
+  ?INFO(":: Applying rule mTauR (rec) on ~p to reduce ~p.", [Red, N]),
+
+  % Unfold monitor.
+  {tau, NPrime} = sem(Act, N),
+  {tau, {Op, {M, NPrime}}};
+
+sem(Act, Red = {Op, {M = {Op2, _}, N}}) ->
+  ?INFO(":: Applying rule mTauL (~p) on ~p to reduce ~p.", [Op2, Red, M]),
+
+  % Unfold monitor.
+  {tau, MPrime} = sem(Act, M),
+  {tau, {Op, {MPrime, N}}};
+
+sem(Act, Red = {Op, {M, N = {Op2, _}}}) ->
+  ?INFO(":: Applying rule mTauR (~p) on ~p to reduce ~p.", [Op2, Red, N]),
+
+  % Unfold monitor.
+  {tau, NPrime} = sem(Act, N),
+  {tau, {Op, {M, NPrime}}};
+
+
+%%sem(Act, Red = {Op, {M, N}}) ->
+%%  ?INFO(":: Applying rule mTauR??? on ~p.", [Red]),
+  % TODO: There might be another way to encode this. If M and N are anything BUT
+  % functions, then I need to apply sem to reduce them. I apply first the left
+  % reduction and then the right reduction? Hmm will have to think about it, but
+  % its a step in the right direction.
+  % I can also have something in the rule evaluation that reapplies rules until
+  % alpha is consumed to track the unfolding depth for unbounded recursion that
+  % comes from unguarded variables.
+%%  ok;
 
 sem(Act, M) when is_function(M, 1) ->
   ?INFO(":: Applying rule mAct on ~p.", [M]),
   % This includes the automatic external choice by virtue of guards.
-  M(Act).
+  % Action consumed.
+  {act, M(Act)}.
+
+
+% The extra patterns when we have and's and ors is because we need to
+% intelligently select which rule to apply. As it were, I am encoding the choice
+% making skills when it comes to "which rule to apply" directly in code, so that
+% the selection of which rule to apply to reduce is deterministic: there is only
+% one rule to apply to reduce by one step.
 
 
 %%% ----------------------------------------------------------------------------

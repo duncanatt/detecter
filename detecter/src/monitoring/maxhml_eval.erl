@@ -158,6 +158,7 @@ compile_opts(Opts) ->
 %%% Private AST manipulation functions.
 %%% ----------------------------------------------------------------------------
 
+% TODO: Implement check for unguarded variables
 
 create_module(Ast, MonFun, Module, Opts) ->
 
@@ -179,7 +180,7 @@ create_module(Ast, MonFun, Module, Opts) ->
     erl_syntax:function(erl_syntax:atom(MonFun), visit_forms(Ast, Opts))
   ]).
 
-%% @private Visits SHMLnf formula nodes and generates the corresponding syntax
+%% @private Visits maxHML formula nodes and generates the corresponding syntax
 %% tree describing one monitor (i.e. one formula is mapped to one monitor).
 
 visit_forms([], Opts) ->
@@ -235,7 +236,7 @@ visit_node(_Node = {max, _, Var = {var, _, _}, Phi}, Opts) ->
 visit_node(_Node = {'or', _, Phi, Psi}, Opts) ->
   ?TRACE("Visiting 'or' node ~p.", [_Node]),
 
-  
+
 
 
   ok;

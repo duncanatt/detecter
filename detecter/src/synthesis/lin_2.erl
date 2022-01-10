@@ -191,6 +191,51 @@ rule(Act, M) when is_function(M, 1) ->
   M(Act).
 
 
+% Assumes that M is already a monitor.
+analyze(Act, M) ->
+
+  ?INFO("New input monitor: ~p.", [M]),
+
+  Red = rule(Act, M),
+  ?INFO("Reduced monitor: ~p.", [Red]),
+  case Red of
+    {tau, V} when V =:= yes; V =:= no ->
+
+      % Ensures that we do not have an infinite loop on the verdict state.
+      ?INFO("Monitoring verdict reached: ~p.", [V]),
+      V;
+
+    {tau, M_} ->
+      % Monitor was reduced by one or more tau transitions and action was not
+      % analysed. Reapply analysis to new monitor reduction.
+
+      analyze(Act, M_);
+
+    Mon = {_, V, _} when V =:= yes; V =:= no ->
+      io:format(">> Reached verdict state and advancing automatically~n"),
+      analyze(Act, Mon);
+
+    M_ ->
+      % Monitor was reduced an action was analysed.
+      io:format(">> Normal monitor returned~n"),
+      M_
+  end.
+
+
+% TODO: Try a monitor with an unguarded variable, which should loop forever.
+
+% TODO: Reduce the monitor until the next action needs to be consumed. We do this
+% TODO: by taking into account verdict states in ands and ors.
+
+% TODO: Test whether we need the rules for conjunctions and disjunctions where
+% TODO: the verdict is on the RHS, rather than on the LHS. One example would be
+% TODO:
+
+% TODO: Improve the analyze function so that we have one rule TauL and TauR in
+% TODO: rules, and then we know when to apply it in the analyse function. So the
+% TODO: 'intelligence' as to what reduction rule to apply should be encoded in
+% TODO: the analyze function. Might as well name it derive(Act, Mon)? Could be.
+
 %%% ----------------------------------------------------------------------------
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------

@@ -363,31 +363,68 @@ can_tau(_) ->
 
 
 
-unwind(M, PdLst) ->
+%%unwind(M, PdLst) ->
+%%  case can_tau(M) of
+%%    true ->
+%%      {Pd, M_} = rule(tau, M),
+%%      unwind(M_, [Pd | PdLst]);
+%%    false ->
+%%      {PdLst, M}
+%%  end.
+
+
+% Returns: {PdLst, M_}
+reduce(M, PdLst) ->
   case can_tau(M) of
     true ->
+
+      % Monitor can reduce internally via one or more tau transitions. Axioms
+      % reduce the monitor by one step; rules recursively apply reductions until
+      % an axiom is reached. Applying the rule results in a full proof
+      % derivation.
       {Pd, M_} = rule(tau, M),
-      unwind(M_, [Pd | PdLst]);
+
+      % The resulting monitor may not necessarily be in a state that it is able
+      % to analyse a concrete action yet. Try reducing further.
+      reduce(M_, [Pd | PdLst]);
+
     false ->
+
+      % Monitor cannot reduce further via tau transitions.
       {PdLst, M}
   end.
 
 
+% M = {chs, _, _}
+% M = {par, _, _}
+% M = fun
 analyze(Act, M, PdLst) ->
 
-  % Later we can assume that the monitor is unwound.
+  % Assume that monitor is reduced and ready to analyse an action.
+  % Assert something.
 
-  % Can tau? if Yes. first tau.
-  {PdLst1, M1} = unwind(M, PdLst),
-  if M =:= M1 ->
-    ?INFO(">> There is nothing to unwind in M!")
-  end,
+  % Analyze action.
+  {Pd, M_} = rule(Act, M),
 
-  % Monitor is unwound on taus. Now it analyze the action.
-  {Pd, M2} = rule(Act, M1),
+  % Reduce monitor state to one where it is ready to analyse the next action.
+  reduce(M_, [Pd | PdLst]).
 
-  % Unwind again.
-  unwind(M2, [Pd | PdLst1]).
+
+%%analyze2(Act, M, PdLst) ->
+%%
+%%  % Later we can assume that the monitor is unwound.
+%%
+%%  % Can tau? if Yes. first tau.
+%%  {PdLst1, M1} = unwind(M, PdLst),
+%%  if M =:= M1 ->
+%%    ?INFO(">> There is nothing to unwind in M!")
+%%  end,
+%%
+%%  % Monitor is unwound on taus. Now it analyze the action.
+%%  {Pd, M2} = rule(Act, M1),
+%%
+%%  % Unwind again.
+%%  unwind(M2, [Pd | PdLst1]).
 
 
 % Ensures that the monitor is always in a state ready to analyse the next

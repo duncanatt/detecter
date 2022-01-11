@@ -56,6 +56,11 @@
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
+% TODO: Consider also extracting out the CHS rules. I think this is the only bit
+% TODO: that remains so that we can fully separate the monitor syntax from the
+% TODO: semantics.
+
+% TODO: Inside the monitor string description, we need to add the values that
 % No two adjacent actions are this same. This has one recursive variable which
 % is not preceded by a box, but it is guarded nevertheless. The formula is as
 % follows:
@@ -98,11 +103,6 @@ m1() ->
     end
   }.
 
-% TODO: Consider also extracting out the CHS rules. I think this is the only bit
-% TODO: that remains so that we can fully separate the monitor syntax from the
-% TODO: semantics.
-
-% TODO: Inside the monitor string description, we need to add the values that
 % TODO: have been assigned to variables.
 
 % Axioms.

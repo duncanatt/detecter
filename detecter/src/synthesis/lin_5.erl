@@ -103,6 +103,46 @@ m1() ->
     end
   }.
 
+m2() ->
+  {ok,
+    {'and',
+      {'and',
+        fun(A) ->
+          ?TRACE("M1: Analyzing a(~p).", [A]),
+          fun(B) ->
+            ?TRACE("M1: Analyzing b(~p).", [A]),
+            no;
+            (_) ->
+              yes
+          end;
+          (_) ->
+            yes
+        end,
+        fun(A) ->
+          ?TRACE("M2: Analyzing a(~p).", [A]),
+          fun(B) ->
+            ?TRACE("M2: Analyzing b(~p).", [A]),
+            no;
+            (_) ->
+              yes
+          end;
+          (_) ->
+            yes
+        end},
+      fun(A) ->
+        ?TRACE("M3: Analyzing a(~p).", [A]),
+        fun(B) ->
+          ?TRACE("M3: Analyzing b(~p).", [A]),
+          no;
+          (_) ->
+            yes
+        end;
+        (_) ->
+          yes
+      end
+    }
+  }.
+
 
 %%% Axioms.
 %%rule(_, R = {'and', yes, M}) ->
@@ -207,6 +247,7 @@ m1() ->
 % to the end of the derivation.
 
 
+% Add the symmetric cases of and with verdicts yes and no.
 % Axioms.
 rule(tau, R = {'and', yes, M}) ->
   ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
@@ -251,19 +292,19 @@ rule(Act, M) when is_function(M, 1) ->
   {mAct, M(Act)};
 
 % TODO: Must be tau.
-rule(Act = tau, R = {Op, M = {Op2, _, _}, N}) ->
-  ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op2, R, M]),
-
-  % Rule mTauL.
-  {Rule, M_} = rule(Act, M),
-  {{mTauL, Rule}, {Op, M_, N}};
-
-rule(Act = tau, R = {Op, M, N = {Op2, _, _}}) ->
-  ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op2, R, N]),
-
-  % Rule mTauR.
-  {Rule, N_} = rule(Act, N),
-  {{mTauR, Rule}, {Op, M, N_}};
+%%rule(Act = tau, R = {Op, M = {Op2, _, _}, N}) ->
+%%  ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op2, R, M]),
+%%
+%%  % Rule mTauL.
+%%  {Rule, M_} = rule(Act, M),
+%%  {{mTauL, Rule}, {Op, M_, N}};
+%%
+%%rule(Act = tau, R = {Op, M, N = {Op2, _, _}}) ->
+%%  ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op2, R, N]),
+%%
+%%  % Rule mTauR.
+%%  {Rule, N_} = rule(Act, N),
+%%  {{mTauR, Rule}, {Op, M, N_}};
 
 rule(Act = tau, R = {Op, M = {rec, _}, N}) ->
   ?DEBUG(":: Applying rule mTauL (rec) on monitor ~p to reduce ~p.", [R, M]),
@@ -288,70 +329,22 @@ rule(Act, R = {Op, M, N}) ->
   {{mPar, Rule1, Rule2}, {Op, M_, N_}}.
 
 
-derive(Act, M) ->
-
-  ?INFO("~n~nStarting new derivation: -------"),
-
-  case rule(Act, M) of
-
-    {Der = {Rule, M_}} when Rule =:= mChsL; Rule =:= mChsR ->
-
-      % Unary choice rules reducing via actions.
-      {act, {Der, M_}};
-
-    {Der = {Rule, M_}} when Rule =:= mTauL; Rule =:= mTauR ->
-
-      % Unary rules reducing vid taus.
-      {tau, {Der, M_}};
-
-    {Der = {mPar, _, _}, M_} ->
-
-      % Parallel transition reducing via actions.
-      {act, {Der, M_}};
-
-    {Der, M_} when Der =:= mVrd; Der =:= mAct ->
-
-      % Axioms reducing via actions.
-      {act, {Der, M_}};
-
-    {Der, M_} ->
-
-      % Axioms reducing via taus.
-      {tau, {Der, M_}}
-  end.
 
 
-% Q: How can we detect when a monitor can be unfolded?
-% A: By determining the current monitor state.
-% I should stop before unfolding the function that performs the analysis.
-% {rec, M} -> M()
-% {and, yes, M} -> M
-% {and, no, M} -> no
-% {or, yes, M} -> yes
-% {or, no, M} -> M
-%
-% {and, M = {_, _, _}, N} -> {and, M_, N}
+%%can_tau({'and', V, V_} when either of them is a verdict)
 
 
-%%unfold(M = {'and', V, _}) when V =:= yes; V =:= no ->
-%%  rule(tau, M, 0);
-%%unfold(M = {'or', V, _}) when V =:= yes; V =:= no ->
-%%  rule(tau, M, 0);
-%%unfold(M = {Op, {_, _, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
-%%  rule(tau, M, 0);
-%%unfold(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
-%%  rule(tau, M, 0);
-%%unfold(M = {rec, _}) ->
-%%  rule(tau, M, 0).
+% Expand these to make them explicit.
+
 
 can_tau(M = {'and', V, _}) when V =:= yes; V =:= no ->
   true;
 can_tau(M = {'or', V, _}) when V =:= yes; V =:= no ->
   true;
-can_tau(M = {Op, {_, _, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
-  true;
-can_tau(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
-  true;
+%%can_tau(M = {Op, {_, _, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
+%%  true;
+%%can_tau(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
+%%  true;
 can_tau(M = {Op, {rec, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
   true;
 can_tau(M = {Op, _, {rec, _}}) when Op =:= 'and'; Op =:= 'or' ->
@@ -360,17 +353,6 @@ can_tau(M = {rec, _}) ->
   true;
 can_tau(_) ->
   false.
-
-
-
-%%unwind(M, PdLst) ->
-%%  case can_tau(M) of
-%%    true ->
-%%      {Pd, M_} = rule(tau, M),
-%%      unwind(M_, [Pd | PdLst]);
-%%    false ->
-%%      {PdLst, M}
-%%  end.
 
 
 % Returns: {PdLst, M_}
@@ -408,128 +390,6 @@ analyze(Act, M, PdLst) ->
 
   % Reduce monitor state to one where it is ready to analyse the next action.
   reduce(M_, [Pd | PdLst]).
-
-
-%%analyze2(Act, M, PdLst) ->
-%%
-%%  % Later we can assume that the monitor is unwound.
-%%
-%%  % Can tau? if Yes. first tau.
-%%  {PdLst1, M1} = unwind(M, PdLst),
-%%  if M =:= M1 ->
-%%    ?INFO(">> There is nothing to unwind in M!")
-%%  end,
-%%
-%%  % Monitor is unwound on taus. Now it analyze the action.
-%%  {Pd, M2} = rule(Act, M1),
-%%
-%%  % Unwind again.
-%%  unwind(M2, [Pd | PdLst1]).
-
-
-% Ensures that the monitor is always in a state ready to analyse the next
-% action.
-% This deals with how actions are consumed. When we have taus, we must continue
-% unfolding the monitor until the action is consumed.
-%
-% We must also manually derive verdicts.
-%%analyze(Act, M, DerList) ->
-%%
-%%  ?INFO("----------- Input monitor: ~p.", [M]),
-%%  Ret = derive(Act, M),
-%%
-%%  ?INFO("----------- Return value after derivation: ~p.", [Ret]),
-%%
-%%%%  case derive(Act, M) of
-%%  case Ret of
-%%%%    {tau, {Der, V}} when V =:= yes; V =:= no ->
-%%    {act, {Der, V}} when V =:= yes; V =:= no ->
-%%      ?INFO("Monitoring verdict reached: ~p.", [V]),
-%%
-%%      % Ensures that once a verdict state is reached, the analysis stops.
-%%      {[Der | DerList], V};
-%%
-%%
-%%
-%%    {tau, {Der, M_}} ->
-%%      ?INFO("Reapplying analysis since action was not consumed."),
-%%
-%%      % Monitor reduced by one or more tau transitions, but the action was not
-%%      % analyzed by the monitor. Reapply analysis to new monitor reduction.
-%%      analyze(Act, M_, [Der | DerList]);
-%%
-%%%%    {act, {Der, M_ = {_, V, _}}} when V =:= yes; V =:= no ->
-%%
-%%%%      ?INFO("Reapplying analysis to advance monitor to a verdict."),
-%%
-%%    % Advances the monitor automatically to a state where it is ready to
-%%    % analyse the next action by reducing via one tau.
-%%%%      analyze('', M_, [Der | DerList]);
-%%    % Can use derive.
-%%%%      {tau, {Der__, M__}} = derive(Act, M_),
-%%%%      {[], };
-%%
-%%    {act, {Der, M_}} ->
-%%      ?INFO("Action analysed by monitor."),
-%%
-%%      % Monitor reduced by one action that was also analyzed by the monitor.
-%%      {[Der | DerList], M_}
-%%  end.
-
-% After an action, we need to reapply to check if there are taus that we can
-% unfold. To unfold, use the action atom 'tau'.
-
-% When given an action:
-% 1. Advance taus until you reach the action.
-% 2. Analyse the action.
-% 3. Advance taus until you reach the next action.
-
-%%anl(Act, M, DerList) ->
-%%
-%%  Ret = derive(Act, M),
-%%
-%%  case Ret of
-%%    {act, {Der, M_}} ->
-%%
-%%      % Advance monitor until we meet another action. Do we need a flag for
-%%      % this?
-%%
-%%
-%%      ok;
-%%    {tau, {Der, M_}} ->
-%%      ok
-%%  end.
-
-
-% Assumes that M is already a monitor.
-%%analyze(Act, M) ->
-%%
-%%  ?INFO("New input monitor: ~p.", [M]),
-%%
-%%  Red = rule(Act, M, 0),
-%%  ?INFO("Reduced monitor: ~p.", [Red]),
-%%  case Red of
-%%    {tau, V} when V =:= yes; V =:= no ->
-%%
-%%      % Ensures that we do not have an infinite loop on the verdict state.
-%%      ?INFO("Monitoring verdict reached: ~p.", [V]),
-%%      V;
-%%
-%%    {tau, M_} ->
-%%      % Monitor was reduced by one or more tau transitions and action was not
-%%      % analysed. Reapply analysis to new monitor reduction.
-%%
-%%      analyze(Act, M_);
-%%
-%%    Mon = {_, V, _} when V =:= yes; V =:= no ->
-%%      io:format(">> Reached verdict state and advancing automatically~n"),
-%%      analyze(Act, Mon);
-%%
-%%    M_ ->
-%%      % Monitor was reduced an action was analysed.
-%%      io:format(">> Normal monitor returned~n"),
-%%      M_
-%%  end.
 
 
 % TODO: Extract the "intelligence of applying the rules" from the rules to the

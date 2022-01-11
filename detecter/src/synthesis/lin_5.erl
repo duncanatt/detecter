@@ -199,84 +199,92 @@ m1() ->
 
 % Return value: {Derivation rules used as a tree, Monitor State}.
 
+% Input to rule function:
+% 1. Action to transition with
+% 2. Monitor.
+% Output: new monitor state and derivation tree.
+% Each application of a rule will ALWAYS lead me to a base case, and therefore,
+% to the end of the derivation.
+
+
 % Axioms.
-rule(_, R = {'and', yes, M}, _) ->
+rule(tau, R = {'and', yes, M}) ->
   ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
 
   % Axiom mConY.
   {mConY, M};
 
-rule(_, R = {'and', no, _}, _) ->
+rule(tau, R = {'and', no, _}) ->
   ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
 
   % Axiom mConN.
   {mConN, no};
 
-rule(_, R = {'or', yes, _}, _) ->
+rule(tau, R = {'or', yes, _}) ->
   ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
 
   % Axiom mDisY.
   {mDisY, yes};
 
-rule(_, R = {'or', no, M}, _) ->
+rule(tau, R = {'or', no, M}) ->
   ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
 
   % Axiom mDisN.
   {mDisN, M};
 
-rule(_, R = {rec, M}, _) ->
+rule(tau, R = {rec, M}) ->
   ?DEBUG(":: Applying axiom mRec on monitor ~p.", [R]),
 
   % Axiom mRec.
   {mRec, M()};
 
-rule(_, V, _) when V =:= yes; V =:= no ->
+rule(_, V) when V =:= yes; V =:= no ->
   ?DEBUG(":: Applying axiom mVrd on verdict ~p.", [V]),
 
   % Axiom mVrd.
   {mVrd, V};
 
-rule(Act, M, _) when is_function(M, 1) ->
+rule(Act, M) when is_function(M, 1) ->
   ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
 
   % Axiom mAct.
   {mAct, M(Act)};
 
 % TODO: Must be tau.
-rule(Act, R = {Op, M = {Op2, _, _}, N}, D) ->
+rule(Act = tau, R = {Op, M = {Op2, _, _}, N}) ->
   ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op2, R, M]),
 
   % Rule mTauL.
-  {Rule, M_} = rule(Act, M, D),
+  {Rule, M_} = rule(Act, M),
   {{mTauL, Rule}, {Op, M_, N}};
 
-rule(Act, R = {Op, M, N = {Op2, _, _}}, D) ->
+rule(Act = tau, R = {Op, M, N = {Op2, _, _}}) ->
   ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op2, R, N]),
 
   % Rule mTauR.
-  {Rule, N_} = rule(Act, N, D),
+  {Rule, N_} = rule(Act, N),
   {{mTauR, Rule}, {Op, M, N_}};
 
-rule(Act, R = {Op, M = {rec, _}, N}, D) ->
+rule(Act = tau, R = {Op, M = {rec, _}, N}) ->
   ?DEBUG(":: Applying rule mTauL (rec) on monitor ~p to reduce ~p.", [R, M]),
 
   % Rule mTauL.
-  {Rule, M_} = rule(Act, M, D),
+  {Rule, M_} = rule(Act, M),
   {{mTauL, Rule}, {Op, M_, N}};
 
-rule(Act, R = {Op, M, N = {rec, _}}, D) ->
+rule(Act = tau, R = {Op, M, N = {rec, _}}) ->
   ?DEBUG(":: Applying rule mTauR (rec) on monitor ~p to reduce ~p.", [R, N]),
 
   % Rule mTauR.
-  {Rule, N_} = rule(Act, N, D),
+  {Rule, N_} = rule(Act, N),
   {{mTauR, Rule}, {Op, M, N_}};
 
-rule(Act, R = {Op, M, N}, D) ->
+rule(Act, R = {Op, M, N}) ->
   ?DEBUG(":: Applying rule mPar on monitor ~p", [R]),
 
   % Rule mPar.
-  {Rule1, M_} = rule(Act, M, D),
-  {Rule2, N_} = rule(Act, N, D),
+  {Rule1, M_} = rule(Act, M),
+  {Rule2, N_} = rule(Act, N),
   {{mPar, Rule1, Rule2}, {Op, M_, N_}}.
 
 
@@ -284,7 +292,7 @@ derive(Act, M) ->
 
   ?INFO("~n~nStarting new derivation: -------"),
 
-  case rule(Act, M, 0) of
+  case rule(Act, M) of
 
     {Der = {Rule, M_}} when Rule =:= mChsL; Rule =:= mChsR ->
 
@@ -313,8 +321,73 @@ derive(Act, M) ->
   end.
 
 
+% Q: How can we detect when a monitor can be unfolded?
+% A: By determining the current monitor state.
+% I should stop before unfolding the function that performs the analysis.
+% {rec, M} -> M()
+% {and, yes, M} -> M
+% {and, no, M} -> no
+% {or, yes, M} -> yes
+% {or, no, M} -> M
+%
+% {and, M = {_, _, _}, N} -> {and, M_, N}
 
 
+%%unfold(M = {'and', V, _}) when V =:= yes; V =:= no ->
+%%  rule(tau, M, 0);
+%%unfold(M = {'or', V, _}) when V =:= yes; V =:= no ->
+%%  rule(tau, M, 0);
+%%unfold(M = {Op, {_, _, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
+%%  rule(tau, M, 0);
+%%unfold(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
+%%  rule(tau, M, 0);
+%%unfold(M = {rec, _}) ->
+%%  rule(tau, M, 0).
+
+can_tau(M = {'and', V, _}) when V =:= yes; V =:= no ->
+  true;
+can_tau(M = {'or', V, _}) when V =:= yes; V =:= no ->
+  true;
+can_tau(M = {Op, {_, _, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
+  true;
+can_tau(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
+  true;
+can_tau(M = {Op, {rec, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
+  true;
+can_tau(M = {Op, _, {rec, _}}) when Op =:= 'and'; Op =:= 'or' ->
+  true;
+can_tau(M = {rec, _}) ->
+  true;
+can_tau(_) ->
+  false.
+
+
+
+unwind(M, PdLst) ->
+  case can_tau(M) of
+    true ->
+      {Pd, M_} = rule(tau, M),
+      unwind(M_, [Pd | PdLst]);
+    false ->
+      {PdLst, M}
+  end.
+
+
+analyze(Act, M, PdLst) ->
+
+  % Later we can assume that the monitor is unwound.
+
+  % Can tau? if Yes. first tau.
+  {PdLst1, M1} = unwind(M, PdLst),
+  if M =:= M1 ->
+    ?INFO(">> There is nothing to unwind in M!")
+  end,
+
+  % Monitor is unwound on taus. Now it analyze the action.
+  {Pd, M2} = rule(Act, M1),
+
+  % Unwind again.
+  unwind(M2, [Pd | PdLst1]).
 
 
 % Ensures that the monitor is always in a state ready to analyse the next
@@ -323,48 +396,48 @@ derive(Act, M) ->
 % unfolding the monitor until the action is consumed.
 %
 % We must also manually derive verdicts.
-analyze(Act, M, DerList) ->
-
-  ?INFO("----------- Input monitor: ~p.", [M]),
-  Ret = derive(Act, M),
-
-  ?INFO("----------- Return value after derivation: ~p.", [Ret]),
-
-%%  case derive(Act, M) of
-  case Ret of
-%%    {tau, {Der, V}} when V =:= yes; V =:= no ->
-    {act, {Der, V}} when V =:= yes; V =:= no ->
-      ?INFO("Monitoring verdict reached: ~p.", [V]),
-
-      % Ensures that once a verdict state is reached, the analysis stops.
-      {[Der | DerList], V};
-
-
-
-    {tau, {Der, M_}} ->
-      ?INFO("Reapplying analysis since action was not consumed."),
-
-      % Monitor reduced by one or more tau transitions, but the action was not
-      % analyzed by the monitor. Reapply analysis to new monitor reduction.
-      analyze(Act, M_, [Der | DerList]);
-
-%%    {act, {Der, M_ = {_, V, _}}} when V =:= yes; V =:= no ->
-
-%%      ?INFO("Reapplying analysis to advance monitor to a verdict."),
-
-      % Advances the monitor automatically to a state where it is ready to
-      % analyse the next action by reducing via one tau.
-%%      analyze('', M_, [Der | DerList]);
-    % Can use derive.
-%%      {tau, {Der__, M__}} = derive(Act, M_),
-%%      {[], };
-
-    {act, {Der, M_}} ->
-      ?INFO("Action analysed by monitor."),
-
-      % Monitor reduced by one action that was also analyzed by the monitor.
-      {[Der | DerList], M_}
-  end.
+%%analyze(Act, M, DerList) ->
+%%
+%%  ?INFO("----------- Input monitor: ~p.", [M]),
+%%  Ret = derive(Act, M),
+%%
+%%  ?INFO("----------- Return value after derivation: ~p.", [Ret]),
+%%
+%%%%  case derive(Act, M) of
+%%  case Ret of
+%%%%    {tau, {Der, V}} when V =:= yes; V =:= no ->
+%%    {act, {Der, V}} when V =:= yes; V =:= no ->
+%%      ?INFO("Monitoring verdict reached: ~p.", [V]),
+%%
+%%      % Ensures that once a verdict state is reached, the analysis stops.
+%%      {[Der | DerList], V};
+%%
+%%
+%%
+%%    {tau, {Der, M_}} ->
+%%      ?INFO("Reapplying analysis since action was not consumed."),
+%%
+%%      % Monitor reduced by one or more tau transitions, but the action was not
+%%      % analyzed by the monitor. Reapply analysis to new monitor reduction.
+%%      analyze(Act, M_, [Der | DerList]);
+%%
+%%%%    {act, {Der, M_ = {_, V, _}}} when V =:= yes; V =:= no ->
+%%
+%%%%      ?INFO("Reapplying analysis to advance monitor to a verdict."),
+%%
+%%    % Advances the monitor automatically to a state where it is ready to
+%%    % analyse the next action by reducing via one tau.
+%%%%      analyze('', M_, [Der | DerList]);
+%%    % Can use derive.
+%%%%      {tau, {Der__, M__}} = derive(Act, M_),
+%%%%      {[], };
+%%
+%%    {act, {Der, M_}} ->
+%%      ?INFO("Action analysed by monitor."),
+%%
+%%      % Monitor reduced by one action that was also analyzed by the monitor.
+%%      {[Der | DerList], M_}
+%%  end.
 
 % After an action, we need to reapply to check if there are taus that we can
 % unfold. To unfold, use the action atom 'tau'.
@@ -389,10 +462,6 @@ analyze(Act, M, DerList) ->
 %%    {tau, {Der, M_}} ->
 %%      ok
 %%  end.
-
-
-
-
 
 
 % Assumes that M is already a monitor.

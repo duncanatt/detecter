@@ -282,37 +282,100 @@ m2() ->
 
 % Monitor for the property that all actions are unique.
 % max(X.[a,true](max(Y.[b,a=:=b]ff and [b,a=/=b]Y) and X))
+%%m3() ->
+%%  {ok,
+%%    {rec,
+%%      fun X() -> % max(X.
+%%        {chs,
+%%          fun(A) -> % [a,true]
+%%            {'and',
+%%              {rec,
+%%                fun Y() -> % max(Y.
+%%                  {'and',
+%%                    {chs,
+%%                      fun(B) when A =:= B -> % [b,a=:=b]
+%%                        no; % ff
+%%                        (_) -> % [b,a=/=b]
+%%                          yes % yes
+%%                      end},
+%%                    {chs,
+%%                      fun(B) when A =/= B -> % [b,a=/=b]
+%%                        {rec, Y}; % Y
+%%                        (_) -> % [b,a=:=b]
+%%                          yes % yes
+%%                      end}
+%%                  }
+%%                end}, % end max(Y)
+%%              {rec, X} % X
+%%            };
+%%            (_) -> % [a,false]
+%%              yes % yes
+%%          end}
+%%      end} % end max(X)
+%%  }.
 m3() ->
   {ok,
     {rec,
       fun X() -> % max(X.
         {chs,
-          fun(A) -> % [a,true]
-            {'and',
-              {rec,
-                fun Y() -> % max(Y.
-                  {'and',
-                    {chs,
-                      fun(B) when A =:= B -> % [b,a=:=b]
-                        no; % ff
-                        (_) -> % [b,a=/=b]
-                          yes % yes
-                      end},
-                    {chs,
-                      fun(B) when A =/= B -> % [b,a=/=b]
-                        {rec, Y}; % Y
-                        (_) -> % [b,a=:=b]
-                          yes % yes
-                      end}
-                  }
-                end}, % end max(Y)
-              {rec, X} % X
-            };
-            (_) -> % [a,false]
+          {act,
+            fun(A) -> true; (_) -> false end, % true
+            fun(A) -> % a
+              {'and',
+                {rec,
+                  fun Y() -> % max(Y.
+                    {'and',
+                      {chs,
+                        {act,
+                          fun(B) when A =:= B -> true; (_) -> false end, % a=:=b
+                          fun(B) -> % b
+                            no % ff
+                          end
+                        },
+                        {act,
+                          fun(B) when A =:= B -> false; (_) -> true end, % a=/=b
+                          fun(_) -> % b
+                            yes % yes
+                          end
+                        }
+                      },
+                      {chs,
+                        {act,
+                          fun(B) when A =/= B -> true; (_) -> false end, % a=/=b
+                          fun(B) -> % [b,a=/=b]
+                            {rec, Y} % Y
+                          end
+                        },
+                        {act,
+                          fun(B) when A =/= B -> false; (_) -> true end, % b,a=:=b
+                          fun(_) -> % b
+                            yes % yes
+                          end
+                        }
+                      }
+                    }
+                  end
+                }, % end max(Y)
+                {rec, X} % X
+              }
+            end
+          },
+          {act,
+            fun(A) -> false; (_) -> true end, % false
+            fun(_) -> % a
               yes % yes
-          end}
+            end
+          }
+        }
       end} % end max(X)
   }.
+
+% Investigate error:
+% {ok, M} = lin_5:m3().
+% {PdLst1, M1} = lin_5:reduce(M, []).
+% {PdLst2, M2} = lin_5:analyze(1, M1, PdLst1).
+% {PdLst3, M3} = lin_5:analyze(2, M2, PdLst2).
+% {PdLst4, M4} = lin_5:analyze(3, M3, PdLst3).
 
 
 chs() -> {ok,
@@ -369,65 +432,65 @@ rule(tau, R = {'and', yes, M}) ->
   ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
 
   % Axiom mConY.
-  {{mConY, tau}, M};
+  {{mConY, tau, R, M}, M};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
-rule(tau, R = {'and', M, yes}) ->
-  ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
-
-  % Axiom mConY.
-  {{mConY, tau}, M};
+%%rule(tau, R = {'and', M, yes}) ->
+%%  ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
+%%
+%%  % Axiom mConY.
+%%  {{mConY, tau}, M};
 
 rule(tau, R = {'and', no, _}) ->
   ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
 
   % Axiom mConN.
-  {{mConN, tau}, no};
+  {{mConN, tau, R, no}, no};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
-rule(tau, R = {'and', _, no}) ->
-  ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
-
-  % Axiom mConN.
-  {{mConN, tau}, no};
+%%rule(tau, R = {'and', _, no}) ->
+%%  ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
+%%
+%%  % Axiom mConN.
+%%  {{mConN, tau}, no};
 
 rule(tau, R = {'or', yes, _}) ->
   ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
 
   % Axiom mDisY.
-  {{mDisY, tau}, yes};
+  {{mDisY, tau, R, yes}, yes};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
-rule(tau, R = {'or', _, yes}) ->
-  ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
-
-  % Axiom mDisY.
-  {{mDisY, tau}, yes};
+%%rule(tau, R = {'or', _, yes}) ->
+%%  ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
+%%
+%%  % Axiom mDisY.
+%%  {{mDisY, tau}, yes};
 
 rule(tau, R = {'or', no, M}) ->
   ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
 
   % Axiom mDisN.
-  {{mDisN, tau}, M};
+  {{mDisN, tau, R, M}, M};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
-rule(tau, R = {'or', M, no}) ->
-  ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
-
-  % Axiom mDisN.
-  {{mDisN, tau}, M};
+%%rule(tau, R = {'or', M, no}) ->
+%%  ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
+%%
+%%  % Axiom mDisN.
+%%  {{mDisN, tau}, M};
 
 rule(tau, R = {rec, M}) ->
   ?DEBUG(":: Applying axiom mRec on monitor ~p.", [R]),
 
   % Axiom mRec.
-  {{mRec, tau}, M()};
+  {{mRec, tau, R, M()}, M()};
 
 rule(_, V) when V =:= yes; V =:= no ->
   ?DEBUG(":: Applying axiom mVrd on verdict ~p.", [V]),
 
   % Axiom mVrd.
-  {{mVrd, tau}, V};
+  {{mVrd, tau, V, V}, V};
 
 %%rule(Act, M) when is_function(M, 1) ->
 %%  ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
@@ -435,12 +498,12 @@ rule(_, V) when V =:= yes; V =:= no ->
 %%  % Axiom mAct.
 %%  {mAct, M(Act)};
 
-rule(Act, {act, C, M}) ->
+rule(Act, R = {act, C, M}) ->
   ?assert(C(Act)),
   ?assert(is_function(M, 1)),
   ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
 
-  {{mAct, Act}, M(Act)};
+  {{mAct, Act, R, M(Act)}, M(Act)};
 
 % Rules.
 
@@ -449,14 +512,57 @@ rule(Act = tau, R = {Op, M = {rec, _}, N}) ->
 
   % Rule mTauL.
   {Rule, M_} = rule(Act, M),
-  {{mTauL, Act, Rule}, {Op, M_, N}};
+  {{mTauL, Act, R, {Op, M_, N}, {pre, Rule}}, {Op, M_, N}};
 
 rule(Act = tau, R = {Op, M, N = {rec, _}}) ->
   ?DEBUG(":: Applying rule mTauR (rec) on monitor ~p to reduce ~p.", [R, N]),
 
   % Rule mTauR.
+  % TODO: This is the rule, these two lines. The enclosing function is pattern
+  % TODO: matching intelligence that determine which rule to apply. The proof
+  % TODO: that the two lines below are the rule is the fact that the code is the
+  % TODO: same identical chunk for the {rec, _} version: in this case the rule
+  % TODO: is mTauR.
   {Rule, N_} = rule(Act, N),
-  {{mTauR, Act, Rule}, {Op, M, N_}};
+  {{mTauR, Act, R, {Op, M, N_}, {pre, Rule}}, {Op, M, N_}};
+
+
+% mTauL and mTauR. These are not just rules, these are methods to apply the
+% derivation.
+rule(Act = tau, R = {Op, M = {_, yes, _}, N}) when Op =:= 'and'; Op =:= 'or' ->
+  ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op, R, M]),
+
+  % Rule mTauL.
+  {Rule, M_} = rule(Act, M), % Can transition via mTauL, and then, mConY or mDisY.
+  {{mTauL, Act, R, {Op, M_, N}, {pre, Rule}}, {Op, M_, N}};
+rule(Act = tau, R = {Op, M = {_, no, _}, N}) when Op =:= 'and'; Op =:= 'or' ->
+  ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op, R, M]),
+
+  % Rule mTauL.
+  {Rule, M_} = rule(Act, M), % Can transition via mTauL, and then, mConY or mDisY.
+  {{mTauL, Act, R, {Op, M_, N}, {pre, Rule}}, {Op, M_, N}};
+
+rule(Act = tau, R = {Op, M, N = {_, yes, _}}) when Op =:= 'and'; Op =:= 'or' ->
+  ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op, R, M]),
+
+  % Rule mTauR.
+  {Rule, N_} = rule(Act, N), % Can transition via mTauR, and then, mConY or mDisY.
+  {{mTauR, Act, R, {Op, M, N_}, {pre, Rule}}, {Op, M, N_}};
+
+rule(Act = tau, R = {Op, M, N = {_, no, _}}) when Op =:= 'and'; Op =:= 'or' ->
+  ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op, R, M]),
+
+  % Rule mTauR.
+  {Rule, N_} = rule(Act, N), % Can transition via mTauR, and then, mConN or mDisN.
+  {{mTauR, Act, R, {Op, M, N_}, {pre, Rule}}, {Op, M, N_}};
+
+
+
+
+
+
+
+
 
 %%rule(Act, R = {chs, M}) ->
 %%  ?DEBUG(":: Applying rule mChs on monitor ~p", [R]),
@@ -475,14 +581,14 @@ rule(Act, R = {chs, M, N}) ->
 
       % Rule mChsL.
       {Rule, M_} = rule(Act, M),
-      {{mChsL, Act, Rule}, M_};
+      {{mChsL, Act, R, M_, {pre, Rule}}, M_};
 
     {_, true} ->
       ?DEBUG(":: Applying rule mChsR on monitor ~p", [R]),
 
       % Rule mChsR.
       {Rule, N_} = rule(Act, N),
-      {{mChsR, Act, Rule}, N_}
+      {{mChsR, Act, R, N_, {pre, Rule}}, N_}
   end;
 
 rule(Act, R = {Op, M, N}) when Op =:= 'and'; Op =:= 'or' ->
@@ -497,10 +603,9 @@ rule(Act, R = {Op, M, N}) when Op =:= 'and'; Op =:= 'or' ->
   % M & N can be: chs, act, and, or, yes, no.
 
 
-
   % Rule mPar.
   {{RuleM_, M_}, {RuleN_, N_}} = {rule(Act, M), rule(Act, N)},
-  {{mPar, Act, RuleM_, RuleN_}, {Op, M_, N_}}.
+  {{mPar, Act, R, {Op, M_, N_}, {pre, RuleM_, RuleN_}}, {Op, M_, N_}}.
 
 
 
@@ -522,6 +627,17 @@ can_tau({'or', _, V}) when V =:= yes; V =:= no ->
 %%  true;
 %%can_tau(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
 %%  true;
+
+can_tau({Op, {_, yes, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
+  true; % Can transition via mTauL, and then, mConY or mDisY.
+can_tau({Op, {_, no, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
+  true; % Can transition via mTauL, and mConN or mDisN.
+can_tau({Op, _, {_, yes, _}}) when Op =:= 'and'; Op =:= 'or' ->
+  true; % Can transition via mTauR, and then, mConY or mDisY.
+can_tau({Op, _, {_, no, _}}) when Op =:= 'and'; Op =:= 'or' ->
+  true; % Can transition via mTauR, and then, mConN or mDisN.
+
+
 can_tau({'and', {rec, _}, _}) ->
   true; % Can transition via mTauL.
 can_tau({'and', _, {rec, _}}) ->

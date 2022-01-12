@@ -202,6 +202,35 @@ m1() ->
 % to not use the extra nested tuple: after all, a conjunctions/disjunction is
 % a binary operator. All operators are represented in prefix notation for, so
 % that the operator name doubles as an Erlang tag.
+%%m2() ->
+%%  {ok,
+%%    begin
+%%      ?TRACE("Monitor: rec x.(a,true((b,a=:=b.ff + b,a=/=b.yes) and x) + a,false.yes)"),
+%%      {rec,
+%%        fun X() -> % max (X.
+%%          ?TRACE("rec x.(a,true((b,a=:=b.ff + b,a=/=b.yes) and x) + a,false.yes)"),
+%%          fun(A) -> % [a, true]
+%%            ?TRACE("a,true((b,~p=:=b.ff + b,~p=/=b.yes) and x", [A, A]),
+%%            begin
+%%              ?TRACE("(b,~p=:=b.ff + b,~p=/=b.yes) and x", [A, A]),
+%%              {'and',
+%%                fun(B) when A =:= B -> % [b, a =:= b]
+%%                  ?TRACE("b,~p=:=~p.ff", [A, B]),
+%%                  no; % ff
+%%                  (_B) -> % [b, a =/= b]
+%%                    ?TRACE("b,~p=/=~p.yes", [A, _B]),
+%%                    yes
+%%                end,
+%%                {rec, X} % X
+%%              }
+%%            end;
+%%            (_A) -> % [a, false]
+%%              ?TRACE("a,false.yes"),
+%%              yes
+%%          end
+%%        end} % )
+%%    end
+%%  }.
 m2() ->
   {ok,
     begin
@@ -209,25 +238,43 @@ m2() ->
       {rec,
         fun X() -> % max (X.
           ?TRACE("rec x.(a,true((b,a=:=b.ff + b,a=/=b.yes) and x) + a,false.yes)"),
-          fun(A) -> % [a, true]
-            ?TRACE("a,true((b,~p=:=b.ff + b,~p=/=b.yes) and x", [A, A]),
-            begin
-              ?TRACE("(b,~p=:=b.ff + b,~p=/=b.yes) and x", [A, A]),
-              {'and',
-                fun(B) when A =:= B -> % [b, a =:= b]
-                  ?TRACE("b,~p=:=~p.ff", [A, B]),
-                  no; % ff
-                  (_B) -> % [b, a =/= b]
-                    ?TRACE("b,~p=/=~p.yes", [A, _B]),
-                    yes
-                end,
-                {rec, X} % X
-              }
-            end;
-            (_A) -> % [a, false]
-              ?TRACE("a,false.yes"),
-              yes
-          end
+          {chs,
+            {act,
+              fun(A) -> true; (_) -> false end, % true
+              fun(A) -> % a
+                ?TRACE("a,true((b,~p=:=b.ff + b,~p=/=b.yes) and x", [A, A]),
+                begin
+                  ?TRACE("(b,~p=:=b.ff + b,~p=/=b.yes) and x", [A, A]),
+                  {'and',
+                    {chs,
+                      {act,
+                        fun(B) when A =:= B -> true; (_) -> false end, % a =:= b
+                        fun(B) -> % b
+                          ?TRACE("b,~p=:=~p.ff", [A, B]),
+                          no % ff
+                        end
+                      },
+                      {act,
+                        fun(B) when A =:= B -> false; (_) -> true end, % a =/= b
+                        fun(_B) -> % b
+                          ?TRACE("b,~p=/=~p.yes", [A, _B]),
+                          yes
+                        end
+                      }
+                    },
+                    {rec, X} % X
+                  }
+                end
+              end
+            },
+            {act,
+              fun(A) -> false; (_) -> true end, % false
+              fun(_A) -> % a
+                ?TRACE("a,false.yes"),
+                yes
+              end
+            }
+          }
         end} % )
     end
   }.
@@ -311,71 +358,76 @@ can_act(Act, {act, C, _M}) ->
 % to the end of the derivation.
 
 
+% TODO: In the derivations, I need to also include the action. Thus, a
+% TODO: derivation becomes
+% TODO: {rule_name, tau_or_act, old_monitor, new_monitor} when it's an axiom,
+% TODO: OR {rule_name, tau_or_act, old_monitor, new_monitor, sub_derivation}
+
 % Add the symmetric cases of and with verdicts yes and no.
 % Axioms.
 rule(tau, R = {'and', yes, M}) ->
   ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
 
   % Axiom mConY.
-  {mConY, M};
+  {{mConY, tau}, M};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
 rule(tau, R = {'and', M, yes}) ->
   ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
 
   % Axiom mConY.
-  {mConY, M};
+  {{mConY, tau}, M};
 
 rule(tau, R = {'and', no, _}) ->
   ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
 
   % Axiom mConN.
-  {mConN, no};
+  {{mConN, tau}, no};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
 rule(tau, R = {'and', _, no}) ->
   ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
 
   % Axiom mConN.
-  {mConN, no};
+  {{mConN, tau}, no};
 
 rule(tau, R = {'or', yes, _}) ->
   ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
 
   % Axiom mDisY.
-  {mDisY, yes};
+  {{mDisY, tau}, yes};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
 rule(tau, R = {'or', _, yes}) ->
   ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
 
   % Axiom mDisY.
-  {mDisY, yes};
+  {{mDisY, tau}, yes};
 
 rule(tau, R = {'or', no, M}) ->
   ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
 
   % Axiom mDisN.
-  {mDisN, M};
+  {{mDisN, tau}, M};
 
 % TODO: Ask whether this is needed, or whether we modify mPar.
 rule(tau, R = {'or', M, no}) ->
   ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
 
   % Axiom mDisN.
-  {mDisN, M};
+  {{mDisN, tau}, M};
 
 rule(tau, R = {rec, M}) ->
   ?DEBUG(":: Applying axiom mRec on monitor ~p.", [R]),
 
   % Axiom mRec.
-  {mRec, M()};
+  {{mRec, tau}, M()};
 
 rule(_, V) when V =:= yes; V =:= no ->
   ?DEBUG(":: Applying axiom mVrd on verdict ~p.", [V]),
 
   % Axiom mVrd.
-  {mVrd, V};
+  {{mVrd, tau}, V};
 
 %%rule(Act, M) when is_function(M, 1) ->
 %%  ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
@@ -388,7 +440,7 @@ rule(Act, {act, C, M}) ->
   ?assert(is_function(M, 1)),
   ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
 
-  {mAct, M(Act)};
+  {{mAct, Act}, M(Act)};
 
 % Rules.
 
@@ -397,14 +449,14 @@ rule(Act = tau, R = {Op, M = {rec, _}, N}) ->
 
   % Rule mTauL.
   {Rule, M_} = rule(Act, M),
-  {{mTauL, Rule}, {Op, M_, N}};
+  {{mTauL, Act, Rule}, {Op, M_, N}};
 
 rule(Act = tau, R = {Op, M, N = {rec, _}}) ->
   ?DEBUG(":: Applying rule mTauR (rec) on monitor ~p to reduce ~p.", [R, N]),
 
   % Rule mTauR.
   {Rule, N_} = rule(Act, N),
-  {{mTauR, Rule}, {Op, M, N_}};
+  {{mTauR, Act, Rule}, {Op, M, N_}};
 
 %%rule(Act, R = {chs, M}) ->
 %%  ?DEBUG(":: Applying rule mChs on monitor ~p", [R]),
@@ -414,31 +466,41 @@ rule(Act = tau, R = {Op, M, N = {rec, _}}) ->
 %%  {{mChs, Rule}, M_};
 
 rule(Act, R = {chs, M, N}) ->
+  ?assert(is_tuple(M) andalso element(1, M) =:= act),
+  ?assert(is_tuple(N) andalso element(1, N) =:= act),
+
   case {can_act(Act, M), can_act(Act, N)} of
     {true, _} ->
       ?DEBUG(":: Applying rule mChsL on monitor ~p", [R]),
 
       % Rule mChsL.
       {Rule, M_} = rule(Act, M),
-      {{mChsL, Rule}, M_};
+      {{mChsL, Act, Rule}, M_};
 
     {_, true} ->
       ?DEBUG(":: Applying rule mChsR on monitor ~p", [R]),
 
       % Rule mChsR.
       {Rule, N_} = rule(Act, N),
-      {{mChsL, Rule}, N_}
+      {{mChsR, Act, Rule}, N_}
   end;
 
 rule(Act, R = {Op, M, N}) when Op =:= 'and'; Op =:= 'or' ->
   ?DEBUG(":: Applying rule mPar on monitor ~p", [R]),
+%%  ?assert(is_tuple(M) andalso is_tuple(N)),
+%%  ?assert(
+%%    element(1, M) =:= chs orelse element(1, M) =:= act orelse
+%%      element(1, M) =:= 'and' orelse element(1, M) =:= 'or' orelse
+%%    ),
+%%  ?assert(element(1, N) =:= chs orelse element(1, N) =:= act),
 
-  % Assert: M and N must be either {chs}, {act}, nothing else.
+  % M & N can be: chs, act, and, or, yes, no.
+
+
 
   % Rule mPar.
-  {RuleM_, M_} = rule(Act, M),
-  {RuleN_, N_} = rule(Act, N),
-  {{mPar, RuleM_, RuleN_}, {Op, M_, N_}}.
+  {{RuleM_, M_}, {RuleN_, N_}} = {rule(Act, M), rule(Act, N)},
+  {{mPar, Act, RuleM_, RuleN_}, {Op, M_, N_}}.
 
 
 

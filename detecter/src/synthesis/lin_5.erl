@@ -144,95 +144,39 @@ m2() ->
   }.
 
 
-%%% Axioms.
-%%rule(_, R = {'and', yes, M}) ->
-%%  ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
-%%
-%%  % Axiom mConY. Action not consumed.
-%%  {tau, M};
-%%
-%%rule(_, R = {'and', no, _}) ->
-%%  ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
-%%
-%%  % Axiom mConN. Action not consumed.
-%%  {tau, no};
-%%
-%%rule(_, R = {'or', yes, _}) ->
-%%  ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
-%%
-%%  % Axiom mDisY. Action not consumed.
-%%  {tau, yes};
-%%
-%%rule(_, R = {'or', no, M}) ->
-%%  ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
-%%
-%%  % Axiom mDisN. Action not consumed.
-%%  {tau, M};
-%%
-%%rule(_, R = {rec, M}) ->
-%%  ?DEBUG(":: Applying axiom mRec on monitor ~p.", [R]),
-%%
-%%  % Axiom mRec. Action not consumed.
-%%  {tau, M()};
-%%
-%%rule(_, V) when V =:= yes; V =:= no ->
-%%  ?DEBUG(":: Applying axiom mVrd on verdict ~p.", [V]),
-%%
-%%  % Axiom mVrd. Action not consumed.
-%%  {tau, V};
-%%
-%%% Rules.
-%%
-%%
-%%% mTauL and mTauR for parallel conjunction and disjunction.
-%%
-%%rule(Act, R = {Op, M = {Op2, _, _}, N}) ->
-%%  ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op2, R, M]),
-%%
-%%  % Rule mTauL applied on M. M is a conjunction of two monitors and can be
-%%  % reduced. Action not consumed.
-%%  {tau, M_} = rule(Act, M),
-%%  {tau, {Op, M_, N}};
-%%
-%%rule(Act, R = {Op, M, N = {Op2, _, _}}) ->
-%%  ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op2, R, N]),
-%%
-%%  % Rule mTauR applied on N. N is a conjunction of two monitors and can be
-%%  % reduced. Action not consumed.
-%%  {tau, N_} = rule(Act, N),
-%%  {tau, {Op, M, N_}};
-%%
-%%% mTauL and mTauR for recursion.
-%%rule(Act, R = {Op, M = {rec, _}, N}) ->
-%%  ?DEBUG(":: Applying rule mTauL (rec) on monitor ~p to reduce ~p.", [R, M]),
-%%
-%%  % Rule mTauL applied on M. M is a recursion and can be reduced. Action not
-%%  % consumed.
-%%  {tau, M_} = rule(Act, M), % Must be reduced by an axiom, because that is the
-%%  % only rule that we can use.
-%%  {tau, {Op, M_, N}};
-%%
-%%rule(Act, R = {Op, M, N = {rec, _}}) ->
-%%  ?DEBUG(":: Applying rule mTauR (rec) on monitor ~p to reduce ~p.", [R, N]),
-%%
-%%  {tau, N_} = rule(Act, N),
-%%  {tau, {Op, M, N_}};
-%%
-%%
-%%
-%%rule(Act, R = {Op, M, N}) ->
-%%  ?DEBUG(":: Applying rule mPar on monitor ~p", [R]),
-%%
-%%  % Rule mPar. Action consumed.
-%%  {act, {Op, rule(Act, M), rule(Act, N)}};
-%%%%  {Op, rule(Act, M), rule(Act, N)};
-%%
-%%rule(Act, M) when is_function(M, 1) ->
-%%  ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
-%%
-%%  % Rule mAct. Action consumed.
-%%  {act, M(Act)}.
-%%  M(Act).
+% Monitor for the property that all actions are unique.
+% max(X.[a,true](max(Y.[b,a=:=b]ff and [b,a=/=b]Y) and X))
+m3() ->
+  {ok,
+    {rec,
+      fun X() -> % max(X.
+        {chs,
+          fun(A) -> % [a,true]
+            {'and',
+              {rec,
+                fun Y() -> % max(Y.
+                  {'and',
+                    {chs,
+                      fun(B) when A =:= B -> % [b,a=:=b]
+                        no; % ff
+                        (_) -> % [b,a=/=b]
+                          yes % yes
+                      end},
+                    {chs,
+                      fun(B) when A =/= B -> % [b,a=/=b]
+                        {rec, Y}; % Y
+                        (_) -> % [b,a=:=b]
+                          yes % yes
+                      end}
+                  }
+                end}, % end max(Y)
+              {rec, X} % X
+            };
+            (_) -> % [a,false]
+              yes % yes
+          end}
+      end} % end max(X)
+  }.
 
 
 %%% New ----
@@ -255,7 +199,21 @@ rule(tau, R = {'and', yes, M}) ->
   % Axiom mConY.
   {mConY, M};
 
+% TODO: Ask whether this is needed, or whether we modify mPar.
+rule(tau, R = {'and', M, yes}) ->
+  ?DEBUG(":: Applying axiom mConY on monitor ~p.", [R]),
+
+  % Axiom mConY.
+  {mConY, M};
+
 rule(tau, R = {'and', no, _}) ->
+  ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
+
+  % Axiom mConN.
+  {mConN, no};
+
+% TODO: Ask whether this is needed, or whether we modify mPar.
+rule(tau, R = {'and', _, no}) ->
   ?DEBUG(":: Applying axiom mConN on monitor ~p.", [R]),
 
   % Axiom mConN.
@@ -267,7 +225,21 @@ rule(tau, R = {'or', yes, _}) ->
   % Axiom mDisY.
   {mDisY, yes};
 
+% TODO: Ask whether this is needed, or whether we modify mPar.
+rule(tau, R = {'or', _, yes}) ->
+  ?DEBUG(":: Applying axiom mDisY on monitor ~p.", [R]),
+
+  % Axiom mDisY.
+  {mDisY, yes};
+
 rule(tau, R = {'or', no, M}) ->
+  ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
+
+  % Axiom mDisN.
+  {mDisN, M};
+
+% TODO: Ask whether this is needed, or whether we modify mPar.
+rule(tau, R = {'or', M, no}) ->
   ?DEBUG(":: Applying axiom mDisN on monitor ~p.", [R]),
 
   % Axiom mDisN.
@@ -290,21 +262,6 @@ rule(Act, M) when is_function(M, 1) ->
 
   % Axiom mAct.
   {mAct, M(Act)};
-
-% TODO: Must be tau.
-%%rule(Act = tau, R = {Op, M = {Op2, _, _}, N}) ->
-%%  ?DEBUG(":: Applying rule mTauL (~p) on monitor ~p to reduce ~p.", [Op2, R, M]),
-%%
-%%  % Rule mTauL.
-%%  {Rule, M_} = rule(Act, M),
-%%  {{mTauL, Rule}, {Op, M_, N}};
-%%
-%%rule(Act = tau, R = {Op, M, N = {Op2, _, _}}) ->
-%%  ?DEBUG(":: Applying rule mTauR (~p) on monitor ~p to reduce ~p.", [Op2, R, N]),
-%%
-%%  % Rule mTauR.
-%%  {Rule, N_} = rule(Act, N),
-%%  {{mTauR, Rule}, {Op, M, N_}};
 
 rule(Act = tau, R = {Op, M = {rec, _}, N}) ->
   ?DEBUG(":: Applying rule mTauL (rec) on monitor ~p to reduce ~p.", [R, M]),
@@ -329,28 +286,37 @@ rule(Act, R = {Op, M, N}) ->
   {{mPar, Rule1, Rule2}, {Op, M_, N_}}.
 
 
-
-
 %%can_tau({'and', V, V_} when either of them is a verdict)
 
 
 % Expand these to make them explicit.
 
 
-can_tau(M = {'and', V, _}) when V =:= yes; V =:= no ->
+
+
+
+can_tau({'and', V, _}) when V =:= yes; V =:= no ->
   true;
-can_tau(M = {'or', V, _}) when V =:= yes; V =:= no ->
+can_tau({'and', _, V}) when V =:= yes; V =:= no ->
+  true;
+can_tau({'or', V, _}) when V =:= yes; V =:= no ->
+  true;
+can_tau({'or', _, V}) when V =:= yes; V =:= no ->
   true;
 %%can_tau(M = {Op, {_, _, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
 %%  true;
 %%can_tau(M = {Op, _, {_, _, _}}) when Op =:= 'and'; Op =:= 'or' ->
 %%  true;
-can_tau(M = {Op, {rec, _}, _}) when Op =:= 'and'; Op =:= 'or' ->
-  true;
-can_tau(M = {Op, _, {rec, _}}) when Op =:= 'and'; Op =:= 'or' ->
-  true;
-can_tau(M = {rec, _}) ->
-  true;
+can_tau({'and', {rec, _}, _}) ->
+  true; % Can transition via mTauL.
+can_tau({'and', _, {rec, _}}) ->
+  true; % Can transition via mTauR.
+can_tau({'or', {rec, _}, _}) ->
+  true; % Can transition via mTauL.
+can_tau({'or', _, {rec, _}}) ->
+  true; % Can transition via mTauR.
+can_tau({rec, _}) ->
+  true; % Can transition via mRec.
 can_tau(_) ->
   false.
 

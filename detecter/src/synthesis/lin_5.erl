@@ -58,50 +58,133 @@
 
 
 % P1: [a,true][b,true]ff and [a,true][b,true]ff and [a,true][b,true]ff
+%%m1() ->
+%%  {ok,
+%%    {'and',
+%%      {'and',
+%%        {chs,
+%%          fun(A) ->
+%%            ?TRACE("M1: Analyzing a(~p).", [A]),
+%%            {chs,
+%%              fun(B) ->
+%%                ?TRACE("M1: Analyzing b(~p).", [B]),
+%%                no;
+%%                (_) ->
+%%                  yes
+%%              end};
+%%            (_) ->
+%%              yes
+%%          end},
+%%        {chs,
+%%          fun(A) ->
+%%            ?TRACE("M2: Analyzing a(~p).", [A]),
+%%            {chs,
+%%              fun(B) ->
+%%                ?TRACE("M2: Analyzing b(~p).", [B]),
+%%                no;
+%%                (_) ->
+%%                  yes
+%%              end};
+%%            (_) ->
+%%              yes
+%%          end}
+%%      },
+%%      {chs,
+%%        fun(A) ->
+%%          ?TRACE("M3: Analyzing a(~p).", [A]),
+%%          {chs,
+%%            fun(B) ->
+%%              ?TRACE("M3: Analyzing b(~p).", [B]),
+%%              no;
+%%              (_) ->
+%%                yes
+%%            end};
+%%          (_) ->
+%%            yes
+%%        end}
+%%    }
+%%  }.
+
 m1() ->
   {ok,
     {'and',
       {'and',
         {chs,
-          fun(A) ->
-            ?TRACE("M1: Analyzing a(~p).", [A]),
-            {chs,
-              fun(B) ->
-                ?TRACE("M1: Analyzing b(~p).", [B]),
-                no;
-                (_) ->
-                  yes
-              end};
-            (_) ->
-              yes
-          end},
+          {act,
+            fun(A) -> true; (_) -> false end, % Constraint
+            fun(A) -> % Continuation
+              ?TRACE("M1: Analyzing a(~p).", [A]),
+              {chs,
+                {act,
+                  fun(B) -> true; (_) -> false end, % Constraint
+                  fun(B) -> % Continuation
+                    ?TRACE("M1: Analyzing b(~p).", [B]),
+                    no
+                  end
+                },
+                {act,
+                  fun(B) -> false; (_) -> true end, % Inverse constraint
+                  fun(_) -> yes end % Yes
+                }
+              }
+            end
+          },
+          {act,
+            fun(A) -> false; (_) -> true end, % Inverse constraint
+            fun(_) -> yes end % Yes
+          }
+        },
         {chs,
-          fun(A) ->
-            ?TRACE("M2: Analyzing a(~p).", [A]),
-            {chs,
-              fun(B) ->
-                ?TRACE("M2: Analyzing b(~p).", [B]),
-                no;
-                (_) ->
-                  yes
-              end};
-            (_) ->
-              yes
-          end}
+          {act,
+            fun(A) -> true; (_) -> false end, % Constraint
+            fun(A) -> % Continuation
+              ?TRACE("M1: Analyzing a(~p).", [A]),
+              {chs,
+                {act,
+                  fun(B) -> true; (_) -> false end, % Constraint
+                  fun(B) -> % Continuation
+                    ?TRACE("M1: Analyzing b(~p).", [B]),
+                    no
+                  end
+                },
+                {act,
+                  fun(B) -> false; (_) -> true end, % Inverse constraint
+                  fun(_) -> yes end % Yes
+                }
+              }
+            end
+          },
+          {act,
+            fun(A) -> false; (_) -> true end, % Inverse constraint
+            fun(_) -> yes end % Yes
+          }
+        }
       },
       {chs,
-        fun(A) ->
-          ?TRACE("M3: Analyzing a(~p).", [A]),
-          {chs,
-            fun(B) ->
-              ?TRACE("M3: Analyzing b(~p).", [B]),
-              no;
-              (_) ->
-                yes
-            end};
-          (_) ->
-            yes
-        end}
+        {act,
+          fun(A) -> true; (_) -> false end, % Constraint
+          fun(A) -> % Continuation
+            ?TRACE("M1: Analyzing a(~p).", [A]),
+            {chs,
+              {act,
+                fun(B) -> true; (_) -> false end, % Constraint
+                fun(B) -> % Continuation
+                  ?TRACE("M1: Analyzing b(~p).", [B]),
+                  no
+                end
+              },
+              {act,
+                fun(B) -> false; (_) -> true end, % Inverse constraint
+                fun(_) -> yes end % Yes
+              }
+            }
+          end
+        },
+        {act,
+          fun(A) -> false; (_) -> true end, % Inverse constraint
+          fun(_) -> yes end % Yes
+        }
+      }
     }
   }.
 
@@ -184,11 +267,6 @@ m3() ->
       end} % end max(X)
   }.
 
-act_example() -> {act,
-  fun(X) -> ok end, % action + constraint
-  p,
-  n
-}.
 
 chs() -> {ok,
   {chs,
@@ -354,6 +432,8 @@ rule(Act, R = {chs, M, N}) ->
 
 rule(Act, R = {Op, M, N}) when Op =:= 'and'; Op =:= 'or' ->
   ?DEBUG(":: Applying rule mPar on monitor ~p", [R]),
+
+  % Assert: M and N must be either {chs}, {act}, nothing else.
 
   % Rule mPar.
   {RuleM_, M_} = rule(Act, M),

@@ -56,10 +56,56 @@
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-% TODO: Consider also extracting out the CHS rules. I think this is the only bit
-% TODO: that remains so that we can fully separate the monitor syntax from the
-% TODO: semantics.
 
+% P1: [a,true][b,true]ff and [a,true][b,true]ff and [a,true][b,true]ff
+m1() ->
+  {ok,
+    {'and',
+      {'and',
+        {chs,
+          fun(A) ->
+            ?TRACE("M1: Analyzing a(~p).", [A]),
+            {chs,
+              fun(B) ->
+                ?TRACE("M1: Analyzing b(~p).", [B]),
+                no;
+                (_) ->
+                  yes
+              end};
+            (_) ->
+              yes
+          end},
+        {chs,
+          fun(A) ->
+            ?TRACE("M2: Analyzing a(~p).", [A]),
+            {chs,
+              fun(B) ->
+                ?TRACE("M2: Analyzing b(~p).", [B]),
+                no;
+                (_) ->
+                  yes
+              end};
+            (_) ->
+              yes
+          end}
+      },
+      {chs,
+        fun(A) ->
+          ?TRACE("M3: Analyzing a(~p).", [A]),
+          {chs,
+            fun(B) ->
+              ?TRACE("M3: Analyzing b(~p).", [B]),
+              no;
+              (_) ->
+                yes
+            end};
+          (_) ->
+            yes
+        end}
+    }
+  }.
+
+% P2:
 % TODO: Inside the monitor string description, we need to add the values that
 % No two adjacent actions are this same. This has one recursive variable which
 % is not preceded by a box, but it is guarded nevertheless. The formula is as
@@ -73,7 +119,7 @@
 % to not use the extra nested tuple: after all, a conjunctions/disjunction is
 % a binary operator. All operators are represented in prefix notation for, so
 % that the operator name doubles as an Erlang tag.
-m1() ->
+m2() ->
   {ok,
     begin
       ?TRACE("Monitor: rec x.(a,true((b,a=:=b.ff + b,a=/=b.yes) and x) + a,false.yes)"),
@@ -101,46 +147,6 @@ m1() ->
           end
         end} % )
     end
-  }.
-
-m2() ->
-  {ok,
-    {'and',
-      {'and',
-        fun(A) ->
-          ?TRACE("M1: Analyzing a(~p).", [A]),
-          fun(B) ->
-            ?TRACE("M1: Analyzing b(~p).", [A]),
-            no;
-            (_) ->
-              yes
-          end;
-          (_) ->
-            yes
-        end,
-        fun(A) ->
-          ?TRACE("M2: Analyzing a(~p).", [A]),
-          fun(B) ->
-            ?TRACE("M2: Analyzing b(~p).", [A]),
-            no;
-            (_) ->
-              yes
-          end;
-          (_) ->
-            yes
-        end},
-      fun(A) ->
-        ?TRACE("M3: Analyzing a(~p).", [A]),
-        fun(B) ->
-          ?TRACE("M3: Analyzing b(~p).", [A]),
-          no;
-          (_) ->
-            yes
-        end;
-        (_) ->
-          yes
-      end
-    }
   }.
 
 
@@ -178,6 +184,19 @@ m3() ->
       end} % end max(X)
   }.
 
+act_example() -> {act,
+  fun(X) -> ok end, % action + constraint
+  p,
+  n
+}.
+
+% I know that when I have a choice, the next thing will always be an action
+% that needs to be evaluated: the synthesis guarantees this. So one way to
+% handle this would be to have the {chs, M, N}, and then have an
+% {act, Cond, Pos, Neg} thing. Then, I would have a function con_sat() which
+% is a predicate that applies the action in the choice rule mChs to the
+% sub-derivation which I know will surely be an act, and return true or false
+% accordingly.
 
 %%% New ----
 
@@ -263,6 +282,8 @@ rule(Act, M) when is_function(M, 1) ->
   % Axiom mAct.
   {mAct, M(Act)};
 
+% Rules.
+
 rule(Act = tau, R = {Op, M = {rec, _}, N}) ->
   ?DEBUG(":: Applying rule mTauL (rec) on monitor ~p to reduce ~p.", [R, M]),
 
@@ -277,6 +298,13 @@ rule(Act = tau, R = {Op, M, N = {rec, _}}) ->
   {Rule, N_} = rule(Act, N),
   {{mTauR, Rule}, {Op, M, N_}};
 
+rule(Act, R = {chs, M}) ->
+  ?DEBUG(":: Applying rule mChs on monitor ~p", [R]),
+
+  % Rule mChsL and mChsR.
+  {Rule, M_} = rule(Act, M),
+  {{mChs, Rule}, M_};
+
 rule(Act, R = {Op, M, N}) ->
   ?DEBUG(":: Applying rule mPar on monitor ~p", [R]),
 
@@ -286,10 +314,8 @@ rule(Act, R = {Op, M, N}) ->
   {{mPar, Rule1, Rule2}, {Op, M_, N_}}.
 
 
-%%can_tau({'and', V, V_} when either of them is a verdict)
 
 
-% Expand these to make them explicit.
 
 
 
@@ -354,6 +380,8 @@ analyze(Act, M, PdLst) ->
   % Analyze action.
   {Pd, M_} = rule(Act, M),
 
+  ?TRACE("Reducing monitor on taus."),
+
   % Reduce monitor state to one where it is ready to analyse the next action.
   reduce(M_, [Pd | PdLst]).
 
@@ -380,3 +408,60 @@ analyze(Act, M, PdLst) ->
 %%% ----------------------------------------------------------------------------
 %%% Private helper functions.
 %%% ----------------------------------------------------------------------------
+
+%%% Properties to test.
+
+% P1: [a,true][b,true]ff and [a,true][b,true]ff and [a,true][b,true]ff
+%
+% Aim: To test that when the monitor ends up with {'and', {'and', no, no}, no}
+% we are able to tau to a no, and then tau to a no again. This, I found only
+% possible to do using the symmetric case of mConNR (which was not in the
+% original axioms of the semantics in POPL). A different alternative would be
+% to keep these axioms as are, but then change the mPar rule to transition over
+% \mu's rather than \alpha's.
+%
+% The resulting monitor from this property should be:
+% a,true.(b,true.ff + b,false.yes) + a,false.yes and a,true.(b,true.ff + b,false.yes) + a,false.yes and a,true.(b,true.ff + b,false.yes) + a,false.yes
+%
+% which can transition to ((no and no) and no) using two successive derivations
+% each of which consists of two inductive applications of mPar.
+
+% P2: Two consecutive actions cannot be the same.
+%
+% max(X.[a,true]([b,a=:=b]ff and X))
+%
+% Aim: To test the general behaviour of one recursive operator, and in
+% particular, that recursive variables are correctly expanded. One other aspect
+% that is tested is the automatic reduction of the monitor when tau transitions
+% can be performed. The monitor is reduced to a state where it is ready to
+% analyze the next action.
+%
+% The resulting monitor from this property should be:
+% rec (x.a,true.((b,a=:=b.no + b,a=/=b.yes) and x ) + a,false.yes)
+%
+% which can transition to no given the trace 1.2.2 in 8 reductions, ending with
+% tha application of axiom mConN.
+
+% P3: All actions are unique.
+%
+% max(X.[a,true](max(Y.[b,a=:=b]ff and [b,a=/=b]Y) and X))
+%
+% Aim: To test the general behaviour of more than one recursive operator, and in
+% particular, that data binding works correctly. The value of variable A should
+% become re-instantiated when the recursive variable X is unfolded, but its
+% value should persist in the inner recursion max(Y...). With each unfolding of
+% X, we get a tree that expands on the left, wherein each I'th recursion
+% unfolding, a new of A is obtained, corresponding to the I'th event from the
+% trace. A similar reasoning applies to variable B: it should become
+% instantiated with a new value when the recursive variable Y is unfolded. With
+% each unfolding of Y, a new value of B is obtained, ranging over the actions
+% starting from the position of the I'th event in the trace corresponding to
+% the variable A, plus 1.
+%
+% The resulting monitor from this property should be:
+% rec(x.a,true.(rec(y.(b,a=:=b.no + b,a=/=b.yes) and (b,a=/=b.y + b,a=:=b.yes)) and x) + a,false.yes)
+%
+% which can transition to no given the trace 1.2.1.
+
+
+% PX: Unguarded variables.

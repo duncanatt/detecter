@@ -190,6 +190,29 @@ act_example() -> {act,
   n
 }.
 
+chs() -> {ok,
+  {chs,
+    {act,
+      fun(A) when true -> true; (_) -> false end, % Constraint.
+      fun(A) -> % Continuation M_
+        no
+      end
+    },
+    {act,
+      fun(A) when true -> false; (_) ->
+        true end, % Constraint. This seems to be working. We just swap the return values.
+      fun(A) ->
+        yes % yes
+      end
+    }
+  }
+}.
+
+can_act(Act, {act, C, _M}) ->
+  ?assert(is_function(_M, 1)),
+  C(Act).
+
+
 % I know that when I have a choice, the next thing will always be an action
 % that needs to be evaluated: the synthesis guarantees this. So one way to
 % handle this would be to have the {chs, M, N}, and then have an
@@ -276,10 +299,17 @@ rule(_, V) when V =:= yes; V =:= no ->
   % Axiom mVrd.
   {mVrd, V};
 
-rule(Act, M) when is_function(M, 1) ->
+%%rule(Act, M) when is_function(M, 1) ->
+%%  ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
+%%
+%%  % Axiom mAct.
+%%  {mAct, M(Act)};
+
+rule(Act, {act, C, M}) ->
+  ?assert(C(Act)),
+  ?assert(is_function(M, 1)),
   ?DEBUG(":: Applying rule mAct on monitor ~p.", [M]),
 
-  % Axiom mAct.
   {mAct, M(Act)};
 
 % Rules.
@@ -298,20 +328,37 @@ rule(Act = tau, R = {Op, M, N = {rec, _}}) ->
   {Rule, N_} = rule(Act, N),
   {{mTauR, Rule}, {Op, M, N_}};
 
-rule(Act, R = {chs, M}) ->
-  ?DEBUG(":: Applying rule mChs on monitor ~p", [R]),
+%%rule(Act, R = {chs, M}) ->
+%%  ?DEBUG(":: Applying rule mChs on monitor ~p", [R]),
+%%
+%%  % Rule mChsL and mChsR.
+%%  {Rule, M_} = rule(Act, M),
+%%  {{mChs, Rule}, M_};
 
-  % Rule mChsL and mChsR.
-  {Rule, M_} = rule(Act, M),
-  {{mChs, Rule}, M_};
+rule(Act, R = {chs, M, N}) ->
+  case {can_act(Act, M), can_act(Act, N)} of
+    {true, _} ->
+      ?DEBUG(":: Applying rule mChsL on monitor ~p", [R]),
 
-rule(Act, R = {Op, M, N}) ->
+      % Rule mChsL.
+      {Rule, M_} = rule(Act, M),
+      {{mChsL, Rule}, M_};
+
+    {_, true} ->
+      ?DEBUG(":: Applying rule mChsR on monitor ~p", [R]),
+
+      % Rule mChsR.
+      {Rule, N_} = rule(Act, N),
+      {{mChsL, Rule}, N_}
+  end;
+
+rule(Act, R = {Op, M, N}) when Op =:= 'and'; Op =:= 'or' ->
   ?DEBUG(":: Applying rule mPar on monitor ~p", [R]),
 
   % Rule mPar.
-  {Rule1, M_} = rule(Act, M),
-  {Rule2, N_} = rule(Act, N),
-  {{mPar, Rule1, Rule2}, {Op, M_, N_}}.
+  {RuleM_, M_} = rule(Act, M),
+  {RuleN_, N_} = rule(Act, N),
+  {{mPar, RuleM_, RuleN_}, {Op, M_, N_}}.
 
 
 

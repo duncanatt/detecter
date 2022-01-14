@@ -115,33 +115,34 @@ m3() ->
       end} % end max(X)
   }.
 
+
 % Monitor for the formula [a,true]ff and [b,true]ff and [c,true]ff.
 m2() ->
   {ok,
-    {'and', "((a,true.no + a,not(true).yes) and (b,true.no + b,not(true).yes)) and (c,true.no + c,not(true).yes)",
-      {'and', "(a,true.no + a,not(true).yes) and (b,true.no + b,not(true).yes)",
-        {chs, "(a,true.no + a,not(true).yes)",
-          {act, "a,true.no",
+    {'and', "(({:A},true.no + {:A},not(true).yes) and ({:B},true.no + {:B},not(true).yes)) and ({:C},true.no + {:C},not(true).yes)",
+      {'and', "({:A},true.no + {:A},not(true).yes) and ({:B},true.no + {:B},not(true).yes)",
+        {chs, "({:A},true.no + {:A},not(true).yes)",
+          {act, "{:A},true.no",
             fun(A) -> true; (_) -> false end,
             fun(A) ->
               {no, "no"}
             end
           },
-          {act, "a,not(true).yes",
+          {act, "{:B},not(true).yes",
             fun(A) -> false; (_) -> true end,
             fun(A) ->
               {yes, "yes"}
             end
           }
         },
-        {chs, "(b,true.no + b,not(true).yes)",
-          {act, "b,true.no",
+        {chs, "({:B},true.no + {:B},not(true).yes)",
+          {act, "{:B},true.no",
             fun(B) -> true; (_) -> false end,
             fun(B) ->
               {no, "no"}
             end
           },
-          {act, "b,not(true).yes",
+          {act, "{:B},not(true).yes",
             fun(B) -> false; (_) -> true end,
             fun(B) ->
               {yes, "yes"}
@@ -149,14 +150,14 @@ m2() ->
           }
         }
       },
-      {chs, "(c,true.no + c,not(true).yes)",
-        {act, "c,true.no",
+      {chs, "({:C},true.no + {:C},not(true).yes)",
+        {act, "{:C},true.no",
           fun(C) -> true; (_) -> false end,
           fun(C) ->
             {no, "no"}
           end
         },
-        {act, "c,not(true).yes",
+        {act, "{:C},not(true).yes",
           fun(C) -> false; (_) -> true end,
           fun(C) ->
             {yes, "yes"}
@@ -189,6 +190,36 @@ m4() ->
   }.
 
 
+% In no verbose mode.
+%%{act,
+%%  {env,[]},
+%%  cond,
+%%  body
+%%}
+
+% In verbose mode.
+%%{act,
+%%  {env,[{str, "monitor string representation"}, {var, "variable name"}]},
+%%  cond,
+%%  body
+%%}
+
+%%{con,
+%%  left,
+%%  right
+%%}
+
+%%{dis,
+%%  left,
+%%  right
+%%}
+
+%%{rec,
+%%  right
+%%}
+
+
+
 % Rules.
 
 %%to_string({'and', _, M, N}) ->
@@ -211,56 +242,56 @@ derive_tau(R = {'and', _S, {yes, _}, M}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConYL.
-  {true, {{Id, mConYL, tau}, M}};
+  {true, {{Id, mConYL, tau, _S}, M}};
 
 derive_tau(R = {'and', _S, M, {yes, _}}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConYR.
-  {true, {{Id, mConYR, tau}, M}};
+  {true, {{Id, mConYR, tau, _S}, M}};
 
 derive_tau(R = {'and', _S, No = {no, _}, _}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConNL.
-  {true, {{Id, mConNL, tau}, No}};
+  {true, {{Id, mConNL, tau, _S}, No}};
 
 derive_tau(R = {'and', _S, _, No = {no, _}}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConNR.
-  {true, {{Id, mConNR, tau}, No}};
+  {true, {{Id, mConNR, tau, _S}, No}};
 
 derive_tau(R = {'or', _S, Yes = {yes, _}, _}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisYL.
-  {true, {{Id, mDisYL, tau}, Yes}};
+  {true, {{Id, mDisYL, tau, _S}, Yes}};
 
 derive_tau(R = {'or', _S, _, Yes = {yes, _}}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisYR.
-  {true, {{Id, mDisYR, tau}, Yes}};
+  {true, {{Id, mDisYR, tau, _S}, Yes}};
 
 derive_tau(R = {'or', _S, {no, _}, M}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisNL.
-  {true, {{Id, mDisNL, tau}, M}};
+  {true, {{Id, mDisNL, tau, _S}, M}};
 
 derive_tau(R = {'or', _S, M, {no, _}}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisNR.
-  {true, {{Id, mDisNR, tau}, M}};
+  {true, {{Id, mDisNR, tau, _S}, M}};
 
 derive_tau(R = {rec, _S, M}, Id) ->
   ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mRec.
   M_ = M(),
-  {true, {{Id, mRec, tau}, M_}};
+  {true, {{Id, mRec, tau, _S}, M_}};
 
 derive_tau(R = {Op, _S, M, N}, Id) when Op =:= 'and'; Op =:= 'or' ->
 
@@ -272,10 +303,10 @@ derive_tau(R = {Op, _S, M, N}, Id) when Op =:= 'and'; Op =:= 'or' ->
         false ->
           false;
         {true, {PdN, N_}} ->
-          {true, {{Id, mTauR, tau, {pd, PdN}}, {Op, element(2, M) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M, N_}}}
+          {true, {{Id, mTauR, tau, _S, {pd, PdN}}, {Op, element(2, M) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M, N_}}}
       end;
     {true, {PdM, M_}} ->
-      {true, {{Id, mTauL, tau, {pd, PdM}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N), M_, N}}}
+      {true, {{Id, mTauL, tau, _S, {pd, PdM}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N), M_, N}}}
   end;
 
 derive_tau(_, _) ->
@@ -287,7 +318,7 @@ derive_act(Act, V_ = {V, _S}, Id) when V =:= yes; V =:= no ->
   ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mVrd.
-  {{Id, mVrd, Act}, V_};
+  {{Id, mVrd, Act, _S}, V_};
 
 derive_act(Act, R = {act, _S, C, M}, Id) ->
   ?assertNot(Act =:= tau),
@@ -297,7 +328,8 @@ derive_act(Act, R = {act, _S, C, M}, Id) ->
 
   % Axiom mAct.
   M_ = M(Act),
-  {{Id, mAct, Act}, M_};
+%%  {{Id, mAct, Act, _S}, M_};
+  {{Id, mAct, Act, _S}, M_};
 
 derive_act(Act, R = {chs, _S, M, N}, Id) ->
   ?assert(is_tuple(M) andalso element(1, M) =:= act),
@@ -309,14 +341,14 @@ derive_act(Act, R = {chs, _S, M, N}, Id) ->
 
       % Rule mChsL.
       {PdM, M_} = derive_act(Act, M, new_id(Id)),
-      {{Id, mChsL, Act, {pd, PdM}}, M_};
+      {{Id, mChsL, Act, _S, {pd, PdM}}, M_};
 
     {false, true} ->
       ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [fmt_id(Id), _S]),
 
       % Rule mChsR.
       {PdN, N_} = derive_act(Act, N, new_id(Id)),
-      {{Id, mChsR, Act, {pd, PdN}}, N_}
+      {{Id, mChsR, Act, _S, {pd, PdN}}, N_}
   end;
 
 
@@ -326,7 +358,7 @@ derive_act(Act, R = {Op, _S, M, N}, Id) when Op =:= 'and'; Op =:= 'or' ->
   ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [fmt_id(Id), _S]),
 
   {{PdM, M_}, {PdN, N_}} = {derive_act(Act, M, new_id(Id)), derive_act(Act, N, inc_id(new_id(Id)))},
-  {{Id, mPar, Act, {pd, PdM}, {pd, PdN}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M_, N_}}.
+  {{Id, mPar, Act, _S, {pd, PdM}, {pd, PdN}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M_, N_}}.
 
 
 can_act(Act, {act, _S, C, _M}) ->
@@ -358,42 +390,34 @@ show_pdlst(PdList) ->
   io:format("~s~n", [IoList]).
 
 
-%%pre.
-%%der.
-%%fmt_pd(Id, Rule, Act, Pd) ->
-%%  ok;
-%%fmt_pd(Id, {pd, {Id, Rule, Act}}, )
 
-%%{Id, mAct, Act}
-%%{Id, mDisNR, tau}
-
-%%{Id, mChsR, Act, {pd, PdN}
-%%{Id, mTauL, tau, {pd, PdM}
-
-%%{Id, mPar, Act, {pd, PdM}, {pd, PdN}}
-
-fmt_pd({Id, Rule, Act}) ->
-%%  io:format(">> (~s, axiom) ~s on ~p.~n", [fmt_id(Id), Rule, Act]),
-
-  io_lib:format("~*s (~s) axiom ~s on '~w'~n", [length(Id) + 1, "->", fmt_id(Id), Rule, Act]);
+fmt_pd({Id, Rule, Act, S}) ->
+  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(Id) + 2, "->", fmt_id(Id), Rule, Act, S]);
 
 
-fmt_pd({Id, Rule, Act, {pd, PdM}}) ->
+fmt_pd({Id, Rule, Act, S, {pd, PdM}}) ->
   PdMFmt = fmt_pd(PdM),
-%%  [io_lib:format("(~s, rule) ~s on action ~p: >> ~n", [fmt_id(Id), Rule, Act]), "premise" | PdMFmt];
-  [io_lib:format("~*s (~s) rule ~s on '~w' using premise~n", [length(Id) + 1, "->", fmt_id(Id), Rule, Act]) | PdMFmt];
+  [io_lib:format("~*s (~s) rule ~s on '~w': ~s using premise~n", [length(Id) + 2, "->", fmt_id(Id), Rule, Act, S]) | PdMFmt];
 
 
-fmt_pd({Id, Rule, Act, {pd, PdM}, {pd, PdN}}) ->
+fmt_pd({Id, Rule, Act, S, {pd, PdM}, {pd, PdN}}) ->
   {PdMFmt, PdNFmt} = {fmt_pd(PdM), fmt_pd(PdN)},
-%%  ?TRACE("::: PdMFmt ~p", [PdMFmt]),
-%%  [[io_lib:format("(~s) rule ~s on '~p' using premises~n", [fmt_id(Id), Rule, Act]), "-> " | PdMFmt], "and -> " | PdNFmt].
-  [[io_lib:format("~*s (~s) rule ~s on '~p' using premises~n", [length(Id) + 1, "->", fmt_id(Id), Rule, Act]) | PdMFmt] | PdNFmt].
+  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(Id) + 2, "->", fmt_id(Id), Rule, Act, S]) | PdMFmt] | PdNFmt].
 
 
-%%fmt_str(Fmt, Args) ->
-%%  io_lib:format()
+format_ph(IoList, Name, Value) ->
+  Pat = [${, $:, atom_to_list(Name), $}],
+  case re:run(IoList, Pat, [global]) of
+    nomatch ->
+      IoList;
+    {match, Matches} ->
+      Format = re:replace(IoList, Pat, "~w", [global, {return, list}]),
+      io_lib:format(Format, lists:duplicate(length(Matches), Value))
+  end.
 
+
+%%re:run("{:a}, when {:a}=:= {b}", ["{:a}"], [global]).
+%%re:replace(IoData, "{:a}", "~w", [global, {return, list}]).
 
 % Can tau means try to derive using tau. So I call derive(tau, M). What is the
 % return value I should expect? {tau, X} or false?

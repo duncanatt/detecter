@@ -207,68 +207,68 @@ m4() ->
 % Return result from derive: the action that was used, tau or act.
 
 % Derivation strategy.
-derive_tau(R = {'and', _S, {yes, _}, M}) ->
-  ?DEBUG(":: Reducing using axiom mConYL: ~s.", [_S]),
+derive_tau(R = {'and', _S, {yes, _}, M}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConYL.
   {true, {{mConYL, tau}, M}};
 
-derive_tau(R = {'and', _S, M, {yes, _}}) ->
-  ?DEBUG(":: Reducing using axiom mConYR: ~s.", [_S]),
+derive_tau(R = {'and', _S, M, {yes, _}}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConYR.
   {true, {{mConYR, tau}, M}};
 
-derive_tau(R = {'and', _S, No = {no, _}, _}) ->
-  ?DEBUG(":: Reducing using axiom mConNL: ~s.", [_S]),
+derive_tau(R = {'and', _S, No = {no, _}, _}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConNL.
   {true, {{mConNL, tau}, No}};
 
-derive_tau(R = {'and', _S, _, No = {no, _}}) ->
-  ?DEBUG(":: Reducing using axiom mConNR: ~s.", [_S]),
+derive_tau(R = {'and', _S, _, No = {no, _}}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mConNR.
   {true, {{mConNR, tau}, No}};
 
-derive_tau(R = {'or', _S, Yes = {yes, _}, _}) ->
-  ?DEBUG(":: Reducing using axiom mDisYL: ~s.", [_S]),
+derive_tau(R = {'or', _S, Yes = {yes, _}, _}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisYL.
   {true, {{mDisYL, tau}, Yes}};
 
-derive_tau(R = {'or', _S, _, Yes = {yes, _}}) ->
-  ?DEBUG(":: Reducing using axiom mDisYR: ~s.", [_S]),
+derive_tau(R = {'or', _S, _, Yes = {yes, _}}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisYR.
   {true, {{mDisYR, tau}, Yes}};
 
-derive_tau(R = {'or', _S, {no, _}, M}) ->
-  ?DEBUG(":: Reducing using axiom mDisNL: ~s.", [_S]),
+derive_tau(R = {'or', _S, {no, _}, M}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisNL.
   {true, {{mDisNL, tau}, M}};
 
-derive_tau(R = {'or', _S, M, {no, _}}) ->
-  ?DEBUG(":: Reducing using axiom mDisNR: ~s.", [_S]),
+derive_tau(R = {'or', _S, M, {no, _}}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mDisNR.
   {true, {{mDisNR, tau}, M}};
 
-derive_tau(R = {rec, _S, M}) ->
-  ?DEBUG(":: Reducing using axiom mRec: ~s.", [_S]),
+derive_tau(R = {rec, _S, M}, Id) ->
+  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mRec.
   M_ = M(),
   {true, {{mRec, tau}, M_}};
 
-derive_tau(R = {Op, _S, M, N}) when Op =:= 'and'; Op =:= 'or' ->
+derive_tau(R = {Op, _S, M, N}, Id) when Op =:= 'and'; Op =:= 'or' ->
 
-  ?DEBUG(":: Trying to reduce using rule mTauL: ~s.", [_S]),
-  case derive_tau(M) of
+  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [fmt_id(Id), _S]),
+  case derive_tau(M, new_id(Id)) of
     false ->
-      ?DEBUG(":: Trying to reduce using rule mTauR: ~s.", [_S]),
-      case derive_tau(N) of
+      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [fmt_id(Id), _S]),
+      case derive_tau(N, new_id(Id)) of
         false ->
           false;
         {true, {PdN, N_}} ->
@@ -278,60 +278,75 @@ derive_tau(R = {Op, _S, M, N}) when Op =:= 'and'; Op =:= 'or' ->
       {true, {{mTauL, tau, {pd, PdM}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N), M_, N}}}
   end;
 
-derive_tau(_) ->
+derive_tau(_, _) ->
   false.
 
 
-derive_act(Act, V_ = {V, _S}) when V =:= yes; V =:= no ->
+derive_act(Act, V_ = {V, _S}, Id) when V =:= yes; V =:= no ->
   ?assertNot(Act =:= tau),
-  ?DEBUG(":: Reducing using axiom mVrd: ~s.", [_S]),
+  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mVrd.
   {{mVrd, Act}, V_};
 
-derive_act(Act, R = {act, _S, C, M}) ->
+derive_act(Act, R = {act, _S, C, M}, Id) ->
   ?assertNot(Act =:= tau),
   ?assert(C(Act)),
   ?assert(is_function(M, 1)),
-  ?DEBUG(":: Reducing using rule mAct: ~s.", [_S]),
+  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [fmt_id(Id), _S]),
 
   % Axiom mAct.
   M_ = M(Act),
   {{mAct, Act}, M_};
 
-derive_act(Act, R = {chs, _S, M, N}) ->
+derive_act(Act, R = {chs, _S, M, N}, Id) ->
   ?assert(is_tuple(M) andalso element(1, M) =:= act),
   ?assert(is_tuple(N) andalso element(1, N) =:= act),
 
   case {can_act(Act, M), can_act(Act, N)} of
     {true, false} ->
-      ?DEBUG(":: Reducing using rule mChsL: ~p.", [_S]),
+      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [fmt_id(Id), _S]),
 
       % Rule mChsL.
-      {PdM, M_} = derive_act(Act, M),
+      {PdM, M_} = derive_act(Act, M, new_id(Id)),
       {{mChsL, Act, {pd, PdM}}, M_};
 
     {false, true} ->
-      ?DEBUG(":: Reducing using rule mChsR: ~p.", [_S]),
+      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [fmt_id(Id), _S]),
 
       % Rule mChsR.
-      {PdN, N_} = derive_act(Act, N),
+      {PdN, N_} = derive_act(Act, N, new_id(Id)),
       {{mChsR, Act, {pd, PdN}}, N_}
   end;
 
 
 
-derive_act(Act, R = {Op, _S, M, N}) when Op =:= 'and'; Op =:= 'or' ->
+derive_act(Act, R = {Op, _S, M, N}, Id) when Op =:= 'and'; Op =:= 'or' ->
   ?assertNot(Act =:= tau),
-  ?DEBUG(":: Reducing using rule mPar: ~p.", [_S]),
+  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [fmt_id(Id), _S]),
 
-  {{PdM, M_}, {PdN, N_}} = {derive_act(Act, M), derive_act(Act, N)},
+  {{PdM, M_}, {PdN, N_}} = {derive_act(Act, M, new_id(Id)), derive_act(Act, N, inc_id(new_id(Id)))},
   {{mPar, Act, {pd, PdM}, {pd, PdN}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M_, N_}}.
 
 
 can_act(Act, {act, _S, C, _M}) ->
   ?assert(is_function(_M, 1)),
   C(Act).
+
+new_id(Id) when is_list(Id) ->
+  [1 | Id].
+
+inc_id([Idx | Idxs]) ->
+  [Idx + 1 | Idxs].
+
+fmt_id(Id = [_ | _]) ->
+  tl(lists:flatten(
+    lists:foldl(fun(Idx, Id) -> [[".", integer_to_list(Idx)] | Id] end, [], Id)
+  )).
+
+
+%%fmt_pdlst(PdLst) ->
+%%  lists:foldl(fun(Pd, I) -> [[".", integer_to_list(Idx)] | Id] end, [], Pds)
 
 
 % Can tau means try to derive using tau. So I call derive(tau, M). What is the
@@ -358,7 +373,7 @@ can_act(Act, {act, _S, C, _M}) ->
 reduce_tau(M, PdLst) ->
   ?TRACE("[ Starting a new derivation for monitor on action 'tau' ]"),
 
-  case derive_tau(M) of
+  case derive_tau(M, new_id([])) of
     false ->
 
       % No more tau reductions.
@@ -374,12 +389,12 @@ analyze(Act, M, PdLst) ->
   ?TRACE("[ Starting a new derivation for monitor on action '~p' ]", [Act]),
 
   % Analyze action.
-  {PdM, M_} = derive_act(Act, M),
+  {PdM, M_} = derive_act(Act, M, new_id([])),
 
   % Check whether the residual monitor state can be reduced further using tau
   % transitions. This ensures that the monitor is always left in a state where
   % it is ready to analyse the next action.
-  reduce_tau(M_ , [PdM | PdLst]).
+  reduce_tau(M_, [PdM | PdLst]).
 
 
 

@@ -219,7 +219,6 @@ m4() ->
 %%}
 
 
-
 % Rules.
 
 %%to_string({'and', _, M, N}) ->
@@ -365,6 +364,7 @@ can_act(Act, {act, _S, C, _M}) ->
   ?assert(is_function(_M, 1)),
   C(Act).
 
+
 new_id(Id) when is_list(Id) ->
   [1 | Id].
 
@@ -372,9 +372,16 @@ inc_id([Idx | Idxs]) ->
   [Idx + 1 | Idxs].
 
 fmt_id(Id = [_ | _]) ->
-  tl(lists:flatten(
-    lists:foldl(fun(Idx, Id) -> [[".", integer_to_list(Idx)] | Id] end, [], Id)
-  )).
+%%  tl(lists:flatten(
+%%    lists:foldl(fun(Idx, Id) -> [[".", integer_to_list(Idx)] | Id] end, [], Id)
+%%  )).
+  tl(lists:foldl(fun(Idx, Id) -> [$., integer_to_list(Idx) | Id] end, [], Id)).
+%%  {_, IoList} = lists:foldl(
+%%    fun(Idx, {1, IoList}) -> {1, [integer_to_list(Idx) | IoList]};
+%%      (Idx, {I, IoList}) -> {I - 1, [$., integer_to_list(Idx) | IoList]}
+%%    end,
+%%    {length(Id), []}, Id),
+%%  IoList.
 
 
 fmt_pdlst(PdList) ->

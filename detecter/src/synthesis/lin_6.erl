@@ -191,7 +191,17 @@ m4() ->
 
 % Rules.
 
+%%to_string({'and', _, M, N}) ->
+%%  to_string(M);
+%%
+%%to_string({chs, _, M, N}) ->
+%%  to_string(M);
+%%
+%%to_string({act, _, C, M}) ->
+%%  erlang:fun_info(C),
+%%  erlang:fun_to_list(C).
 
+%%TODO: Test with m3 tomorrow!
 
 
 % Return result from derive: the action that was used, tau or act.
@@ -341,13 +351,37 @@ can_act(Act, {act, _S, C, _M}) ->
 % 2) try tau right
 % 3) If both fail, then mPar
 
-% Returns false if unable to derive anything, or {true, derivation, Monitor_}
-% if able to derive.
-try_tau(M) ->
-  % Need to derive things using the derivation rules.
-  ok.
 
 % Would it make sense to split the derivation in functions like: derive_tau, derive_act?
+% Yes.
+
+reduce_tau(M, PdLst) ->
+  ?TRACE("[ Starting a new derivation for monitor on action 'tau' ]"),
+
+  case derive_tau(M) of
+    false ->
+
+      % No more tau reductions.
+      {PdLst, M};
+    {true, {PdM, M_}} ->
+
+      % Monitor state reduced by one tau transition. Attempt to reduce further.
+      reduce_tau(M_, [PdM | PdLst])
+  end.
+
+% Assumes that the monitor is already in a ready state.
+analyze(Act, M, PdLst) ->
+  ?TRACE("[ Starting a new derivation for monitor on action '~p' ]", [Act]),
+
+  % Analyze action.
+  {PdM, M_} = derive_act(Act, M),
+
+  % Check whether the residual monitor state can be reduced further using tau
+  % transitions. This ensures that the monitor is always left in a state where
+  % it is ready to analyse the next action.
+  reduce_tau(M_ , [PdM | PdLst]).
+
+
 
 
 can_tau({yes, _S}) ->

@@ -137,77 +137,100 @@ m1() ->
 % The ID can be saved in the Env probably. The env is used or verbosing and IDs!
 
 % Proof derivation strategy for rules that transition via the internal action tau .
-derive_tau({'and', {env, Env}, {yes, _}, M}, PdId) ->
+derive_tau(_@M = {'and', Env = {env, _}, {yes, _}, M}, PdId) ->
 
-  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mConYL.
   {true, {{PdId, mConYL, tau, Env}, M}};
 
-derive_tau({'and', {env, Env}, M, {yes, _}}, PdId) ->
+derive_tau(_@M = {'and', Env = {env, _}, M, {yes, _}}, PdId) ->
 
-  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mConYR.
   {true, {{PdId, mConYR, tau, Env}, M}};
 
-derive_tau({'and', {env, Env}, No = {no, _}, _}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {'and', Env = {env, _}, No = {no, _}, _}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mConNL.
   {true, {{PdId, mConNL, tau, Env}, No}};
 
-derive_tau({'and', {env, Env}, _, No = {no, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {'and', Env = {env, _}, _, No = {no, _}}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mConNR.
   {true, {{PdId, mConNR, tau, Env}, No}};
 
-derive_tau({'or', {env, Env}, Yes = {yes, _}, _}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {'or', Env = {env, _}, Yes = {yes, _}, _}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mDisYL.
   {true, {{PdId, mDisYL, tau, Env}, Yes}};
 
-derive_tau({'or', {env, Env}, _, Yes = {yes, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {'or', Env = {env, _}, _, Yes = {yes, _}}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mDisYR.
   {true, {{PdId, mDisYR, tau, Env}, Yes}};
 
-derive_tau({'or', {env, Env}, {no, _}, M}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {'or', Env = {env, _}, {no, _}, M}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mDisNL.
   {true, {{PdId, mDisNL, tau, Env}, M}};
 
-derive_tau({'or', {env, Env}, M, {no, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {'or', Env = {env, _}, M, {no, _}}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mDisNR.
   {true, {{PdId, mDisNR, tau, Env}, M}};
 
-derive_tau({rec, {env, Env}, M}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), get_str(Env)]),
+derive_tau(_@M = {rec, Env = {env, _}, M}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mRec.
   M_ = M(),
   {true, {{PdId, mRec, tau, Env}, M_}};
 
-derive_tau({Op, {env, Env}, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+derive_tau(_@M = {var, Env = {env, _}, M}, PdId) ->
+%%  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mRec (var): ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
-  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [str_pdid(PdId), get_str(Env)]),
+  % This case is the second part to the mRec rule which applies the recursive
+  % variable that itself, is the function that we want to recurse on.
+
+  % Axiom mRec.
+  M_ = M(),
+  {true, {{PdId, mRec, tau, Env}, M_}};
+
+derive_tau(_@M = {Op, Env = {env, _}, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+
+  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
   case derive_tau(M, new_pdid(PdId)) of
     false ->
-      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [str_pdid(PdId), get_str(Env)]),
+      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
       case derive_tau(N, new_pdid(PdId)) of
         false ->
+          ?DEBUG("::---------- We cannot reduce on TAU."),
           false;
         {true, {PdN, N_}} ->
-          {true, {{PdId, mTauR, tau, Env, {pd, PdN}}, {Op, element(2, M) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M, N_}}}
+%%          {true, {{PdId, mTauR, tau, Env, {pd, PdN}}, {Op, Env, M, N_}}},
+          {true, {{PdId, mTauR, tau, Env, {pd, PdN}}, {Op, Env, M, N_}}}
       end;
     {true, {PdM, M_}} ->
-      {true, {{PdId, mTauL, tau, Env, {pd, PdM}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N), M_, N}}}
+%%      {true, {{PdId, mTauL, tau, Env, {pd, PdM}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N), M_, N}}}
+      {true, {{PdId, mTauL, tau, Env, {pd, PdM}}, {Op, Env, M_, N}}}
   end;
 
 derive_tau(_, _) ->
@@ -217,38 +240,42 @@ derive_tau(_, _) ->
 
 
 % Proof derivation strategy for rules that transition via external actions.
-derive_act(Act, V_ = {V, {env, Env}}, PdId) when V =:= yes; V =:= no ->
+derive_act(Act, _@M = M = {V, Env = {env, _}}, PdId) when V =:= yes; V =:= no ->
   ?assertNot(Act =:= tau),
-  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mVrd.
-  {{PdId, mVrd, Act, Env}, V_};
+  {{PdId, mVrd, Act, Env}, M};
 
-derive_act(Act, {act, {env, Env}, C, M}, PdId) ->
+derive_act(Act, _@M = {act, Env = {env, _}, C, M}, PdId) ->
   ?assertNot(Act =:= tau),
   ?assert(C(Act)),
   ?assert(is_function(M, 1)),
-  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   % Axiom mAct.
   M_ = M(Act),
 %%  {{Id, mAct, Act, _S}, M_};
   {{PdId, mAct, Act, Env}, M_};
 
-derive_act(Act, {chs, {env, Env}, M, N}, PdId) ->
+derive_act(Act, _@M = {chs, Env = {env, _}, M, N}, PdId) ->
   ?assert(is_tuple(M) andalso element(1, M) =:= act),
   ?assert(is_tuple(N) andalso element(1, N) =:= act),
 
   case {can_act(Act, M), can_act(Act, N)} of
     {true, false} ->
-      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [str_pdid(PdId), get_str(Env)]),
+      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
       % Rule mChsL.
       {PdM, M_} = derive_act(Act, M, new_pdid(PdId)),
       {{PdId, mChsL, Act, Env, {pd, PdM}}, M_};
 
     {false, true} ->
-      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [str_pdid(PdId), get_str(Env)]),
+      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
       % Rule mChsR.
       {PdN, N_} = derive_act(Act, N, new_pdid(PdId)),
@@ -257,12 +284,15 @@ derive_act(Act, {chs, {env, Env}, M, N}, PdId) ->
 
 
 
-derive_act(Act, {Op, {env, Env}, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+derive_act(Act, _@M = {Op, Env = {env, _}, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   ?assertNot(Act =:= tau),
-  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [str_pdid(PdId), get_str(Env)]),
+%%  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [str_pdid(PdId), get_str(Env)]),
+  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
 
   {{PdM, M_}, {PdN, N_}} = {derive_act(Act, M, new_pdid(PdId)), derive_act(Act, N, inc_pdid(new_pdid(PdId)))},
-  {{PdId, mPar, Act, Env, {pd, PdM}, {pd, PdN}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M_, N_}}.
+%%  {{PdId, mPar, Act, Env, {pd, PdM}, {pd, PdN}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M_, N_}}.
+  {{PdId, mPar, Act, Env, {pd, PdM}, {pd, PdN}}, {Op, Env, M_, N_}}.
+  % The env should be the updated Env, always.
 
 
 can_act(Act, {act, _Env, C, _M}) ->
@@ -360,41 +390,32 @@ put_id(Env, Value) ->
   put_key(Env, ?KEY_ENV_PDID, Value).
 
 
-
-
-
-
-str_mon({yes, {env, Env}}) ->
+% Stringifies the monitor.
+to_iolist({yes, {env, Env}}) ->
   ?TRACE("Visting yes."),
   get_str(Env);
-str_mon({no, {env, Env}}) ->
+to_iolist({no, {env, Env}}) ->
   ?TRACE("Visiting no"),
   get_str(Env);
-str_mon({var, {env, Env}, _}) ->
+to_iolist({var, {env, Env}, _}) ->
   ?TRACE("Visiting rec var"),
   get_str(Env);
-str_mon({act, {env, Env}, _, M}) ->
+to_iolist({act, {env, Env}, _, M}) ->
   ?TRACE("Visiting act"),
-  format_ph(get_str(Env), get_vars(Env)) ++ "." ++ str_mon(M(ok));
+  [format_ph(get_str(Env), get_vars(Env)), ".", to_iolist(M(undef))];
 
-str_mon({chs, {env, Env}, M, N}) ->
+to_iolist({chs, {env, Env}, M, N}) ->
   ?TRACE("Visiting chs"),
-  "(" ++ str_mon(M) ++ " " ++ get_str(Env) ++ " " ++ str_mon(N) ++ ")";
-str_mon({'or', {env, Env}, M, N}) ->
+  ["(", to_iolist(M), " ", get_str(Env), " ", to_iolist(N) ++ ")"];
+to_iolist({'or', {env, Env}, M, N}) ->
   ?TRACE("Visiting or"),
-  str_mon(M) ++ " " ++ get_str(Env) ++ " " ++ str_mon(N);
-str_mon({'and', {env, Env}, M, N}) ->
+  [to_iolist(M), " ", get_str(Env), " " ++ to_iolist(N)];
+to_iolist({'and', {env, Env}, M, N}) ->
   ?TRACE("Visiting and"),
-  str_mon(M) ++ " " ++ get_str(Env) ++ " " ++ str_mon(N);
-str_mon({rec, {env, Env}, M}) ->
-  ?TRACE("Visiting rec on ~p", [get_rvar(Env)]),
-  get_str(Env) ++ "(" ++ str_mon(M()) ++ ")".
-
-
-
-
-
-
+  [to_iolist(M), " ", get_str(Env), " ", to_iolist(N)];
+to_iolist({rec, {env, Env}, M}) ->
+  ?TRACE("Visiting rec"),
+  [get_str(Env), "(", to_iolist(M()), ")"].
 
 
 % General implementation of format placeholder.

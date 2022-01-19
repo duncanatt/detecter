@@ -561,69 +561,7 @@ str_pdid(Id = [_ | _]) ->
   tl(lists:foldl(fun(Idx, Id) -> [$., integer_to_list(Idx) | Id] end, [], Id)).
 
 
-% Generic.
-%%get_key(List, Key) when is_list(List) ->
-%%  case lists:keyfind(Key, 1, List) of
-%%    false ->
-%%      false;
-%%    {Key, Val} ->
-%%      Val
-%%  end.
 
-%%put_key(List, Key, Value) when is_list(List) ->
-%%  lists:keystore(Key, 1, List, {Key, Value}).
-
-% Monitor environment related.
-%%{env, [{str, "{:A} when true"}, {vars, [{'A', undef}]}]},
-%%get_env(Node) when is_tuple(Node), tuple_size(Node) >= 2 ->
-%%  {?KEY_ENV, Env} = element(2, Node),
-%%  Env.
-
-% TODO: Important! The Return value of these should be env!
-
-%%put_dvar({env, Env}, Name, Value) when is_list(Env) ->
-%%
-%%  Vars = case get_key(Env, ?KEY_ENV_DVARS) of false -> []; Vars -> Vars end,
-%%  {env, put_key(Env, ?KEY_ENV_DVARS, put_key(Vars, Name, Value))}.
-%%  case get_key(Env, ?KEY_ENV_DVARS) of
-%%    false ->
-%%      false; % ERROR!
-%%    Vars ->
-%%      {env, put_key(Env, ?KEY_ENV_DVARS, put_key(Vars, Name, Value))}
-%%  end.
-
-%%new_binding({env, Env}, Name, Value) ->
-%%
-%%  Vars =
-%%    case get_key(Env, ?KEY_ENV_DVARS) of
-%%      false ->
-%%        [];
-%%      Vars ->
-%%        Vars
-%%    end,
-%%  {env, put_key(Env, ?KEY_ENV_DVARS, put_key(Vars, Name, Value))}.
-
-
-%%get_dvar({env, Env}, Name) when is_list(Env) ->
-%%  case get_key(Env, ?KEY_ENV_DVARS) of
-%%    false ->
-%%      false;
-%%    Vars ->
-%%      get_key(Vars, Name)
-%%  end.
-
-
-%%get_rvar(Env) ->
-%%  get_key(Env, ?KEY_ENV_RVAR).
-
-%%get_vars({env, Env}) ->
-%%  case get_key(Env, ?KEY_ENV_DVARS) of false -> .
-
-%%put_id({env, Env}, Value) ->
-%%  put_key(Env, ?KEY_ENV_PDID, Value).
-
-%%get_var({env, Env}) ->
-%%  get_key(Env, ?KEY_ENV_VAR).
 
 
 
@@ -666,10 +604,6 @@ get_ctx({env, Env}) when is_list(Env) ->
 set_ctx({env, Env}, {ctx, Ctx}) when is_list(Env), is_list(Ctx) ->
   {env, put_key(?KEY_ENV_CTX, Ctx, Env)}.
 
-% Returns updated environment.
-%%new_binder({env, Env}, Name, Value) ->
-%%  {?KEY_ENV_CTX, Ctx} = get_ctx({env, Env}),
-%%  {env, put_key(?KEY_ENV_CTX, put_key(Name, Value, Ctx), Env)}.
 
 new_binder({ctx, Ctx}, Name, Value) when is_list(Ctx) ->
   {ctx, put_key(Name, Value, Ctx)}.
@@ -715,6 +649,7 @@ to_iolist(L = {chs, Env = {env, _}, M, N}) ->
 
 %%  ["(", to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N) ++ ")"];
   ["(", to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N)), ")"];
+
 to_iolist(L = {'or', Env = {env, _}, M, N}) ->
 %%  ?TRACE("Visiting or"),
 %%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
@@ -737,6 +672,62 @@ to_iolist(L = {rec, Env = {env, _}, M}) ->
   [unwrap_value(get_str(Env)), "(", to_iolist(copy_ctx(L, M_)), ")"].
 
 
+
+
+m_to_iolist({yes, Env = {env, _}}) ->
+  unwrap_value(get_str(Env));
+m_to_iolist({no, Env = {env, _}}) ->
+  unwrap_value(get_str(Env));
+m_to_iolist({var, Env = {env, _}, _}) ->
+  unwrap_value(get_str(Env));
+m_to_iolist({act, Env = {env, _}, _, M}) ->
+  ?TRACE("Env = ~p", [Env]),
+  unwrap_value(get_str(Env));
+m_to_iolist({chs, Env = {env, _}, M, N}) ->
+  [m_to_iolist(M), unwrap_value(get_str(Env)), m_to_iolist(M)];
+m_to_iolist({'or', Env = {env, _}, M, N}) ->
+  [m_to_iolist(M), unwrap_value(get_str(Env)), m_to_iolist(M)];
+m_to_iolist({'and', Env = {env, _}, M, N}) ->
+  [m_to_iolist(M), unwrap_value(get_str(Env)), m_to_iolist(M)];
+m_to_iolist({rec, Env = {env, _}, M}) ->
+  unwrap_value(get_str(Env)).
+
+
+
+m_to_iolist2(M) ->
+
+  % Pass variable context of monitor so that monitors containing free variables
+  % are correctly stringified.
+  {ctx, Ctx} = get_ctx(get_env(M)),
+  m_to_iolist2(M, Ctx).
+
+m_to_iolist2({yes, Env = {env, _}}, _) ->
+  unwrap_value(get_str(Env));
+m_to_iolist2({no, Env = {env, _}}, _) ->
+  unwrap_value(get_str(Env));
+m_to_iolist2({var, Env = {env, _}, _}, _) ->
+  unwrap_value(get_str(Env));
+m_to_iolist2({act, Env = {env, _}, _, M}, Ctx) ->
+
+  % The continuation of an action is a function. In order to stringify the rest
+  % of the monitor, apply the function to unfold it. Action functions accept a
+  % single parameter.
+  M_ = M(undef),
+  [format_ph(unwrap_value(get_str(Env)), Ctx), $., m_to_iolist2(M_, Ctx)];
+m_to_iolist2({chs, Env = {env, _}, M, N}, Ctx) ->
+  [$(, m_to_iolist2(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist2(N, Ctx), $)];
+m_to_iolist2({'or', Env = {env, _}, M, N}, Ctx) ->
+  [m_to_iolist2(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist2(N, Ctx)];
+m_to_iolist2({'and', Env = {env, _}, M, N}, Ctx) ->
+  [m_to_iolist2(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist2(N, Ctx)];
+m_to_iolist2({rec, Env = {env, _}, M}, Ctx) ->
+
+  % The continuation of recursion is a function. In order to stringify the rest
+  % of the monitor, apply the function to unfold it. Recursive functions do not
+  % accept parameters.
+  [unwrap_value(get_str(Env)), m_to_iolist2(M(), Ctx)].
+
+
 % General implementation of format placeholder.
 format_ph(IoList, []) ->
   IoList;
@@ -754,3 +745,29 @@ format_ph(IoList, Name, Value) ->
       io_lib:format(Format, lists:duplicate(length(Matches), Value))
   end.
 
+
+format_pdlist(PdList) ->
+  lists:foldl(
+    fun(Pd, {I, IoList}) ->
+      {I - 1, [[io_lib:format("~nDerivation ~w:~n", [I]), fmt_pd(Pd)] | IoList]}
+    end,
+    {length(PdList), []}, PdList
+  ).
+
+show_pdlist(PdList) ->
+  {_, IoList} = format_pdlist(PdList),
+  io:format("~s~n", [IoList]).
+
+
+
+fmt_pd({PdId, Rule, Act, {Type, Env}}) ->
+  Formatted = format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env))),
+  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, Formatted]);
+
+fmt_pd({PdId, Rule, Act, {Type, Env}, {pd, PdM}}) ->
+  PdMFmt = fmt_pd(PdM),
+  [io_lib:format("~*s (~s) rule ~s on '~w': ~s using premise~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, unwrap_value(get_str(Env))]) | PdMFmt];
+
+fmt_pd({PdId, Rule, Act, {Type, Env}, {pd, PdM}, {pd, PdN}}) ->
+  {PdMFmt, PdNFmt} = {fmt_pd(PdM), fmt_pd(PdN)},
+  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, unwrap_value(get_str(Env))]) | PdMFmt] | PdNFmt].

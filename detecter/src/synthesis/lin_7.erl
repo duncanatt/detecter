@@ -83,7 +83,7 @@
 m1() ->
   {ok,
     {rec,
-      {env, [{str, "rec X"}]},
+      {env, [{str, "rec X"}, {var, 'X'}]},
       fun X() ->
         {chs,
           {env, [{str, "+"}]},
@@ -113,7 +113,7 @@ m1() ->
                     end
                   }
                 },
-                {var, {env, [{str, "X"}]}, X}
+                {var, {env, [{str, "X"}, {var, 'X'}]}, X}
               }
             end
           },
@@ -146,7 +146,7 @@ m2() ->
         fun(A) -> true; (_) -> false end,
         fun(A) ->
           {rec,
-            {env, [{str, "rec X"}]},
+            {env, [{str, "rec X"}, {var, 'X'}]},
             fun X() ->
               {'and',
                 {env, [{str, "and"}]},
@@ -173,7 +173,7 @@ m2() ->
                     {env, [{str, "{:B} when {:A}=/={:B}"}, {var, 'B'}]},
                     fun(B) when A =/= B -> true; (_) -> false end,
                     fun(B) ->
-                      {var, {env, [{str, "X"}]}, X}
+                      {var, {env, [{str, "X"}, {var, 'X'}]}, X}
                     end
                   },
                   {act,
@@ -270,247 +270,262 @@ m3() ->
 % The ID can be saved in the Env probably. The env is used or verbosing and IDs!
 
 % Proof derivation strategy for rules that transition via the internal action tau .
-derive_tau(L = {'and', Env, {yes, _}, M}, PdId) ->
-
-%%  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [str_pdid(PdId), to_iolist(L)]),
+derive_tau(L = {'and', _, {yes, _}, M}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mConYL.
-  {true, {{PdId, mConYL, tau, {'and', Env}}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mConYL, tau, L}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mConYL, tau, L, copy_ctx(L, M)}, copy_ctx(L, M)}};
+  {true, {{PdId, mConYL, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
-derive_tau(L = _@M = {'and', Env, M, {yes, _}}, PdId) ->
-
-%%  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {'and', _, M, {yes, _}}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mConYR.
-  {true, {{PdId, mConYR, tau, {'and', Env}}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mConYR, tau, L}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mConYR, tau, L, copy_ctx(L, M)}, copy_ctx(L, M)}};
+  {true, {{PdId, mConYR, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
-derive_tau(_@M = {'and', Env, No = {no, _}, _}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {'and', _, No = {no, _}, _}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mConNL.
-  {true, {{PdId, mConNL, tau, {'and', Env}}, No}};
+%%  {true, {{PdId, mConNL, tau, L}, No}};
+  {true, {{PdId, mConNL, tau, L, No}, No}};
 
-derive_tau(_@M = {'and', Env, _, No = {no, _}}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {'and', _, _, No = {no, _}}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mConNR.
-  {true, {{PdId, mConNR, tau, {'and', Env}}, No}};
+%%  {true, {{PdId, mConNR, tau, L}, No}};
+  {true, {{PdId, mConNR, tau, L, No}, No}};
 
-derive_tau(_@M = {'or', Env, Yes = {yes, _}, _}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {'or', _, Yes = {yes, _}, _}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mDisYL.
-  {true, {{PdId, mDisYL, tau, {'or', Env}}, Yes}};
+%%  {true, {{PdId, mDisYL, tau, L}, Yes}};
+  {true, {{PdId, mDisYL, tau, L, Yes}, Yes}};
 
-derive_tau(_@M = {'or', Env, _, Yes = {yes, _}}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {'or', _, _, Yes = {yes, _}}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mDisYR.
-  {true, {{PdId, mDisYR, tau, {'or', Env}}, Yes}};
+%%  {true, {{PdId, mDisYR, tau, L}, Yes}};
+  {true, {{PdId, mDisYR, tau, L, Yes}, Yes}};
 
-derive_tau(L = _@M = {'or', Env, {no, _}, M}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {'or', _, {no, _}, M}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mDisNL.
-  {true, {{PdId, mDisNL, tau, {'or', Env}}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mDisNL, tau, L}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mDisNL, tau, L, copy_ctx(L, M)}, copy_ctx(L, M)}};
+  {true, {{PdId, mDisNL, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
-derive_tau(L = _@M = {'or', Env, M, {no, _}}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-
+derive_tau(L = {'or', _, M, {no, _}}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Axiom mDisNR.
-  {true, {{PdId, mDisNR, tau, {'or', Env}}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mDisNR, tau, L}, copy_ctx(L, M)}};
+%%  {true, {{PdId, mDisNR, tau, L, copy_ctx(L, M)}, copy_ctx(L, M)}};
+  {true, {{PdId, mDisNR, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
-derive_tau(L = _@M = {rec, Env = {env, _}, M}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+derive_tau(L = {rec, Env, M}, PdId) ->
+
+%%  Ns_ = [unwrap_value(get_var(Env)) | Ns],
+  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
+
+  % The continuation of a recursive construct is encoded in terms of a function
+  % that needs to be applied to unfold the monitor. Recursive monitor
+  % definitions do not accept parameters.
+
+
+
+
+
+  % Axiom mRec.
+  M_ = M(),
+
+
+
+
+  % Open new namespace.
+%%  Env = get_env(M_),
+
+%%  ?TRACE("Env of M_ = ~p", [Env]),
+
+  M__ = set_env(M_, set_ns(get_env(M_), {ns, unwrap_value(get_var(Env))})),
+
+%%  {true, {{PdId, mRec, tau, L}, copy_ctx(L, M_)}};
+%%  {true, {{PdId, mRec, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
+  {true, {{PdId, mRec, tau, L, copy_ctx(L, M__)}, copy_ctx(L, M__)}};
+
+derive_tau(L = {var, Env, M}, PdId) ->
+  ?DEBUG(":: (~s) Reducing using axiom mRec (var): ~s.", [str_pdid(PdId), m_to_iolist(L)]),
+
+  % Recursive variables complement recursive constructs, and are used to refer
+  % to recursive monitor definitions. Identically to the recursive construct,
+  % the variable itself is a function reference that needs to be applied to
+  % unfold the monitor. Recursive monitor definitions do not accept parameters.
 
   % Axiom mRec.
   M_ = M(),
 
+  % Delete vars with NS.
 
-%%  {true, {{PdId, mRec, tau, {rec, Env}}, M_}};
-  {true, {{PdId, mRec, tau, {rec, Env}}, copy_ctx(L, M_)}};
-
-derive_tau(L = _@M = {var, Env = {env, _}, M}, PdId) ->
-%%  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mRec (var): ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-
-  % This case is the second part to the mRec rule which applies the recursive
-  % variable that itself, is the function that we want to recurse on.
-
-  % Axiom mRec.
-  M_ = M(),
-%%  {true, {{PdId, mRec, tau, {var, Env}}, M_}};
-  {true, {{PdId, mRec, tau, {var, Env}}, copy_ctx(L, M_)}};
-
-derive_tau(L = _@M = {Op, Env = {env, _}, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+  Ctx = del_bindings(get_ctx(Env), unwrap_value(get_ns(Env))),
+  L_ = set_env(L, set_ctx(Env, Ctx)),
 
 
-  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-%%  case derive_tau(M, new_pdid(PdId)) of
-  case derive_tau(copy_ctx(L, M), new_pdid(PdId)) of
+
+  ?TRACE("----- RECURSIVE CONTEXT M_: ~p", [get_ctx(get_env(M_))]),
+  ?TRACE("----- RECURSIVE CONTEXT L: ~p", [get_ctx(get_env(L))]),
+
+%%  {true, {{PdId, mRec, tau, L}, copy_ctx(L, M_)}};
+%%  {true, {{PdId, mRecccc, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
+%%  {true, {{PdId, mRecccc, tau, L, M_}, M_}};
+  {true, {{PdId, mRecccc, tau, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}};
+
+derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+
+  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
+%%  case derive_tau(copy_ctx(L, M), new_pdid(PdId)) of
+  case derive_tau(copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)) of
     false ->
-      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-%%      case derive_tau(N, new_pdid(PdId)) of
-      case derive_tau(copy_ctx(L, N), new_pdid(PdId)) of
+      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
+%%      case derive_tau(copy_ctx(L, N), new_pdid(PdId)) of
+      case derive_tau(copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)) of
         false ->
-          ?DEBUG(":: Unable to reduce futher using tau: ~s.", [to_iolist(_@M)]),
+          ?DEBUG(":: (~s) Unable to reduce futher using tau: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
           false;
-        {true, {PdN, N_}} ->
-%%          ?DEBUG(":: (~s) Reducing using rule mTauR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-%%          {true, {{PdId, mTauR, tau, Env, {pd, PdN}}, {Op, Env, M, N_}}},
-          {true, {{PdId, mTauR, tau, {Op, Env}, {pd, PdN}}, {Op, Env, M, N_}}}
+        {true, {PdN_, N_}} ->
+
+          % Rule mTauR.
+%%          {true, {{PdId, mTauR, tau, L, copy_ctx(L, M), N_, {pre, PdN_}}, {Op, Env, M, N_}}}
+          {true, {{PdId, mTauR, tau, L, copy_ns(L, copy_ctx(L, M)), N_, {pre, PdN_}}, {Op, Env, M, N_}}}
       end;
-    {true, {PdM, M_}} ->
-%%      ?DEBUG(":: (~s) Reducing using rule mTauL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-%%      {true, {{PdId, mTauL, tau, Env, {pd, PdM}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N), M_, N}}}
-      {true, {{PdId, mTauL, tau, {Op, Env}, {pd, PdM}}, {Op, Env, M_, N}}}
+    {true, {PdM_, M_}} ->
+
+      % Rule mTauL.
+%%      {true, {{PdId, mTauL, tau, L, M_, copy_ctx(L, N), {pre, PdM_}}, {Op, Env, M_, N}}}
+      {true, {{PdId, mTauL, tau, L, M_, copy_ns(L, copy_ctx(L, N)), {pre, PdM_}}, {Op, Env, M_, N}}}
   end;
 
 derive_tau(_, _) ->
+
+  % The monitor cannot transition internally on tau actions.
   false.
 
 
 % Proof derivation strategy for rules that transition via external actions.
-derive_act(Act, _@M = M = {V, Env}, PdId) when V =:= yes; V =:= no ->
+derive_act(Act, M = {V, _}, PdId) when V =:= yes; V =:= no ->
   ?assertNot(Act =:= tau),
-%%  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [str_pdid(PdId), m_to_iolist(M)]),
 
   % Axiom mVrd.
-  {{PdId, mVrd, Act, {V, Env}}, M};
+  {{PdId, mVrd, Act, M, M}, M};
 
-derive_act(Act, L = MM = {act, Env, C, M}, PdId) ->
+derive_act(Act, L = {act, Env, C, M}, PdId) ->
   ?assertNot(Act =:= tau),
   ?assert(C(Act)),
   ?assert(is_function(M, 1)),
 %%  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), get_str(Env)]),
 
 
-  % Get the variable binder for this action.
+  % Get the variable binder associated with this action.
   Binder = unwrap_value(get_var(Env)),
 
-  % Add the new binder also to the context of the current monitor so that
-  % we can return it in the proof derivation.
+  % Instantiate binder with data from action and extend the variable context.
+  % This is used for debugging purposes, to track the flow of data values in the
+  % monitor and its continuation.
 
-%%  Ctx = get_ctx(Env),
-%%  ?TRACE("Context of current monitor: ~p", [Ctx]),
+  Ns = get_ns(Env),
+  L_ = set_env(L, set_ctx(Env, new_binding(get_ctx(Env), unwrap_value(Ns), Binder, Act))),
 
 
-
-
-  Ctx = new_binder(get_ctx(Env), Binder, Act),
-  NewEnv = set_ctx(Env, Ctx),
-  MMM = set_env(MM, NewEnv),
-
-%%  ?TRACE("Current monitor with context updated: ~p", [MMM]),
-  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), to_iolist(MMM)]),
+  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), m_to_iolist(L_)]),
 
 
   % Axiom mAct.
   M_ = M(Act),
   ?assertNot(is_function(M_)),
 
+%%  M__ = set_ns()
+
   % The environment of M cannot be updated prior to applying M to Act, since M
   % is a function. Once M is applied, the new variable binding acquired during
   % the analysis of Act can be passed down to the unwrapped monitor by updating
   % its environment.
-%%  Env_ = get_env(M_),
-%%  Ctx_ = new_binder(get_ctx(Env_), Binder, Act),
-%%  NewM = set_env(M_, set_ctx(Env_, Ctx_)),
-  NewM = copy_ctx(MMM, M_),
+
+%%  NewM = copy_ctx(MMM, M_),
+%%  NewM = copy_ctx(L_, M_),
 
 
-  {{PdId, mAct, Act, {act, NewEnv}}, NewM}; % Updated monitor env.
-%%  {{PdId, mAct, Act, {act, NewEnv}}, M_}; % Updated monitor env.
 
-derive_act(Act, L = _@M = {chs, Env = {env, _}, M, N}, PdId) ->
+%%  {{PdId, mAct, Act, {act, NewEnv}}, NewM}; % Updated monitor env.
+%%  {{PdId, mAct, Act, MMM}, NewM}; % Updated monitor env.
+%%  {{PdId, mAct, Act, L_}, M_}; % Updated monitor env.
+%%  {{PdId, mAct, Act, L_}, copy_ctx(L_, M_)}; % Updated monitor env.
+
+%%  {{PdId, mAct, Act, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}; % Updated monitor env.
+  {{PdId, mAct, Act, L, copy_ns(L_, copy_ctx(L_, M_))}, copy_ns(L_, copy_ctx(L_, M_))}; % Updated monitor env.
+
+derive_act(Act, L = {chs, _, M, N}, PdId) ->
   ?assert(is_tuple(M) andalso element(1, M) =:= act),
   ?assert(is_tuple(N) andalso element(1, N) =:= act),
 
-  % Extend variable binding context of current monitor to the two sub-monitors
-  % M and N.
-%%  Ctx = get_ctx(Env),
-%%  NewM = set_env(M, set_ctx(get_env(M), Ctx)),
-%%  NewN = set_env(N, set_ctx(get_env(N), Ctx)),
-
-
-%%  case {can_act(Act, NewM), can_act(Act, NewN)} of
-%%  case {can_act(Act, M), can_act(Act, N)} of
   case {can_act(Act, M), can_act(Act, N)} of
     {true, false} ->
-%%      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [str_pdid(PdId), get_str(Env)]),
-      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
       % Rule mChsL.
-      {PdM_, M_} = derive_act(Act, copy_ctx(L, M), new_pdid(PdId)),
-%%      {PdM_, M_} = derive_act(Act, NewM, new_pdid(PdId)),
-      {{PdId, mChsL, Act, {chs, Env}, {pd, PdM_}}, M_};
+      {PdM_, M_} = derive_act(Act, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
+%%      ?TRACE("---- Updated context from premises: ~p", [get_ctx(get_env(M_))]),
+%%      {{PdId, mChsL, Act, L, {pre, PdM_}}, M_};
+      {{PdId, mChsL, Act, L, M_, {pre, PdM_}}, M_};
+%%      {{PdId, mChsL, Act, copy_ctx(M_, L), {pre, PdM_}}, M_};
+%%      {{PdId, mChsL, Act, M_, {pre, PdM_}}, M_};
 
     {false, true} ->
-%%      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [str_pdid(PdId), get_str(Env)]),
-      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
+      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
       % Rule mChsR.
-      {PdN_, N_} = derive_act(Act, copy_ctx(L, N), new_pdid(PdId)),
-%%      {PdN_, N_} = derive_act(Act, NewN, new_pdid(PdId)),
-      {{PdId, mChsR, Act, {chs, Env}, {pd, PdN_}}, N_}
+      {PdN_, N_} = derive_act(Act, copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)),
+%%      ?TRACE("---- Updated context from premises: ~p", [get_ctx(get_env(N_))]),
+%%      {{PdId, mChsR, Act, L, {pre, PdN_}}, N_}
+      {{PdId, mChsR, Act, L, N_, {pre, PdN_}}, N_}
+%%      {{PdId, mChsR, Act, copy_ctx(N_, L), {pre, PdN_}}, N_}
   end;
 
-
-
-derive_act(Act, L = _@M = {Op, Env = {env, _}, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+derive_act(Act, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   ?assertNot(Act =:= tau),
-%%  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [str_pdid(PdId), get_str(Env)]),
-  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [str_pdid(PdId), to_iolist(_@M)]),
-
-
-  % We need to pass on the current binding context to the next monitor. How?
-
-  % 1. Get the environment of the next monitor.
-
-  % 2. Get the binding context of the current monitor from its environment.
-
-  % 3. Overwrite the (empty) binding context of the next monitor in its environment.
-
-  % 4. Overwrite the environment of the current monitor.
-
-  % 5. Recurse.
-
-
-  % Extend variable binding context of current monitor to the two sub-monitors
-  % M and N.
-%%  Ctx = get_ctx(Env),
-%%  NewM = set_env(M, set_ctx(get_env(M), Ctx)),
-%%  NewN = set_env(N, set_ctx(get_env(N), Ctx)),
-
-%%  ?TRACE("New monitor M updated with new context: ~p", [NewM]),
-%%  ?TRACE("New monitor N updated with new context: ~p", [NewN]),
-
+  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
 
   % Unfold respective sub-monitors. Proof derivation ID for second monitor N is
   % incremented accordingly.
-  {PdM_, M_} = derive_act(Act, copy_ctx(L, M), new_pdid(PdId)),
-  {PdN_, N_} = derive_act(Act, copy_ctx(L, N), inc_pdid(new_pdid(PdId))),
+  {PdM_, M_} = derive_act(Act, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
+  {PdN_, N_} = derive_act(Act, copy_ns(L, copy_ctx(L, N)), inc_pdid(new_pdid(PdId))),
 
 
-%%  {{PdM, M_}, {PdN, N_}} = {derive_act(Act, M, new_pdid(PdId)), derive_act(Act, N, inc_pdid(new_pdid(PdId)))},
-%%  {{PdId, mPar, Act, Env, {pd, PdM}, {pd, PdN}}, {Op, element(2, M_) ++ " " ++ atom_to_list(Op) ++ " " ++ element(2, N_), M_, N_}}.
-  {{PdId, mPar, Act, {Op, Env}, {pd, PdM_}, {pd, PdN_}}, {Op, Env, M_, N_}}.
-% The env should be the updated Env, always.
+  % Merge context.
+%%  Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
+%%  Env_ = set_ctx(Env, Ctx),
 
-%%extend_ctx(From, To) ->
-%%  Ctx = get_ctx(Env),
-%%  set_env(M, set_ctx(get_env(M), Ctx)).
+  % Copy the merged context of the children to this monitor.
+
+  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
+%%  {{PdId, mPar, Act, L, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
+%%  {{PdId, mPar, Act, set_env(L, Env_), {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
+
+
+% The env should be the updated Env, always. Depends on how you decide to print
+% it after all, since it's not necessary for the correct operation of monitors,
+% but only for the correct stringifying of monitors.
+
+
+
+
+
 
 can_act(Act, {act, _Env, C, _M}) ->
   ?assert(is_function(_M, 1)),
@@ -538,7 +553,6 @@ analyze(Act, M, PdLst) ->
 
   % Analyze action.
   {PdM, M_} = derive_act(Act, M, new_pdid([])),
-%%  {PdM, M_} = derive_act(Act, M, new_pdid([]), []),
 
   % Check whether the residual monitor state can be reduced further using tau
   % transitions. This ensures that the monitor is always left in a state where
@@ -580,7 +594,6 @@ get_key(Key, List, {true, Default}) ->
 put_key(Key, Value, List) ->
   lists:keystore(Key, 1, List, {Key, Value}).
 
-
 get_env(M) when is_tuple(M), tuple_size(M) > 1 ->
   {env, _} = element(2, M).
 
@@ -605,14 +618,51 @@ set_ctx({env, Env}, {ctx, Ctx}) when is_list(Env), is_list(Ctx) ->
   {env, put_key(?KEY_ENV_CTX, Ctx, Env)}.
 
 
-new_binder({ctx, Ctx}, Name, Value) when is_list(Ctx) ->
-  {ctx, put_key(Name, Value, Ctx)}.
+new_binding({ctx, Ctx}, Ns, Name, Value) when is_list(Ctx) ->
+  {ctx, put_key({Ns, Name}, Value, Ctx)}.
+
+
+del_bindings({ctx, []}, _) ->
+  {ctx, []};
+
+del_bindings({ctx, [{{Ns, _}, _} | Bindings]}, Ns) ->
+  del_bindings({ctx, Bindings}, Ns);
+
+del_bindings({ctx, [Binding = {{_, _}, _} | Bindings]}, Ns) ->
+  {ctx, Bindings_} = del_bindings({ctx, Bindings}, Ns),
+  {ctx, [Binding | Bindings_]}.
 
 
 
+get_ns({env, Env}) ->
+  get_key(ns, Env, {true, global}).
+
+set_ns({env, Env}, {ns, Ns}) ->
+  {env, put_key(ns, Ns, Env)}.
+
+
+copy_ns(From, To) ->
+  EnvTo = set_ns(get_env(To), get_ns(get_env(From))),
+  set_env(To, EnvTo).
+
+
+
+% From: Monitor; To: monitor.
 copy_ctx(From, To) ->
   EnvTo = set_ctx(get_env(To), get_ctx(get_env(From))),
   set_env(To, EnvTo).
+
+merge_ctx({ctx, Ctx1}, {ctx, Ctx2}) ->
+  {ctx, lists:foldr(
+    fun(Mapping = {Name, _}, Acc) ->
+      case get_key(Name, Acc, false) of
+        false ->
+          [Mapping | Acc];
+        {Name, _} ->
+          Acc
+      end
+    end, Ctx2, Ctx1)}.
+
 
 
 unwrap_value({_, Value}) ->
@@ -620,112 +670,98 @@ unwrap_value({_, Value}) ->
 
 % Also needs to pass on context.
 
-% Stringifies the monitor.
-to_iolist({yes, Env = {env, _}}) ->
-%%  ?TRACE("Visting yes."),
-  unwrap_value(get_str(Env));
-to_iolist({no, Env = {env, _}}) ->
-%%  ?TRACE("Visiting no"),
-  unwrap_value(get_str(Env));
-to_iolist({var, Env = {env, _}, _}) ->
-%%  ?TRACE("Visiting rec var"),
-  unwrap_value(get_str(Env));
-to_iolist(L = {act, Env = {env, _}, _, M}) ->
-
-  M_ = M(undef),
-  MM_ = copy_ctx(L, M_),
-
-%%  ?TRACE("Visiting act with context: ~p", [get_ctx(Env)]),
-%%  ?TRACE("Visiting act and getting string: ~p", [get_str(Env)]),
-%%  ?TRACE("Visiting act"),
-  [
-    [format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env)))],
-    ".", to_iolist(MM_)
-  ];
-
-to_iolist(L = {chs, Env = {env, _}, M, N}) ->
-%%  ?TRACE("Visiting chs"),
-
-
-%%  ["(", to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N) ++ ")"];
-  ["(", to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N)), ")"];
-
-to_iolist(L = {'or', Env = {env, _}, M, N}) ->
-%%  ?TRACE("Visiting or"),
-%%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
-
-
-
-
-  [to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N))];
-to_iolist(L = {'and', Env = {env, _}, M, N}) ->
-%%  ?TRACE("Visiting and"),
-%%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
-
-
-
-  [to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N))];
-to_iolist(L = {rec, Env = {env, _}, M}) ->
-%%  ?TRACE("Visiting rec"),
-  M_ = M(),
-%%  [unwrap_value(get_str(Env)), "(", to_iolist(M()), ")"].
-  [unwrap_value(get_str(Env)), "(", to_iolist(copy_ctx(L, M_)), ")"].
-
-
-
-
-m_to_iolist({yes, Env = {env, _}}) ->
-  unwrap_value(get_str(Env));
-m_to_iolist({no, Env = {env, _}}) ->
-  unwrap_value(get_str(Env));
-m_to_iolist({var, Env = {env, _}, _}) ->
-  unwrap_value(get_str(Env));
-m_to_iolist({act, Env = {env, _}, _, M}) ->
-  ?TRACE("Env = ~p", [Env]),
-  unwrap_value(get_str(Env));
-m_to_iolist({chs, Env = {env, _}, M, N}) ->
-  [m_to_iolist(M), unwrap_value(get_str(Env)), m_to_iolist(M)];
-m_to_iolist({'or', Env = {env, _}, M, N}) ->
-  [m_to_iolist(M), unwrap_value(get_str(Env)), m_to_iolist(M)];
-m_to_iolist({'and', Env = {env, _}, M, N}) ->
-  [m_to_iolist(M), unwrap_value(get_str(Env)), m_to_iolist(M)];
-m_to_iolist({rec, Env = {env, _}, M}) ->
-  unwrap_value(get_str(Env)).
+%%% Stringifies the monitor.
+%%to_iolist({yes, Env = {env, _}}) ->
+%%%%  ?TRACE("Visting yes."),
+%%  unwrap_value(get_str(Env));
+%%to_iolist({no, Env = {env, _}}) ->
+%%%%  ?TRACE("Visiting no"),
+%%  unwrap_value(get_str(Env));
+%%to_iolist({var, Env = {env, _}, _}) ->
+%%%%  ?TRACE("Visiting rec var"),
+%%  unwrap_value(get_str(Env));
+%%to_iolist(L = {act, Env = {env, _}, _, M}) ->
+%%
+%%  M_ = M(undef),
+%%  MM_ = copy_ctx(L, M_),
+%%
+%%%%  ?TRACE("Visiting act with context: ~p", [get_ctx(Env)]),
+%%%%  ?TRACE("Visiting act and getting string: ~p", [get_str(Env)]),
+%%%%  ?TRACE("Visiting act"),
+%%  [
+%%    [format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env)))],
+%%    ".", to_iolist(MM_)
+%%  ];
+%%
+%%to_iolist(L = {chs, Env = {env, _}, M, N}) ->
+%%%%  ?TRACE("Visiting chs"),
+%%
+%%
+%%%%  ["(", to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N) ++ ")"];
+%%  ["(", to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N)), ")"];
+%%
+%%to_iolist(L = {'or', Env = {env, _}, M, N}) ->
+%%%%  ?TRACE("Visiting or"),
+%%%%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
+%%
+%%
+%%
+%%
+%%  [to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N))];
+%%to_iolist(L = {'and', Env = {env, _}, M, N}) ->
+%%%%  ?TRACE("Visiting and"),
+%%%%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
+%%
+%%
+%%
+%%  [to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N))];
+%%to_iolist(L = {rec, Env = {env, _}, M}) ->
+%%%%  ?TRACE("Visiting rec"),
+%%  M_ = M(),
+%%%%  [unwrap_value(get_str(Env)), "(", to_iolist(M()), ")"].
+%%  [unwrap_value(get_str(Env)), "(", to_iolist(copy_ctx(L, M_)), ")"].
 
 
 
-m_to_iolist2(M) ->
+
+
+
+% This relies on the fact that the derivation algorithm copies the context from
+% one monitor continuation to the other so inherit it. But since we are printing
+% a monitor that has not been reduce, we need to pass the context to the
+% continuation which has not been yet unfolded.
+m_to_iolist(M) ->
 
   % Pass variable context of monitor so that monitors containing free variables
   % are correctly stringified.
   {ctx, Ctx} = get_ctx(get_env(M)),
-  m_to_iolist2(M, Ctx).
+  m_to_iolist(M, [{Name, Value} || {{_, Name}, Value} <- Ctx]).
 
-m_to_iolist2({yes, Env = {env, _}}, _) ->
+m_to_iolist({yes, Env = {env, _}}, _) ->
   unwrap_value(get_str(Env));
-m_to_iolist2({no, Env = {env, _}}, _) ->
+m_to_iolist({no, Env = {env, _}}, _) ->
   unwrap_value(get_str(Env));
-m_to_iolist2({var, Env = {env, _}, _}, _) ->
+m_to_iolist({var, Env = {env, _}, _}, _) ->
   unwrap_value(get_str(Env));
-m_to_iolist2({act, Env = {env, _}, _, M}, Ctx) ->
+m_to_iolist({act, Env = {env, _}, _, M}, Ctx) ->
 
   % The continuation of an action is a function. In order to stringify the rest
   % of the monitor, apply the function to unfold it. Action functions accept a
   % single parameter.
   M_ = M(undef),
-  [format_ph(unwrap_value(get_str(Env)), Ctx), $., m_to_iolist2(M_, Ctx)];
-m_to_iolist2({chs, Env = {env, _}, M, N}, Ctx) ->
-  [$(, m_to_iolist2(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist2(N, Ctx), $)];
-m_to_iolist2({'or', Env = {env, _}, M, N}, Ctx) ->
-  [m_to_iolist2(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist2(N, Ctx)];
-m_to_iolist2({'and', Env = {env, _}, M, N}, Ctx) ->
-  [m_to_iolist2(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist2(N, Ctx)];
-m_to_iolist2({rec, Env = {env, _}, M}, Ctx) ->
+  [format_ph(unwrap_value(get_str(Env)), Ctx), $., m_to_iolist(M_, Ctx)];
+m_to_iolist({chs, Env = {env, _}, M, N}, Ctx) ->
+  [$(, m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx), $)];
+m_to_iolist({'or', Env = {env, _}, M, N}, Ctx) ->
+  [m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx)];
+m_to_iolist({'and', Env = {env, _}, M, N}, Ctx) ->
+  [m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx)];
+m_to_iolist({rec, Env = {env, _}, M}, Ctx) ->
 
-  % The continuation of recursion is a function. In order to stringify the rest
-  % of the monitor, apply the function to unfold it. Recursive functions do not
-  % accept parameters.
-  [unwrap_value(get_str(Env)), m_to_iolist2(M(), Ctx)].
+  % The continuation of a recursive construct is encoded in terms of a function
+  % that needs to be applied to unfold the monitor before stringifying it.
+  % Recursive monitor definitions do not accept parameters.
+  [unwrap_value(get_str(Env)), m_to_iolist(M(), Ctx)].
 
 
 % General implementation of format placeholder.
@@ -760,14 +796,82 @@ show_pdlist(PdList) ->
 
 
 
-fmt_pd({PdId, Rule, Act, {Type, Env}}) ->
-  Formatted = format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env))),
-  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, Formatted]);
+fmt_pd({PdId, Rule, Act, M, M_}) ->
+%%  Env = get_env(M),
+%%  Formatted = format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env))),
+%%  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, Formatted]);
+%%  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]);
+  io_lib:format("~*s [~s, axiom ~s] ~s -(~w)-> ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]);
 
-fmt_pd({PdId, Rule, Act, {Type, Env}, {pd, PdM}}) ->
+
+
+
+fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
   PdMFmt = fmt_pd(PdM),
-  [io_lib:format("~*s (~s) rule ~s on '~w': ~s using premise~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, unwrap_value(get_str(Env))]) | PdMFmt];
+  [io_lib:format("~*s mCHSBRANCH [~s, rule ~s] M = ~s -(~w)-> M_ = ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
 
-fmt_pd({PdId, Rule, Act, {Type, Env}, {pd, PdM}, {pd, PdN}}) ->
+fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}}) -> % mTauL and mTauR
+  PdMFmt = fmt_pd(PdM),
+%%  [io_lib:format("~*s [~s, axiom ~s] ~s -(~w)-> ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
+  [io_lib:format("~*s mTAUBRANCH[~s, rule ~s] ~s -(~w)-> ~s ~s ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt];
+
+
+fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
   {PdMFmt, PdNFmt} = {fmt_pd(PdM), fmt_pd(PdN)},
-  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, unwrap_value(get_str(Env))]) | PdMFmt] | PdNFmt].
+%%  Env = get_env(M),
+%%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, unwrap_value(get_str(Env))]) | PdMFmt] | PdNFmt].
+%%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]) | PdMFmt] | PdNFmt].
+%%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]) | PdMFmt] | PdNFmt].
+
+  [[io_lib:format("~*s [~s, rule ~s] ~s -(~w)-> ~s ~s ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt] | PdNFmt].
+
+% For this we do not need to pass the context, since all the variable
+% information is contained in the proof derivation.
+
+% Monitor = a,true.rec(x,(b,a=:=b.no + b,not(a=:=b).yes) and (b,a=/=b.x + b,not(a=/=b).yes)) + a,not(true).yes
+
+
+%%format_m({yes, Env = {env, _}}) ->
+%%  unwrap_value(get_str(Env));
+%%format_m({no, Env = {env, _}}) ->
+%%  unwrap_value(get_str(Env));
+%%format_m({var, Env = {env, _}, _}) ->
+%%  unwrap_value(get_str(Env));
+%%format_m({act, Env = {env, _}, _, M}) ->
+%%%%  ?TRACE("Env = ~p", [Env]),
+%%%%  M_ = M(undef),
+%%%%  ?TRACE("Formatting ACT: Env = ~p", [Env]),
+%%  [format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env)))];
+%%format_m({chs, Env = {env, _}, M, N}) ->
+%%%%  ?TRACE("Formatting CHS"),
+%%  [format_m(M), $ , unwrap_value(get_str(Env)), $ , format_m(N)];
+%%format_m({'or', Env = {env, _}, M, N}) ->
+%%  [format_m(M), $ , unwrap_value(get_str(Env)), $ , format_m(N)];
+%%format_m({'and', Env = {env, _}, M, N}) ->
+%%  [format_m(M), $ , unwrap_value(get_str(Env)), $ , format_m(N)];
+%%format_m({rec, Env = {env, _}, M}) ->
+%%  [unwrap_value(get_str(Env)), format_m(M())].
+
+
+format_m(M) ->
+  {ctx, Ctx} = get_ctx(get_env(M)),
+  format_m(M, [{Name, Value} || {{_, Name}, Value} <- Ctx]).
+
+
+format_m({yes, Env = {env, _}}, _) ->
+  unwrap_value(get_str(Env));
+format_m({no, Env = {env, _}}, _) ->
+  unwrap_value(get_str(Env));
+format_m({var, Env = {env, _}, _}, _) ->
+  unwrap_value(get_str(Env));
+format_m({act, Env = {env, _}, _, M}, Ctx) ->
+  M_ = M(undef),
+  [format_ph(unwrap_value(get_str(Env)), Ctx), $., format_m(M_, Ctx)];
+format_m({chs, Env = {env, _}, M, N}, Ctx) ->
+  [$(, format_m(M, Ctx), $ , $!, unwrap_value(get_str(Env)), $!, $ , format_m(N, Ctx), $)];
+format_m({'or', Env = {env, _}, M, N}, Ctx) ->
+  [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
+format_m({'and', Env = {env, _}, M, N}, Ctx) ->
+  [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
+format_m({rec, Env = {env, _}, M}, Ctx) ->
+  [unwrap_value(get_str(Env)), format_m(M(), Ctx)].

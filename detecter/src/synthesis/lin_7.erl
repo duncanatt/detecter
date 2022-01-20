@@ -101,6 +101,7 @@ m1() ->
                     {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}]},
                     fun(B) when A =:= B -> true; (_) -> false end,
                     fun(B) ->
+                      ?INFO("Reached verdict no."),
                       {no, {env, [{str, "no"}]}}
                     end
                   },
@@ -258,13 +259,6 @@ m3() ->
 % TODO: generating the instantiated monitor string, the string is already
 % TODO: instantiated with the value.
 
-%%m_str() ->
-%%  {ok,
-%%    {rec,
-%%      fun X() ->
-%%        {var, }
-%%      end}
-%%    }.
 
 
 % The ID can be saved in the Env probably. The env is used or verbosing and IDs!
@@ -377,14 +371,16 @@ derive_tau(L = {var, Env, M}, PdId) ->
   L_ = set_env(L, set_ctx(Env, Ctx)),
 
 
+  ?TRACE("----- RECURSIVE CONTEXT of current monitor L: ~p", [get_ctx(get_env(L))]),
+  ?TRACE("----- RECURSIVE CONTEXT of new reduction M_: ~p", [get_ctx(get_env(M_))]),
+  ?TRACE("----- RECURSIVE CONTEXT of new reduction (UPDATED) M_: ~p", [get_ctx(get_env(copy_ctx(L_, M_)))]),
 
-  ?TRACE("----- RECURSIVE CONTEXT M_: ~p", [get_ctx(get_env(M_))]),
-  ?TRACE("----- RECURSIVE CONTEXT L: ~p", [get_ctx(get_env(L))]),
 
 %%  {true, {{PdId, mRec, tau, L}, copy_ctx(L, M_)}};
 %%  {true, {{PdId, mRecccc, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
 %%  {true, {{PdId, mRecccc, tau, L, M_}, M_}};
   {true, {{PdId, mRecccc, tau, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}};
+%%  {true, {{PdId, mRecccc, tau, L_, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}}; %??
 
 derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 
@@ -507,6 +503,9 @@ derive_act(Act, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   {PdN_, N_} = derive_act(Act, copy_ns(L, copy_ctx(L, N)), inc_pdid(new_pdid(PdId))),
 
 
+%%  Merged = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
+%%  ?DEBUG(":: (~s) REDUCED using rule mPar: ~s.", [str_pdid(PdId), m_to_iolist(set_env(L, set_ctx(get_env(L), Merged)))]),
+
   % Merge context.
 %%  Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
 %%  Env_ = set_ctx(Env, Ctx),
@@ -534,7 +533,7 @@ can_act(Act, {act, _Env, C, _M}) ->
 
 
 reduce_tau(M, PdLst) ->
-%%  ?TRACE("[ Starting a new derivation for monitor on action 'tau' ]"),
+  ?TRACE("[ Attempting a new derivation for monitor on action 'tau' ]"),
 
   case derive_tau(M, new_pdid([])) of
     false ->
@@ -549,7 +548,7 @@ reduce_tau(M, PdLst) ->
 
 % Assumes that the monitor is already in a ready state.
 analyze(Act, M, PdLst) ->
-%%  ?TRACE("[ Starting a new derivation for monitor on action '~p' ]", [Act]),
+  ?TRACE("[ Starting a new derivation for monitor on action '~w' ]", [Act]),
 
   % Analyze action.
   {PdM, M_} = derive_act(Act, M, new_pdid([])),
@@ -801,19 +800,21 @@ fmt_pd({PdId, Rule, Act, M, M_}) ->
 %%  Formatted = format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env))),
 %%  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, Formatted]);
 %%  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]);
-  io_lib:format("~*s [~s, axiom ~s] ~s -(~w)-> ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]);
+  io_lib:format("~*s [~s, axiom ~s] ~s ~n-(~w)->~n ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]);
+%%  io_lib:format("~*s [~s, axiom ~s] -(~w)-> ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, Act, format_m(M_)]);
 
 
 
 
 fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
   PdMFmt = fmt_pd(PdM),
-  [io_lib:format("~*s mCHSBRANCH [~s, rule ~s] M = ~s -(~w)-> M_ = ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
+  [io_lib:format("~*s [~s, rule ~s] ~n~s -(~w)->~n M_ = ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
+%%  [io_lib:format("~*s [~s, rule ~s] -(~w)-> ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, Act, format_m(M_)]) | PdMFmt];
 
 fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}}) -> % mTauL and mTauR
   PdMFmt = fmt_pd(PdM),
 %%  [io_lib:format("~*s [~s, axiom ~s] ~s -(~w)-> ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
-  [io_lib:format("~*s mTAUBRANCH[~s, rule ~s] ~s -(~w)-> ~s ~s ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt];
+  [io_lib:format("~*s [~s, rule ~s] ~s ~n-(~w)-> ~s ~s ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt];
 
 
 fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
@@ -823,7 +824,8 @@ fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
 %%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]) | PdMFmt] | PdNFmt].
 %%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]) | PdMFmt] | PdNFmt].
 
-  [[io_lib:format("~*s [~s, rule ~s] ~s -(~w)-> ~s ~s ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt] | PdNFmt].
+  [[io_lib:format("~*s [~s, rule ~s] ~s ~n-(~w)->~n ~s ~s ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt] | PdNFmt].
+%%  [[io_lib:format("~*s [~s, rule ~s] -(~w)-> ~s ~s ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt] | PdNFmt].
 
 % For this we do not need to pass the context, since all the variable
 % information is contained in the proof derivation.
@@ -868,7 +870,7 @@ format_m({act, Env = {env, _}, _, M}, Ctx) ->
   M_ = M(undef),
   [format_ph(unwrap_value(get_str(Env)), Ctx), $., format_m(M_, Ctx)];
 format_m({chs, Env = {env, _}, M, N}, Ctx) ->
-  [$(, format_m(M, Ctx), $ , $!, unwrap_value(get_str(Env)), $!, $ , format_m(N, Ctx), $)];
+  [$(, format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx), $)];
 format_m({'or', Env = {env, _}, M, N}, Ctx) ->
   [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
 format_m({'and', Env = {env, _}, M, N}, Ctx) ->

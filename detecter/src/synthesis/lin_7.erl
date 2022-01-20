@@ -55,6 +55,7 @@
 -define(KEY_ENV_PDID, pdid).
 -define(KEY_ENV_CTX, ctx).
 
+-define(PD_SEP, "-").
 
 %%% ----------------------------------------------------------------------------
 %%% Type definitions.
@@ -67,7 +68,11 @@
 
 % P2: Two consecutive actions cannot be the same.
 %
-% max(X.[a,true]([b,a=:=b]ff and X))
+% max(X.[a,true]([b,a=:=b]ff and X)) [a]
+
+% [a,true]([b,1=:=b]ff and max(X.[a,true]([b,a=:=b]ff and X)))
+% -(1)-> [b,a=:=b]ff and max(X.[a,true]([b,a=:=b]ff and X))) GOOD [a->1]
+% -(1)-> [b,1=:=b]ff and max(X.[1,true]([b,1=:=b]ff and X))) BAD
 %
 % Aim: To test the general behaviour of one recursive operator, and in
 % particular, that recursive variables are correctly expanded. One other aspect
@@ -101,7 +106,7 @@ m1() ->
                     {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}]},
                     fun(B) when A =:= B -> true; (_) -> false end,
                     fun(B) ->
-                      io:format("Reached verdict no.~n"),
+%%                      io:format("Reached verdict no.~n"),
                       {no, {env, [{str, "no"}]}}
                     end
                   },
@@ -252,13 +257,90 @@ m3() ->
     }
   }.
 
+
+% Property P4: All actions are unique.
+%
+% Formula F4: max(X.[a,true](max(Y.[b,a=:=b]ff and [b,a=/=b]Y) and X))
+%
+% Monitor M4: rec(X. a,true(rec(Y. (b,a=:=b.no + b,not(a=:=b).yes) and (b,a=/=b.Y + b,a=/=b.yes)) and X) + a,not(true).yes)
+m4() ->
+  {ok,
+    {rec,
+      {env, [{str, "rec X"}, {var, 'X'}]},
+      fun X() ->
+        {chs,
+          {env, [{str, "+"}]},
+          {act,
+            {env, [{str, "{:A} when true"}, {var, 'A'}]},
+            fun(A) -> true; (_) -> false end,
+            fun(A) ->
+              {'and',
+                {env, [{str, "and"}]},
+                {rec,
+                  {env, [{str, "rec Y"}, {var, 'Y'}]},
+                  fun Y() ->
+                    {'and',
+                      {env, [{str, "and"}]},
+                      {chs,
+                        {env, [{str, "+"}]},
+                        {act,
+                          {env, [{str, "{:B} when {:A}=:={:B}"}, {var, 'B'}]},
+                          fun(B) when A =:= B -> true; (_) -> false end,
+                          fun(B) ->
+                            {no, {env, [{str, "no"}]}}
+                          end
+                        },
+                        {act,
+                          {env, [{str, "{:B} when not({:A}=:={:B})"}, {var, 'B'}]},
+                          fun(B) when A =:= B -> false; (_) -> true end,
+                          fun(B) ->
+                            {yes, {env, [{str, "yes"}]}}
+                          end
+                        }
+                      },
+                      {chs,
+                        {env, [{str, "+"}]},
+                        {act,
+                          {env, [{str, "{:B} when {:A}=/={:B}"}, {var, 'B'}]},
+                          fun(B) when A =/= B -> true; (_) -> false end,
+                          fun(B) ->
+                            {var, {env, [{str, "Y"}, {var, 'Y'}]}, Y}
+                          end
+                        },
+                        {act,
+                          {env, [{str, "{:B} when not({:A}=/={:B})"}, {var, 'B'}]},
+                          fun(B) when A =/= B -> false; (_) -> true end,
+                          fun(B) ->
+                            {yes, {env, [{str, "yes"}]}}
+                          end
+                        }
+                      }
+                    }
+                  end
+                },
+                {var, {env, [{str, "X"}, {var, 'X'}]}, X}
+              }
+            end
+          },
+          {act,
+            {env, [{str, "{:A} when not(true)"}, {var, 'A'}]},
+            fun(A) -> false; (_) -> true end,
+            fun(A) ->
+              {yes, {env, [{str, "yes"}]}}
+            end
+          }
+        }
+      end
+    }
+  }.
+
+
 % TODO: Consider removing the unbound variables in the list of tuples 'bind',
 % TODO: as these are not required actually, and we can add them on the fly when
 % TODO: we are evaluating the monitor.
 % TODO: Actually I think that the variable suffices, since when we are
 % TODO: generating the instantiated monitor string, the string is already
 % TODO: instantiated with the value.
-
 
 
 % The ID can be saved in the Env probably. The env is used or verbosing and IDs!
@@ -334,13 +416,8 @@ derive_tau(L = {rec, Env, M}, PdId) ->
   % definitions do not accept parameters.
 
 
-
-
-
   % Axiom mRec.
   M_ = M(),
-
-
 
 
   % Open new namespace.
@@ -371,16 +448,13 @@ derive_tau(L = {var, Env, M}, PdId) ->
   L_ = set_env(L, set_ctx(Env, Ctx)),
 
 
-  ?TRACE("----- RECURSIVE CONTEXT of current monitor L: ~p", [get_ctx(get_env(L))]),
-  ?TRACE("----- RECURSIVE CONTEXT of new reduction M_: ~p", [get_ctx(get_env(M_))]),
-  ?TRACE("----- RECURSIVE CONTEXT of new reduction (UPDATED) M_: ~p", [get_ctx(get_env(copy_ctx(L_, M_)))]),
+%%  ?TRACE("----- RECURSIVE CONTEXT of current monitor L: ~p", [get_ctx(get_env(L))]),
+%%  ?TRACE("----- RECURSIVE CONTEXT of new reduction M_: ~p", [get_ctx(get_env(M_))]),
+%%  ?TRACE("----- RECURSIVE CONTEXT of new reduction (UPDATED) M_: ~p", [get_ctx(get_env(copy_ctx(L_, M_)))]),
 
 
-%%  {true, {{PdId, mRec, tau, L}, copy_ctx(L, M_)}};
 %%  {true, {{PdId, mRecccc, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
-%%  {true, {{PdId, mRecccc, tau, L, M_}, M_}};
   {true, {{PdId, mRecccc, tau, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}};
-%%  {true, {{PdId, mRecccc, tau, L_, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}}; %??
 
 derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 
@@ -397,14 +471,14 @@ derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
         {true, {PdN_, N_}} ->
 
           % Rule mTauR.
-%%          {true, {{PdId, mTauR, tau, L, copy_ctx(L, M), N_, {pre, PdN_}}, {Op, Env, M, N_}}}
           {true, {{PdId, mTauR, tau, L, copy_ns(L, copy_ctx(L, M)), N_, {pre, PdN_}}, {Op, Env, M, N_}}}
+%%          {true, {{PdId, mTauR, tau, L, copy_ns(L, copy_ctx(L, M)), N_, {pre, PdN_}}, {Op, {env, [{str, "TAUR"}]}, M, N_}}}
       end;
     {true, {PdM_, M_}} ->
 
       % Rule mTauL.
-%%      {true, {{PdId, mTauL, tau, L, M_, copy_ctx(L, N), {pre, PdM_}}, {Op, Env, M_, N}}}
       {true, {{PdId, mTauL, tau, L, M_, copy_ns(L, copy_ctx(L, N)), {pre, PdM_}}, {Op, Env, M_, N}}}
+%%      {true, {{PdId, mTauL, tau, L, M_, copy_ns(L, copy_ctx(L, N)), {pre, PdM_}}, {Op, {env, [{str, "TAUL"}]}, M_, N}}}
   end;
 
 derive_tau(_, _) ->
@@ -457,7 +531,6 @@ derive_act(Act, L = {act, Env, C, M}, PdId) ->
 %%  NewM = copy_ctx(L_, M_),
 
 
-
 %%  {{PdId, mAct, Act, {act, NewEnv}}, NewM}; % Updated monitor env.
 %%  {{PdId, mAct, Act, MMM}, NewM}; % Updated monitor env.
 %%  {{PdId, mAct, Act, L_}, M_}; % Updated monitor env.
@@ -507,12 +580,21 @@ derive_act(Act, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 %%  ?DEBUG(":: (~s) REDUCED using rule mPar: ~s.", [str_pdid(PdId), m_to_iolist(set_env(L, set_ctx(get_env(L), Merged)))]),
 
   % Merge context.
-%%  Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
-%%  Env_ = set_ctx(Env, Ctx),
+  ?TRACE("--> CTX M_ ~p", [get_ctx(get_env(M_))]),
+  ?TRACE("--> CTX N_ ~p", [get_ctx(get_env(N_))]),
+  Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
+  ?TRACE("--> Merged context ~p", [Ctx]),
+  Env_ = set_ctx(Env, Ctx),
 
-  % Copy the merged context of the children to this monitor.
 
-  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
+
+
+
+
+%%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
+  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env_, M_, N_}}.
+%%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
+%%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, get_env(N_), M_, N_}}. % Use context of N_ ?
 %%  {{PdId, mPar, Act, L, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
 %%  {{PdId, mPar, Act, set_env(L, Env_), {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
 
@@ -557,6 +639,22 @@ analyze(Act, M, PdLst) ->
   % transitions. This ensures that the monitor is always left in a state where
   % it is ready to analyse the next action.
   reduce_tau(M_, [PdM | PdLst]).
+
+
+
+%%analyze([], M) ->
+%%  ?TRACE("[ Analysis ready ]");
+
+analyze_trace(Trace, M) when is_list(Trace) ->
+  {PdList_, M_} = reduce_tau(M, []),
+  analyze_trace(Trace, M_, PdList_).
+
+analyze_trace([], M, PdList) ->
+  {PdList, M};
+
+analyze_trace([Act | Trace], M, PdList) ->
+  {PdList_, M_} = analyze(Act, M, PdList),
+  analyze_trace(Trace, M_, PdList_).
 
 %%% ----------------------------------------------------------------------------
 %%% Private helper functions.
@@ -645,7 +743,6 @@ copy_ns(From, To) ->
   set_env(To, EnvTo).
 
 
-
 % From: Monitor; To: monitor.
 copy_ctx(From, To) ->
   EnvTo = set_ctx(get_env(To), get_ctx(get_env(From))),
@@ -662,66 +759,8 @@ merge_ctx({ctx, Ctx1}, {ctx, Ctx2}) ->
       end
     end, Ctx2, Ctx1)}.
 
-
-
 unwrap_value({_, Value}) ->
   Value.
-
-% Also needs to pass on context.
-
-%%% Stringifies the monitor.
-%%to_iolist({yes, Env = {env, _}}) ->
-%%%%  ?TRACE("Visting yes."),
-%%  unwrap_value(get_str(Env));
-%%to_iolist({no, Env = {env, _}}) ->
-%%%%  ?TRACE("Visiting no"),
-%%  unwrap_value(get_str(Env));
-%%to_iolist({var, Env = {env, _}, _}) ->
-%%%%  ?TRACE("Visiting rec var"),
-%%  unwrap_value(get_str(Env));
-%%to_iolist(L = {act, Env = {env, _}, _, M}) ->
-%%
-%%  M_ = M(undef),
-%%  MM_ = copy_ctx(L, M_),
-%%
-%%%%  ?TRACE("Visiting act with context: ~p", [get_ctx(Env)]),
-%%%%  ?TRACE("Visiting act and getting string: ~p", [get_str(Env)]),
-%%%%  ?TRACE("Visiting act"),
-%%  [
-%%    [format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env)))],
-%%    ".", to_iolist(MM_)
-%%  ];
-%%
-%%to_iolist(L = {chs, Env = {env, _}, M, N}) ->
-%%%%  ?TRACE("Visiting chs"),
-%%
-%%
-%%%%  ["(", to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N) ++ ")"];
-%%  ["(", to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N)), ")"];
-%%
-%%to_iolist(L = {'or', Env = {env, _}, M, N}) ->
-%%%%  ?TRACE("Visiting or"),
-%%%%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
-%%
-%%
-%%
-%%
-%%  [to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N))];
-%%to_iolist(L = {'and', Env = {env, _}, M, N}) ->
-%%%%  ?TRACE("Visiting and"),
-%%%%  [to_iolist(M), " ", unwrap_value(get_str(Env)), " ", to_iolist(N)];
-%%
-%%
-%%
-%%  [to_iolist(copy_ctx(L, M)), " ", unwrap_value(get_str(Env)), " ", to_iolist(copy_ctx(L, N))];
-%%to_iolist(L = {rec, Env = {env, _}, M}) ->
-%%%%  ?TRACE("Visiting rec"),
-%%  M_ = M(),
-%%%%  [unwrap_value(get_str(Env)), "(", to_iolist(M()), ")"].
-%%  [unwrap_value(get_str(Env)), "(", to_iolist(copy_ctx(L, M_)), ")"].
-
-
-
 
 
 
@@ -796,68 +835,56 @@ show_pdlist(PdList) ->
 
 
 fmt_pd({PdId, Rule, Act, M, M_}) ->
-%%  Env = get_env(M),
-%%  Formatted = format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env))),
-%%  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, Formatted]);
-%%  io_lib:format("~*s (~s) axiom ~s on '~w': ~s ~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]);
-  io_lib:format("~*s [~s, axiom ~s] ~s ~n-(~w)->~n ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]);
-%%  io_lib:format("~*s [~s, axiom ~s] -(~w)-> ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, Act, format_m(M_)]);
+  Indent = length(PdId) + length(?PD_SEP),
+  io_lib:format("~*s [~s, axiom ~s] ~s~n~*s-(~w)->~n~*s~s~n",
+    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_)]
+%%    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_)]
+  );
 
 
 
 
 fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
   PdMFmt = fmt_pd(PdM),
-  [io_lib:format("~*s [~s, rule ~s] ~n~s -(~w)->~n M_ = ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
-%%  [io_lib:format("~*s [~s, rule ~s] -(~w)-> ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, Act, format_m(M_)]) | PdMFmt];
+  Indent = length(PdId) + length(?PD_SEP),
+  [io_lib:format("~*s [~s, rule ~s] ~s~n~*s-(~w)->~n~*s~s~n",
+    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_)])
+%%    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_)])
+    | PdMFmt
+  ];
 
 fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}}) -> % mTauL and mTauR
   PdMFmt = fmt_pd(PdM),
-%%  [io_lib:format("~*s [~s, axiom ~s] ~s -(~w)-> ~s~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_)]) | PdMFmt];
-  [io_lib:format("~*s [~s, rule ~s] ~s ~n-(~w)-> ~s ~s ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt];
+  Indent = length(PdId) + length(?PD_SEP),
+  [io_lib:format("~*s [~s, rule ~s] ~s~n~*s-(~w)->~n~*s ~s ~s ~s~n",
+    [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)])
+%%    [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_), unwrap_value(get_str(get_env(M))), format_m2(N_)])
+    | PdMFmt
+  ];
 
 
 fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
   {PdMFmt, PdNFmt} = {fmt_pd(PdM), fmt_pd(PdN)},
-%%  Env = get_env(M),
-%%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, unwrap_value(get_str(Env))]) | PdMFmt] | PdNFmt].
-%%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]) | PdMFmt] | PdNFmt].
-%%  [[io_lib:format("~*s (~s) rule ~s on '~w': ~s using premises~n", [length(PdId) + 2, "->", str_pdid(PdId), Rule, Act, format_m(M)]) | PdMFmt] | PdNFmt].
-
-  [[io_lib:format("~*s [~s, rule ~s] ~s ~n-(~w)->~n ~s ~s ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, format_m(M), Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt] | PdNFmt].
-%%  [[io_lib:format("~*s [~s, rule ~s] -(~w)-> ~s ~s ~s~n", [length(PdId) + 1, ".", str_pdid(PdId), Rule, Act, format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)]) | PdMFmt] | PdNFmt].
+  Indent = length(PdId) + length(?PD_SEP),
+  [
+    [
+      io_lib:format("~*s [~s, rule ~s] ~s~n~*s-(~w)->~n~*s~s ~s ~s~n",
+        [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)])
+%%        [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_), unwrap_value(get_str(get_env(M))), format_m2(N_)])
+      | PdMFmt
+    ]
+    | PdNFmt
+  ].
 
 % For this we do not need to pass the context, since all the variable
 % information is contained in the proof derivation.
 
-% Monitor = a,true.rec(x,(b,a=:=b.no + b,not(a=:=b).yes) and (b,a=/=b.x + b,not(a=/=b).yes)) + a,not(true).yes
-
-
-%%format_m({yes, Env = {env, _}}) ->
-%%  unwrap_value(get_str(Env));
-%%format_m({no, Env = {env, _}}) ->
-%%  unwrap_value(get_str(Env));
-%%format_m({var, Env = {env, _}, _}) ->
-%%  unwrap_value(get_str(Env));
-%%format_m({act, Env = {env, _}, _, M}) ->
-%%%%  ?TRACE("Env = ~p", [Env]),
-%%%%  M_ = M(undef),
-%%%%  ?TRACE("Formatting ACT: Env = ~p", [Env]),
-%%  [format_ph(unwrap_value(get_str(Env)), unwrap_value(get_ctx(Env)))];
-%%format_m({chs, Env = {env, _}, M, N}) ->
-%%%%  ?TRACE("Formatting CHS"),
-%%  [format_m(M), $ , unwrap_value(get_str(Env)), $ , format_m(N)];
-%%format_m({'or', Env = {env, _}, M, N}) ->
-%%  [format_m(M), $ , unwrap_value(get_str(Env)), $ , format_m(N)];
-%%format_m({'and', Env = {env, _}, M, N}) ->
-%%  [format_m(M), $ , unwrap_value(get_str(Env)), $ , format_m(N)];
-%%format_m({rec, Env = {env, _}, M}) ->
-%%  [unwrap_value(get_str(Env)), format_m(M())].
-
 
 format_m(M) ->
   {ctx, Ctx} = get_ctx(get_env(M)),
-  format_m(M, [{Name, Value} || {{_, Name}, Value} <- Ctx]).
+  Vars = [{Name, Value} || {{_, Name}, Value} <- Ctx],
+  lists:flatten(io_lib:format("~s sub([ ~s])", [format_m(M, Vars),
+    [io_lib:format("~s=~w ", [Name, Value]) || {Name, Value} <- Vars]])).
 
 
 format_m({yes, Env = {env, _}}, _) ->
@@ -868,12 +895,55 @@ format_m({var, Env = {env, _}, _}, _) ->
   unwrap_value(get_str(Env));
 format_m({act, Env = {env, _}, _, M}, Ctx) ->
   M_ = M(undef),
-  [format_ph(unwrap_value(get_str(Env)), Ctx), $., format_m(M_, Ctx)];
+%%  [format_ph(unwrap_value(get_str(Env)), Ctx), $., format_m(M_, Ctx)];
+%%  [format_ph(re:replace(unwrap_value(get_str(Env)), " when ", ","), Ctx), $., format_m(M_, Ctx)];
+  [re:replace(unwrap_value(get_str(Env)), " when ", ","), $., format_m(M_, Ctx)];
 format_m({chs, Env = {env, _}, M, N}, Ctx) ->
   [$(, format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx), $)];
 format_m({'or', Env = {env, _}, M, N}, Ctx) ->
   [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
 format_m({'and', Env = {env, _}, M, N}, Ctx) ->
+%%  ?TRACE("Env of AND: ~p", [Env]),
+%%  ?TRACE("Env of M: ~p", [get_env(M)]),
+%%  ?TRACE("Env of N: ~p", [get_env(N)]),
   [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
 format_m({rec, Env = {env, _}, M}, Ctx) ->
   [unwrap_value(get_str(Env)), format_m(M(), Ctx)].
+
+
+
+%%filter_ctx({ctx, Ctx}) ->
+%%  [{Name, Value} || {{_, Name}, Value} <- Ctx].
+%%
+%%str_ctx({ctx, Ctx}) ->
+%%  Vars = filter_ctx({ctx, Ctx}),
+%%  lists:flatten(io_lib:format(" sub([ ~s])   ", [[io_lib:format("~s=~w ", [Name, Value]) || {Name, Value} <- Vars]])).
+
+%%format_m2({yes, Env = {env, _}}) ->
+%%%%  [unwrap_value(get_str(Env)), str_ctx(get_ctx(Env))];
+%%  [unwrap_value(get_str(Env))];
+%%format_m2({no, Env = {env, _}}) ->
+%%%%  [unwrap_value(get_str(Env)), str_ctx(get_ctx(Env))];
+%%  [unwrap_value(get_str(Env))];
+%%format_m2({var, Env = {env, _}, _}) ->
+%%%%  [unwrap_value(get_str(Env)), str_ctx(get_ctx(Env))];
+%%  [unwrap_value(get_str(Env))];
+%%format_m2({act, Env = {env, _}, _, M}) ->
+%%  M_ = M(undef),
+%%  [format_ph(re:replace(unwrap_value(get_str(Env)), " when ", ","), filter_ctx(get_ctx(Env))), str_ctx(get_ctx(Env)), $., format_m2(M_)];
+%%%%  ?TRACE("IN Act. M_ = ~p", [M_]),
+%%%%  [format_ph(re:replace(unwrap_value(get_str(Env)), " when ", ","), filter_ctx(get_ctx(Env))), $., format_m2(M_)];
+%%format_m2({chs, Env = {env, _}, M, N}) ->
+%%%%  [$(, format_m2(M), $ , unwrap_value(get_str(Env)), $ , format_m2(N), $), str_ctx(get_ctx(Env))];
+%%%%  ?TRACE("IN CHS. M = ~p ADN N = ~p", [M, N]),
+%%  [$(, format_m2(M), $ , unwrap_value(get_str(Env)), $ , format_m2(N), $)];
+%%format_m2({'or', Env = {env, _}, M, N}) ->
+%%%%  [format_m2(M), $ , unwrap_value(get_str(Env)), $ , format_m2(N), str_ctx(get_ctx(Env))];
+%%  [format_m2(M), $ , unwrap_value(get_str(Env)), $ , format_m2(N)];
+%%format_m2({'and', Env = {env, _}, M, N}) ->
+%%%%  [format_m2(M), $ , unwrap_value(get_str(Env)), $ , format_m2(N), str_ctx(get_ctx(Env))];
+%%  [format_m2(M), $ , unwrap_value(get_str(Env)), $ , format_m2(N)];
+%%format_m2({rec, Env = {env, _}, M}) ->
+%%%%  [unwrap_value(get_str(Env)), format_m2(M()), str_ctx(get_ctx(Env))].
+%%  [unwrap_value(get_str(Env)), format_m2(M())].
+

@@ -101,7 +101,7 @@ m1() ->
                     {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}]},
                     fun(B) when A =:= B -> true; (_) -> false end,
                     fun(B) ->
-                      ?INFO("Reached verdict no."),
+                      io:format("Reached verdict no.~n"),
                       {no, {env, [{str, "no"}]}}
                     end
                   },

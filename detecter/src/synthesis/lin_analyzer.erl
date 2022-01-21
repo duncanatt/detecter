@@ -43,6 +43,11 @@
 %%% Macro and record definitions.
 %%% ----------------------------------------------------------------------------
 
+%% Process dictionary key used to store the synthesized analysis function that
+%% is applied to trace events. The result of this function application is used
+%% to overwrite the previous result.
+-define(MONITOR, '$monitor').
+
 %% Irrevocable verdicts reached by the runtime analysis.
 -define(VERDICT_YES, yes).
 -define(VERDICT_NO, no).
@@ -146,56 +151,55 @@
   M :: monitor(),
   PdId :: pd_id().
 derive_tau(L = {'or', _, Yes = {yes, _}, _}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisYL: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mDisYL.
   {true, {{PdId, ?M_DIS_Y_L, tau, L, Yes}, Yes}};
 
 derive_tau(L = {'or', _, _, Yes = {yes, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisYR: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mDisYR.
   {true, {{PdId, ?M_DIS_Y_R, tau, L, Yes}, Yes}};
 
 derive_tau(L = {'or', _, {no, _}, M}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisNL: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mDisNL.
   {true, {{PdId, ?M_DIS_N_L, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
 derive_tau(L = {'or', _, M, {no, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mDisNR: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mDisNR.
   {true, {{PdId, ?M_DIS_N_R, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
 derive_tau(L = {'and', _, {yes, _}, M}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConYL: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mConYL.
   {true, {{PdId, ?M_CON_Y_L, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
 derive_tau(L = {'and', _, M, {yes, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConYR: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mConYR.
   {true, {{PdId, ?M_CON_Y_R, tau, L, copy_ns(L, copy_ctx(L, M))}, copy_ns(L, copy_ctx(L, M))}};
 
 derive_tau(L = {'and', _, No = {no, _}, _}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mConNL.
   {true, {{PdId, ?M_CON_N_L, tau, L, No}, No}};
 
 derive_tau(L = {'and', _, _, No = {no, _}}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Axiom mConNR.
   {true, {{PdId, ?M_CON_N_R, tau, L, No}, No}};
 
 derive_tau(L = {rec, Env, M}, PdId) ->
-
-  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % The continuation of a recursive construct is encoded in terms of a function
   % that needs to be applied to unfold the monitor. Recursive monitor
@@ -218,7 +222,7 @@ derive_tau(L = {rec, Env, M}, PdId) ->
   {true, {{PdId, ?M_REC, tau, L, copy_ctx(L, M__)}, copy_ctx(L, M__)}};
 
 derive_tau(L = {var, Env, M}, PdId) ->
-  ?DEBUG(":: (~s) Reducing using axiom mRec (var): ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using axiom mRec (var): ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Recursive variables complement recursive constructs, and are used to refer
   % to recursive monitor definitions. Identically to the recursive construct,
@@ -239,15 +243,15 @@ derive_tau(L = {var, Env, M}, PdId) ->
 
 derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 
-  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 %%  case derive_tau(copy_ctx(L, M), new_pdid(PdId)) of
   case derive_tau(copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)) of
     false ->
-      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+      ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 %%      case derive_tau(copy_ctx(L, N), new_pdid(PdId)) of
       case derive_tau(copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)) of
         false ->
-          ?DEBUG(":: (~s) Unable to reduce futher using tau: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+          ?DEBUG(":: (~s) Unable to reduce futher using tau: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
           false;
         {true, {PdN_, N_}} ->
 
@@ -289,7 +293,7 @@ derive_tau(_, _) ->
   PdId :: pd_id().
 derive_event(Event, M = {V, _}, PdId) when V =:= yes; V =:= no ->
   ?assertNot(Event =:= tau),
-  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [pdid_to_iolist(PdId), m_to_iolist(M)]),
+  ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [pdid_to_iolist(PdId), format_m(M)]),
 
   % Axiom mVrd.
   {{PdId, ?M_VRD, Event, M, M}, M};
@@ -298,8 +302,6 @@ derive_event(Event, L = {act, Env, C, M}, PdId) ->
   ?assertNot(Event =:= tau),
   ?assert(C(Event)),
   ?assert(is_function(M, 1)),
-%%  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [str_pdid(PdId), get_str(Env)]),
-
 
   % Get the variable binder associated with this action.
   Binder = unwrap_value(get_var(Env)),
@@ -311,8 +313,7 @@ derive_event(Event, L = {act, Env, C, M}, PdId) ->
   Ns = get_ns(Env),
   L_ = set_env(L, set_ctx(Env, new_binding(get_ctx(Env), unwrap_value(Ns), Binder, Event))),
 
-
-  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L_)]),
+  ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [pdid_to_iolist(PdId), format_m(L_)]),
 
 
   % Axiom mAct.
@@ -344,22 +345,20 @@ derive_event(Event, L = {chs, _, M, N}, PdId) ->
 
   case {is_satisfied(Event, M), is_satisfied(Event, N)} of
     {true, false} ->
-      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+      ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
       % Rule mChsL.
       {PdM_, M_} = derive_event(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
-%%      ?TRACE("---- Updated context from premises: ~p", [get_ctx(get_env(M_))]),
 %%      {{PdId, mChsL, Act, L, {pre, PdM_}}, M_};
       {{PdId, ?M_CHS_L, Event, L, M_, {pre, PdM_}}, M_};
 %%      {{PdId, mChsL, Act, copy_ctx(M_, L), {pre, PdM_}}, M_};
 %%      {{PdId, mChsL, Act, M_, {pre, PdM_}}, M_};
 
     {false, true} ->
-      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+      ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
       % Rule mChsR.
       {PdN_, N_} = derive_event(Event, copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)),
-%%      ?TRACE("---- Updated context from premises: ~p", [get_ctx(get_env(N_))]),
 %%      {{PdId, mChsR, Act, L, {pre, PdN_}}, N_}
       {{PdId, ?M_CHS_R, Event, L, N_, {pre, PdN_}}, N_}
 %%      {{PdId, mChsR, Act, copy_ctx(N_, L), {pre, PdN_}}, N_}
@@ -367,22 +366,15 @@ derive_event(Event, L = {chs, _, M, N}, PdId) ->
 
 derive_event(Event, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   ?assertNot(Event =:= tau),
-  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+  ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [pdid_to_iolist(PdId), format_m(L)]),
 
   % Unfold respective sub-monitors. Proof derivation ID for second monitor N is
   % incremented accordingly.
   {PdM_, M_} = derive_event(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
   {PdN_, N_} = derive_event(Event, copy_ns(L, copy_ctx(L, N)), inc_pdid(new_pdid(PdId))),
 
-
-%%  Merged = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
-%%  ?DEBUG(":: (~s) REDUCED using rule mPar: ~s.", [str_pdid(PdId), m_to_iolist(set_env(L, set_ctx(get_env(L), Merged)))]),
-
-  % Merge context.
-  ?TRACE("--> CTX M_ ~p", [get_ctx(get_env(M_))]),
-  ?TRACE("--> CTX N_ ~p", [get_ctx(get_env(N_))]),
+  % Merge context of M and N monitors.
   Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
-  ?TRACE("--> Merged context ~p", [Ctx]),
   Env_ = set_ctx(Env, Ctx),
 
 
@@ -392,13 +384,6 @@ derive_event(Event, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 %%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, get_env(N_), M_, N_}}. % Use context of N_ ?
 %%  {{PdId, mPar, Act, L, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
 %%  {{PdId, mPar, Act, set_env(L, Env_), {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
-
-
-% The env should be the updated Env, always. Depends on how you decide to print
-% it after all, since it's not necessary for the correct operation of monitors,
-% but only for the correct stringifying of monitors.
-
-
 
 
 reduce_tau(M, PdList) ->
@@ -592,8 +577,11 @@ copy_ns(From, To) ->
 %%% @private Returns the value element of the specified tagged tuple.
 -spec unwrap_value(Pair :: {atom(), any()}) -> any().
 unwrap_value({_, Value}) ->
-  Value.
+  Value;
 
+unwrap_value(Any) ->
+  io:format("The unwrapped value is : ~p~n", [Any]),
+  ok.
 
 %%% ----------------------------------------------------------------------------
 %%% Monitor and proof derivation display functions.
@@ -603,41 +591,38 @@ unwrap_value({_, Value}) ->
 % one monitor continuation to the other so inherit it. But since we are printing
 % a monitor that has not been reduce, we need to pass the context to the
 % continuation which has not been yet unfolded.
-m_to_iolist(M) ->
-
-  % Pass variable context of monitor so that monitors containing free variables
-  % are correctly stringified.
-  {ctx, Ctx} = get_ctx(get_env(M)),
-  m_to_iolist(M, [{Name, Value} || {{_, Name}, Value} <- Ctx]).
-
-m_to_iolist({yes, Env = {env, _}}, _) ->
-  unwrap_value(get_str(Env));
-m_to_iolist({no, Env = {env, _}}, _) ->
-  unwrap_value(get_str(Env));
-m_to_iolist({var, Env = {env, _}, _}, _) ->
-  unwrap_value(get_str(Env));
-m_to_iolist({act, Env = {env, _}, _, M}, Ctx) ->
-
-  % The continuation of an action is a function. In order to stringify the rest
-  % of the monitor, apply the function to unfold it. Action functions accept a
-  % single parameter.
-  M_ = M(undef),
-  [lin_7:format_ph(unwrap_value(get_str(Env)), Ctx), $., m_to_iolist(M_, Ctx)];
-m_to_iolist({chs, Env = {env, _}, M, N}, Ctx) ->
-  [$(, m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx), $)];
-m_to_iolist({'or', Env = {env, _}, M, N}, Ctx) ->
-  [m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx)];
-m_to_iolist({'and', Env = {env, _}, M, N}, Ctx) ->
-  [m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx)];
-m_to_iolist({rec, Env = {env, _}, M}, Ctx) ->
-
-  % The continuation of a recursive construct is encoded in terms of a function
-  % that needs to be applied to unfold the monitor before stringifying it.
-  % Recursive monitor definitions do not accept parameters.
-  [unwrap_value(get_str(Env)), m_to_iolist(M(), Ctx)].
-
-
-
+%%m_to_iolist(M) ->
+%%
+%%  % Pass variable context of monitor so that monitors containing free variables
+%%  % are correctly stringified.
+%%  {ctx, Ctx} = get_ctx(get_env(M)),
+%%  m_to_iolist(M, [{Name, Value} || {{_, Name}, Value} <- Ctx]).
+%%
+%%m_to_iolist({yes, Env = {env, _}}, _) ->
+%%  unwrap_value(get_str(Env));
+%%m_to_iolist({no, Env = {env, _}}, _) ->
+%%  unwrap_value(get_str(Env));
+%%m_to_iolist({var, Env = {env, _}, _}, _) ->
+%%  unwrap_value(get_str(Env));
+%%m_to_iolist({act, Env = {env, _}, _, M}, Ctx) ->
+%%
+%%  % The continuation of an action is a function. In order to stringify the rest
+%%  % of the monitor, apply the function to unfold it. Action functions accept a
+%%  % single parameter.
+%%  M_ = M(undef),
+%%  [lin_7:format_ph(unwrap_value(get_str(Env)), Ctx), $., m_to_iolist(M_, Ctx)];
+%%m_to_iolist({chs, Env = {env, _}, M, N}, Ctx) ->
+%%  [$(, m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx), $)];
+%%m_to_iolist({'or', Env = {env, _}, M, N}, Ctx) ->
+%%  [m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx)];
+%%m_to_iolist({'and', Env = {env, _}, M, N}, Ctx) ->
+%%  [m_to_iolist(M, Ctx), $ , unwrap_value(get_str(Env)), $ , m_to_iolist(N, Ctx)];
+%%m_to_iolist({rec, Env = {env, _}, M}, Ctx) ->
+%%
+%%  % The continuation of a recursive construct is encoded in terms of a function
+%%  % that needs to be applied to unfold the monitor before stringifying it.
+%%  % Recursive monitor definitions do not accept parameters.
+%%  [unwrap_value(get_str(Env)), m_to_iolist(M(), Ctx)].
 
 
 %%% @private Extends the current proof derivation ID with a new sub-derivation.
@@ -655,6 +640,7 @@ inc_pdid([Idx | Idxs]) ->
 -spec pdid_to_iolist(Id :: list(integer())) -> iolist().
 pdid_to_iolist(Id = [_ | _]) ->
   tl(lists:foldl(fun(Idx, Id) -> [$., integer_to_list(Idx) | Id] end, [], Id)).
+
 
 
 
@@ -754,5 +740,151 @@ format_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
     | PdNFmt
   ].
 
+
+%%% ----------------------------------------------------------------------------
+%%% Monitor instrumentation functions.
+%%% ----------------------------------------------------------------------------
+
+%% TODO: Used by the instrumenter.
+%% @doc Embeds the trace event analysis function into the process dictionary.
+%%
+%% {@params
+%%   {@name M}
+%%   {@desc Monitor function that is applied to trace events to determine their
+%%          correct or incorrect sequence.
+%%   }
+%% }
+%%
+%% {@returns `true' to indicate success, otherwise `false'.}
+-spec embed(M :: monitor()) -> true.
+embed(M) ->
+  ?TRACE("Embedding monitor in ~w.", [self()]),
+
+  % Reduce monitor internally until it is in a state where it can analyze the
+  % next trace event.
+  {PdList_, M_} = reduce_tau(M, []),
+  undefined =:= put(?MONITOR, {PdList_, M_}).
+
+
+%% @doc Dispatches the specified abstract event to the monitor for analysis.
+%%
+%% {@params
+%%   {@name Event}
+%%   {@desc The abstract event that the monitor is to analyze.}
+%% }
+%%
+%% {@returns Depends on the event type. See {@link event:event/0}.
+%%           {@ul
+%%             {@item When event is of type `fork', the PID of the new child
+%%                    process is returned;
+%%             }
+%%             {@item When event is of type `init', the PID of the parent
+%%                    process is returned;
+%%             }
+%%             {@item When event is of type `exit', the exit reason is
+%%                    returned;
+%%             }
+%%             {@item When event is of type `send', the message is returned;}
+%%             {@item When event is of type `recv', the message is returned.}
+%%           }
+%% }
+-spec dispatch(Event :: event:int_event()) -> term().
+dispatch(Event = {fork, _Parent, Child, _Mfa}) ->
+  do_monitor(event:to_evm_event(Event),
+    fun(Verdict, PdList) ->
+      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+    end
+  ),
+  Child;
+dispatch(Event = {init, _Child, Parent, _Mfa}) ->
+  do_monitor(event:to_evm_event(Event),
+    fun(Verdict, PdList) ->
+      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+    end
+  ),
+  Parent;
+dispatch(Event = {exit, _Process, Reason}) ->
+  do_monitor(event:to_evm_event(Event),
+    fun(Verdict, PdList) ->
+      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+    end
+  ),
+  Reason;
+dispatch(Event = {send, _Sender, _Receiver, Msg}) ->
+  do_monitor(event:to_evm_event(Event),
+    fun(Verdict, PdList) ->
+      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+    end
+  ),
+  Msg;
+dispatch(Event = {recv, _Receiver, Msg}) ->
+  do_monitor(event:to_evm_event(Event),
+    fun(Verdict, PdList) ->
+      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+    end
+  ),
+  Msg.
+
+%% @doc Retrieves the monitor function stored in the process dictionary (if
+%% any), and applies it on the event. The result is put back in the process
+%% dictionary. If a verdict state is reached, the callback function is invoked,
+%% otherwise nothing is done. When no monitor function is stored inside the
+%% process dictionary (i.e. meaning that the process is not monitored), the atom
+%% `undefined' is returned.
+%%-spec do_monitor(Event, VerdictFun) -> monitor() | undefined
+%%  when
+%%  Event :: event:evm_event(),
+%%  VerdictFun :: fun((Verdict :: verdict()) -> any()).
+do_monitor(Event, VerdictFun) when is_function(VerdictFun, 2) ->
+  case get(?MONITOR) of
+    undefined ->
+      ?TRACE("Analyzer undefined; discarding trace event ~w.", [Event]),
+      undefined;
+    {PdList, M} ->
+
+      % Analyze event. At this point, monitor might have reached a verdict.
+      % Check whether verdict is reached to enable immediate detection, should
+      % this be the case.
+%%      put(?MONITOR, Monitor0 = analyze(M, Event)),
+      put(?MONITOR, {PdList_, M_} = analyze(Event, M, PdList)),
+      case is_verdict(M_) of
+        true ->
+%%          {V, _} = M_,
+          VerdictFun(M_, PdList_);
+        false ->
+          ok
+      end,
+      M_
+  end.
+
+%% @doc Default filter that allows all events to pass.
+-spec filter(Event :: event:int_event()) -> true.
+filter(_) ->
+  true. % True = keep event.
+
+%% @private Determines whether the specified monitor is indeed a verdict.
+-spec is_verdict(V :: {?VERDICT_YES | ?VERDICT_NO, env()}) -> boolean().
+is_verdict({V, _}) when V =:= ?VERDICT_YES; V =:= ?VERDICT_NO ->
+  true;
+is_verdict(_) ->
+  false.
+
+format_verdict(Fmt, Args, {no, _}) ->
+  io:format(lists:flatten(["\e[1;31m:: Violation: ", Fmt, "\e[0m"]), Args);
+format_verdict(Fmt, Args, {yes, _}) ->
+  io:format(lists:flatten(["\e[1;32m:: Satisfaction: ", Fmt, "\e[0m"]), Args).
+
+%% Tests.
+%%{ok, M} = lin_7:m5().
+%% lin_analyzer:embed(M).
+%% lin_analyzer:dispatch({send, self(), self(), {1,3}}).
+%% lin_analyzer:dispatch({send, self(), self(), {6,1}}).
+%% lin_analyzer:dispatch({send, self(), self(), {2,2}}).
+
+%% lin_analyzer:analyze_trace([{trace, self(), send, {1, 3}, self()}, {trace, self(), send, {2, 2}, self()}], M).
+
+%% 1. lin_weaver:weave_file("/Users/duncan/Dropbox/PhD/Development/detecter/detecter/src/synthesis/calc_server.erl", fun prop_add_rec:mfa_spec/1, [{outdir, "/Users/duncan/Dropbox/PhD/Development/detecter/detecter/ebin"}]).
+%% 2. calc_server:start(10).
+%% 3. Pid ! {add, 1, 2}.
 
 

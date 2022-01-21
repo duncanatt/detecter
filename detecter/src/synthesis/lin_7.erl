@@ -522,8 +522,8 @@ derive_tau(L = {var, Env, M}, PdId) ->
 %%  ?TRACE("----- RECURSIVE CONTEXT of new reduction (UPDATED) M_: ~p", [get_ctx(get_env(copy_ctx(L_, M_)))]),
 
 
-%%  {true, {{PdId, mRecccc, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
-  {true, {{PdId, mRecccc, tau, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}};
+%%  {true, {{PdId, mRec, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
+  {true, {{PdId, mRec, tau, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}};
 
 derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 

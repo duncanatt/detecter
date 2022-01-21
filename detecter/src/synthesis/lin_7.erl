@@ -364,7 +364,7 @@ m5() ->
         {chs,
           {env, [{str, "+"}]},
           {act,
-            {env, [{str, "{:A} when true"}, {var, 'A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+            {env, [{str, "_@A/{trace, _, send, {P, Q}, _}} when true"}, {var, '_@A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
             fun(_@A = {trace, _, send, {P, Q}, _}) -> true; (_) -> false end,
             fun(_@A = {trace, _, send, {P, Q}, _}) ->
               {'and',
@@ -372,14 +372,14 @@ m5() ->
                 {chs,
                   {env, [{str, "+"}]},
                   {act,
-                    {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+                    {env, [{str, "_@B/{trace, _, send, {R, S}, _} when P + Q =:= R + S"}, {var, '_@B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
                     fun(_@B= {trace, _, send, {R, S}, _}) when P + Q =:= R + S -> true; (_) -> false end,
                     fun(_@B= {trace, _, send, {R, S}, _}) ->
                       {no, {env, [{str, "no"}]}}
                     end
                   },
                   {act,
-                    {env, [{str, "{:B} when not({:A} =:= {:B})"}, {var, 'B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+                    {env, [{str, "_@B/{trace, _, send, {R, S}, _} when not(P + Q =:= R + S)"}, {var, '_@B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
                     fun(_@B= {trace, _, send, {R, S}, _}) when P + Q =:= R + S -> false; (_) -> true end,
                     fun(_@B= {trace, _, send, {R, S}, _}) ->
                       {yes, {env, [{str, "yes"}]}}
@@ -391,7 +391,7 @@ m5() ->
             end
           },
           {act,
-            {env, [{str, "{:A} when not(true)"}, {var, 'A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+            {env, [{str, "_@A/{trace, _, send, {P, Q}, _}} when not(true)"}, {var, '_@A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
             fun(_@A = {trace, _, send, {_, _}, _}) -> false; (_) -> true end,
             fun(_@A = {trace, _, send, {_, _}, _}) ->
               {yes, {env, [{str, "yes"}]}}
@@ -911,7 +911,7 @@ show_pdlist(PdList) ->
 
 fmt_pd({PdId, Rule, Act, M, M_}) ->
   Indent = length(PdId) + length(?PD_SEP),
-  io_lib:format("~*s [~s, \e[1;36maxiom ~s\e[0m] ~s~n~*s-(~w)->~n~*s~s~n",
+  io_lib:format("~*s [~s, \e[1;36maxiom ~s\e[0m] ~s~n\e[0;36m~*s-(~w)->\e[0m~n~*s~s~n",
     [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_)]
 %%    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_)]
   );
@@ -922,7 +922,7 @@ fmt_pd({PdId, Rule, Act, M, M_}) ->
 fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
   PdMFmt = fmt_pd(PdM),
   Indent = length(PdId) + length(?PD_SEP),
-  [io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n~*s-(~w)->~n~*s~s~n",
+  [io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n\e[0;36m~*s-(~w)->\e[0m~n~*s~s~n",
     [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_)])
 %%    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_)])
     | PdMFmt
@@ -931,7 +931,7 @@ fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
 fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}}) -> % mTauL and mTauR
   PdMFmt = fmt_pd(PdM),
   Indent = length(PdId) + length(?PD_SEP),
-  [io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n~*s-(~w)->~n~*s ~s ~s ~s~n",
+  [io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n\e[0;36m~*s-(~w)->\e[0m~n~*s ~s ~s ~s~n",
     [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)])
 %%    [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_), unwrap_value(get_str(get_env(M))), format_m2(N_)])
     | PdMFmt
@@ -943,7 +943,7 @@ fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
   Indent = length(PdId) + length(?PD_SEP),
   [
     [
-      io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n~*s-(~w)->~n~*s~s ~s ~s~n",
+      io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n\e[0;36m~*s-(~w)->\e[0m~n~*s~s ~s ~s~n",
         [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)])
 %%        [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_), unwrap_value(get_str(get_env(M))), format_m2(N_)])
       | PdMFmt

@@ -66,7 +66,7 @@
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-% P2: Two consecutive actions cannot be the same.
+% P1: Two consecutive actions cannot be the same.
 %
 % max(X.[a,true]([b,a=:=b]ff and X)) [a]
 
@@ -93,8 +93,7 @@ m1() ->
         {chs,
           {env, [{str, "+"}]},
           {act,
-%%            {env, [{str, "{:A} when true"}, {var, 'A'}, {ctx, [{'A', undef}]}]},
-            {env, [{str, "{:A} when true"}, {var, 'A'}]},
+            {env, [{str, "{:A} when true"}, {var, 'A'}, {pat, undefined}]},
             fun(A) -> true; (_) -> false end,
             fun(A) ->
               {'and',
@@ -102,19 +101,16 @@ m1() ->
                 {chs,
                   {env, [{str, "+"}]},
                   {act,
-%%                    {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}, {ctx, [{'A', undef}, {'B', undef}]}]},
-                    {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}]},
+                    {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}, {pat, undefined}]},
                     fun(B) when A =:= B -> true; (_) -> false end,
-                    fun(B) ->
-%%                      io:format("Reached verdict no.~n"),
+                    fun(_) ->
                       {no, {env, [{str, "no"}]}}
                     end
                   },
                   {act,
-%%                    {env, [{str, "{:B} when not({:A} =:= {:B})"}, {var, 'B'}, {ctx, [{'A', undef}, {'B', undef}]}]},
-                    {env, [{str, "{:B} when not({:A} =:= {:B})"}, {var, 'B'}]},
+                    {env, [{str, "{:B} when not({:A} =:= {:B})"}, {var, 'B'}, {pat, undefined}]},
                     fun(B) when A =:= B -> false; (_) -> true end,
-                    fun(B) ->
+                    fun(_) ->
                       {yes, {env, [{str, "yes"}]}}
                     end
                   }
@@ -124,10 +120,9 @@ m1() ->
             end
           },
           {act,
-%%            {env, [{str, "{:A} when not(true)"}, {var, 'A'}, {ctx, [{'A', undef}]}]},
-            {env, [{str, "{:A} when not(true)"}, {var, 'A'}]},
+            {env, [{str, "{:A} when not(true)"}, {var, 'A'}, {pat, undefined}]},
             fun(A) -> false; (_) -> true end,
-            fun(A) ->
+            fun(_) ->
               {yes, {env, [{str, "yes"}]}}
             end
           }
@@ -148,7 +143,7 @@ m2() ->
     {chs,
       {env, [{str, "+"}]},
       {act,
-        {env, [{str, "{:A} when true"}, {var, 'A'}]},
+        {env, [{str, "{:A} when true"}, {var, 'A'}, {pat, undefined}]},
         fun(A) -> true; (_) -> false end,
         fun(A) ->
           {rec,
@@ -159,16 +154,16 @@ m2() ->
                 {chs,
                   {env, [{str, "+"}]},
                   {act,
-                    {env, [{str, "{:B} when {:A}=:={:B}"}, {var, 'B'}]},
+                    {env, [{str, "{:B} when {:A}=:={:B}"}, {var, 'B'}, {pat, undefined}]},
                     fun(B) when A =:= B -> true; (_) -> false end,
-                    fun(B) ->
+                    fun(_) ->
                       {no, {env, [{str, "no"}]}}
                     end
                   },
                   {act,
-                    {env, [{str, "{:B} when not({:A}=:={:B})"}, {var, 'B'}]},
+                    {env, [{str, "{:B} when not({:A}=:={:B})"}, {var, 'B'}, {pat, undefined}]},
                     fun(B) when A =:= B -> false; (_) -> true end,
-                    fun(B) ->
+                    fun(_) ->
                       {yes, {env, [{str, "yes"}]}}
                     end
                   }
@@ -176,16 +171,16 @@ m2() ->
                 {chs,
                   {env, [{str, "+"}]},
                   {act,
-                    {env, [{str, "{:B} when {:A}=/={:B}"}, {var, 'B'}]},
+                    {env, [{str, "{:B} when {:A}=/={:B}"}, {var, 'B'}, {pat, undefined}]},
                     fun(B) when A =/= B -> true; (_) -> false end,
-                    fun(B) ->
+                    fun(_) ->
                       {var, {env, [{str, "X"}, {var, 'X'}]}, X}
                     end
                   },
                   {act,
-                    {env, [{str, "{:B} when not({:A}=/={:B})"}, {var, 'B'}]},
+                    {env, [{str, "{:B} when not({:A}=/={:B})"}, {var, 'B'}, {pat, undefined}]},
                     fun(B) when A =/= B -> false; (_) -> true end,
-                    fun(B) ->
+                    fun(_) ->
                       {yes, {env, [{str, "yes"}]}}
                     end
                   }
@@ -196,9 +191,9 @@ m2() ->
         end
       },
       {act,
-        {env, [{str, "{:A} when not(true)"}, {var, 'A'}]},
+        {env, [{str, "{:A} when not(true)"}, {var, 'A'}, {pat, undefined}]},
         fun(A) -> false; (_) -> true end,
-        fun(A) ->
+        fun(_) ->
           {yes, {env, [{str, "yes"}]}}
         end
       }
@@ -271,7 +266,7 @@ m4() ->
         {chs,
           {env, [{str, "+"}]},
           {act,
-            {env, [{str, "{:A} when true"}, {var, 'A'}]},
+            {env, [{str, "{:A} when true"}, {var, 'A'}, {pat, undefined}]},
             fun(A) -> true; (_) -> false end,
             fun(A) ->
               {'and',
@@ -284,16 +279,16 @@ m4() ->
                       {chs,
                         {env, [{str, "+"}]},
                         {act,
-                          {env, [{str, "{:B} when {:A}=:={:B}"}, {var, 'B'}]},
+                          {env, [{str, "{:B} when {:A}=:={:B}"}, {var, 'B'}, {pat, undefined}]},
                           fun(B) when A =:= B -> true; (_) -> false end,
-                          fun(B) ->
+                          fun(_) ->
                             {no, {env, [{str, "no"}]}}
                           end
                         },
                         {act,
-                          {env, [{str, "{:B} when not({:A}=:={:B})"}, {var, 'B'}]},
+                          {env, [{str, "not({:B} when {:A}=:={:B})"}, {var, 'B'}, {pat, undefined}]},
                           fun(B) when A =:= B -> false; (_) -> true end,
-                          fun(B) ->
+                          fun(_) ->
                             {yes, {env, [{str, "yes"}]}}
                           end
                         }
@@ -301,16 +296,16 @@ m4() ->
                       {chs,
                         {env, [{str, "+"}]},
                         {act,
-                          {env, [{str, "{:B} when {:A}=/={:B}"}, {var, 'B'}]},
+                          {env, [{str, "{:B} when {:A}=/={:B}"}, {var, 'B'}, {pat, undefined}]},
                           fun(B) when A =/= B -> true; (_) -> false end,
-                          fun(B) ->
+                          fun(_) ->
                             {var, {env, [{str, "Y"}, {var, 'Y'}]}, Y}
                           end
                         },
                         {act,
-                          {env, [{str, "{:B} when not({:A}=/={:B})"}, {var, 'B'}]},
+                          {env, [{str, "not({:B} when {:A}=/={:B})"}, {var, 'B'}, {pat, undefined}]},
                           fun(B) when A =/= B -> false; (_) -> true end,
-                          fun(B) ->
+                          fun(_) ->
                             {yes, {env, [{str, "yes"}]}}
                           end
                         }
@@ -323,7 +318,7 @@ m4() ->
             end
           },
           {act,
-            {env, [{str, "{:A} when not(true)"}, {var, 'A'}]},
+            {env, [{str, "not({:A} when true)"}, {var, 'A'}, {pat, undefined}]},
             fun(A) -> false; (_) -> true end,
             fun(A) ->
               {yes, {env, [{str, "yes"}]}}
@@ -379,7 +374,7 @@ m5() ->
                     end
                   },
                   {act,
-                    {env, [{str, "_@B/{trace, _, send, {R, S}, _} when not(P + Q =:= R + S)"}, {var, '_@B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+                    {env, [{str, "not(_@B/{trace, _, send, {R, S}, _} when P + Q =:= R + S)"}, {var, '_@B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
                     fun(_@B= {trace, _, send, {R, S}, _}) when P + Q =:= R + S -> false; (_) -> true end,
                     fun(_@B= {trace, _, send, {R, S}, _}) ->
                       {yes, {env, [{str, "yes"}]}}
@@ -391,9 +386,9 @@ m5() ->
             end
           },
           {act,
-            {env, [{str, "_@A/{trace, _, send, {P, Q}, _}} when not(true)"}, {var, '_@A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
-            fun(_@A = {trace, _, send, {_, _}, _}) -> false; (_) -> true end,
-            fun(_@A = {trace, _, send, {_, _}, _}) ->
+            {env, [{str, "not(_@A/{trace, _, send, {P, Q}, _}} when true)"}, {var, '_@A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+            fun(_@A = {trace, _, send, {P, Q}, _}) -> false; (_) -> true end,
+            fun(_@A = {trace, _, send, {P, Q}, _}) ->
               {yes, {env, [{str, "yes"}]}}
             end
           }
@@ -433,6 +428,7 @@ derive_tau(L = {'and', _, M, {yes, _}}, PdId) ->
 
 derive_tau(L = {'and', _, No = {no, _}, _}, PdId) ->
   ?DEBUG(":: (~s) Reducing using axiom mConNL: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
+  io:format("~n:: Violation reached.~n"),
 
   % Axiom mConNL.
 %%  {true, {{PdId, mConNL, tau, L}, No}};
@@ -440,6 +436,7 @@ derive_tau(L = {'and', _, No = {no, _}, _}, PdId) ->
 
 derive_tau(L = {'and', _, _, No = {no, _}}, PdId) ->
   ?DEBUG(":: (~s) Reducing using axiom mConNR: ~s.", [str_pdid(PdId), m_to_iolist(L)]),
+  io:format("~n:: Violation reached.~n"),
 
   % Axiom mConNR.
 %%  {true, {{PdId, mConNR, tau, L}, No}};

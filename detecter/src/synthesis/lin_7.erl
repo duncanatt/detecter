@@ -375,7 +375,6 @@ m5() ->
                     {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
                     fun(_@B= {trace, _, send, {R, S}, _}) when P + Q =:= R + S -> true; (_) -> false end,
                     fun(_@B= {trace, _, send, {R, S}, _}) ->
-%%                      io:format("Reached verdict no.~n"),
                       {no, {env, [{str, "no"}]}}
                     end
                   },
@@ -897,7 +896,7 @@ format_ph(IoList, Name, Value) ->
 format_pdlist(PdList) ->
   lists:foldl(
     fun(Pd, {I, IoList}) ->
-      {I - 1, [[io_lib:format("~nDerivation ~w:~n", [I]), fmt_pd(Pd)] | IoList]}
+      {I - 1, [[io_lib:format("~n\e[4;32mDerivation ~w:\e[0m~n", [I]), fmt_pd(Pd)] | IoList]}
     end,
     {length(PdList), []}, PdList
   ).
@@ -908,9 +907,11 @@ show_pdlist(PdList) ->
 
 
 
+
+
 fmt_pd({PdId, Rule, Act, M, M_}) ->
   Indent = length(PdId) + length(?PD_SEP),
-  io_lib:format("~*s [~s, axiom ~s] ~s~n~*s-(~w)->~n~*s~s~n",
+  io_lib:format("~*s [~s, \e[1;36maxiom ~s\e[0m] ~s~n~*s-(~w)->~n~*s~s~n",
     [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_)]
 %%    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_)]
   );
@@ -921,7 +922,7 @@ fmt_pd({PdId, Rule, Act, M, M_}) ->
 fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
   PdMFmt = fmt_pd(PdM),
   Indent = length(PdId) + length(?PD_SEP),
-  [io_lib:format("~*s [~s, rule ~s] ~s~n~*s-(~w)->~n~*s~s~n",
+  [io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n~*s-(~w)->~n~*s~s~n",
     [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_)])
 %%    [Indent, ?PD_SEP, str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_)])
     | PdMFmt
@@ -930,7 +931,7 @@ fmt_pd({PdId, Rule, Act, M, M_, {pre, PdM}}) -> % mChs
 fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}}) -> % mTauL and mTauR
   PdMFmt = fmt_pd(PdM),
   Indent = length(PdId) + length(?PD_SEP),
-  [io_lib:format("~*s [~s, rule ~s] ~s~n~*s-(~w)->~n~*s ~s ~s ~s~n",
+  [io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n~*s-(~w)->~n~*s ~s ~s ~s~n",
     [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)])
 %%    [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_), unwrap_value(get_str(get_env(M))), format_m2(N_)])
     | PdMFmt
@@ -942,13 +943,15 @@ fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
   Indent = length(PdId) + length(?PD_SEP),
   [
     [
-      io_lib:format("~*s [~s, rule ~s] ~s~n~*s-(~w)->~n~*s~s ~s ~s~n",
+      io_lib:format("~*s [~s, \e[1;36mrule ~s\e[0m] ~s~n~*s-(~w)->~n~*s~s ~s ~s~n",
         [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m(M), Indent + 1, "", Act, Indent + 1, "", format_m(M_), unwrap_value(get_str(get_env(M))), format_m(N_)])
 %%        [length(PdId) + 1, "-", str_pdid(PdId), Rule, format_m2(M), Indent + 1, "", Act, Indent + 1, "", format_m2(M_), unwrap_value(get_str(get_env(M))), format_m2(N_)])
       | PdMFmt
     ]
     | PdNFmt
   ].
+
+
 
 % For this we do not need to pass the context, since all the variable
 % information is contained in the proof derivation.
@@ -957,7 +960,7 @@ fmt_pd({PdId, Rule, Act, M, M_, N_, {pre, PdM}, {pre, PdN}}) ->
 format_m(M) ->
   {ctx, Ctx} = get_ctx(get_env(M)),
   Vars = [{Name, Value} || {{_, Name}, Value} <- Ctx],
-  lists:flatten(io_lib:format("~s sub([ ~s])", [format_m(M, Vars),
+  lists:flatten(io_lib:format("~s \e[0;33msub([\e[0m \e[37m~s\e[0m\e[0;33m])\e[0m", [format_m(M, Vars),
     [io_lib:format("~s=~w ", [Name, Value]) || {Name, Value} <- Vars]])).
 
 

@@ -334,6 +334,76 @@ m4() ->
     }
   }.
 
+% P2: Two consecutive actions cannot be the same.
+%
+% max(X.[a,true]([b,a=:=b]ff and X)) [a]
+%
+% Instantiated to: the addition of the payload in two successive send actions
+% cannot be equal.
+
+% [a,true]([b,1=:=b]ff and max(X.[a,true]([b,a=:=b]ff and X)))
+% -(1)-> [b,a=:=b]ff and max(X.[a,true]([b,a=:=b]ff and X))) GOOD [a->1]
+% -(1)-> [b,1=:=b]ff and max(X.[1,true]([b,1=:=b]ff and X))) BAD
+%
+% Aim: To test the general behaviour of one recursive operator, and in
+% particular, that recursive variables are correctly expanded. One other aspect
+% that is tested is the automatic reduction of the monitor when tau transitions
+% can be performed. The monitor is reduced to a state where it is ready to
+% analyze the next action.
+%
+% The resulting monitor from this property should be:
+% rec (x.a,true.((b,a=:=b.no + b,a=/=b.yes) and x ) + a,false.yes)
+%
+% which can transition to no given the trace 1.2.2 in 8 reductions, ending with
+% tha application of axiom mConN.
+m5() ->
+  {ok,
+    {rec,
+      {env, [{str, "rec X"}, {var, 'X'}]},
+      fun X() ->
+        {chs,
+          {env, [{str, "+"}]},
+          {act,
+            {env, [{str, "{:A} when true"}, {var, 'A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+            fun(_@A = {trace, _, send, {P, Q}, _}) -> true; (_) -> false end,
+            fun(_@A = {trace, _, send, {P, Q}, _}) ->
+              {'and',
+                {env, [{str, "and"}]},
+                {chs,
+                  {env, [{str, "+"}]},
+                  {act,
+                    {env, [{str, "{:B} when {:A} =:= {:B}"}, {var, 'B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+                    fun(_@B= {trace, _, send, {R, S}, _}) when P + Q =:= R + S -> true; (_) -> false end,
+                    fun(_@B= {trace, _, send, {R, S}, _}) ->
+%%                      io:format("Reached verdict no.~n"),
+                      {no, {env, [{str, "no"}]}}
+                    end
+                  },
+                  {act,
+                    {env, [{str, "{:B} when not({:A} =:= {:B})"}, {var, 'B'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+                    fun(_@B= {trace, _, send, {R, S}, _}) when P + Q =:= R + S -> false; (_) -> true end,
+                    fun(_@B= {trace, _, send, {R, S}, _}) ->
+                      {yes, {env, [{str, "yes"}]}}
+                    end
+                  }
+                },
+                {var, {env, [{str, "X"}, {var, 'X'}]}, X}
+              }
+            end
+          },
+          {act,
+            {env, [{str, "{:A} when not(true)"}, {var, 'A'}, {pat, {trace, undefined, send, {undefined, undefined}, undefined}}]},
+            fun(_@A = {trace, _, send, {_, _}, _}) -> false; (_) -> true end,
+            fun(_@A = {trace, _, send, {_, _}, _}) ->
+              {yes, {env, [{str, "yes"}]}}
+            end
+          }
+        }
+      end
+    }
+  }.
+
+
 
 % TODO: Consider removing the unbound variables in the list of tuples 'bind',
 % TODO: as these are not required actually, and we can add them on the fly when
@@ -706,6 +776,10 @@ get_str({env, Env}) when is_list(Env) ->
 get_var({env, Env}) when is_list(Env) ->
   get_key(?KEY_ENV_VAR, Env, false).
 
+% Returns the event pattern.
+get_pat({env, Env}) when is_list(Env) ->
+  get_key(pat, Env, false).
+
 
 % Returns the existing context or an empty one if none exists.
 get_ctx({env, Env}) when is_list(Env) ->
@@ -894,7 +968,12 @@ format_m({no, Env = {env, _}}, _) ->
 format_m({var, Env = {env, _}, _}, _) ->
   unwrap_value(get_str(Env));
 format_m({act, Env = {env, _}, _, M}, Ctx) ->
-  M_ = M(undef),
+
+  % Unfold continuation monitor body for act using dummy data. This data will
+  % not interfere with constraints since there are no constraints associated
+  % with the continuation body, but only with the action guard test.
+  M_ = M(unwrap_value(get_pat(Env))),
+
 %%  [format_ph(unwrap_value(get_str(Env)), Ctx), $., format_m(M_, Ctx)];
 %%  [format_ph(re:replace(unwrap_value(get_str(Env)), " when ", ","), Ctx), $., format_m(M_, Ctx)];
   [re:replace(unwrap_value(get_str(Env)), " when ", ","), $., format_m(M_, Ctx)];
@@ -903,12 +982,10 @@ format_m({chs, Env = {env, _}, M, N}, Ctx) ->
 format_m({'or', Env = {env, _}, M, N}, Ctx) ->
   [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
 format_m({'and', Env = {env, _}, M, N}, Ctx) ->
-%%  ?TRACE("Env of AND: ~p", [Env]),
-%%  ?TRACE("Env of M: ~p", [get_env(M)]),
-%%  ?TRACE("Env of N: ~p", [get_env(N)]),
   [format_m(M, Ctx), $ , unwrap_value(get_str(Env)), $ , format_m(N, Ctx)];
 format_m({rec, Env = {env, _}, M}, Ctx) ->
   [unwrap_value(get_str(Env)), format_m(M(), Ctx)].
+
 
 
 

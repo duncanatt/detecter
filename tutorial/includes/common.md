@@ -4,6 +4,7 @@
 *[GPG]: GNU Privacy Guard
 *[GPL]: GNU Public License
 *[sHML]: Safety Hennessy-Milner Logic
+*[maxHML]: Maximal Hennessy-Milner Logic
 *[EVM]: Erlang Virtual Machine
 *[BIF]: Built-in Function
 *[BIFs]: Built-in Functions

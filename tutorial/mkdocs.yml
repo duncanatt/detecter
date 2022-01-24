@@ -115,7 +115,7 @@ nav:
     - Preparation: getting-started/preparation.md
     - Setting up detectEr: getting-started/setting-up-detecter.md 
     - Quickstart: getting-started/quickstart.md
-  - Using detectEr:
+  - Using detectEr Branching Time:
     - Getting Started: using-detecter/getting-started.md
     - The Specification Logic: using-detecter/the-specification-logic.md
     - Formalising Properties: using-detecter/formalising-properties.md
@@ -125,3 +125,7 @@ nav:
     - Inline Instrumentation: using-detecter/inline-instrumentation.md
     - Outline Instrumentation: using-detecter/outline-instrumentation.md
     - Offline Instrumentation: using-detecter/offline-instrumentation.md
+  - Using detectEr Linear Time:
+    - The Specification Logic: using-detecter-linear-time/the-specification-logic.md
+    - Synthesising Analysers: using-detecter-linear-time/synthesising-analysers.md
+    - Inline Instrumentation: using-detecter-linear-time/inline-instrumentation.md

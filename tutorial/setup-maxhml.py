@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-"""Setup shml-lexer.
+"""Setup maxhml-lexer.
 
 Copyright (c) 2021, Duncan Paul Attard <duncanatt@gmail.com>
 
@@ -20,13 +20,13 @@ from setuptools import setup, find_packages
 
 entry_points = '''
 [pygments.lexers]
-shml=shml_lexer:ShmlLexer
+maxhml=maxhml_lexer:MaxHmlLexer
 '''
 
 setup(
-    name='shml-lexer',
+    name='maxhml-lexer',
     version='0.9.0',
-    description='Pygments lexer package for shml-script v0.9+',
+    description='Pygments lexer package for maxhml-script v0.9+',
     author='Duncan Paul Attard',
     author_email='duncanatt[at]gmail.com',
     url='https://github.com/detecter',

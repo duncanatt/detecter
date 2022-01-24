@@ -397,24 +397,19 @@ derive_tau(L = {'and', _, _, No = {no, _}}, PdId) ->
 derive_tau(L = {rec, Env, M}, PdId) ->
   ?DEBUG(":: (~s) Reducing using axiom mRec: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
-  % The continuation of a recursive construct is encoded in terms of a function
-  % that needs to be applied to unfold the monitor. Recursive monitor
-  % definitions do not accept parameters.
-
-
-  % Axiom mRec.
+  % The continuation of a recursion construct is encoded as a function that
+  % needs to be applied to unfold the monitor. Recursion monitors do not accept
+  % parameters. Axiom mRec.
   M_ = M(),
 
-
-  % Open new namespace.
-%%  Env = get_env(M_),
-
-%%  ?TRACE("Env of M_ = ~p", [Env]),
-
+  % Create a new namespace that enables the monitor to track the recursion
+  % context that the data binder is in. This is used so that when a recursive
+  % variable is unfolded, all the variables in that context are cleared. This
+  % garbage collection of variables can be done since an unfolded monitor with
+  % data variables shadows the variables in the previous unfolding. The clearing
+  % of data variables is handled by the clause underneath.
   M__ = set_env(M_, set_ns(get_env(M_), {ns, unwrap_value(get_var(Env))})),
 
-%%  {true, {{PdId, mRec, tau, L}, copy_ctx(L, M_)}};
-%%  {true, {{PdId, mRec, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
   {true, {{PdId, ?M_REC, tau, L, copy_ctx(L, M__)}, copy_ctx(L, M__)}};
 
 derive_tau(L = {var, Env, M}, PdId) ->
@@ -425,39 +420,44 @@ derive_tau(L = {var, Env, M}, PdId) ->
   % the variable itself is a function reference that needs to be applied to
   % unfold the monitor. Recursive monitor definitions do not accept parameters.
 
-  % Axiom mRec.
+  % Recursion variables complement recursion definition constructs. Recursion
+  % variables invoke recursion monitor definitions. The recursion variable
+  % refers to the same function defined by the recursion definition construct,
+  % and needs to be applied to unfold the monitor. Recursion monitor definitions
+  % do not accept parameters. Axiom mRec.
   M_ = M(),
 
-  % Delete vars with NS.
-
+  % Purge all the variables in the binding context that are in the current
+  % recursion context.
   Ctx = clean_ns(get_ctx(Env), unwrap_value(get_ns(Env))),
   L_ = set_env(L, set_ctx(Env, Ctx)),
 
-
-%%  {true, {{PdId, mRecccc, tau, L, copy_ctx(L, M_)}, copy_ctx(L, M_)}};
   {true, {{PdId, ?M_REC, tau, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}};
 
 derive_tau(L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
 
+  % Parallel monitors may transition internally by either reducing their left or
+  % right sub-monitor constituents. The formal semantics presented in the paper
+  % leave this selection unspecified. This implementation opts for trying to
+  % reduce the left sub-monitor first, then the right one, if, and only if the
+  % former reduction is not possible.
   ?DEBUG(":: (~s) Trying to reduce using rule mTauL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
   case derive_tau(copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)) of
     false ->
       ?DEBUG(":: (~s) Trying to reduce using rule mTauR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
       case derive_tau(copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)) of
         false ->
-          ?DEBUG(":: (~s) Unable to reduce futher using tau: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
+          ?DEBUG(":: (~s) Unable to reduce using mTauL or mTauR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
           false;
         {true, {PdN_, N_}} ->
 
           % Rule mTauR.
           {true, {{PdId, ?M_TAU_R, tau, L, copy_ns(L, copy_ctx(L, M)), N_, {pre, PdN_}}, {Op, Env, M, N_}}}
-%%          {true, {{PdId, mTauR, tau, L, copy_ns(L, copy_ctx(L, M)), N_, {pre, PdN_}}, {Op, {env, [{str, "TAUR"}]}, M, N_}}}
       end;
     {true, {PdM_, M_}} ->
 
       % Rule mTauL.
       {true, {{PdId, ?M_TAU_L, tau, L, M_, copy_ns(L, copy_ctx(L, N)), {pre, PdM_}}, {Op, Env, M_, N}}}
-%%      {true, {{PdId, mTauL, tau, L, M_, copy_ns(L, copy_ctx(L, N)), {pre, PdM_}}, {Op, {env, [{str, "TAUL"}]}, M_, N}}}
   end;
 
 derive_tau(_, _) ->
@@ -500,66 +500,49 @@ derive_event(Event, L = {act, Env, C, M}, PdId) ->
   % Get the variable binder associated with this action.
   Binder = unwrap_value(get_var(Env)),
 
-  % Instantiate binder with data from action and extend the variable context.
-  % This is used for debugging purposes, to track the flow of data values in the
-  % monitor and its continuation.
-
+  % Instantiate the variable binder with data from the trace event, and extend
+  % the variable context. Variables in the context are tagged with the current
+  % namespace, which is the scope of the current recursion definition.
+  % Populating data variables is used for debugging purposes.
   Ns = get_ns(Env),
   L_ = set_env(L, set_ctx(Env, new_binding(get_ctx(Env), unwrap_value(Ns), Binder, Event))),
 
   ?DEBUG(":: (~s) Reducing using rule mAct: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L_)]),
 
-
-  % Axiom mAct.
+  % Monitor actions are encoded as functions. The function needs to be applied
+  % to the event being analysed to unfold the monitor. Axiom mAct.
   M_ = M(Event),
   ?assertNot(is_function(M_)),
 
-%%  M__ = set_ns()
-
-  % The environment of M cannot be updated prior to applying M to Act, since M
-  % is a function. Once M is applied, the new variable binding acquired during
-  % the analysis of Act can be passed down to the unwrapped monitor by updating
-  % its environment.
-
-%%  NewM = copy_ctx(MMM, M_),
-%%  NewM = copy_ctx(L_, M_),
-
-
-%%  {{PdId, mAct, Act, {act, NewEnv}}, NewM}; % Updated monitor env.
-%%  {{PdId, mAct, Act, MMM}, NewM}; % Updated monitor env.
-%%  {{PdId, mAct, Act, L_}, M_}; % Updated monitor env.
-%%  {{PdId, mAct, Act, L_}, copy_ctx(L_, M_)}; % Updated monitor env.
-
-%%  {{PdId, mAct, Act, L, copy_ctx(L_, M_)}, copy_ctx(L_, M_)}; % Updated monitor env.
+  % Copy the variable binding context of the current monitor to the binding
+  % context of the next unfolding.
   {{PdId, ?M_ACT, Event, L, copy_ns(L_, copy_ctx(L_, M_))}, copy_ns(L_, copy_ctx(L_, M_))}; % Updated monitor env.
 
 derive_event(Event, L = {chs, _, M, N}, PdId) ->
   ?assert(is_tuple(M) andalso element(1, M) =:= act),
   ?assert(is_tuple(N) andalso element(1, N) =:= act),
 
+  % Monitors can transition externally by either reducing their left of right
+  % sub-monitor constituents. This reduction is based on whether a sub-monitor
+  % is able to transition via a trace event. The synthesis generates monitors
+  % where the conditions of the left and right sub-monitors are
+  % mutually-exclusive. This enables the analysis to check which branch can be
+  % reduced before effecting the sub-monitor reduction.
   case {is_satisfied(Event, M), is_satisfied(Event, N)} of
     {true, false} ->
       ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
       % Rule mChsL.
       {PdM_, M_} = derive_event(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
-%%      {{PdId, mChsL, Act, L, {pre, PdM_}}, M_};
       {{PdId, ?M_CHS_L, Event, L, M_, {pre, PdM_}}, M_};
-%%      {{PdId, mChsL, Act, copy_ctx(M_, L), {pre, PdM_}}, M_};
-%%      {{PdId, mChsL, Act, M_, {pre, PdM_}}, M_};
 
-%%    {false, true} ->
     {_, _} ->
       ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
       % Rule mChsR.
       {PdN_, N_} = derive_event(Event, copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)),
-%%      {{PdId, mChsR, Act, L, {pre, PdN_}}, N_}
       {{PdId, ?M_CHS_R, Event, L, N_, {pre, PdN_}}, N_}
-%%      {{PdId, mChsR, Act, copy_ctx(N_, L), {pre, PdN_}}, N_} % Used to bubble data to the original monitor.
   end;
-
-
 
 derive_event(Event, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   ?assertNot(Event =:= tau),
@@ -574,14 +557,7 @@ derive_event(Event, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
   Env_ = set_ctx(Env, Ctx),
 
-
-%%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
   {{PdId, ?M_PAR, Event, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env_, M_, N_}}.
-%%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
-%%  {{PdId, mPar, Act, L, M_, N_, {pre, PdM_}, {pre, PdN_}}, {Op, get_env(N_), M_, N_}}. % Use context of N_ ?
-%%  {{PdId, mPar, Act, L, {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
-%%  {{PdId, mPar, Act, set_env(L, Env_), {pre, PdM_}, {pre, PdN_}}, {Op, Env, M_, N_}}.
-
 
 %%% @private Determines whether the monitor constraint is satisfied by the trace
 %%%          event.

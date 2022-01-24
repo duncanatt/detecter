@@ -536,7 +536,7 @@ derive_event(Event, L = {chs, _, M, N}, PdId) ->
       {PdM_, M_} = derive_event(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
       {{PdId, ?M_CHS_L, Event, L, M_, {pre, PdM_}}, M_};
 
-    {_, _} ->
+    {false, true} ->
       ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
       % Rule mChsR.
@@ -928,6 +928,5 @@ format_verdict(Fmt, Args, yes) ->
 
 % Part 2.
 % {ok, M} = prop_add_rec:mfa_spec({calc_server, loop, [10]}).
-% Pid = calc_server:start(10).
 % lin_analyzer:analyze_trace([{send, self(), self(), {self(), {add, 1, 3}}}], M). % Should give yes.
 % lin_analyzer:analyze_trace([{init, self(), self(), {calc_server, loop, [10]}}, {recv, self(), {self(), {add, 1, 3}}}, {send, self(), self(), 10}], M). Should give no.

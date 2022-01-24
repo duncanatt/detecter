@@ -168,13 +168,16 @@ mfa_spec({calc_server, loop, [_]}) ->
                   },
                   {act,
                     {env, [{str, "!!!!not(_@B/{trace, _, send, Msg, _} when Secret=:=Msg)"}, {var, '_@B'}, {pat, {trace, undefined, send, undefined, undefined}}]},
-                    fun(E = {trace, _, send, Msg, _}) when Secret =:= Msg ->
-                      ?INFO("~n~n------ RIGHT CHOICE and event is ~p~n", [E]),
-                      false;
-                      (E) ->
-                        ?INFO("~n~n------ RIGHT CHOICE and event is ~p~n", [E]),
-                        true
-                    end, % TODO: This should FAIL!
+                    % False is returned when the pattern matches, which would be the
+                    % complement of the other action. When the event does not match (e.g.
+                    % is a receive) we get true. Keeping the same pattern as the correct
+                    % action but inverting  the return value ensures that true is returned
+                    % both when (1) the action matches but the constraint is not satisfied
+                    % {trace, _, send, Msg, _}) when Secret =:= Msg,
+                    % and also when (2) the pattern does not match (_).
+                    % This piece of information should be included in the implementation
+                    % of the synthesis in code in the paper.
+                    fun({trace, _, send, Msg, _}) when Secret =:= Msg -> false; (_) -> true end,
                     fun(_) -> % TODO: This must be always underscore to admit those messages (and not fail on a pattern match) that may be different that the trace pattern we expect ({trace, ..} in this case).
                       {yes, {env, [{str, "yes"}]}}
                     end
@@ -191,7 +194,7 @@ mfa_spec({calc_server, loop, [_]}) ->
                   },
                   {act,
                     {env, [{str, "not(_@B/_)"}, {var, '_@B'}, {pat, undefined}]},
-                    fun(_) -> false; (_) -> true end, % TODO: This must be always underscore to admit those messages (and not fail on a pattern match) that may be different that the trace pattern we expect ({trace, ..} in this case).
+                    fun(_) -> false; (_) -> true end,
                     fun(_) -> % TODO: This must be always underscore to admit those messages (and not fail on a pattern match) that may be different that the trace pattern we expect ({trace, ..} in this case).
                       {yes, {env, [{str, "yes"}]}}
                     end
@@ -204,7 +207,7 @@ mfa_spec({calc_server, loop, [_]}) ->
       },
       {act,
         {env, [{str, "not(_@A/{trace, _ ,spawned, _,{_,_,[Secret]}})"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {undefined, undefined, [undefined]}}}]},
-        fun({trace, _, spawned, _, {_, _, [Secret]}}) -> false; (_) -> true end, % TODO: This is the correct way.
+        fun({trace, _, spawned, _, {_, _, [Secret]}}) -> false; (_) -> true end,
         fun(_) -> % TODO: This must be always underscore to admit those messages (and not fail on a pattern match) that may be different that the trace pattern we expect ({trace, ..} in this case).
           {yes, {env, [{str, "yes"}]}}
         end

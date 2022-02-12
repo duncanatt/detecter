@@ -30,15 +30,6 @@
 %%% Public API.
 -export([mfa_spec/1]).
 
-%%% Callbacks/Internal.
--export([]).
-
-%%% Types.
--export_type([]).
-
-%%% Implemented behaviors.
-%-behavior().
-
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.

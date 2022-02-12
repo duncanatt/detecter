@@ -82,7 +82,7 @@ handle(<<"GET">>, #{type := Type}) ->
 handle(_, _) ->
 
   % Unsupported HTTP method.
-  exit(bad_http_method).
+  exit(crash).
 
 
 %%% ----------------------------------------------------------------------------

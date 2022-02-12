@@ -1,0 +1,91 @@
+%%%-------------------------------------------------------------------
+%%% @author Duncan Paul Attard
+%%% @copyright (C) 2019 Duncan Paul Attard
+%%% @version 0.9
+%%%
+%%% Lexer specification.
+%%%
+%%% Created: 19. Nov 2019
+%%%
+%%% Copyright (c) 2019 Duncan Paul Attard <duncanatt@gmail.com>
+%%%
+%%% This program is free software: you can redistribute it and/or modify
+%%% it under the terms of the GNU General Public License as published by
+%%% the Free Software Foundation, either version 3 of the License, or
+%%% (at your option) any later version.
+%%%
+%%% This program is distributed in the hope that it will be useful,
+%%% but WITHOUT ANY WARRANTY; without even the implied warranty of
+%%% MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+%%% GNU General Public License for more details.
+%%%
+%%% You should have received a copy of the GNU General Public License
+%%% along with this program.  If not, see <https://www.gnu.org/licenses/>.
+%%%-------------------------------------------------------------------
+
+% Reading events from the connection process' point of view.
+with
+  cowboy_clear:connection_process(_, _, _, _)
+monitor
+  and(
+    [_ConnProc <- _ConnsSup, cowboy_clear:connection_process(_, _, _, _)]
+    max(X.
+      and(
+        [_ConnProc ? {handshake, http, ranch_tcp, _Port, _Timeout}]
+        and(
+          [_ConnProc ? {tcp, _, _}]
+          and(
+            [_ConnProc -> _ReqProc, cowboy_stream_h:request_process(_, _, _)]
+            and(
+              [ConnProc ? {{ConnProc, _}, {response, RespCode, _, _}} when RespCode >= 400] ff, % Make this 500 for errors.
+              [ConnProc ? {{ConnProc, _}, {response, _RespCode, _, _}}]
+              and(
+                [_ConnProc ? {'EXIT', _, normal}]
+                and(
+                  [_ConnProc ? {tcp_closed, _}] X % might discard this event
+                )
+              )
+            )
+          )
+        )
+      )
+    )
+  ),
+
+% Reading events from the request process' point of view.
+with
+  cowboy_stream_h:request_process(_, _, _)
+monitor
+  and(
+    [_ReqProc <- _ConnProc, cowboy_stream_h:request_process(_, _, _)]
+    max(X.
+      and(
+        [_ReqProc ! {{_ConnProc, _}, {response, RespCode, _, _}} when RespCode >= 400] ff, % Make this 500 for errors.
+        [_ReqProc ! {{_ConnProc, _}, {response, _RespCode, _, _}}] X
+      )
+    )
+  ),
+
+% Reading events from the acceptors' point of view.
+with
+  ranch_acceptor:loop(_, _, _, _, _)
+monitor
+  and(
+    [_Acc <- _AccSup, ranch_acceptor:loop(_, _, _, _, _)]
+    max(X.
+      and(
+        [Acc ! {ranch_conns_sup, start_protocol, Acc, _Port}]
+        and(
+          [_Acc ? _ConnsSup] X
+        ),
+        [_Acc ! {ranch_conns_sup, start_protocol, _Acc0, _Port}] ff % Acceptor received rogue message.
+      )
+    )
+  ).
+
+
+
+
+
+
+

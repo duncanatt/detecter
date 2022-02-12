@@ -38,23 +38,9 @@ compile: clean
 	erlc -pa $(BIN) +debug_info -I $(INCLUDE) -o $(BIN) $(call recursive,$(SRC),erl) $(call recursive,$(SRC2),erl)
 	cp $(RES)/* $(BIN)
 
-compile-test: clean
-	mkdir -p $(BIN)
-	erlc -DTEST -pa $(BIN) +debug_info -I $(INCLUDE) -o $(BIN) $(call recursive,$(SRC),erl)
-	erlc -DTEST -pa $(BIN) -I $(INCLUDE) -o $(BIN) $(call recursive,$(TEST),erl)
-
-test: compile-test
-	erl -noshell -pa ebin -eval 'eunit:test(log_tracer_test, [verbose])' -s init stop
-	erl -noshell -pa ebin -eval 'eunit:test(async_tracer_test, [verbose])' -s init stop
 
 weave: compile
-# 	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", "$(INCLUDE)", "$(BIN)", fun launcher:driver_monitors/1, fun launcher:filter_spec/1).' -s init stop
-# 	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", fun launcher:driver_monitors/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}, {filter, fun launcher:filter_spec/1}]).' -s init stop
-# 	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", fun experiment_dais:mon_log/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}, {filter, fun launcher:filter_spec/1}]).' -s init stop
-#	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", fun experiment_dais:driver_monitors/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}, {filter, fun launcher:filter_spec/1}]).' -s init stop
-#	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", fun experiment_oopsla:driver_monitors/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}, {filter, fun launcher:filter_spec/1}]).' -s init stop
-#	erl -noshell -pa ebin -eval 'weaver:weave("$(SRC)/models", fun experiment_ifm:driver_monitors/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}, {filter, fun launcher:filter_spec/1}]).' -s init stop
-	erl -noshell -pa ebin -eval 'weaver:weave("/Users/duncan/Dropbox/PhD/Development/detecter-inline/src/system", fun example_1:mfa_spec/1, [{outdir, "/Users/duncan/Dropbox/PhD/Development/detecter-inline/ebin"}, {i, "/Users/duncan/Dropbox/PhD/Development/detecter-inline/include"}, {filter, fun monitor:filter/1}, erl]).' -s init stop
+	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/token_server", fun token_server_mon:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
 
 weave-cowboy: compile
 	#erl -noshell -pa ebin -eval 'hml_eval:compile("examples/cowboy_mon.hml", [{outdir, "ebin"}]).' -s init stop

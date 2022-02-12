@@ -141,6 +141,7 @@
 
 % This could be a security property, where the secret that we started with cannot
 % be sent to the clients. YASS!
+% Leaked secret property.
 mfa_spec({calc_server, loop, [_]}) ->
   {ok,
     {chs,

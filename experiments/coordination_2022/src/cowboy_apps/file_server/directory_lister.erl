@@ -30,5 +30,5 @@ valid_path([_H | Rest]) -> valid_path(Rest).
 
 resource_path(Path) ->
 	PrivDir = code:priv_dir(coordination_2022),
-	io:format("----- PrivDir = ~p~n", [PrivDir]),
+%%	io:format("----- PrivDir = ~p~n", [PrivDir]),
 	filename:join([PrivDir, Path]).

@@ -122,6 +122,103 @@
 %%    }
 %%  };
 
+% Property on Ranch Request Process: "Request process always returns HTTP 200
+% OK."
+%
+% [_ReqProc <- _ConnProc, cowboy_stream_h:request_process(_, _, _])]
+% max X(
+%   [_ReqProc:_Sock ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode = 200] X
+%   and
+%   [_ReqProc:_Sock ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode = 500] ff
+%   and
+%   [_ReqProc ** crash]
+% )
+mfa_spec({cowboy_stream_h, request_process, [_, _, _]}) ->
+  {ok,
+    {chs,
+      {env, [{str, "+"}]},
+      {act,
+        {env, [{str, "_@A/{trace, _ ,spawned, _, {cowboy_stream_h, request_process, [_, _, _]}}"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {cowboy_stream_h, request_process, [undefined, undefined, undefined]}}}]},
+        fun({trace, _ReqProc, spawned, _ConProc, {cowboy_stream_h, request_process, [_, _, _]}}) -> true; (_) -> false end,
+        fun({trace, _ReqProc, spawned, _ConProc, {cowboy_stream_h, request_process, [_, _, _]}}) ->
+          {rec,
+            {env, [{str, "rec X"}, {var, 'X'}]},
+            fun X() ->
+              {'and',
+                {env, [{str, "and"}]},
+                {'and',
+                  {env, [{str, "and"}]},
+                  {chs,
+                    {env, [{str, "+"}]},
+                    {act,
+                      {env, [{str, "_@B/{trace, _ReqProc , send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _} when HttpCode =:= 200"}, {var, '_@B'}, {pat, {trace, undefined, send, {{undefined, undefined}, {response, undefined, undefined, undefined}}, undefined}}]},
+                      fun({trace, _ReqProc, send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _}) when HttpCode =:= 200 ->
+                        true; (_) -> false end,
+                      fun({trace, _, send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _}) ->
+                        {var, {env, [{str, "X"}, {var, 'X'}]}, X}
+                      end
+                    },
+                    {act,
+                      {env, [{str, "not(_@B/{trace, _ReqProc , send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _} when HttpCode =:= 200)"}, {var, '_@B'}, {pat, {trace, undefined, send, {{undefined, undefined}, {response, undefined, undefined, undefined}}, undefined}}]},
+                      fun({trace, _ReqProc, send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _}) when HttpCode =:= 200 ->
+                        false; (_) -> true end,
+                      fun(_) ->
+                        {yes, {env, [{str, "yes"}]}}
+                      end
+                    }
+                  },
+                  {chs,
+                    {env, [{str, "+"}]},
+                    {act,
+                      {env, [{str, "_@B/{trace, _ReqProc , send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _} when HttpCode =:= 500"}, {var, '_@B'}, {pat, {trace, undefined, send, {{undefined, undefined}, {response, undefined, undefined, undefined}}, undefined}}]},
+                      fun({trace, _ReqProc, send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _}) when HttpCode =:= 500 ->
+                        true; (_) -> false end,
+                      fun({trace, _, send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _}) ->
+                        {no, {env, [{str, "no"}]}}
+                      end
+                    },
+                    {act,
+                      {env, [{str, "not(_@B/{trace, _ReqProc , send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _} when HttpCode =:= 500)"}, {var, '_@B'}, {pat, {trace, undefined, send, {{undefined, undefined}, {response, undefined, undefined, undefined}}, undefined}}]},
+                      fun({trace, _ReqProc, send, {{_ConnProc, _}, {response, HttpCode, _, _}}, _}) when HttpCode =:= 500 ->
+                        false; (_) -> true end,
+                      fun(_) ->
+                        {yes, {env, [{str, "yes"}]}}
+                      end
+                    }
+                  }
+                },
+                {chs,
+                  {env, [{str, "+"}]},
+                  {act,
+                    {env, [{str, "_@B/{trace, _ReqProc, exit, {Status, _}} when Status =:= true"}, {var, '_@B'}, {pat, {trace, undefined, exit, {crash, undefined}}}]},
+                    fun({trace, _ReqProc, exit, {Status, _}}) when Status =:= crash -> true; (_) -> false end,
+                    fun({trace, _ReqProc, exit, {Status, _}}) when Status =:= crash ->
+                      {no, {env, [{str, "no"}]}}
+                    end
+                  },
+                  {act,
+                    {env, [{str, "_@B/{trace, _ReqProc, exit, {Status, _}} when Status =:= true"}, {var, '_@B'}, {pat, {trace, undefined, exit, {crash, undefined}}}]},
+                    fun({trace, _ReqProc, exit, {Status, _}}) when Status =:= crash -> false; (_) -> true end,
+                    fun(_) ->
+                      {yes, {env, [{str, "yes"}]}}
+                    end
+                  }
+                }
+              }
+            end
+          }
+        end
+      },
+      {act,
+        {env, [{str, "not(_@A/{trace, _ ,spawned, _, {cowboy_stream_h, request_process, [_, _, _]}})"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {cowboy_stream_h, request_process, [undefined, undefined, undefined]}}}]},
+        fun({trace, _ReqProc, spawned, _ConProc, {cowboy_stream_h, request_process, [_, _, _]}}) -> false; (_) -> true end,
+        fun(_) ->
+          {yes, {env, [{str, "yes"}]}}
+        end
+      }
+    }
+  };
+
 % Property on Ranch Connection Process: "Connection Process is created correctly
 % and in turn, the Request Process executes correctly and terminates with a
 % normal exit reason."
@@ -139,7 +236,9 @@
 %     [_ConnProc ? {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode >= 500] ff
 %   )
 % )
-%
+% This property was copied verbatim from FASE and does not work for all the
+% cases because some messages like {tcp, closed} are not sent by the Erlang
+% socket connection library. The one below works as intended.
 %%mfa_spec({cowboy_clear, connection_process, [_, _, _, _]}) ->
 %%  {ok,
 %%    {chs,
@@ -319,189 +418,190 @@
 %     [_ConnProc ? {'EXIT', _, {crash, _StackTrace}}] ff
 %   )
 % )
-mfa_spec({cowboy_clear, connection_process, [_, _, _, _]}) ->
-  {ok,
-    {chs,
-      {env, [{str, "+"}]},
-      {act,
-        {env, [{str, "_@A/{trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {cowboy_clear, connection_process, [undefined, undefined, undefined, undefined]}}}]},
-        fun({trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}) -> true; (_) -> false end,
-        fun({trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}) ->
-          {rec,
-            {env, [{str, "rec X"}, {var, 'X'}]},
-            fun X() ->
-              {chs,
-                {env, [{str, "+"}]},
-                {act,
-                  {env, [{str, "_@B/{trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}"}, {var, '_@B'}, {pat, {trace, undefined, 'receive', {handshake, http, ranch_tcp, undefined, undefined}}}]},
-                  fun({trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}) -> true; (_) -> false end,
-                  fun({trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}) ->
-                    {chs,
-                      {env, [{str, "+"}]},
-                      {act,
-                        {env, [{str, "_@C/{trace, _, 'receive', {tcp, _, _}}"}, {var, '_@C'}, {pat, {trace, undefined, 'receive', {tcp, undefined, undefined}}}]},
-                        fun({trace, _, 'receive', {tcp, _, _}}) -> true; (_) -> false end,
-                        fun({trace, _, 'receive', {tcp, _, _}}) ->
-                          {chs,
-                            {env, [{str, "+"}]},
-                            {act,
-                              {env, [{str, "_@D/{trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}"}, {var, '_@D'}, {pat, {trace, undefined, spawn, undefined, {cowboy_stream_h, request_process, [undefined, undefined, undefined]}}}]},
-                              fun({trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}) -> true; (_) ->
-                                false end,
-                              fun({trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}) ->
-                                {'and',
-                                  {env, [{str, "and"}]},
-                                  {'and',
-                                    {env, [{str, "and"}]},
-                                    {chs,
-                                      {env, [{str, "+"}]},
-                                      {act,
-                                        {env, [{str, "_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode < 500"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
-                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode < 500 -> true; (_) -> false end,
-                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) ->
-                                          {'and',
-                                            {env, [{str, "and"}]},
-                                            {chs,
-                                              {env, [{str, "+"}]},
-                                              {act,
-                                                {env, [{str, "_@F/{trace, _, 'receive', {'EXIT', _, normal}}"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, normal}}}]},
-                                                fun({trace, _, 'receive', {'EXIT', _, normal}}) -> true; (_) -> false end,
-                                                fun({trace, _, 'receive', {'EXIT', _, normal}}) ->
-                                                  {chs,
-                                                    {env, [{str, "+"}]},
-                                                    {act,
-                                                      {env, [{str, "_@G/{trace, _, 'receive', _}"}, {var, '_@G'}, {pat, {trace, undefined, 'receive', undefined}}]},
-                                                      fun({trace, _, 'receive', _}) -> true; (_) -> false end,
-                                                      fun({trace, _, 'receive', _}) ->
-                                                        {var, {env, [{str, "X"}, {var, 'X'}]}, X}
-                                                      end
-                                                    },
-                                                    {act,
-                                                      {env, [{str, "not(_@G/{trace, _, 'receive', _})"}, {var, '_@G'}, {pat, {trace, undefined, 'receive', undefined}}]},
-                                                      fun({trace, _, 'receive', _}) -> false; (_) -> true end,
-                                                      fun(_) ->
-                                                        {yes, {env, [{str, "yes"}]}}
-                                                      end
-                                                    }
-                                                  }
-                                                end
-                                              },
-                                              {act,
-                                                {env, [{str, "not(_@F/{trace, _, 'receive', {'EXIT', _, normal}})"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, normal}}}]},
-                                                fun({trace, _, 'receive', {'EXIT', _, normal}}) -> false; (_) -> true end,
-                                                fun(_) ->
-                                                  {yes, {env, [{str, "yes"}]}}
-                                                end
-                                              }
-                                            },
-                                            {chs,
-                                              {env, [{str, "+"}]},
-                                              {act,
-                                                {env, [{str, "_@F/{trace, _, 'receive', {'EXIT', _, crash}}"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, crash}}}]},
-                                                fun({trace, _, 'receive', {'EXIT', _, crash}}) -> true; (_) -> false end,
-                                                fun({trace, _, 'receive', {'EXIT', _, crash}}) ->
-                                                  {no, {env, [{str, "no"}]}}
-                                                end
-                                              },
-                                              {act,
-                                                {env, [{str, "not(_@F/{trace, _, 'receive', {'EXIT', _, crash}})"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, crash}}}]},
-                                                fun({trace, _, 'receive', {'EXIT', _, crash}}) -> false; (_) -> true end,
-                                                fun(_) ->
-                                                  {yes, {env, [{str, "yes"}]}}
-                                                end
-                                              }
-                                            }
-                                          }
-                                        end
-                                      },
-                                      {act,
-                                        {env, [{str, "not(_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode < 500)"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
-                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode < 500 -> false; (_) -> true end,
-                                        fun(_) ->
-                                          {yes, {env, [{str, "yes"}]}}
-                                        end
-                                      }
-                                    },
-                                    {chs,
-                                      {env, [{str, "+"}]},
-                                      {act,
-                                        {env, [{str, "_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode >= 500"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
-                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode >= 500 -> true; (_) -> false end,
-                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) ->
-                                          {no, {env, [{str, "no"}]}}
-                                        end
-                                      },
-                                      {act,
-                                        {env, [{str, "not(_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode >= 500)"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
-                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode >= 500 -> false; (_) -> true end,
-                                        fun(_) ->
-                                          {yes, {env, [{str, "yes"}]}}
-                                        end
-                                      }
-                                    }
-                                  },
-                                  {chs,
-                                    {env, [{str, "+"}]},
-                                    {act,
-                                      {env, [{str, "_@E/{trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, {crash, undefined}}}}]},
-                                      fun({trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}) -> true; (_) -> false end,
-                                      fun({trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}) ->
-                                        {no, {env, [{str, "no"}]}}
-                                      end
-                                    },
-                                    {act,
-                                      {env, [{str, "not(_@E/{trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}})"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, undefined}}}]},
-                                      fun({trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}) -> false; (_) -> true end,
-                                      fun(_) ->
-                                        {yes, {env, [{str, "yes"}]}}
-                                      end
-                                    }
-                                  }
-                                }
-                              end
-                            },
-                            {act,
-                              {env, [{str, "not(_@D/{trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}})"}, {var, '_@D'}, {pat, {trace, undefined, spawn, undefined, {cowboy_stream_h, request_process, [undefined, undefined, undefined]}}}]},
-                              fun({trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}) -> false; (_) ->
-                                true end,
-                              fun(_) ->
-                                {yes, {env, [{str, "yes"}]}}
-                              end
-                            }
-                          }
-                        end
-                      },
-                      {act,
-                        {env, [{str, "not(_@C/{trace, _, 'receive', {tcp, _, _}})"}, {var, '_@C'}, {pat, {trace, undefined, 'receive', {tcp, undefined, undefined}}}]},
-                        fun({trace, _, 'receive', {tcp, _, _}}) -> false; (_) -> true end,
-                        fun(_) ->
-                          {yes, {env, [{str, "yes"}]}}
-                        end
-                      }
-                    }
-                  end
-                },
-                {act,
-                  {env, [{str, "not(_@B/{trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}})"}, {var, '_@B'}, {pat, {trace, undefined, 'receive', {handshake, http, ranch_tcp, undefined, undefined}}}]},
-                  fun({trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}) -> false; (_) -> true end,
-                  fun(_) ->
-                    {yes, {env, [{str, "yes"}]}}
-                  end
-                }
-              }
-            end
-          }
-        end
-      },
-      {act,
-        {env, [{str, "not(_@A/{trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}})"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {cowboy_clear, connection_process, [undefined, undefined, undefined, undefined]}}}]},
-        fun({trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}) -> false; (_) -> true end,
-        fun(_) ->
-          {yes, {env, [{str, "yes"}]}}
-        end
-      }
-    }
-  };
+% This has been tested thoroughly and works correctly.
+%%mfa_spec({cowboy_clear, connection_process, [_, _, _, _]}) ->
+%%  {ok,
+%%    {chs,
+%%      {env, [{str, "+"}]},
+%%      {act,
+%%        {env, [{str, "_@A/{trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {cowboy_clear, connection_process, [undefined, undefined, undefined, undefined]}}}]},
+%%        fun({trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}) -> true; (_) -> false end,
+%%        fun({trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}) ->
+%%          {rec,
+%%            {env, [{str, "rec X"}, {var, 'X'}]},
+%%            fun X() ->
+%%              {chs,
+%%                {env, [{str, "+"}]},
+%%                {act,
+%%                  {env, [{str, "_@B/{trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}"}, {var, '_@B'}, {pat, {trace, undefined, 'receive', {handshake, http, ranch_tcp, undefined, undefined}}}]},
+%%                  fun({trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}) -> true; (_) -> false end,
+%%                  fun({trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}) ->
+%%                    {chs,
+%%                      {env, [{str, "+"}]},
+%%                      {act,
+%%                        {env, [{str, "_@C/{trace, _, 'receive', {tcp, _, _}}"}, {var, '_@C'}, {pat, {trace, undefined, 'receive', {tcp, undefined, undefined}}}]},
+%%                        fun({trace, _, 'receive', {tcp, _, _}}) -> true; (_) -> false end,
+%%                        fun({trace, _, 'receive', {tcp, _, _}}) ->
+%%                          {chs,
+%%                            {env, [{str, "+"}]},
+%%                            {act,
+%%                              {env, [{str, "_@D/{trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}"}, {var, '_@D'}, {pat, {trace, undefined, spawn, undefined, {cowboy_stream_h, request_process, [undefined, undefined, undefined]}}}]},
+%%                              fun({trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}) -> true; (_) ->
+%%                                false end,
+%%                              fun({trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}) ->
+%%                                {'and',
+%%                                  {env, [{str, "and"}]},
+%%                                  {'and',
+%%                                    {env, [{str, "and"}]},
+%%                                    {chs,
+%%                                      {env, [{str, "+"}]},
+%%                                      {act,
+%%                                        {env, [{str, "_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode < 500"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
+%%                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode < 500 -> true; (_) -> false end,
+%%                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) ->
+%%                                          {'and',
+%%                                            {env, [{str, "and"}]},
+%%                                            {chs,
+%%                                              {env, [{str, "+"}]},
+%%                                              {act,
+%%                                                {env, [{str, "_@F/{trace, _, 'receive', {'EXIT', _, normal}}"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, normal}}}]},
+%%                                                fun({trace, _, 'receive', {'EXIT', _, normal}}) -> true; (_) -> false end,
+%%                                                fun({trace, _, 'receive', {'EXIT', _, normal}}) ->
+%%                                                  {chs,
+%%                                                    {env, [{str, "+"}]},
+%%                                                    {act,
+%%                                                      {env, [{str, "_@G/{trace, _, 'receive', _}"}, {var, '_@G'}, {pat, {trace, undefined, 'receive', undefined}}]},
+%%                                                      fun({trace, _, 'receive', _}) -> true; (_) -> false end,
+%%                                                      fun({trace, _, 'receive', _}) ->
+%%                                                        {var, {env, [{str, "X"}, {var, 'X'}]}, X}
+%%                                                      end
+%%                                                    },
+%%                                                    {act,
+%%                                                      {env, [{str, "not(_@G/{trace, _, 'receive', _})"}, {var, '_@G'}, {pat, {trace, undefined, 'receive', undefined}}]},
+%%                                                      fun({trace, _, 'receive', _}) -> false; (_) -> true end,
+%%                                                      fun(_) ->
+%%                                                        {yes, {env, [{str, "yes"}]}}
+%%                                                      end
+%%                                                    }
+%%                                                  }
+%%                                                end
+%%                                              },
+%%                                              {act,
+%%                                                {env, [{str, "not(_@F/{trace, _, 'receive', {'EXIT', _, normal}})"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, normal}}}]},
+%%                                                fun({trace, _, 'receive', {'EXIT', _, normal}}) -> false; (_) -> true end,
+%%                                                fun(_) ->
+%%                                                  {yes, {env, [{str, "yes"}]}}
+%%                                                end
+%%                                              }
+%%                                            },
+%%                                            {chs,
+%%                                              {env, [{str, "+"}]},
+%%                                              {act,
+%%                                                {env, [{str, "_@F/{trace, _, 'receive', {'EXIT', _, crash}}"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, crash}}}]},
+%%                                                fun({trace, _, 'receive', {'EXIT', _, crash}}) -> true; (_) -> false end,
+%%                                                fun({trace, _, 'receive', {'EXIT', _, crash}}) ->
+%%                                                  {no, {env, [{str, "no"}]}}
+%%                                                end
+%%                                              },
+%%                                              {act,
+%%                                                {env, [{str, "not(_@F/{trace, _, 'receive', {'EXIT', _, crash}})"}, {var, '_@F'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, crash}}}]},
+%%                                                fun({trace, _, 'receive', {'EXIT', _, crash}}) -> false; (_) -> true end,
+%%                                                fun(_) ->
+%%                                                  {yes, {env, [{str, "yes"}]}}
+%%                                                end
+%%                                              }
+%%                                            }
+%%                                          }
+%%                                        end
+%%                                      },
+%%                                      {act,
+%%                                        {env, [{str, "not(_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode < 500)"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
+%%                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode < 500 -> false; (_) -> true end,
+%%                                        fun(_) ->
+%%                                          {yes, {env, [{str, "yes"}]}}
+%%                                        end
+%%                                      }
+%%                                    },
+%%                                    {chs,
+%%                                      {env, [{str, "+"}]},
+%%                                      {act,
+%%                                        {env, [{str, "_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode >= 500"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
+%%                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode >= 500 -> true; (_) -> false end,
+%%                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) ->
+%%                                          {no, {env, [{str, "no"}]}}
+%%                                        end
+%%                                      },
+%%                                      {act,
+%%                                        {env, [{str, "not(_@E/{trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}} when HttpCode >= 500)"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {{undefined, undefined}, {response, undefined, undefined, undefined}}}}]},
+%%                                        fun({trace, _, 'receive', {{_ConnProc, _}, {response, HttpCode, _, _}}}) when HttpCode >= 500 -> false; (_) -> true end,
+%%                                        fun(_) ->
+%%                                          {yes, {env, [{str, "yes"}]}}
+%%                                        end
+%%                                      }
+%%                                    }
+%%                                  },
+%%                                  {chs,
+%%                                    {env, [{str, "+"}]},
+%%                                    {act,
+%%                                      {env, [{str, "_@E/{trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, {crash, undefined}}}}]},
+%%                                      fun({trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}) -> true; (_) -> false end,
+%%                                      fun({trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}) ->
+%%                                        {no, {env, [{str, "no"}]}}
+%%                                      end
+%%                                    },
+%%                                    {act,
+%%                                      {env, [{str, "not(_@E/{trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}})"}, {var, '_@E'}, {pat, {trace, undefined, 'receive', {'EXIT', undefined, undefined}}}]},
+%%                                      fun({trace, _, 'receive', {'EXIT', _, {crash, _StackTrace}}}) -> false; (_) -> true end,
+%%                                      fun(_) ->
+%%                                        {yes, {env, [{str, "yes"}]}}
+%%                                      end
+%%                                    }
+%%                                  }
+%%                                }
+%%                              end
+%%                            },
+%%                            {act,
+%%                              {env, [{str, "not(_@D/{trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}})"}, {var, '_@D'}, {pat, {trace, undefined, spawn, undefined, {cowboy_stream_h, request_process, [undefined, undefined, undefined]}}}]},
+%%                              fun({trace, _, spawn, _, {cowboy_stream_h, request_process, [_, _, _]}}) -> false; (_) ->
+%%                                true end,
+%%                              fun(_) ->
+%%                                {yes, {env, [{str, "yes"}]}}
+%%                              end
+%%                            }
+%%                          }
+%%                        end
+%%                      },
+%%                      {act,
+%%                        {env, [{str, "not(_@C/{trace, _, 'receive', {tcp, _, _}})"}, {var, '_@C'}, {pat, {trace, undefined, 'receive', {tcp, undefined, undefined}}}]},
+%%                        fun({trace, _, 'receive', {tcp, _, _}}) -> false; (_) -> true end,
+%%                        fun(_) ->
+%%                          {yes, {env, [{str, "yes"}]}}
+%%                        end
+%%                      }
+%%                    }
+%%                  end
+%%                },
+%%                {act,
+%%                  {env, [{str, "not(_@B/{trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}})"}, {var, '_@B'}, {pat, {trace, undefined, 'receive', {handshake, http, ranch_tcp, undefined, undefined}}}]},
+%%                  fun({trace, _, 'receive', {handshake, _, ranch_tcp, _Port, _Timeout}}) -> false; (_) -> true end,
+%%                  fun(_) ->
+%%                    {yes, {env, [{str, "yes"}]}}
+%%                  end
+%%                }
+%%              }
+%%            end
+%%          }
+%%        end
+%%      },
+%%      {act,
+%%        {env, [{str, "not(_@A/{trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}})"}, {var, '_@A'}, {pat, {trace, undefined, spawned, undefined, {cowboy_clear, connection_process, [undefined, undefined, undefined, undefined]}}}]},
+%%        fun({trace, _, spawned, _, {cowboy_clear, connection_process, [_, _, _, _]}}) -> false; (_) -> true end,
+%%        fun(_) ->
+%%          {yes, {env, [{str, "yes"}]}}
+%%        end
+%%      }
+%%    }
+%%  };
 
 % Undefined.
 mfa_spec(_) ->

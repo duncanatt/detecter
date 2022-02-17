@@ -212,7 +212,9 @@ For the complete reference of these operational rules, please refer to the compa
 
 # Demo video.
 
-Part 1.
+
+
+## Part 1. LOG LEVEL = TRACE
 
 1. Download detectEr and compile it.
 
@@ -236,7 +238,9 @@ Part 1.
 
 11. What we can do instead is the save a copy of the trace and examine it offline.
 
-Part 2.
+
+
+## Part 2.
 
 1. Create the trace on the console, saying that it was previously saved.
 
@@ -258,7 +262,9 @@ Part 2.
 
 10. Comment on the unfolding of the recursive variable.
 
-Part 3 (Switch to the coordination_2020 directory). 
+
+
+## Part 3 (Switch to the coordination_2020 directory).  LOG LEVEL = DEBUG
 
 1. Say that we generated the formula in the paper that detects when a request is ok or no in Cowboy for our REST web service.
 
@@ -274,10 +280,13 @@ Part 3 (Switch to the coordination_2020 directory).
 
 7. We would like to explore this further, and try to see whether it is possible to present the data in a more human consumable format.
 
-8. Grab the sanitised trace, and pass it through the thing, if there is time.
+8. Grab the sanitised trace, and pass it through the thing, if there is time. But probably not.
 
 
-Part 
+
+
+
+-----------
 
 {ok, Mon} = prop_no_leak:mfa_spec({token_server,loop,[1,1]}).
 

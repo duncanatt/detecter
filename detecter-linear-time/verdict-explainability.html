@@ -1,0 +1,1049 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="A step-by-step guide to using detectEr">
+      
+      
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-7.1.5">
+    
+    
+      
+        <title>Verdict Explainability - detectEr Tutorial</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.bde7dde4.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.ef6f36e2.min.css">
+        
+      
+    
+    
+    
+      
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700%7CFira+Code&display=fallback">
+        <style>:root{--md-text-font-family:"Source Sans Pro";--md-code-font-family:"Fira Code"}</style>
+      
+    
+    
+    
+      <link rel="stylesheet" href="../stylesheets/extra.css">
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <script>function __prefix(e){return new URL("..",location).pathname+"."+e}function __get(e,t=localStorage){return JSON.parse(t.getItem(__prefix(e)))}</script>
+    
+      <script>var palette=__get("__palette");if(null!==palette&&"object"==typeof palette.color)for(var key in palette.color)document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#verdict-explainability" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="detectEr Tutorial" class="md-header__button md-logo" aria-label="detectEr Tutorial" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            detectEr Tutorial
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Verdict Explainability
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="deep-purple" data-md-color-accent="purple" type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 7a5 5 0 0 1 5 5 5 5 0 0 1-5 5 5 5 0 0 1-5-5 5 5 0 0 1 5-5m0 2a3 3 0 0 0-3 3 3 3 0 0 0 3 3 3 3 0 0 0 3-3 3 3 0 0 0-3-3m0-7 2.39 3.42C13.65 5.15 12.84 5 12 5c-.84 0-1.65.15-2.39.42L12 2M3.34 7l4.16-.35A7.2 7.2 0 0 0 5.94 8.5c-.44.74-.69 1.5-.83 2.29L3.34 7m.02 10 1.76-3.77a7.131 7.131 0 0 0 2.38 4.14L3.36 17M20.65 7l-1.77 3.79a7.023 7.023 0 0 0-2.38-4.15l4.15.36m-.01 10-4.14.36c.59-.51 1.12-1.14 1.54-1.86.42-.73.69-1.5.83-2.29L20.64 17M12 22l-2.41-3.44c.74.27 1.55.44 2.41.44.82 0 1.63-.17 2.37-.44L12 22z"/></svg>
+            </label>
+          
+        
+          
+          
+          <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo" type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m17.75 4.09-2.53 1.94.91 3.06-2.63-1.81-2.63 1.81.91-3.06-2.53-1.94L12.44 4l1.06-3 1.06 3 3.19.09m3.5 6.91-1.64 1.25.59 1.98-1.7-1.17-1.7 1.17.59-1.98L15.75 11l2.06-.05L18.5 9l.69 1.95 2.06.05m-2.28 4.95c.83-.08 1.72 1.1 1.19 1.85-.32.45-.66.87-1.08 1.27C15.17 23 8.84 23 4.94 19.07c-3.91-3.9-3.91-10.24 0-14.14.4-.4.82-.76 1.27-1.08.75-.53 1.93.36 1.85 1.19-.27 2.86.69 5.83 2.89 8.02a9.96 9.96 0 0 0 8.02 2.89m-1.64 2.02a12.08 12.08 0 0 1-7.8-3.47c-2.17-2.19-3.33-5-3.49-7.82-2.81 3.14-2.7 7.96.31 10.98 3.02 3.01 7.84 3.12 10.98.31z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        
+<a href="https://github.com/duncanatt/detecter/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    duncanatt/detecter
+  </div>
+</a>
+      </div>
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="detectEr Tutorial" class="md-nav__button md-logo" aria-label="detectEr Tutorial" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    detectEr Tutorial
+  </label>
+  
+    <div class="md-nav__source">
+      
+<a href="https://github.com/duncanatt/detecter/" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    duncanatt/detecter
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../index.html" class="md-nav__link">
+        Home
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_2" data-md-state="indeterminate" type="checkbox" id="__nav_2" checked>
+      
+      <label class="md-nav__link" for="__nav_2">
+        Getting Started
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Getting Started" data-md-level="1">
+        <label class="md-nav__title" for="__nav_2">
+          <span class="md-nav__icon md-icon"></span>
+          Getting Started
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/preparation.html" class="md-nav__link">
+        Preparation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/setting-up-detecter.html" class="md-nav__link">
+        Setting up detectEr
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting-started/quickstart.html" class="md-nav__link">
+        Quickstart
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" data-md-state="indeterminate" type="checkbox" id="__nav_3" checked>
+      
+      <label class="md-nav__link" for="__nav_3">
+        Using detectEr Branching Time
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Using detectEr Branching Time" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          Using detectEr Branching Time
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/getting-started.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/the-specification-logic.html" class="md-nav__link">
+        The Specification Logic
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/formalising-properties.html" class="md-nav__link">
+        Formalising Properties
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/runtime-verification.html" class="md-nav__link">
+        Runtime Verification
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/synthesising-analysers.html" class="md-nav__link">
+        Synthesising Analysers
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/instrumentation.html" class="md-nav__link">
+        Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/inline-instrumentation.html" class="md-nav__link">
+        Inline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/outline-instrumentation.html" class="md-nav__link">
+        Outline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../using-detecter/offline-instrumentation.html" class="md-nav__link">
+        Offline Instrumentation
+      </a>
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_4" type="checkbox" id="__nav_4" checked>
+      
+      <label class="md-nav__link" for="__nav_4">
+        Using detectEr Linear Time
+        <span class="md-nav__icon md-icon"></span>
+      </label>
+      <nav class="md-nav" aria-label="Using detectEr Linear Time" data-md-level="1">
+        <label class="md-nav__title" for="__nav_4">
+          <span class="md-nav__icon md-icon"></span>
+          Using detectEr Linear Time
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="setting-up-detecter.html" class="md-nav__link">
+        Setting up detectEr Linear Time
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="getting-started.html" class="md-nav__link">
+        Getting Started
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="the-specification-logic.html" class="md-nav__link">
+        The Specification Logic
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="synthesising-analysers.html" class="md-nav__link">
+        Synthesising Analysers
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="inline-instrumentation.html" class="md-nav__link">
+        Inline Instrumentation
+      </a>
+    </li>
+  
+
+          
+            
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Verdict Explainability
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="verdict-explainability.html" class="md-nav__link md-nav__link--active">
+        Verdict Explainability
+      </a>
+      
+        
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#an-example" class="md-nav__link">
+    An example
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          <div class="md-content" data-md-component="content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                  <a href="https://github.com/duncanatt/detecter/edit/master/docs/detecter-linear-time/verdict-explainability.md" title="Edit this page" class="md-content__button md-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20.71 7.04c.39-.39.39-1.04 0-1.41l-2.34-2.34c-.37-.39-1.02-.39-1.41 0l-1.84 1.83 3.75 3.75M3 17.25V21h3.75L17.81 9.93l-3.75-3.75L3 17.25z"/></svg>
+                  </a>
+                
+                
+                <h1 id="verdict-explainability">Verdict Explainability<a class="headerlink" href="#verdict-explainability" title="Permanent link">&para;</a></h1>
+<hr />
+<h2 id="an-example">An example<a class="headerlink" href="#an-example" title="Permanent link">&para;</a></h2>
+<p>Let us briefly review the property <code>prop_no_leak.hml</code>, that expresses:</p>
+<blockquote>
+<p>(P<sub>3</sub>)&nbsp;&nbsp;&nbsp;&nbsp;The token <code class="highlight"><span class="mi">1</span></code> is <em>not</em> leaked by the server in reply to a client request.</p>
+</blockquote>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="k">with</span>
+  <span class="nn">token_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(_,</span> <span class="p">_)</span>
+<span class="n">check</span>
+  <span class="p">[{_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">token_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(</span><span class="nv">OwnTok</span><span class="p">,</span> <span class="p">_)}]</span>
+  <span class="k">max</span><span class="p">(</span><span class="nv">X</span><span class="p">.</span>
+    <span class="p">[{_</span> <span class="o">?</span> <span class="p">_}](</span>
+      <span class="p">[{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}]</span><span class="k">ff</span>
+      <span class="k">and</span>
+      <span class="p">[{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}]</span><span class="nv">X</span>
+    <span class="p">)</span>
+  <span class="p">).</span>
+</code></pre></div>
+</td></tr></table>
+<p>The corresponding high-level description of the monitor generated by <code class="highlight"><span class="nn">maxhml_eval</span><span class="p">:</span><span class="n">compile</span><span class="o">/</span><span class="mi">2</span></code> is as follows.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">{_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">token_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(</span><span class="nv">OwnTok</span><span class="p">,</span> <span class="p">_)}.</span><span class="n">rec</span> <span class="nv">X</span><span class="p">(</span>
+  <span class="p">{_</span> <span class="o">?</span> <span class="p">_}(</span>
+      <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="n">no</span>
+      <span class="o">+</span>
+      <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+    <span class="k">and</span>
+      <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="nv">X</span>
+      <span class="o">+</span>
+      <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+  <span class="p">)</span>
+  <span class="o">+</span>
+  <span class="nv">NOT</span><span class="o">*</span><span class="p">{_</span> <span class="o">?</span> <span class="p">_}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+<span class="p">)</span>
+<span class="o">+</span>
+<span class="nv">NOT</span><span class="o">*</span><span class="p">{</span><span class="nv">A</span> <span class="o">&lt;-</span> <span class="nv">B</span><span class="p">,</span> <span class="nn">token_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(</span><span class="nv">OwnTok</span><span class="p">,</span> <span class="p">_)}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+</code></pre></div>
+</td></tr></table>
+<p>In this high-level description, we use <code>+</code> to denote a mutually-exclusive choice between two branches of the monitor, and <code>NOT* ... *</code> to designate the monitor branch where <em>(i)</em> either the specified action pattern does not match the actual event from the trace, or, <em>(ii)</em> the pattern matches, but the Boolean constraint is not satisfied, given the data inside the variables contained in the pattern.
+Parallel conjunctions are written as <code>and</code>, recursion is denoted by <code>rec</code>, and <code>yes</code> and <code>no</code> respectively denote the verdicts that monitors flag.</p>
+<h1 id="monitor-reduction-step-by-step">Monitor reduction, step-by-step<a class="headerlink" href="#monitor-reduction-step-by-step" title="Permanent link">&para;</a></h1>
+<p>Recall the monitor:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span>
+<span class="normal">14</span>
+<span class="normal">15</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">{_</span> <span class="o">&lt;-</span> <span class="p">_,</span> <span class="nn">token_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(</span><span class="nv">OwnTok</span><span class="p">,</span> <span class="p">_)}.</span><span class="n">rec</span> <span class="nv">X</span><span class="p">(</span>
+  <span class="p">{_</span> <span class="o">?</span> <span class="p">_}(</span>
+      <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="n">no</span>
+      <span class="o">+</span>
+      <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+    <span class="k">and</span>
+      <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="nv">X</span>
+      <span class="o">+</span>
+      <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="nv">OwnTok</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+  <span class="p">)</span>
+  <span class="o">+</span>
+  <span class="nv">NOT</span><span class="o">*</span><span class="p">{_</span> <span class="o">?</span> <span class="p">_}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+<span class="p">)</span>
+<span class="o">+</span>
+<span class="nv">NOT</span><span class="o">*</span><span class="p">{</span><span class="nv">A</span> <span class="o">&lt;-</span> <span class="nv">B</span><span class="p">,</span> <span class="nn">token_server</span><span class="p">:</span><span class="nf">loop</span><span class="p">(</span><span class="nv">OwnTok</span><span class="p">,</span> <span class="p">_)}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+</code></pre></div>
+</td></tr></table>
+<p>Let us assume that our <em>buggy</em> version of the token server exhibited the execution below. 
+For this sequence of events, we describe the monitor reduction that explains how a verdict is reached.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">spawned</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]}}</span>
+<span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">&#39;receive&#39;</span><span class="p">,{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="mi">0</span><span class="p">}}</span>
+<span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span>
+</code></pre></div>
+</td></tr></table>
+<ol>
+<li>
+<p>The monitor analyses the event <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">spawned</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">]}}</span></code> and it chooses the left  branch <code>{A &lt;- B, token_server:loop(OwnTok, _)}</code> since the pattern matches, and its Boolean constraint <code class="highlight"><span class="n">true</span></code> (elided) is always satisfied.
+    The residual monitor with the instantiated data of <code class="highlight"><span class="nv">OwnTok</span> <span class="o">=</span> <span class="mi">1</span></code>.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span>
+<span class="normal">12</span>
+<span class="normal">13</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="n">rec</span> <span class="nv">X</span><span class="p">(</span>
+  <span class="p">{_</span> <span class="o">?</span> <span class="p">_}(</span>
+      <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="n">no</span>
+      <span class="o">+</span>
+      <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+    <span class="k">and</span>
+      <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="nv">X</span>
+      <span class="o">+</span>
+      <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+  <span class="p">)</span>
+  <span class="o">+</span>
+  <span class="nv">NOT</span><span class="o">*</span><span class="p">{_</span> <span class="o">?</span> <span class="p">_}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+<span class="p">)</span>
+</code></pre></div>
+</td></tr></table>
+</li>
+<li>
+<p>It then performs an internal transition to unfold the recursive variable <code class="highlight"><span class="nv">X</span></code> (expansion is not shown in the monitor due to space reasons).</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 1</span>
+<span class="normal"> 2</span>
+<span class="normal"> 3</span>
+<span class="normal"> 4</span>
+<span class="normal"> 5</span>
+<span class="normal"> 6</span>
+<span class="normal"> 7</span>
+<span class="normal"> 8</span>
+<span class="normal"> 9</span>
+<span class="normal">10</span>
+<span class="normal">11</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="p">{_</span> <span class="o">?</span> <span class="p">_}(</span>
+    <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="n">no</span>
+    <span class="o">+</span>
+    <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+  <span class="k">and</span>
+    <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="nv">X</span>
+    <span class="o">+</span>
+    <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+<span class="p">)</span>
+<span class="o">+</span>
+<span class="nv">NOT</span><span class="o">*</span><span class="p">{_</span> <span class="o">?</span> <span class="p">_}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+</code></pre></div>
+</td></tr></table>
+</li>
+<li>
+<p>It analyses <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">&#39;receive&#39;</span><span class="p">,{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="mi">0</span><span class="p">}}</span></code>, and choosing the left monitor branch.
+    The left monitor branch matches any receive event, which means that the right branch matches no receive event.</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span>
+<span class="normal">4</span>
+<span class="normal">5</span>
+<span class="normal">6</span>
+<span class="normal">7</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="n">no</span>
+  <span class="o">+</span>
+  <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+<span class="k">and</span>
+  <span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}.</span><span class="nv">X</span>
+  <span class="o">+</span>
+  <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=/=</span> <span class="nv">Tok</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span>
+</code></pre></div>
+</td></tr></table>
+</li>
+<li>
+<p>At this point, the two conjuncted sub-monitors can evolve in parallel, given the trace event <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span></code>.
+    The left sub-monitor <code class="highlight"><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="mi">1</span><span class="p">}.</span><span class="n">no</span> <span class="o">+</span> <span class="nv">NOT</span><span class="o">*</span><span class="p">{_:_</span> <span class="o">!</span> <span class="nv">Tok</span> <span class="k">when</span> <span class="mi">1</span> <span class="o">=:=</span> <span class="mi">1</span><span class="p">}</span><span class="o">*</span><span class="p">.</span><span class="n">yes</span></code> chooses the left branch since the pattern matches and the Boolean constrain is fulfilled.
+    The right sub-monitor <code>{_:_ ! Tok when 1 =/= 1}.X + NOT*{_:_ ! Tok when 1 =/= 1}*.yes</code> chooses the right branch since the pattern matches, but the Boolean constrain for the right branch is satisfied.
+    This reduces the monitor to:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">1</span>
+<span class="normal">2</span>
+<span class="normal">3</span></pre></div></td><td class="code"><div class="highlight"><pre><span></span><code>  <span class="n">no</span>
+<span class="k">and</span>
+  <span class="n">yes</span>
+</code></pre></div>
+</td></tr></table>
+<p>The last internal computation leads the monitor to the rejection verdict <code class="highlight"><span class="n">no</span></code>.</p>
+</li>
+</ol>
+<h2 id="try-this-for-yourself">Try this for yourself<a class="headerlink" href="#try-this-for-yourself" title="Permanent link">&para;</a></h2>
+<p>detectEr Linear Time includes the function <code class="highlight"><span class="nn">lin_analyzer</span><span class="p">:</span><span class="n">analyze_trace</span><span class="o">/</span><span class="mi">2</span></code> to reduce a monitor, given a trace of events.
+In this example, we use the monitor that we synthesised earlier for P<sub>3</sub>.
+This is located in the script <code>props/prop_no_leak.hml</code>.</p>
+<ol>
+<li>
+<p>First we invoke the main monitor function <code class="highlight"><span class="nn">prop_no_leak</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> to obtain the monitor instance.
+    Since we need to match the pattern expected by <code class="highlight"><span class="n">mfa_spec</span></code>, <em>i.e.</em>, <code class="highlight"><span class="p">{</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[_,_]}</span></code>, we can use any arguments we wish.
+    In this example, we shall use <code class="highlight"><span class="mi">1</span></code> for both tokens.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">1&gt;</span> <span class="p">{</span><span class="n">ok</span><span class="p">,</span> <span class="nv">Mon</span><span class="p">}</span> <span class="o">=</span> <span class="nn">prop_no_leak</span><span class="p">:</span><span class="nf">mfa_spec</span><span class="p">({</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]}).</span>
+<span class="go">...</span>
+</code></pre></div>
+<p>Note that <code class="highlight"><span class="nn">prop_no_leak</span><span class="p">:</span><span class="n">mfa_spec</span><span class="o">/</span><span class="mi">1</span></code> returns the tuple tagged with <code class="highlight"><span class="n">ok</span></code>, and we unwrap it accordingly to obtain the monitor in <code>#1erlang Mon</code>.</p>
+</li>
+<li>
+<p>Next, we create the trace to feed to the monitor as a list of events:</p>
+<div class="highlight"><pre><span></span><code><span class="gp">2&gt;</span> <span class="nv">Trc</span> <span class="o">=</span> <span class="p">[{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">spawned</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]}},</span>
+<span class="go">{trace,&lt;0.134.0&gt;,&#39;receive&#39;,{&lt;0.136.0&gt;,0}},</span>
+<span class="go">{trace,&lt;0.134.0&gt;,send,1,&lt;0.136.0&gt;}].</span>
+</code></pre></div>
+</li>
+<li>
+<p>Finally the trace can be analyzed using the following invocation:</p>
+<p><div class="highlight"><pre><span></span><code><span class="gp">3&gt;</span> <span class="p">{</span><span class="nv">PdList</span><span class="p">,</span> <span class="p">_}</span><span class="o">=</span> <span class="nn">lin_analyzer</span><span class="p">:</span><span class="nf">analyze_trace</span><span class="p">(</span><span class="nv">Trc</span><span class="p">,</span> <span class="nv">Mon</span><span class="p">).</span>
+</code></pre></div>
+Variable <code class="highlight"><span class="nv">PdList</span></code> contains the whole justification that details the steps taken by the monitor to reach the violation verdict <code>no</code>.</p>
+</li>
+<li>
+<p>The <code class="highlight"><span class="n">lin_analyzer</span></code> module also provides the means to pretty print the contents of the proof derivation list <code class="highlight"><span class="nv">PdList</span></code>.</p>
+<div class="highlight"><pre><span></span><code><span class="gp">4&gt;</span> <span class="nn">lin_analyzer</span><span class="p">:</span><span class="nf">show_pdlist</span><span class="p">(</span><span class="nv">PdList</span><span class="p">).</span>
+</code></pre></div>
+</li>
+</ol>
+<p>Step <code>4</code> shows that the monitor is reduced using the following operational semantic rules:</p>
+<ol>
+<li>
+<p>Rule <em>mChsL</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">spawned</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]}}</span></code>.</p>
+<p>1.1. Axiom <em>mAct</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">spawned</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">82</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,{</span><span class="n">token_server</span><span class="p">,</span><span class="n">loop</span><span class="p">,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]}}</span></code>.</p>
+</li>
+<li>
+<p>Axiom <em>mRec</em> on <code>tau</code>.</p>
+</li>
+<li>
+<p>Rule <em>mChsL</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">&#39;receive&#39;</span><span class="p">,{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="mi">0</span><span class="p">}}</span></code>.</p>
+<p>3.1. Axiom <em>mAct</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="n">&#39;receive&#39;</span><span class="p">,{</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="mi">0</span><span class="p">}}</span></code>.</p>
+</li>
+<li>
+<p>Rule <em>mPar</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span></code>.</p>
+<p>4.1. Rule <em>mChsL</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span></code>.</p>
+<p>4.1.1. Axiom <em>mAct</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span></code>.</p>
+<p>4.2. Rule <em>mChsR</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span></code>.</p>
+<p>4.2.1. Axiom <em>mAct</em> on <code class="highlight"><span class="p">{</span><span class="nb">trace</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">134</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">,</span><span class="nb">send</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">.</span><span class="mi">136</span><span class="p">.</span><span class="mi">0</span><span class="o">&gt;</span><span class="p">}</span></code>.</p>
+</li>
+<li>
+<p>Rule <em>mConYR</em> on <code>tau</code>.</p>
+</li>
+</ol>
+<p>For the complete reference of these operational rules, please refer to the companion paper.</p>
+<!-- 
+
+# Demo video.
+
+
+
+## Part 1. LOG LEVEL = TRACE
+
+1. Download detectEr and compile it.
+
+2. Open the examples folder and compile them.
+
+3. Try a simple test without the instrumented monitor, send a request, not commenting on whether it works or not.
+
+4. State the property in english, and write it in the text file. 
+
+5. Write the property in maxHml in the same text file.
+
+6. Compile the property, and comment that for the sake of brevity, we shall not go over the file.
+
+7. Instead, open the website and show the monitor in high-level format.
+
+8. Go back to the console and instrument the monitor.
+
+9. Run the server again and this time it should give a bug.
+
+10. Comment that we run the system with full logs, which enables us to see what happens, but it may be a bit difficult to parse the text.
+
+11. What we can do instead is the save a copy of the trace and examine it offline.
+
+
+
+## Part 2.
+
+1. Create the trace on the console, saying that it was previously saved.
+
+2. Load the monitor.
+
+3. Analyse the trace.
+
+4. Print proof derivation list.
+
+5. Explain the proof derivation list and point to the last line where we have the variables x, y, and z populated and draw the attention to the 1.
+
+6. Fix the bug and recompile.
+
+7. Restart the shell and then re-instrument the monitor.
+
+8. Say that we need not regenerate the monitor, since the instrumentation aspect and the monitor are in separate modules, and this gives us the advantage to re-instrument when needed without altering the monitor, or keep the instrumentation in place and regenerate the monitor, so long as the entry function does not change.
+
+9. Run the token server, make a request and no violation should happen.
+
+10. Comment on the unfolding of the recursive variable.
+
+
+
+## Part 3 (Switch to the coordination_2020 directory).  LOG LEVEL = DEBUG
+
+1. Say that we generated the formula in the paper that detects when a request is ok or no in Cowboy for our REST web service.
+
+2. Show the formula written down.
+
+3. Say that we compiled the formula down to a monitor, and we weaved Cowboy. Weave it, but remove the frames.
+
+4. Start Cowboy forever.
+
+5. Switch to the postman and make a bad request and show the violation. Make a good request if there is time.
+
+6. In practice, it might be a bit difficult to go through to the logs, but this depends on the application. For instance here we have a lot of request data passed in each request.
+
+7. We would like to explore this further, and try to see whether it is possible to present the data in a more human consumable format.
+
+8. Grab the sanitised trace, and pass it through the thing, if there is time. But probably not.
+
+
+
+
+
+-----------
+
+{ok, Mon} = prop_no_leak:mfa_spec({token_server,loop,[1,1]}).
+
+Trc = [{trace,<0.84.0>,spawned,<0.82.0>,{token_server,loop,[1,1]}},{trace,<0.134.0>,'receive',{<0.136.0>,0}},{trace,<0.134.0>,send,1,<0.136.0>}].
+
+
+
+{PdList, _}= lin_analyzer:analyze_trace(Trc, Mon).
+
+
+lin_analyzer:show_pdlist(PdList). -->
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+        
+          <a href="#" class="md-top md-icon" title="Back to top" data-md-component="top" data-md-state="hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"/></svg>
+          </a>
+        
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <nav class="md-footer__inner md-grid" aria-label="Footer">
+      
+        <a href="inline-instrumentation.html" class="md-footer__link md-footer__link--prev" rel="prev">
+          <div class="md-footer__button md-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+          </div>
+          <div class="md-footer__title">
+            <div class="md-ellipsis">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              Inline Instrumentation
+            </div>
+          </div>
+        </a>
+      
+      
+    </nav>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+          <div class="md-footer-copyright__highlight">
+            Copyright &copy; 2019 - 2021 Duncan Paul Attard
+          </div>
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+        
+      </div>
+      
+  <div class="md-footer-social">
+    
+      
+      
+      <a href="https://duncanatt.github.io" target="_blank" rel="noopener" title="Profile" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg>
+      </a>
+    
+      
+      
+      <a href="https://github.com/duncanatt" target="_blank" rel="noopener" title="Duncan on GitHub" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+      </a>
+    
+      
+      
+      <a href="https://twitter.com/duncanattard" target="_blank" rel="noopener" title="Duncan on Twitter" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+      </a>
+    
+      
+      
+      <a href="mailto:duncanatt@gmail.com" target="_blank" rel="noopener" title="Drop a line" class="md-footer-social__link">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><path d="M512 464c0 26.51-21.49 48-48 48H48c-26.51 0-48-21.49-48-48V200.724a48 48 0 0 1 18.387-37.776c24.913-19.529 45.501-35.365 164.2-121.511C199.412 29.17 232.797-.347 256 .003c23.198-.354 56.596 29.172 73.413 41.433 118.687 86.137 139.303 101.995 164.2 121.512A48 48 0 0 1 512 200.724V464zm-65.666-196.605c-2.563-3.728-7.7-4.595-11.339-1.907-22.845 16.873-55.462 40.705-105.582 77.079-16.825 12.266-50.21 41.781-73.413 41.43-23.211.344-56.559-29.143-73.413-41.43-50.114-36.37-82.734-60.204-105.582-77.079-3.639-2.688-8.776-1.821-11.339 1.907l-9.072 13.196a7.998 7.998 0 0 0 1.839 10.967c22.887 16.899 55.454 40.69 105.303 76.868 20.274 14.781 56.524 47.813 92.264 47.573 35.724.242 71.961-32.771 92.263-47.573 49.85-36.179 82.418-59.97 105.303-76.868a7.998 7.998 0 0 0 1.839-10.967l-9.071-13.196z"/></svg>
+      </a>
+    
+  </div>
+
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "navigation.top", "header.autohide", "navigation.expand", "toc.integrate"], "translations": {"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.placeholder": "Search", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.term.missing": "Missing"}, "search": "../assets/javascripts/workers/search.d351de03.min.js", "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.a1609d9a.min.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

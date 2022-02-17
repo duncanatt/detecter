@@ -607,7 +607,6 @@
                 
                 
                 <h1 id="getting-started">Getting Started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
-<!-- # Concurrent programs -->
 <hr />
 <h2 id="a-token-server-program-in-erlang">A Token Server Program in Erlang<a class="headerlink" href="#a-token-server-program-in-erlang" title="Permanent link">&para;</a></h2>
 <p>Let us consider a token server program consisting of a single process that handles client requests for obtaining integer identifier tokens.
@@ -635,7 +634,7 @@ In our client-server protocol, messages contain the command <code class="highlig
   <span class="k">end</span><span class="p">.</span>
 </code></pre></div>
 </td></tr></table>
-<p><code class="highlight"><span class="nn">token_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> encapsulates the calculator server logic that is <a href="../getting-started/quickstart.html#hello-world-the-asynchronous-way">spawned</a> by some other launcher process (<em>e.g.</em> the Erlang shell) that invokes <code class="highlight"><span class="nn">token_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> for some integer argument <code class="highlight"><span class="nv">Tok</span></code>.
+<p><code class="highlight"><span class="nn">token_server</span><span class="p">:</span><span class="n">loop</span><span class="o">/</span><span class="mi">1</span></code> encapsulates the token server logic that is <a href="../getting-started/quickstart.html#hello-world-the-asynchronous-way">spawned</a> by some other launcher process (<em>e.g.</em> the Erlang shell) that invokes <code class="highlight"><span class="nn">token_server</span><span class="p">:</span><span class="n">start</span><span class="o">/</span><span class="mi">1</span></code> for some integer argument <code class="highlight"><span class="nv">Tok</span></code>.
 This argument <code class="highlight"><span class="nv">Tok</span></code> is the private server token that should <em>never</em> be leaked.</p>
 <p>The spawned server consumes a message request from its mailbox via the <code class="highlight"><span class="k">receive</span></code> expression on lines <code>5-9</code>, and pattern matches against the new token request operation <code class="highlight"><span class="mi">0</span></code>.</p>
 <p>Every request fulfilled by the server results in a corresponding reply that it sends to the <abbr title="Process ID">PID</abbr> of the client instantiated in variable <code class="highlight"><span class="nv">Clt</span></code>, line <code>6</code>.

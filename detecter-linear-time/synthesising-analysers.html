@@ -759,10 +759,11 @@ Not also that since the functions are nested withing each other, the variables i
 This *lexical scoping* is what allows us to refer to the variables `#!erlang A` and `#!erlang B` of the receive pattern `#!shml _ ? {_, {add, A, B}}` in the first necessity, from the constraints of the second necessities, `#!shml when Res =/= A + B` and `#!shml when Res =:= A + B`. -->
 
 <h2 id="executable-analysers">Executable analysers<a class="headerlink" href="#executable-analysers" title="Permanent link">&para;</a></h2>
-<p>Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile <code>prop_no_leak.hml</code> script, this time removing the <code class="highlight"><span class="n">erl</span></code> option.</p>
+<p>We can go ahead and recompile <code>prop_no_leak.hml</code> script, this time removing the <code class="highlight"><span class="n">erl</span></code> option.</p>
 <!-- Verbose analysers print the events they analyse on the Erlang shell. -->
-<p>Of course, the resulting analyser binary must be included in the code path of the program we are running, together with the detectEr binaries.
-This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server.</p>
+<p>Of course, the resulting analyser binary must be included in the code path of the program we are running, together with the detectEr binaries.</p>
+<!-- This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server. -->
+
 <div class="highlight"><pre><span></span><code><span class="gp">2&gt;</span> <span class="nn">maxhml_eval</span><span class="p">:</span><span class="nf">compile</span><span class="p">(</span><span class="s">&quot;props/prop_no_leak.hml&quot;</span><span class="p">,</span> <span class="p">[{</span><span class="n">outdir</span><span class="p">,</span> <span class="s">&quot;ebin&quot;</span><span class="p">}]).</span>
 <span class="go">ok</span>
 </code></pre></div>

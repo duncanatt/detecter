@@ -119,10 +119,10 @@ This *lexical scoping* is what allows us to refer to the variables `#!erlang A` 
 
 ## Executable analysers
 
-Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile `prop_no_leak.hml` script, this time removing the `#!erlang erl` option.
+We can go ahead and recompile `prop_no_leak.hml` script, this time removing the `#!erlang erl` option.
 <!-- Verbose analysers print the events they analyse on the Erlang shell. -->
 Of course, the resulting analyser binary must be included in the code path of the program we are running, together with the detectEr binaries.
-This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server.
+<!-- This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server. -->
 
 ```erl
 2> maxhml_eval:compile("props/prop_no_leak.hml", [{outdir, "ebin"}]).

@@ -204,7 +204,7 @@ Try running the correct version of the server, following steps 2-4 above.
 
     ```erl
     12> f(Pid).
-    Pid = calc_server:start(1).
+    Pid = token_server:start(1).
     <0.90.0>
     ```
 

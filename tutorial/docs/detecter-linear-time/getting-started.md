@@ -2,7 +2,6 @@
 --8<-- "includes/common.md"
 
 # Getting Started
-<!-- # Concurrent programs -->
 ---
 
 ## A Token Server Program in Erlang
@@ -17,7 +16,7 @@ Our token server program is implemented as the Erlang module `#!erlang token_ser
 
 --8<-- "includes/token_server.md"
 
-`#!erlang token_server:loop/1` encapsulates the calculator server logic that is [spawned](../getting-started/quickstart.md#hello-world-the-asynchronous-way) by some other launcher process (*e.g.* the Erlang shell) that invokes `#!erlang token_server:start/1` for some integer argument `#!erlang Tok`.
+`#!erlang token_server:loop/1` encapsulates the token server logic that is [spawned](../getting-started/quickstart.md#hello-world-the-asynchronous-way) by some other launcher process (*e.g.* the Erlang shell) that invokes `#!erlang token_server:start/1` for some integer argument `#!erlang Tok`.
 This argument `#!erlang Tok` is the private server token that should *never* be leaked.
 
 The spawned server consumes a message request from its mailbox via the `#!erlang receive` expression on lines `5-9`, and pattern matches against the new token request operation `#!erlang 0`.

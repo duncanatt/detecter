@@ -130,7 +130,7 @@ The set of valid Erlang guards supported by detectEr are the following:
 
 ## A simple example
 
-Let us try to specify a safety requirement on the *traces* of our [token server program](getting-started.md#calculator-program).
+Let us try to specify a safety requirement on the *traces* of our [token server program](getting-started.md#A-token-server-program-in-erlang).
 <!-- The maxHML formula with symbolic action `#!maxhml Srv:Clt ! {bye, Tot} when Tot < 0` describes the property requiring that "the trace exhibited by the program does *not* contain a send event whose payload consists of `#!erlang {bye, Tot}` with a negative total: -->
 The maxHML formula with symbolic action `#!maxhml Prnt ← Srv, token_server:loop([OwnTok, _]) when OwnTok =/= 1` describes the property requiring that "the server does not start with an identifier token other than `#!erlang 1`".
 

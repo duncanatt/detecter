@@ -1,6 +1,6 @@
 --8<-- "includes/common.md"
 
-# The Specification Logic
+# The Specification Logic sHML
 ---
 
 ## Overview

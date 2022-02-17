@@ -1,6 +1,6 @@
 --8<-- "includes/common.md"
 
-# Synthesising Analysers (Under construction)
+# Synthesising Analysers
 ---
 
 ## Trace events, in practice
@@ -13,22 +13,21 @@ We adopt this approach since it simplifies the implementation of analysers.
 ## From specification to analyser
 
 To demonstrate how you can use detectEr to synthesise analysers, we use the formalisation of property P~3~ as a vehicle.
-detectEr provides the `#!erlang hml_eval:compile/2` function that compiles sHML specifications to executable Erlang code.
-The `#!erlang compile` function accepts two arguments, the path that points to the sHML script file, and a list of options that control how the resulting analyser is generated.
-sHML script files are plain text formatted files with a `.hml` extension, and must at least contain one specification.
+detectEr Linear Time provides the `#!erlang maxhml_eval:compile/2` function that compiles maxHML specifications to executable Erlang code.
+The `#!erlang compile` function accepts two arguments, the path that points to the maxHML script file, and a list of options that control how the resulting analyser is generated.
+maxHML script files are plain text formatted files with a `.hml` extension, and must at least contain one specification.
 Multiple specifications are separated with comma, and every file must be terminated with a full-stop.
-The configuration options that `#!erlang hml_eval:compile/2` are as follows.
+The configuration options that `#!erlang maxhml_eval:compile/2` are as follows.
 
 | Option            | Description                                                                                                                                                           |
 |:-----------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `#!erlang outdir` | Directory where the synthesised analyser file should be written. If left unspecified, defaults to the current directory `.`.                                          |
-| `#!erlang v`      | Inserts logging statements into the synthesised output analyser file. Only use for debugging purposes.                                                                |
 | `#!erlang erl`    | Instructs `#!erlang compile` function to output the synthesised analyser as Erlang source code rather than in `beam` format. If left unspecified, defaults to `beam`. |
 
 Analysers are synthesised from the Erlang shell, which needs to have the detectEr binaries loaded in its code path.
 This is done by launching the shell with the `-pa` flag.
 For this example, we change the directory to `examples/erlang` and launch the Erlang shell, of course assuming that the detectEr source files have already been compiled.
-Refer to the section [Setting up detectEr](../getting-started/setting-up-detecter.md) if you need to do this.
+Refer to the section [Setting up detectEr Linear Time](../detecter-linear-time/setting-up-detecter.md) if you need to do this.
 
 ```console
 [duncan@local]:$ cd examples/erlang
@@ -38,19 +37,19 @@ Eshell V11.2.1  (abort with ^G)
 1>
 ```
 
-With the Erlang shell loaded, compile the `prop_add_rec.hml`.
+With the Erlang shell loaded, compile the `prop_no_leak.hml`.
 
 ```erl
-1> hml_eval:compile("props/prop_add_rec.hml", [{outdir, "ebin"}, erl]).
+1> maxhml_eval:compile("props/prop_no_leak.hml", [{outdir, "ebin"}, erl]).
 ok
 ```
 
 We have specified the `#!erlang erl` option to generate the analyser source code in order to overview the internal workings of analysers.
 You may skip this section if you want just learn how to to use the tool.
-The analyser is written in the file `ebin/prop_add_rec.erl`, an excerpt of which is shown below.
+<!-- The analyser is written in the file `ebin/prop_no_leak.erl`, an excerpt of which is shown below. -->
 
-```erlang linenums="1"
--module(prop_add_rec).
+<!-- ```erlang linenums="1"
+-module(prop_no_leak).
 -author("detectEr").
 -generated("2021/6/12 16:51:08").
 -export([mfa_spec/1]).
@@ -79,10 +78,10 @@ mfa_spec({calc_server, loop, [_]}) ->
     end};
 mfa_spec(_) ->
   undefined.
-```
+``` -->
 
 So the first thing that we should note is that the analyser is one higher-order function returns other functions or atoms in turn.
-The `init`, `send`, `recv` event patterns in the specification are translated by `#!erlang hml_eval:compile/2` to the event format that the EVM uses for tracing.
+The `init`, `send`, `recv` event patterns in the specification are translated by `#!erlang maxhml_eval:compile/2` to the event format that the EVM uses for tracing.
 These event mappings are tabled below.
 
 | Program event  | Pattern                                | EVM trace event translation                           |
@@ -93,14 +92,15 @@ These event mappings are tabled below.
 | `send`         | `P₁` **:** `P₂` **!** `Msg`            | `#!erlang {trace, P₁, send, Msg, P₂}`                 |
 | `recv`         | `P₂` **?** `Msg`                       | `#!erlang {trace, P₁, 'receive', Msg}`                |
 
-The entry point to analysers is the hardcoded function `#!erlang mfa_spec/1` that accepts as an argument the function that we designated with the keyword `#!shml with`, line `5`.
+The entry point to analysers is the hardcoded function `#!erlang mfa_spec/1` that accepts as an argument the function that we designated with the keyword `#!maxhml with`, line `5`.
 We revisit `#!erlang mfa_spec/1` when we discuss the instrumentation.
-In the specific case of our calculator server example, the targeted function on line `5` is `#!erlang loop` in the `#!erlang calc_server` module.
-Our examples packaged with the detectEr distribution include a second implementation of a buggy calculator server, `#!erlang calc_server_bug`, which we will use to show how analysers flag rejection verdicts.
-`prop_add_rec.hml` specifies the same formalisation of P~3~ for this buggy version, the corresponding synthesised analyser code is given on lines `24`-`27` (omitted).
-We will use this second analyser to show how a rejection verdict is reached when incorrect program behaviour is detected.
+In the specific case of our token server example, the targeted function on line `5` is `#!erlang loop` in the `#!erlang token_server` module.
+Our examples packaged with the detectEr distribution include a second implementation of a buggy token server which we will use to show how analysers flag rejection verdicts.
+`prop_no_leak.hml` specifies the same formalisation of P~3~ for this buggy version. 
+<!-- The corresponding synthesised analyser code is given on lines `24`-`27` (omitted). -->
+We will use this buggy version of the token server  to show how a rejection verdict is reached when the incorrect behaviour in the program trace is detected.
 
-Our analysers behave similar to *state machines* that analyse events and transition to the next state that corresponds to the continuation formula.
+<!-- Our analysers behave similar to *state machines* that analyse events and transition to the next state that corresponds to the continuation formula.
 In the analyser code above, the necessity with the `init` symbolic action, `#!shml and([_ <- _, calc_server:loop(_)]`, in our sHML formula corresponds to the function clause on line `7`.
 Next comes the maximal fix-point construct that is translated to the named function `#!erlang X`, line `8`.
 The name `#!erlang X` is used to recurse when the `send` event pattern matches to the correct reply consisting of the addition of the variables `#!erlang A` and `#!erlang B`.
@@ -115,22 +115,19 @@ The functions we discussed each have an extra 'catch all' clause that is inserte
 This clause matches any other event, hence the use of the don't care pattern `_`.
 In such instances, the analyser is unable to decide whether that event leads to a rejection verdict, *i.e.*, a violation of the property.
 Not also that since the functions are nested withing each other, the variables in the outer functions bind the ones in the inner functions.
-This *lexical scoping* is what allows us to refer to the variables `#!erlang A` and `#!erlang B` of the receive pattern `#!shml _ ? {_, {add, A, B}}` in the first necessity, from the constraints of the second necessities, `#!shml when Res =/= A + B` and `#!shml when Res =:= A + B`.
-
-
-
+This *lexical scoping* is what allows us to refer to the variables `#!erlang A` and `#!erlang B` of the receive pattern `#!shml _ ? {_, {add, A, B}}` in the first necessity, from the constraints of the second necessities, `#!shml when Res =/= A + B` and `#!shml when Res =:= A + B`. -->
 
 ## Executable analysers
 
-Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile `prop_add_rec.hml` script, this time replacing the `#!erlang erl` option for `#!erlang v`.
-Verbose analysers print the events they analyse on the Erlang shell.
+Now that we have seen what the analyser looks like from the inside, we can go ahead and recompile `prop_no_leak.hml` script, this time removing the `#!erlang erl` option.
+<!-- Verbose analysers print the events they analyse on the Erlang shell. -->
 Of course, the resulting analyser binary must be included in the code path of the program we are running, together with the detectEr binaries.
 This will be instructive to help understand what happens when we instrument and runtime analyse the correct and buggy versions of our calculator server.
 
 ```erl
-2> hml_eval:compile("props/prop_add_rec.hml", [{outdir, "ebin"}, v]).
+2> maxhml_eval:compile("props/prop_no_leak.hml", [{outdir, "ebin"}]).
 ok
 ```
 
 ---
-Now we look at the kinds of instrumentation methods detectEr offers.
+Now we look at how we instrument the system with monitors.

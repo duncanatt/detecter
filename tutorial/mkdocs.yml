@@ -126,6 +126,9 @@ nav:
     - Outline Instrumentation: using-detecter/outline-instrumentation.md
     - Offline Instrumentation: using-detecter/offline-instrumentation.md
   - Using detectEr Linear Time:
-    - The Specification Logic: using-detecter-linear-time/the-specification-logic.md
-    - Synthesising Analysers: using-detecter-linear-time/synthesising-analysers.md
-    - Inline Instrumentation: using-detecter-linear-time/inline-instrumentation.md
+    - Setting up detectEr Linear Time: detecter-linear-time/setting-up-detecter.md
+    - Getting Started: detecter-linear-time/getting-started.md
+    - The Specification Logic: detecter-linear-time/the-specification-logic.md
+    - Synthesising Analysers: detecter-linear-time/synthesising-analysers.md
+    - Inline Instrumentation: detecter-linear-time/inline-instrumentation.md
+    - Verdict Explainability: detecter-linear-time/verdict-explainability.md

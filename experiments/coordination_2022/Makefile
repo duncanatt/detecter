@@ -44,8 +44,10 @@ weave: compile
 
 weave-cowboy: compile
 	#erl -noshell -pa ebin -eval 'hml_eval:compile("examples/cowboy_mon.hml", [{outdir, "ebin"}]).' -s init stop
-	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/ranch", fun cowboy_mon:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
-	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/cowboy", fun cowboy_mon:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
+#	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/ranch", fun cowboy_mon:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
+#	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/cowboy", fun cowboy_mon:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
+	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/ranch", fun no_http_500:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
+	erl -noshell -pa ebin -eval 'lin_weaver:weave("$(SRC)/cowboy", fun no_http_500:mfa_spec/1, [{outdir, "$(BIN)"}, {i, "$(INCLUDE)"}]).' -s init stop
 
 run:
 	mkdir -p $(LOG_DIR)

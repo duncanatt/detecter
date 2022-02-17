@@ -95,7 +95,8 @@ compile(File, Opts) when is_list(Opts) ->
 
           % Synthesize monitor from parsed syntax tree in the form of an Erlang
           % syntax tree and write result to file as Erlang source or beam code.
-          write_monitor(create_module(Ast, ?MFA_SPEC, Module, Opts), File, Opts);
+%%          write_monitor(create_module(Ast, ?MFA_SPEC, Module, Opts), File, Opts);
+          ok;
 
         {error, Reason} ->
 

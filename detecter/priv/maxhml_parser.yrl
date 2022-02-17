@@ -158,23 +158,25 @@ maxhml_fact -> '(' maxhml_expr ')'            : '$2'.
 % internally interpreted as true when omitted.
 act -> '{' pat '}'                      : {act, ?anno('$1'), '$2', []}.
 act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
+%%act -> pat                              : {act, ?anno('$1'), '$1', []}.
+%%act -> pat 'when' guard                 : {act, ?anno('$1'), '$1', '$3'}.
 
 % Process sending pattern. Process in var_1 sent a message to process in var_2.
-pat -> var ':' var '!' var              : {send, ?anno('$1'), '$1', '$3', '$5'}.
+pat -> var ':' var '!' expr              : {send, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process receiving pattern. Process in var_1 receives message.
 %%pat -> var '?' expr                    : {recv, ?anno('$1'), '$1', '$3'}.
-pat -> var '?' var                      : {recv, ?anno('$1'), '$1', '$3'}.
+pat -> var '?' expr                      : {recv, ?anno('$1'), '$1', '$3'}.
 
 % Process forking pattern. Process in var_1 forked child in var_2 via MFArgs.
-pat -> var '->' var 'with' mfargs       : {fork, ?anno('$1'), '$1', '$3', '$5'}.
+pat -> var '->' var ',' mfargs       : {fork, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process initialization pattern. Child in var_2 was forked by process in var_1
 % via MFArgs.
-pat -> var '<-' var 'with' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
+pat -> var '<-' var ',' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
 
 % Process termination pattern. Process in var_1 exited with specified reason.
-pat -> var '**' var                     : {exit, ?anno('$1'), '$1', '$3'}.
+pat -> var '**' expr                     : {exit, ?anno('$1'), '$1', '$3'}.
 
 mfargs -> atom ':' atom '(' ')'         : build_mfargs('$1', '$3', []).
 mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').

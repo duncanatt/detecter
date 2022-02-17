@@ -578,7 +578,8 @@ analyze_trace([], M, PdList) ->
   {PdList, M};
 analyze_trace([Event | Trace], M, PdList) ->
 %%  {PdList_, M_} = analyze(Event, M, PdList), % TODO: Use this to analyze a simple trace of non-Erlang trace objects.
-  {PdList_, M_} = analyze(event:to_evm_event(Event), M, PdList),
+%%  {PdList_, M_} = analyze(event:to_evm_event(Event), M, PdList),
+  {PdList_, M_} = analyze(Event, M, PdList),
   analyze_trace(Trace, M_, PdList_).
 
 
@@ -785,6 +786,8 @@ m_to_iolist({act, Env = {env, _}, _, M}, Ctx) ->
   % the constraint segment of the action, since constraints are not present in
   % the function encoding the monitor continuation body. Note that functions
   % encoding actions accept a single parameter.
+%%  ?TRACE(">> Pat is: ~p", [get_pat(Env)]),
+%%  ?TRACE(">> Unwrapped Pat is: ~p", [unwrap_value(get_pat(Env))]),
   M_ = M(unwrap_value(get_pat(Env))),
 
   [re:replace(unwrap_value(get_str(Env)), " when ", ","), $., m_to_iolist(M_, Ctx)];

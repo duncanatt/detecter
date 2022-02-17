@@ -1,6 +1,6 @@
 -module(maxhml_parser).
 -export([parse/1, parse_and_scan/1, format_error/1]).
--file("priv/maxhml_parser.yrl", 406).
+-file("priv/maxhml_parser.yrl", 400).
 
 %% Token information extraction macros {token, TokenInfo}.
 -define(anno(Tuple), element(2, Tuple)). % Line number.
@@ -217,7 +217,7 @@ yecctoken2string(Other) ->
 
 
 
--file("src/monitoring/maxhml_parser.erl", 220).
+-file("src/synthesis/maxhml_parser.erl", 220).
 
 -dialyzer({nowarn_function, yeccpars2/7}).
 yeccpars2(0=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -601,7 +601,7 @@ yeccpars2(187=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccpars2(189=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_189(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(190=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_190(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_33(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(191=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_191(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(192=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -609,9 +609,9 @@ yeccpars2(192=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccpars2(193=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_193(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(194=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_194(S, Cat, Ss, Stack, T, Ts, Tzr);
-yeccpars2(195=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_195(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_33(S, Cat, Ss, Stack, T, Ts, Tzr);
+%% yeccpars2(195=S, Cat, Ss, Stack, T, Ts, Tzr) ->
+%%  yeccpars2_195(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(196=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_196(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(197=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -621,17 +621,17 @@ yeccpars2(197=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccpars2(199=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_199(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(200=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_200(S, Cat, Ss, Stack, T, Ts, Tzr);
-yeccpars2(201=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_201(S, Cat, Ss, Stack, T, Ts, Tzr);
+ yeccpars2_33(S, Cat, Ss, Stack, T, Ts, Tzr);
+%% yeccpars2(201=S, Cat, Ss, Stack, T, Ts, Tzr) ->
+%%  yeccpars2_201(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(202=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_202(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(203=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_3(S, Cat, Ss, Stack, T, Ts, Tzr);
 %% yeccpars2(204=S, Cat, Ss, Stack, T, Ts, Tzr) ->
 %%  yeccpars2_204(S, Cat, Ss, Stack, T, Ts, Tzr);
-yeccpars2(205=S, Cat, Ss, Stack, T, Ts, Tzr) ->
- yeccpars2_205(S, Cat, Ss, Stack, T, Ts, Tzr);
+%% yeccpars2(205=S, Cat, Ss, Stack, T, Ts, Tzr) ->
+%%  yeccpars2_205(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(206=S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_33(S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccpars2(207=S, Cat, Ss, Stack, T, Ts, Tzr) ->
@@ -1630,11 +1630,7 @@ yeccpars2_189(S, '?', Ss, Stack, T, Ts, Tzr) ->
 yeccpars2_189(_, _, _, _, T, _, _) ->
  yeccerror(T).
 
--dialyzer({nowarn_function, yeccpars2_190/7}).
-yeccpars2_190(S, var, Ss, Stack, T, Ts, Tzr) ->
- yeccpars1(S, 205, Ss, Stack, T, Ts, Tzr);
-yeccpars2_190(_, _, _, _, T, _, _) ->
- yeccerror(T).
+%% yeccpars2_190: see yeccpars2_33
 
 -dialyzer({nowarn_function, yeccpars2_191/7}).
 yeccpars2_191(S, var, Ss, Stack, T, Ts, Tzr) ->
@@ -1654,11 +1650,7 @@ yeccpars2_193(S, var, Ss, Stack, T, Ts, Tzr) ->
 yeccpars2_193(_, _, _, _, T, _, _) ->
  yeccerror(T).
 
--dialyzer({nowarn_function, yeccpars2_194/7}).
-yeccpars2_194(S, var, Ss, Stack, T, Ts, Tzr) ->
- yeccpars1(S, 195, Ss, Stack, T, Ts, Tzr);
-yeccpars2_194(_, _, _, _, T, _, _) ->
- yeccerror(T).
+%% yeccpars2_194: see yeccpars2_33
 
 yeccpars2_195(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  [_,_|Nss] = Ss,
@@ -1666,7 +1658,7 @@ yeccpars2_195(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccgoto_pat(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
 -dialyzer({nowarn_function, yeccpars2_196/7}).
-yeccpars2_196(S, with, Ss, Stack, T, Ts, Tzr) ->
+yeccpars2_196(S, ',', Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 197, Ss, Stack, T, Ts, Tzr);
 yeccpars2_196(_, _, _, _, T, _, _) ->
  yeccerror(T).
@@ -1684,11 +1676,7 @@ yeccpars2_199(S, '!', Ss, Stack, T, Ts, Tzr) ->
 yeccpars2_199(_, _, _, _, T, _, _) ->
  yeccerror(T).
 
--dialyzer({nowarn_function, yeccpars2_200/7}).
-yeccpars2_200(S, var, Ss, Stack, T, Ts, Tzr) ->
- yeccpars1(S, 201, Ss, Stack, T, Ts, Tzr);
-yeccpars2_200(_, _, _, _, T, _, _) ->
- yeccerror(T).
+%% yeccpars2_200: see yeccpars2_33
 
 yeccpars2_201(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  [_,_,_,_|Nss] = Ss,
@@ -1696,7 +1684,7 @@ yeccpars2_201(_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccgoto_pat(hd(Nss), Cat, Nss, NewStack, T, Ts, Tzr).
 
 -dialyzer({nowarn_function, yeccpars2_202/7}).
-yeccpars2_202(S, with, Ss, Stack, T, Ts, Tzr) ->
+yeccpars2_202(S, ',', Ss, Stack, T, Ts, Tzr) ->
  yeccpars1(S, 203, Ss, Stack, T, Ts, Tzr);
 yeccpars2_202(_, _, _, _, T, _, _) ->
  yeccerror(T).
@@ -1843,6 +1831,12 @@ yeccgoto_atomic(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_31(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_atomic(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_31(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_atomic(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_31(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_atomic(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_31(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_atomic(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_31(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_atomic(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_31(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -1915,6 +1909,12 @@ yeccgoto_binary(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_30(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_binary(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_30(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_binary(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_30(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_binary(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_30(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_binary(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_30(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_binary(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_30(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -1974,6 +1974,12 @@ yeccgoto_binary_comprehension(145=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_binary_comprehension(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_29(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_binary_comprehension(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_29(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_binary_comprehension(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_29(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_binary_comprehension(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_29(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_binary_comprehension(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_29(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_binary_comprehension(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_29(_S, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2039,6 +2045,12 @@ yeccgoto_expr(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_28(28, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr(164, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_28(28, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_205(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_195(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_201(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_28(28, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2076,6 +2088,12 @@ yeccgoto_expr_100(116=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_100(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_27(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_100(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_27(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_100(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_27(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_100(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_27(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_100(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_27(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_100(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_27(_S, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2116,6 +2134,12 @@ yeccgoto_expr_150(118=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_150(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_26(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_150(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_26(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_150(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_26(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_150(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_26(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_150(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_26(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_150(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_26(_S, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2159,6 +2183,12 @@ yeccgoto_expr_160(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_25(25, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_160(164, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_25(25, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_160(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_25(25, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_160(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_25(25, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_160(200, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_25(25, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_160(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_25(25, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2200,6 +2230,12 @@ yeccgoto_expr_200(120, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_200(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_24(24, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_200(164, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_24(24, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_200(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_24(24, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_200(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_24(24, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_200(200, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_24(24, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_200(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_24(24, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2247,6 +2283,12 @@ yeccgoto_expr_300(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_23(23, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_300(164, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_23(23, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_300(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_23(23, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_300(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_23(23, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_300(200, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_23(23, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_300(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_23(23, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2292,6 +2334,12 @@ yeccgoto_expr_400(132, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_400(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_400(164, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_400(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_400(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_400(200, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_400(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_22(22, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2340,6 +2388,12 @@ yeccgoto_expr_500(133, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_500(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_21(21, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_500(164, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_21(21, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_500(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_21(21, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_500(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_21(21, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_500(200, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_21(21, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_500(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_21(21, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2390,6 +2444,12 @@ yeccgoto_expr_600(145=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_600(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_20(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_600(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_20(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_600(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_20(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_600(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_20(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_600(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_20(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_600(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_20(_S, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2443,6 +2503,12 @@ yeccgoto_expr_700(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_19(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_700(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_19(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_700(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_19(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_700(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_19(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_700(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_19(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_700(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_19(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2494,6 +2560,12 @@ yeccgoto_expr_800(145=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_800(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_18(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_800(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_18(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_800(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_18(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_800(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_18(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_800(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_18(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_800(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_18(_S, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2554,6 +2626,12 @@ yeccgoto_expr_max(145, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_expr_max(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_17(17, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_max(164, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_17(17, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_max(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_17(17, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_max(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_17(17, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_expr_max(200, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_17(17, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_expr_max(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_17(17, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2665,6 +2743,12 @@ yeccgoto_list(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_15(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_list(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_15(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_list(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_15(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_list(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_15(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_list(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_15(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_list(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_15(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2725,6 +2809,12 @@ yeccgoto_list_comprehension(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_14(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_list_comprehension(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_14(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_list_comprehension(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_14(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_list_comprehension(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_14(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_list_comprehension(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_14(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_list_comprehension(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_14(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2778,6 +2868,12 @@ yeccgoto_map_expr(145, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_map_expr(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_13(13, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_map_expr(164, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_13(13, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_map_expr(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_13(13, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_map_expr(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_13(13, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_map_expr(200, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_13(13, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_map_expr(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_13(13, Cat, Ss, Stack, T, Ts, Tzr).
@@ -2929,6 +3025,12 @@ yeccgoto_prefix_op(161, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_prefix_op(164, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_prefix_op(190, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_prefix_op(194, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_prefix_op(200, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_prefix_op(206, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_12(12, Cat, Ss, Stack, T, Ts, Tzr).
 
@@ -2990,6 +3092,12 @@ yeccgoto_strings(145=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
 yeccgoto_strings(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_strings(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_strings(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_strings(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_strings(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_strings(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_11(_S, Cat, Ss, Stack, T, Ts, Tzr).
@@ -3057,10 +3165,16 @@ yeccgoto_tuple(161=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_tuple(164=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_tuple(190=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_tuple(194=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr);
+yeccgoto_tuple(200=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
+ yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr);
 yeccgoto_tuple(206=_S, Cat, Ss, Stack, T, Ts, Tzr) ->
  yeccpars2_10(_S, Cat, Ss, Stack, T, Ts, Tzr).
 
--file("src/monitoring/maxhml_parser.erl", 3063).
+-file("src/synthesis/maxhml_parser.erl", 3177).
 -compile({inline,yeccpars2_5_/1}).
 -file("priv/maxhml_parser.yrl", 108).
 yeccpars2_5_(__Stack0) ->
@@ -3070,7 +3184,7 @@ yeccpars2_5_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_28_/1}).
--file("priv/maxhml_parser.yrl", 339).
+-file("priv/maxhml_parser.yrl", 333).
 yeccpars2_28_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3078,61 +3192,61 @@ yeccpars2_28_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_34_/1}).
--file("priv/maxhml_parser.yrl", 179).
+-file("priv/maxhml_parser.yrl", 177).
 yeccpars2_34_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    build_mfargs ( __1 , __3 , [ ] )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3088).
+-file("src/synthesis/maxhml_parser.erl", 3202).
 -compile({inline,yeccpars2_49_/1}).
--file("priv/maxhml_parser.yrl", 317).
+-file("priv/maxhml_parser.yrl", 311).
 yeccpars2_49_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
    { tuple , ? anno ( __1 ) , [ ] }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3097).
+-file("src/synthesis/maxhml_parser.erl", 3211).
 -compile({inline,yeccpars2_50_/1}).
--file("priv/maxhml_parser.yrl", 318).
+-file("priv/maxhml_parser.yrl", 312).
 yeccpars2_50_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { tuple , ? anno ( __1 ) , __2 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3106).
+-file("src/synthesis/maxhml_parser.erl", 3220).
 -compile({inline,yeccpars2_51_/1}).
--file("priv/maxhml_parser.yrl", 356).
+-file("priv/maxhml_parser.yrl", 350).
 yeccpars2_51_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
    { string , ? anno ( __1 ) , element ( 3 , __1 ) ++ element ( 3 , __2 ) }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3115).
+-file("src/synthesis/maxhml_parser.erl", 3229).
 -compile({inline,yeccpars2_53_/1}).
--file("priv/maxhml_parser.yrl", 272).
+-file("priv/maxhml_parser.yrl", 266).
 yeccpars2_53_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
    { nil , ? anno ( __1 ) }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3124).
+-file("src/synthesis/maxhml_parser.erl", 3238).
 -compile({inline,yeccpars2_54_/1}).
--file("priv/maxhml_parser.yrl", 273).
+-file("priv/maxhml_parser.yrl", 267).
 yeccpars2_54_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { cons , ? anno ( __1 ) , __2 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3133).
+-file("src/synthesis/maxhml_parser.erl", 3247).
 -compile({inline,yeccpars2_56_/1}).
--file("priv/maxhml_parser.yrl", 275).
+-file("priv/maxhml_parser.yrl", 269).
 yeccpars2_56_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3140,25 +3254,25 @@ yeccpars2_56_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_60_/1}).
--file("priv/maxhml_parser.yrl", 309).
+-file("priv/maxhml_parser.yrl", 303).
 yeccpars2_60_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
    [ __1 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3150).
+-file("src/synthesis/maxhml_parser.erl", 3264).
 -compile({inline,yeccpars2_64_/1}).
--file("priv/maxhml_parser.yrl", 314).
+-file("priv/maxhml_parser.yrl", 308).
 yeccpars2_64_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { b_generate , ? anno ( __2 ) , __1 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3159).
+-file("src/synthesis/maxhml_parser.erl", 3273).
 -compile({inline,yeccpars2_66_/1}).
--file("priv/maxhml_parser.yrl", 313).
+-file("priv/maxhml_parser.yrl", 307).
 yeccpars2_66_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3166,16 +3280,16 @@ yeccpars2_66_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_68_/1}).
--file("priv/maxhml_parser.yrl", 310).
+-file("priv/maxhml_parser.yrl", 304).
 yeccpars2_68_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    [ __1 | __3 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3176).
+-file("src/synthesis/maxhml_parser.erl", 3290).
 -compile({inline,yeccpars2_69_/1}).
--file("priv/maxhml_parser.yrl", 307).
+-file("priv/maxhml_parser.yrl", 301).
 yeccpars2_69_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3183,16 +3297,16 @@ yeccpars2_69_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_71_/1}).
--file("priv/maxhml_parser.yrl", 276).
+-file("priv/maxhml_parser.yrl", 270).
 yeccpars2_71_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    __2
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3193).
+-file("src/synthesis/maxhml_parser.erl", 3307).
 -compile({inline,yeccpars2_73_/1}).
--file("priv/maxhml_parser.yrl", 277).
+-file("priv/maxhml_parser.yrl", 271).
 yeccpars2_73_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3200,23 +3314,23 @@ yeccpars2_73_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_76_/1}).
--file("priv/maxhml_parser.yrl", 293).
+-file("priv/maxhml_parser.yrl", 287).
 yeccpars2_76_(__Stack0) ->
  [begin
    default
   end | __Stack0].
 
 -compile({inline,yeccpars2_78_/1}).
--file("priv/maxhml_parser.yrl", 283).
+-file("priv/maxhml_parser.yrl", 277).
 yeccpars2_78_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
    [ __1 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3217).
+-file("src/synthesis/maxhml_parser.erl", 3331).
 -compile({inline,yeccpars2_79_/1}).
--file("priv/maxhml_parser.yrl", 280).
+-file("priv/maxhml_parser.yrl", 274).
 yeccpars2_79_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3224,16 +3338,16 @@ yeccpars2_79_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_82_/1}).
--file("priv/maxhml_parser.yrl", 284).
+-file("priv/maxhml_parser.yrl", 278).
 yeccpars2_82_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    [ __1 | __3 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3234).
+-file("src/synthesis/maxhml_parser.erl", 3348).
 -compile({inline,yeccpars2_83_/1}).
--file("priv/maxhml_parser.yrl", 281).
+-file("priv/maxhml_parser.yrl", 275).
 yeccpars2_83_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3241,23 +3355,23 @@ yeccpars2_83_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_84_/1}).
--file("priv/maxhml_parser.yrl", 296).
+-file("priv/maxhml_parser.yrl", 290).
 yeccpars2_84_(__Stack0) ->
  [begin
    default
   end | __Stack0].
 
 -compile({inline,yeccpars2_87_/1}).
--file("priv/maxhml_parser.yrl", 292).
+-file("priv/maxhml_parser.yrl", 286).
 yeccpars2_87_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
    __2
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3258).
+-file("src/synthesis/maxhml_parser.erl", 3372).
 -compile({inline,yeccpars2_88_/1}).
--file("priv/maxhml_parser.yrl", 287).
+-file("priv/maxhml_parser.yrl", 281).
 yeccpars2_88_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3265,7 +3379,7 @@ yeccpars2_88_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_90_/1}).
--file("priv/maxhml_parser.yrl", 295).
+-file("priv/maxhml_parser.yrl", 289).
 yeccpars2_90_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3273,7 +3387,7 @@ yeccpars2_90_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_91_/1}).
--file("priv/maxhml_parser.yrl", 299).
+-file("priv/maxhml_parser.yrl", 293).
 yeccpars2_91_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3281,7 +3395,7 @@ yeccpars2_91_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_92_/1}).
--file("priv/maxhml_parser.yrl", 301).
+-file("priv/maxhml_parser.yrl", 295).
 yeccpars2_92_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3289,7 +3403,7 @@ yeccpars2_92_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_94_/1}).
--file("priv/maxhml_parser.yrl", 302).
+-file("priv/maxhml_parser.yrl", 296).
 yeccpars2_94_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3297,25 +3411,25 @@ yeccpars2_94_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_96_/1}).
--file("priv/maxhml_parser.yrl", 298).
+-file("priv/maxhml_parser.yrl", 292).
 yeccpars2_96_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    [ __1 | __3 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3307).
+-file("src/synthesis/maxhml_parser.erl", 3421).
 -compile({inline,yeccpars2_99_/1}).
--file("priv/maxhml_parser.yrl", 308).
+-file("priv/maxhml_parser.yrl", 302).
 yeccpars2_99_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { bc , ? anno ( __1 ) , __2 , __4 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3316).
+-file("src/synthesis/maxhml_parser.erl", 3430).
 -compile({inline,yeccpars2_100_/1}).
--file("priv/maxhml_parser.yrl", 289).
+-file("priv/maxhml_parser.yrl", 283).
 yeccpars2_100_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3323,16 +3437,16 @@ yeccpars2_100_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_102_/1}).
--file("priv/maxhml_parser.yrl", 267).
+-file("priv/maxhml_parser.yrl", 261).
 yeccpars2_102_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    __2
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3333).
+-file("src/synthesis/maxhml_parser.erl", 3447).
 -compile({inline,yeccpars2_103_/1}).
--file("priv/maxhml_parser.yrl", 322).
+-file("priv/maxhml_parser.yrl", 316).
 yeccpars2_103_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3340,7 +3454,7 @@ yeccpars2_103_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_108_/1}).
--file("priv/maxhml_parser.yrl", 329).
+-file("priv/maxhml_parser.yrl", 323).
 yeccpars2_108_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3348,7 +3462,7 @@ yeccpars2_108_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_110_/1}).
--file("priv/maxhml_parser.yrl", 326).
+-file("priv/maxhml_parser.yrl", 320).
 yeccpars2_110_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3356,7 +3470,7 @@ yeccpars2_110_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_112_/1}).
--file("priv/maxhml_parser.yrl", 330).
+-file("priv/maxhml_parser.yrl", 324).
 yeccpars2_112_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3364,16 +3478,16 @@ yeccpars2_112_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_113_/1}).
--file("priv/maxhml_parser.yrl", 327).
+-file("priv/maxhml_parser.yrl", 321).
 yeccpars2_113_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    __2
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3374).
+-file("src/synthesis/maxhml_parser.erl", 3488).
 -compile({inline,yeccpars2_115_/1}).
--file("priv/maxhml_parser.yrl", 334).
+-file("priv/maxhml_parser.yrl", 328).
 yeccpars2_115_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3381,70 +3495,70 @@ yeccpars2_115_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_117_/1}).
--file("priv/maxhml_parser.yrl", 340).
+-file("priv/maxhml_parser.yrl", 334).
 yeccpars2_117_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    [ __1 | __3 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3391).
+-file("src/synthesis/maxhml_parser.erl", 3505).
 -compile({inline,yeccpars2_119_/1}).
--file("priv/maxhml_parser.yrl", 219).
+-file("priv/maxhml_parser.yrl", 213).
 yeccpars2_119_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop2 ( __1 , __2 , __3 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3400).
+-file("src/synthesis/maxhml_parser.erl", 3514).
 -compile({inline,yeccpars2_121_/1}).
--file("priv/maxhml_parser.yrl", 223).
+-file("priv/maxhml_parser.yrl", 217).
 yeccpars2_121_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop2 ( __1 , __2 , __3 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3409).
+-file("src/synthesis/maxhml_parser.erl", 3523).
 -compile({inline,yeccpars2_131_/1}).
--file("priv/maxhml_parser.yrl", 227).
+-file("priv/maxhml_parser.yrl", 221).
 yeccpars2_131_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop2 ( __1 , __2 , __3 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3418).
+-file("src/synthesis/maxhml_parser.erl", 3532).
 -compile({inline,yeccpars2_144_/1}).
--file("priv/maxhml_parser.yrl", 236).
+-file("priv/maxhml_parser.yrl", 230).
 yeccpars2_144_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop2 ( __1 , __2 , __3 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3427).
+-file("src/synthesis/maxhml_parser.erl", 3541).
 -compile({inline,yeccpars2_152_/1}).
--file("priv/maxhml_parser.yrl", 241).
+-file("priv/maxhml_parser.yrl", 235).
 yeccpars2_152_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop2 ( __1 , __2 , __3 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3436).
+-file("src/synthesis/maxhml_parser.erl", 3550).
 -compile({inline,yeccpars2_153_/1}).
--file("priv/maxhml_parser.yrl", 231).
+-file("priv/maxhml_parser.yrl", 225).
 yeccpars2_153_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop2 ( __1 , __2 , __3 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3445).
+-file("src/synthesis/maxhml_parser.erl", 3559).
 -compile({inline,yeccpars2_155_/1}).
--file("priv/maxhml_parser.yrl", 323).
+-file("priv/maxhml_parser.yrl", 317).
 yeccpars2_155_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
@@ -3452,32 +3566,32 @@ yeccpars2_155_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_156_/1}).
--file("priv/maxhml_parser.yrl", 181).
+-file("priv/maxhml_parser.yrl", 178).
 yeccpars2_156_(__Stack0) ->
  [__6,__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    build_mfargs ( __1 , __3 , __5 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3462).
+-file("src/synthesis/maxhml_parser.erl", 3576).
 -compile({inline,yeccpars2_158_/1}).
--file("priv/maxhml_parser.yrl", 324).
+-file("priv/maxhml_parser.yrl", 318).
 yeccpars2_158_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { map , ? anno ( __2 ) , __1 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3471).
+-file("src/synthesis/maxhml_parser.erl", 3585).
 -compile({inline,yeccpars2_160_/1}).
--file("priv/maxhml_parser.yrl", 246).
+-file("priv/maxhml_parser.yrl", 240).
 yeccpars2_160_(__Stack0) ->
  [__2,__1 | __Stack] = __Stack0,
  [begin
    ? mkop1 ( __1 , __2 )
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3480).
+-file("src/synthesis/maxhml_parser.erl", 3594).
 -compile({inline,yeccpars2_162_/1}).
 -file("priv/maxhml_parser.yrl", 109).
 yeccpars2_162_(__Stack0) ->
@@ -3487,7 +3601,7 @@ yeccpars2_162_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_163_/1}).
--file("priv/maxhml_parser.yrl", 343).
+-file("priv/maxhml_parser.yrl", 337).
 yeccpars2_163_(__Stack0) ->
  [__1 | __Stack] = __Stack0,
  [begin
@@ -3495,14 +3609,14 @@ yeccpars2_163_(__Stack0) ->
   end | __Stack].
 
 -compile({inline,yeccpars2_165_/1}).
--file("priv/maxhml_parser.yrl", 344).
+-file("priv/maxhml_parser.yrl", 338).
 yeccpars2_165_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    [ __1 | __3 ]
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3505).
+-file("src/synthesis/maxhml_parser.erl", 3619).
 -compile({inline,yeccpars2_169_/1}).
 -file("priv/maxhml_parser.yrl", 107).
 yeccpars2_169_(__Stack0) ->
@@ -3511,7 +3625,7 @@ yeccpars2_169_(__Stack0) ->
    { form , ? anno ( __1 ) , __2 , __4 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3514).
+-file("src/synthesis/maxhml_parser.erl", 3628).
 -compile({inline,yeccpars2_181_/1}).
 -file("priv/maxhml_parser.yrl", 140).
 yeccpars2_181_(__Stack0) ->
@@ -3520,7 +3634,7 @@ yeccpars2_181_(__Stack0) ->
    { max , ? anno ( __1 ) , __3 , __5 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3523).
+-file("src/synthesis/maxhml_parser.erl", 3637).
 -compile({inline,yeccpars2_183_/1}).
 -file("priv/maxhml_parser.yrl", 130).
 yeccpars2_183_(__Stack0) ->
@@ -3529,7 +3643,7 @@ yeccpars2_183_(__Stack0) ->
    { 'or' , ? anno ( __1 ) , __1 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3532).
+-file("src/synthesis/maxhml_parser.erl", 3646).
 -compile({inline,yeccpars2_185_/1}).
 -file("priv/maxhml_parser.yrl", 132).
 yeccpars2_185_(__Stack0) ->
@@ -3538,52 +3652,52 @@ yeccpars2_185_(__Stack0) ->
    { 'and' , ? anno ( __1 ) , __1 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3541).
+-file("src/synthesis/maxhml_parser.erl", 3655).
 -compile({inline,yeccpars2_195_/1}).
--file("priv/maxhml_parser.yrl", 163).
+-file("priv/maxhml_parser.yrl", 165).
 yeccpars2_195_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { recv , ? anno ( __1 ) , __1 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3550).
+-file("src/synthesis/maxhml_parser.erl", 3664).
 -compile({inline,yeccpars2_198_/1}).
--file("priv/maxhml_parser.yrl", 170).
+-file("priv/maxhml_parser.yrl", 172).
 yeccpars2_198_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { init , ? anno ( __1 ) , __3 , __1 , __5 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3559).
+-file("src/synthesis/maxhml_parser.erl", 3673).
 -compile({inline,yeccpars2_201_/1}).
--file("priv/maxhml_parser.yrl", 159).
+-file("priv/maxhml_parser.yrl", 161).
 yeccpars2_201_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { send , ? anno ( __1 ) , __1 , __3 , __5 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3568).
+-file("src/synthesis/maxhml_parser.erl", 3682).
 -compile({inline,yeccpars2_204_/1}).
--file("priv/maxhml_parser.yrl", 166).
+-file("priv/maxhml_parser.yrl", 168).
 yeccpars2_204_(__Stack0) ->
  [__5,__4,__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { fork , ? anno ( __1 ) , __1 , __3 , __5 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3577).
+-file("src/synthesis/maxhml_parser.erl", 3691).
 -compile({inline,yeccpars2_205_/1}).
--file("priv/maxhml_parser.yrl", 173).
+-file("priv/maxhml_parser.yrl", 175).
 yeccpars2_205_(__Stack0) ->
  [__3,__2,__1 | __Stack] = __Stack0,
  [begin
    { exit , ? anno ( __1 ) , __1 , __3 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3586).
+-file("src/synthesis/maxhml_parser.erl", 3700).
 -compile({inline,yeccpars2_207_/1}).
 -file("priv/maxhml_parser.yrl", 155).
 yeccpars2_207_(__Stack0) ->
@@ -3592,7 +3706,7 @@ yeccpars2_207_(__Stack0) ->
    { act , ? anno ( __1 ) , __2 , [ ] }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3595).
+-file("src/synthesis/maxhml_parser.erl", 3709).
 -compile({inline,yeccpars2_209_/1}).
 -file("priv/maxhml_parser.yrl", 156).
 yeccpars2_209_(__Stack0) ->
@@ -3601,7 +3715,7 @@ yeccpars2_209_(__Stack0) ->
    { act , ? anno ( __1 ) , __2 , __4 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3604).
+-file("src/synthesis/maxhml_parser.erl", 3718).
 -compile({inline,yeccpars2_211_/1}).
 -file("priv/maxhml_parser.yrl", 137).
 yeccpars2_211_(__Stack0) ->
@@ -3610,7 +3724,7 @@ yeccpars2_211_(__Stack0) ->
    { nec , ? anno ( __1 ) , __2 , __4 }
   end | __Stack].
 
--file("src/monitoring/maxhml_parser.erl", 3613).
+-file("src/synthesis/maxhml_parser.erl", 3727).
 -compile({inline,yeccpars2_214_/1}).
 -file("priv/maxhml_parser.yrl", 136).
 yeccpars2_214_(__Stack0) ->
@@ -3644,4 +3758,4 @@ yeccpars2_219_(__Stack0) ->
   end | __Stack].
 
 
--file("priv/maxhml_parser.yrl", 450).
+-file("priv/maxhml_parser.yrl", 444).

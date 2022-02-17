@@ -181,7 +181,7 @@ For this demo, we use our token server to detect property violations.
 You might have noticed that the `recv` and `send` events exhibited by the server process as it terminated (step 4 above) are also analysed by our analyser.
 Both of these analyses yield the same rejection verdict of `no`.
 Why does this happen?
-In the section [Is one execution trace enough?](runtime-verification.md#is-one-execution-trace-enough) we explained that analysers yield irrevocable verdicts (*i.e.*, ones that cannot be retracted).
+In the section [Is one execution trace enough?](../using/detecter/runtime-verification.md#is-one-execution-trace-enough) we explained that analysers yield irrevocable verdicts (*i.e.*, ones that cannot be retracted).
 This is one such instance, where the verdict `no` is flagged, and the analyser will persist its decision, regardless of the events it analyses going forward.
 
 ## Correcting the server implementation

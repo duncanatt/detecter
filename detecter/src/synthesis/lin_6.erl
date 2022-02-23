@@ -514,6 +514,28 @@ can_tau({'or', _S, M, N}) ->
   ?TRACE("Got ~s after checking ~s.", [Ret, _S]),
   Ret.
 
+
+pp_erlang(Erl) ->
+  {ok, Tokens, _EndLine} = erl_scan:string(Erl),
+  {ok, [AbsForm]} = erl_parse:parse_exprs(Tokens),
+  io:format("~p~n", [AbsForm]),
+  Clauses = erl_syntax:fun_expr_clauses(AbsForm),
+  io:format("Clauses are: ~p~n", [Clauses]),
+  Guard = erl_syntax:clause_guard(hd(Clauses)),
+  io:format("Guard is: ~p~n", [Guard]).
+%%  erl_pp:expr(AbsForm). % This prints any expression.
+
+print_fun_guard(ErlFunStr) ->
+  {ok, Tokens, _EndLine} = erl_scan:string(ErlFunStr),
+  {ok, [AbsForm]} = erl_parse:parse_exprs(Tokens),
+  Clauses = erl_syntax:fun_expr_clauses(AbsForm),
+  {clause, _, _, GuardGood, _} = hd(Clauses),
+  io:format("The good guard: ~p~n", [GuardGood]),
+  GuardBad = erl_syntax:clause_guard(hd(Clauses)), % Bad guard is not printable by erl_pp:guard/1.
+  io:format("The bad guard: ~p~n", [erl_syntax:revert(GuardBad)]),
+  lists:flatten(erl_pp:guard(GuardGood)).
+
+
 % TODO: What if we have no + yes synthesised from ff. This cannot happen.
 
 % Tests:

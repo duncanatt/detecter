@@ -64,10 +64,32 @@
 -define(COMPILER_OPTS, [nowarn_shadow_vars, return]).
 
 %% Monitoring verdicts.
--define(ACCEPT, yes).
--define(REJECT, no).
+%%-define(ACCEPT, yes).
+%%-define(REJECT, no).
+
+%% Monitor node names.
+-define(NODE_ACC, yes).
+-define(NODE_REJ, no).
+-define(NODE_CHS, chs).
+-define(NODE_ACT, act).
+-define(NODE_AND, 'and').
+-define(NODE_OR, 'or').
+-define(NODE_REC, rec).
+-define(NODE_VAR, var).
 
 
+%% Monitor environment keys.
+-define(KEY_ENV, env).
+-define(KEY_STR, str).
+-define(KEY_VAR, var).
+-define(KEY_PAT, pat).
+
+%% Placeholder management.
+%%-define(PH_NAMES, [a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z]).
+-define(PH_NAMES, [a]).
+-define(PH_PRF, "_@").
+-define(KEY_PH_NAMES, ph_names).
+-define(KEY_PH_CNT, ph_cnt).
 
 %%% ----------------------------------------------------------------------------
 %%% Type definitions.
@@ -95,8 +117,7 @@ compile(File, Opts) when is_list(Opts) ->
 
           % Synthesize monitor from parsed syntax tree in the form of an Erlang
           % syntax tree and write result to file as Erlang source or beam code.
-%%          write_monitor(create_module(Ast, ?MFA_SPEC, Module, Opts), File, Opts);
-          ok;
+          write_monitor(create_module(Ast, ?MFA_SPEC, Module, Opts), File, Opts);
 
         {error, Reason} ->
 
@@ -215,48 +236,57 @@ visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard},
 
 
 %%-spec visit_node(Node, Opts) -> erl_syntax:syntaxTree() | [erl_syntax:syntaxTree()].
-visit_node(_Node = {tt, _}, Opts) ->
-  ?TRACE("Visiting 'tt' node ~p.", [_Node]),
-  erl_syntax:atom(yes);
+visit_node(Node = {tt, _}, Opts) ->
+  ?TRACE("Visiting 'tt' node ~p.", [Node]),
 
-visit_node(_Node = {ff, _}, Opts) ->
-  ?TRACE("Visiting 'ff' node ~p.", [_Node]),
-  erl_syntax:atom(no);
+  Env = get_env(Node),
+  erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), Env]);
+
+
+
+visit_node(Node = {ff, _}, Opts) ->
+  ?TRACE("Visiting 'ff' node ~p.", [Node]),
+
+  Env = get_env(Node),
+  erl_syntax:tuple([erl_syntax:atom(?NODE_REJ), Env]);
 
 visit_node(Var = {var, _, Name}, Opts) ->
   ?TRACE("Visiting 'var' node ~p.", [Var]),
-  erl_syntax:application(Var, []);
 
-visit_node(_Node = {max, _, Var = {var, _, _}, Phi}, Opts) ->
-  ?TRACE("Visiting 'max' node ~p.", [_Node]),
+  Env = get_env(Var),
+  erl_syntax:tuple([erl_syntax:atom(?NODE_VAR), Env, Var]);
+
+visit_node(Node = {max, _, Var = {var, _, _}, Phi}, Opts) ->
+  ?TRACE("Visiting 'max' node ~p.", [Node]),
 
   Clause = erl_syntax:clause(none, [visit_node(Phi, Opts)]),
+%%  Rec = erl_syntax:application(erl_syntax:named_fun_expr(Var, [Clause]), []),
+  Fun = erl_syntax:named_fun_expr(Var, [Clause]),
 
-  erl_syntax:application(erl_syntax:named_fun_expr(Var, [Clause]), []);
+  Env = get_env(Node),
+  erl_syntax:tuple([erl_syntax:atom(?NODE_REC), Env, Fun]);
 
-visit_node(_Node = {'or', _, Phi, Psi}, Opts) ->
-  ?TRACE("Visiting 'or' node ~p.", [_Node]),
+% TODO: Can merge this one with the atom.
+visit_node(Node = {Op, _, Phi, Psi}, Opts) when Op =:= 'or'; Op =:= 'and' ->
+  ?TRACE("Visiting '~s' node ~p.", [Op, Node]),
+
+  Op0 = erl_syntax:atom(Op),
+%%  Env = erl_syntax:tuple([erl_syntax:atom(env), erl_syntax:list([])]),
+  Env = get_env(Node),
+  erl_syntax:tuple([Op0, Env, visit_node(Phi, Opts), visit_node(Psi, Opts)]);
 
 
 
 
-  ok;
-
-visit_node(_Node = {'and', _, Phi, Psi}, Opts) ->
-  ?TRACE("Visiting 'and' node ~p.", [_Node]),
-  ok;
-
-visit_node(_Node = {pos, _, Act, Phi}, Opts) ->
+visit_node(_Node = {pos, _, {act, _, Pat, Guard}, Phi}, Opts) ->
   ?TRACE("Visiting 'pos' node ~p.", [_Node]),
 
-  erl_syntax:fun_expr(
-    act_clauses(Act, [visit_node(Phi, Opts)], [erl_syntax:atom(?REJECT)]));
+  % TODO: The case for this is just the same but we only need to handle when we have the opposite condition.
+  ok;
 
 
-visit_node(_Node = {nec, _, Act, Phi}, Opts) ->
-  ?TRACE("Visiting 'nec' node ~p.", [_Node]),
-
-
+visit_node(Node = {nec, _, {act, _, Pat, Guard}, Phi}, Opts) ->
+  ?TRACE("Visiting 'nec' node ~p.", [Node]),
 
 
   % TODO: We need two extra clauses: the usual catchall _ for end, and the
@@ -272,16 +302,232 @@ visit_node(_Node = {nec, _, Act, Phi}, Opts) ->
   % TODO: actions (since we have potentially an infinite set that matches)?
 
 
-  erl_syntax:fun_expr(
-    act_clauses(Act, [visit_node(Phi, Opts)], [erl_syntax:atom(?ACCEPT)])).
+%%   = Act,
+
+
+  % Here we need to implement the choice.
+
+%%  erl_syntax:clause([pat_tuple(Pat)], Guard, ActBody)
+
+  LeftPredClause = [
+    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(true)]),
+    erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(false)])
+  ],
+
+  RightPredClause = [
+    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(false)]),
+    erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(true)])
+  ],
+
+  LeftPred = erl_syntax:fun_expr(LeftPredClause),
+  RightPred = erl_syntax:fun_expr(RightPredClause),
+
+
+  LeftBodyClause = [erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, Opts)])],
+  LeftBody = erl_syntax:fun_expr(LeftBodyClause),
+
+  % Constructs the body of the accept branch, when the monitor takes the other branch.
+  Env0 = get_env({tt, undefined}),
+  NodeAcc = erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), Env0]),
+
+
+  RightBodyClause = [erl_syntax:clause([erl_syntax:underscore()], none, [NodeAcc])],
+  RightBody = erl_syntax:fun_expr(RightBodyClause),
+
+  % Get a new unique placeholder for this monitor action.
+  Ph = new_ph(),
+
+  LeftAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, true), LeftPred, LeftBody]),
+  RightAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, false), RightPred, RightBody]),
+
+
+%%  erl_syntax:fun_expr(
+%%    act_clauses(Act, [visit_node(Phi, Opts)], [erl_syntax:atom(?ACCEPT)])),
+
+  EnvChoice = get_chs_env(),
+
+
+
+
+  erl_syntax:tuple([erl_syntax:atom(chs), EnvChoice, LeftAct, RightAct]).
+
+
+% Name: atom
+% Env : syntaxTree
+% Act : syntaxTree
+
+
+% Contains the meta monitor logic for managing the environment.
+get_env(Node = {tt, _}) ->
+  Str = new_env_kv(?KEY_STR, get_str(Node)),
+  new_env([Str]);
+get_env(Node = {ff, _}) ->
+  Str = new_env_kv(?KEY_STR, get_str(Node)),
+  new_env([Str]);
+get_env(Node = {Op, _, _, _}) when Op =:= 'or'; Op =:= 'and' ->
+  Str = new_env_kv(?KEY_STR, get_str(Node)),
+  new_env([Str]);
+get_env(Node = {max, _, {var, _, Name}, _}) ->
+  Str = new_env_kv(?KEY_STR, get_str(Node)),
+  Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Name)),
+  new_env([Str, Var]);
+get_env(Node = {var, _, Name}) ->
+  Str = new_env_kv(?KEY_STR, get_str(Node)),
+  Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Name)),
+  new_env([Str, Var]).
 
 
 
 
 
-act_clauses({act, _, Pat, Guard}, ActBody, InvBody) ->
-  [erl_syntax:clause([pat_tuple(Pat)], Guard, ActBody),
-    erl_syntax:clause([erl_syntax:underscore()], none, InvBody)].
+get_env(Node = {Mod, _, Act, Phi}, Ph, Neg) when Mod =:= pos; Mod =:= nec ->
+
+
+  Str = new_env_kv(?KEY_STR, get_str(Node, Ph, Neg)),
+  Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Ph)),
+  Pat = new_env_kv(?KEY_PAT, get_pat(Node)),
+  ?INFO("PAT is: ~p", [Pat]),
+
+  new_env([Str, Var, Pat]).
+
+get_chs_env() ->
+  Str = new_env_kv(?KEY_STR, get_chs_str()),
+  new_env([Str]).
+
+
+
+
+
+%% TODO: Add the cases for the nec and pos to generate their own environment.
+
+
+% key : atom
+% val : syntaxTree
+
+%%% @private Returns an Erlang AST representation of a new key-value pair.
+-spec new_env_kv(Key, Val) -> erl_syntax:syntaxTree()
+  when
+  Key :: atom(),
+  Val :: erl_syntax:syntaxTree().
+new_env_kv(Key, Val) ->
+  erl_syntax:tuple([erl_syntax:atom(Key), Val]).
+
+%%% @private Returns an Erlang AST representation of a new monitor environment,
+%%% with the specified list elements.
+-spec new_env(List :: list(erl_syntax:syntaxTree())) -> erl_syntax:syntaxTree().
+new_env(List) ->
+  erl_syntax:tuple([erl_syntax:atom(?KEY_ENV), erl_syntax:list(List)]).
+
+%%% @private Returns an Erlang ASP representation of the stringified monitor.
+%% TODO: Add a proper type later.
+-spec get_str(any()) -> erl_syntax:syntaxTree().
+get_str({tt, _}) ->
+  erl_syntax:string("yes");
+get_str({ff, _}) ->
+  erl_syntax:string("no");
+get_str({Op, _, _, _}) when Op =:= 'or'; Op =:= 'and' ->
+  erl_syntax:string(atom_to_list(Op));
+get_str({max, _, {var, _, Name}, _}) ->
+  erl_syntax:string(["rec ", atom_to_list(Name)]);
+get_str({var, _, Name}) ->
+  erl_syntax:string(atom_to_list(Name)).
+
+
+get_str({Mod, _, {act, _, Pat, Guard}, _}, Ph, Neg) when Mod =:= pos; Mod =:= nec ->
+
+  % Stringify placeholder and the internal representation of the pattern as an
+  % Erlang trace event.
+  IoList = [Ph, $/, erl_pp:expr(erl_syntax:revert(pat_tuple(Pat)))],
+
+  % Stringify guard only if present.
+  IoList_ = if Guard =:= [] -> IoList; true -> [IoList, $ , erl_pp:guard(Guard)] end,
+
+  % Add the stringified negation if the branch is the inverse one (called the)
+  % negative branch of mutually-exclusive choice.
+  IoList__ = if Neg -> IoList_; true -> ["NOT(", IoList_, ")"] end,
+
+  erl_syntax:string(IoList__).
+
+get_chs_str() ->
+  erl_syntax:string("+").
+
+
+%%get_str_act_pair(Ph, LStr, RStr) ->
+%%  {LStr, RStr}.
+
+
+%%get_chs_str(ActL, ActR, Ph) ->
+%%  ok.
+
+get_pat({Mod, _, {act, _, Pat, Guard}, _}) when Mod =:= pos; Mod =:= nec ->
+
+  Str = erl_pp:expr(erl_syntax:revert(pat_tuple(Pat))),
+
+
+%%  Replaced = re:replace(Str, "\W_\W", "undefined", [{return, list}, global]),
+  Replaced = re:replace(Str, "\\b([A-Z_][a-zA-Z0-9_@]*)\\b", "undefined", [{return, list}, global]),
+
+  ?INFO("The Originial patternn is: ~s", [Str]),
+  ?INFO("The replaced patternn is: ~s", [Replaced]),
+
+  {ok, Tokens, _EndLine} = erl_scan:string(Replaced ++ "."),
+  {ok, [AbsForm]} = erl_parse:parse_exprs(Tokens),
+
+%%  P0 = pat_tuple(Pat).
+
+%%  \b(_[a-zA-Z0-9_@]*)|([A-Z][a-zA-Z0-9_@]*)\b
+
+  AbsForm.
+
+
+
+init_ph() ->
+
+  % Placeholder token list must at least contain one name.
+  if length(?PH_NAMES) < 1 -> error("Empty token token names"); true -> ok end,
+
+  put(?KEY_PH_NAMES, ?PH_NAMES), %
+  put(?KEY_PH_CNT, 0). % 0-based index.
+
+check_ph() ->
+
+  case get(?KEY_PH_NAMES) of
+    undefined ->
+
+      % Placeholder token name generator not initialized.
+      init_ph();
+    _ ->
+      ok
+  end.
+
+% Generates the next variable place holder.
+new_ph() ->
+
+  % Ensure that placeholder token name generator is initialized.
+  check_ph(),
+
+  % Get last placeholder counter and increment it.
+  Cnt = put(?KEY_PH_CNT, get(?KEY_PH_CNT) + 1),
+
+  % Get next placeholder token name. Calculation wraps around the counter when
+  % the it goes beyond the number of available token names. Access to the list
+  % of token names is 1-based.
+  Tok = lists:nth((Cnt rem length(?PH_NAMES)) + 1, ?PH_NAMES),
+
+  % Calculate the token name suffix, to generate a unique placeholder token. The
+  % suffix is incremented once the counter goes beyond the number of available
+  % token names.
+  Idx = Cnt div length(?PH_NAMES),
+
+  % Generate unique placeholder name.
+%%  list_to_atom(lists:flatten(io_lib:format("~s~s~2..0B", [?PH_PRF, Tok, Idx]))).
+  lists:flatten(io_lib:format("~s~s~2..0B", [?PH_PRF, Tok, Idx])).
+
+
+%%act_clauses({act, _, Pat, Guard}, ActBody, InvBody) ->
+%%  [erl_syntax:clause([pat_tuple(Pat)], Guard, ActBody),
+%%    erl_syntax:clause([erl_syntax:underscore()], none, InvBody)].
+
 
 
 
@@ -294,7 +540,7 @@ act_clauses({act, _, Pat, Guard}, ActBody, InvBody) ->
 pat_tuple({send, _, Pid, To, Var}) ->
 %%  {trace, Pid, send, Msg, To}
   erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(send), To, Var]);
+    erl_syntax:atom(trace), Pid, erl_syntax:atom(send), Var, To]);
 pat_tuple({recv, _, Pid, Var}) ->
 %%  {trace, Pid, 'receive', Msg}
   erl_syntax:tuple([

@@ -24,11 +24,11 @@
 %%%-------------------------------------------------------------------
 
 with
-  cowboy_stream_h:request_process(_, _, _])
+  cowboy_stream_h:request_process(_, _, _)
 check
-  [_ReqProc <- _ConnProc, cowboy_stream_h:request_process(_, _, _])]
-    max X(
-      [_ReqProc:_Sock ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode = 200] X
+  [{_ConnProc <- _ReqProc, cowboy_stream_h:request_process(_, _, _)}]
+    max X.(
+      [{_ReqProc:_ ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode =:= 200}] X
       and
-      [_ReqProc:_Sock ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode = 500] ff
-  )
+      [{_ReqProc:_ ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode =:= 500}] ff
+  ).

@@ -276,80 +276,100 @@ visit_node(Node = {Op, _, Phi, Psi}, Opts) when Op =:= 'or'; Op =:= 'and' ->
   erl_syntax:tuple([Op0, Env, visit_node(Phi, Opts), visit_node(Psi, Opts)]);
 
 
+%%visit_node(_Node = {pos, _, {act, _, Pat, Guard}, Phi}, Opts) ->
+%%  ?TRACE("Visiting 'pos' node ~p.", [_Node]),
+%%
+%%  % TODO: The case for this is just the same but we only need to handle when we have the opposite condition.
+%%  ok;
 
 
-visit_node(_Node = {pos, _, {act, _, Pat, Guard}, Phi}, Opts) ->
-  ?TRACE("Visiting 'pos' node ~p.", [_Node]),
+visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, Opts) when Mod =:= pos; Mod =:= nec ->
+  ?TRACE("Visiting '~s' node ~p.", [Mod, Node]),
 
-  % TODO: The case for this is just the same but we only need to handle when we have the opposite condition.
-  ok;
-
-
-visit_node(Node = {nec, _, {act, _, Pat, Guard}, Phi}, Opts) ->
-  ?TRACE("Visiting 'nec' node ~p.", [Node]),
-
-
-  % TODO: We need two extra clauses: the usual catchall _ for end, and the
-  % complement of the boolean condition that for nec, would be yes, for pos
-  % would be no.
-
-  % TODO: I think that, since the mutually exclusive choice + is implemented as
-  % TODO: guards, we can simply use the _ pattern to generate yes or no's
-  % TODO: depending on whether a pos or a nec is being processed. But would this
-  % TODO: mean that there will be no place for the 'end' verdict?
-  % TODO: Question: What happens when we have a variable/pattern that matches
-  % TODO: anything. What its complement set of action. Is it the empty set of
-  % TODO: actions (since we have potentially an infinite set that matches)?
-
-
-%%   = Act,
-
-
-  % Here we need to implement the choice.
-
-%%  erl_syntax:clause([pat_tuple(Pat)], Guard, ActBody)
-
-  LeftPredClause = [
+  % Encode the predicate functions for the action and its inverse. The predicate
+  % functions are mutually-exclusive. This means that for any pattern and guard
+  % combination, and any value the pattern data variables may be mapped to,
+  % these two predicate functions will always return the negated truth value of
+  % of each other.
+  Pred = erl_syntax:fun_expr([
     erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(true)]),
     erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(false)])
-  ],
+  ]),
 
-  RightPredClause = [
+  InvPred = erl_syntax:fun_expr([
     erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(false)]),
     erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(true)])
-  ],
-
-  LeftPred = erl_syntax:fun_expr(LeftPredClause),
-  RightPred = erl_syntax:fun_expr(RightPredClause),
+  ]),
 
 
-  LeftBodyClause = [erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, Opts)])],
-  LeftBody = erl_syntax:fun_expr(LeftBodyClause),
+%%  LeftPredClause = [
+%%    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(true)]),
+%%    erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(false)])
+%%  ],
+%%
+%%  RightPredClause = [
+%%    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(false)]),
+%%    erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(true)])
+%%  ],
+%%
+%%  LeftPred = erl_syntax:fun_expr(LeftPredClause),
+%%  RightPred = erl_syntax:fun_expr(RightPredClause),
+
+
+%%  LeftBodyClause = [erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, Opts)])],
+%%  LeftBody = erl_syntax:fun_expr(LeftBodyClause),
+
+  % Encode the action bodies. The normal (left) action body consists of the
+  % pattern with variables, and the continuation monitor. The inverse (right)
+  % action consists of the verdict when the inverse pattern and guard test is
+  % successful.
+  ContBody = erl_syntax:fun_expr([
+    erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, Opts)])
+  ]),
+
+  VerdBody = erl_syntax:fun_expr([
+    erl_syntax:clause([erl_syntax:underscore()], none, [
+      if Mod =:= pos ->
+        erl_syntax:tuple([erl_syntax:atom(?NODE_REJ), get_env({ff, -1})]);
+        Mod =:= nec ->
+          erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), get_env({tt, -1})])
+      end
+    ])
+  ]),
+
+
+%%  InvBody =
+%%    case Mod of
+%%      pos ->
+%%        erl_syntax:tuple([erl_syntax:atom(?NODE_REJ), get_env({ff, undefined})]);
+%%      nec ->
+%%        erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), get_env({tt, undefined})])
+%%    end,
+
 
   % Constructs the body of the accept branch, when the monitor takes the other branch.
-  Env0 = get_env({tt, undefined}),
-  NodeAcc = erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), Env0]),
+%%  Env0 = get_env({tt, undefined}),
+%%  NodeAcc = erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), Env0]),
 
 
-  RightBodyClause = [erl_syntax:clause([erl_syntax:underscore()], none, [NodeAcc])],
-  RightBody = erl_syntax:fun_expr(RightBodyClause),
+%%  RightBodyClause = [erl_syntax:clause([erl_syntax:underscore()], none, [NodeAcc])],
+%%  RightBody = erl_syntax:fun_expr(RightBodyClause),
+
+
 
   % Get a new unique placeholder for this monitor action.
   Ph = new_ph(),
 
-  LeftAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, true), LeftPred, LeftBody]),
-  RightAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, false), RightPred, RightBody]),
+%%  LeftAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, true), LeftPred, LeftBody]),
+%%  RightAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, false), RightPred, RightBody]),
 
+  % Encode left and right actions.
+  LeftAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, true), Pred, ContBody]),
+  RightAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, false), InvPred, VerdBody]),
 
-%%  erl_syntax:fun_expr(
-%%    act_clauses(Act, [visit_node(Phi, Opts)], [erl_syntax:atom(?ACCEPT)])),
-
-  EnvChoice = get_chs_env(),
-
-
-
-
-  erl_syntax:tuple([erl_syntax:atom(chs), EnvChoice, LeftAct, RightAct]).
+  % Encode the mutually-exclusive choice consisting of the left and right
+  % summands.
+  erl_syntax:tuple([erl_syntax:atom(chs), get_chs_env(), LeftAct, RightAct]).
 
 
 % Name: atom
@@ -393,9 +413,6 @@ get_env(Node = {Mod, _, Act, Phi}, Ph, Neg) when Mod =:= pos; Mod =:= nec ->
 get_chs_env() ->
   Str = new_env_kv(?KEY_STR, get_chs_str()),
   new_env([Str]).
-
-
-
 
 
 %% TODO: Add the cases for the nec and pos to generate their own environment.
@@ -452,12 +469,7 @@ get_chs_str() ->
   erl_syntax:string("+").
 
 
-%%get_str_act_pair(Ph, LStr, RStr) ->
-%%  {LStr, RStr}.
 
-
-%%get_chs_str(ActL, ActR, Ph) ->
-%%  ok.
 
 get_pat({Mod, _, {act, _, Pat, Guard}, _}) when Mod =:= pos; Mod =:= nec ->
 

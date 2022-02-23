@@ -1,6 +1,6 @@
 %%% @author Duncan Paul Attard
 %%%
-%%% Parser specification.
+%%% maxHML parser specification.
 %%%
 %%% Copyright (c) 2021, Duncan Paul Attard <duncanatt@gmail.com>
 %%%
@@ -31,9 +31,6 @@ maxhml_expr maxhml_fact maxhml_term
 mfargs_sel
 
 %%% Erlang non-terminals.
-
-% Clauses.
-%%clause clause_guard
 
 % Expressions.
 expr expr_100 expr_150 expr_160 expr_200 expr_300 expr_400 expr_500
@@ -93,7 +90,6 @@ Terminals
 % Atomic data types.
 char integer float atom string var.
 
-%%Rootsymbol maxhml_expr.
 Rootsymbol forms.
 
 
@@ -141,7 +137,6 @@ maxhml_fact -> '<' act '>' maxhml_fact        : {pos, ?anno('$1'), '$2', '$4'}.
 maxhml_fact -> '[' act ']' maxhml_fact        : {nec, ?anno('$1'), '$2', '$4'}.
 
 % Maximal fix-point.
-%%maxhml_fact -> 'max' '(' var '.' maxhml_expr ')'  : {max, ?anno('$1'), '$3', '$5'}.
 maxhml_fact -> 'max' var '.' '(' maxhml_expr ')'  : {max, ?anno('$1'), '$2', '$5'}.
 
 % Truth, falsity, recursive variables and bracketing.
@@ -151,12 +146,15 @@ maxhml_fact -> var                            : '$1'.
 maxhml_fact -> '(' maxhml_expr ')'            : '$2'.
 
 %%% Data extensions with symbolic action pairs comprised of process action
-%%% patterns and decidable constraints. Four process action patterns are
-%%% supported: send, receive, fork, initialisation and termination. The
-%%% constraint language corresponds to the language used in Erlang guards.
+%%% patterns and decidable Boolean constraints. Five process action patterns are
+%%% supported: send, receive, fork, initialisation and termination.
 
-% Symbolic actions. Constraints (guards) in symbolic actions are optional, and
-% internally interpreted as true when omitted.
+% Symbolic actions. Constraints in symbolic actions are optional, and internally
+% interpreted as true when omitted. The implementation of constraints is
+% delegated to Erlang guards. The curly braces '{}' around symbolic actions are
+% used as an aid to visual parsing. These are also used to resolve a
+% shift-reduce conflict that arises due to the angled brackets used for the
+% possibility modality and > operator in guards. To be resolved in the future.
 act -> '{' pat '}'                      : {act, ?anno('$1'), '$2', []}.
 act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
 %%act -> pat                              : {act, ?anno('$1'), '$1', []}.
@@ -166,7 +164,6 @@ act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
 pat -> var ':' var '!' expr              : {send, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process receiving pattern. Process in var_1 receives message.
-%%pat -> var '?' expr                    : {recv, ?anno('$1'), '$1', '$3'}.
 pat -> var '?' expr                      : {recv, ?anno('$1'), '$1', '$3'}.
 
 % Process forking pattern. Process in var_1 forked child in var_2 via MFArgs.
@@ -179,37 +176,25 @@ pat -> var '<-' var ',' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
 % Process termination pattern. Process in var_1 exited with specified reason.
 pat -> var '**' expr                     : {exit, ?anno('$1'), '$1', '$3'}.
 
+% MFArgs pattern. There are two ways to implement this. One is to use the Erlang
+% expression syntax where pattern matching can be performed in place, in the
+% parameters themselves. Although using a list of exprs makes it possible to
+% write illegal patterns (e.g., A + 10), this is the route taken by Erlang,
+% where parsing succeeds and the errors is detected on compilation. The second
+% option is to simply use a list of variables and avoid this. We choose the
+% former approach since it is more flexible in practice, and as we generate an
+% Erlang AST, the Erlang compiler can handle the illegal pattern as usual.
 mfargs -> atom ':' atom '(' ')'         : build_mfargs('$1', '$3', []).
 mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').
-
-%% TODO: it must be a list of expr nodes. Will rectify this later.
-
-% TODO: The MFArgs argument list 'exprs' is incorrect: this should be a pattern
-% TODO: consisting of just a list of variables. With this current definition,
-% TODO: one may be able to create argument patterns such as [A + 10], which is
-% TODO: clearly an illegal pattern in Erlang.
 
 
 %%% ----------------------------------------------------------------------------
 %%% Erlang grammar definition.
 %%% ----------------------------------------------------------------------------
 
-% TODO: Remove this once we are finished.
-%%% Clauses.
-
-%% TODO: This is key to process the erlang code and latch it onto its internal parsing mechanism.
-% Clause with one expression.
-%%clause -> expr clause_guard                      : {clause, ?anno('$1'), ['$1'], '$2', []}.
-
-% Clause guard.
-%%clause_guard -> 'when' guard : '$2'.
-%%clause_guard -> '$empty' : [].
-
-
-
-%%% Expressions with precedence. Certain precedence rules are left as empty
-%%% placeholders in case we want to add more power to our grammar, such as
-%%% pattern matching and variable assignment.
+%%% Rest of Erlang expressions (with precedence). Certain precedence rules are
+%%% left as empty and kept as placeholders in case we want to add more power to
+%%% our grammar.
 
 % Placeholder for catch expressions.
 expr -> expr_100 : '$1'.

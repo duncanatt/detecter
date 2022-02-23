@@ -28,7 +28,7 @@ with
 %  token_server:loop(_, A) when A =:= 2
 check
   [{_ <- _, token_server:loop(OwnTok, _)}]
-  max(X.
+  max X.(
     [{_ ? {_, _}}](
       [{_:_ ! Tok when OwnTok =:= Tok}]ff
       and

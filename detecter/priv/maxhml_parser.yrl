@@ -180,6 +180,9 @@ pat -> var '**' expr                     : {exit, ?anno('$1'), '$1', '$3'}.
 
 mfargs -> atom ':' atom '(' ')'         : build_mfargs('$1', '$3', []).
 mfargs -> atom ':' atom '(' exprs ')'   : build_mfargs('$1', '$3', '$5').
+
+%% TODO: it must be a list of expr nodes. Will rectify this later.
+
 % TODO: The MFArgs argument list 'exprs' is incorrect: this should be a pattern
 % TODO: consisting of just a list of variables. With this current definition,
 % TODO: one may be able to create argument patterns such as [A + 10], which is

@@ -141,7 +141,8 @@ maxhml_fact -> '<' act '>' maxhml_fact        : {pos, ?anno('$1'), '$2', '$4'}.
 maxhml_fact -> '[' act ']' maxhml_fact        : {nec, ?anno('$1'), '$2', '$4'}.
 
 % Maximal fix-point.
-maxhml_fact -> 'max' '(' var '.' maxhml_expr ')'  : {max, ?anno('$1'), '$3', '$5'}.
+%%maxhml_fact -> 'max' '(' var '.' maxhml_expr ')'  : {max, ?anno('$1'), '$3', '$5'}.
+maxhml_fact -> 'max' var '.' '(' maxhml_expr ')'  : {max, ?anno('$1'), '$2', '$5'}.
 
 % Truth, falsity, recursive variables and bracketing.
 maxhml_fact -> 'ff'                           : '$1'.

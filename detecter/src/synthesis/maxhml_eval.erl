@@ -67,15 +67,25 @@
 %%-define(ACCEPT, yes).
 %%-define(REJECT, no).
 
-%% Monitor node names.
--define(NODE_ACC, yes).
--define(NODE_REJ, no).
--define(NODE_CHS, chs).
--define(NODE_ACT, act).
--define(NODE_AND, 'and').
--define(NODE_OR, 'or').
--define(NODE_REC, rec).
--define(NODE_VAR, var).
+%% maxHML logic AST node tags.
+-define(LOG_TRU, tt).
+-define(LOG_FLS, ff).
+-define(LOG_POS, pos).
+-define(LOG_NEC, nec).
+-define(LOG_OR, 'or').
+-define(LOG_AND, 'and').
+-define(LOG_MAX, max).
+-define(LOG_VAR, var).
+
+%% Monitor AST node tags.
+-define(MON_ACC, yes).
+-define(MON_REJ, no).
+-define(MON_ACT, act).
+-define(MON_CHS, chs).
+-define(MON_OR, 'or').
+-define(MON_AND, 'and').
+-define(MON_REC, rec).
+-define(MON_VAR, var).
 
 
 %% Monitor environment keys.
@@ -236,54 +246,45 @@ visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard},
 
 
 %%-spec visit_node(Node, Opts) -> erl_syntax:syntaxTree() | [erl_syntax:syntaxTree()].
-visit_node(Node = {tt, _}, Opts) ->
-  ?TRACE("Visiting 'tt' node ~p.", [Node]),
 
+visit_node(Node = {Bool, _}, _Opts) when Bool =:= ?LOG_TRU; Bool =:= ?LOG_FLS ->
+  ?TRACE("Visiting '~s' node ~p.", [Bool, Node]),
+
+  % Get monitor meta environment for node.
   Env = get_env(Node),
-  erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), Env]);
+  erl_syntax:tuple([erl_syntax:atom(
+    if Bool =:= ?LOG_TRU -> ?MON_ACC; Bool =:= ?LOG_FLS -> ?MON_REJ end
+  ), Env]);
 
-
-
-visit_node(Node = {ff, _}, Opts) ->
-  ?TRACE("Visiting 'ff' node ~p.", [Node]),
-
-  Env = get_env(Node),
-  erl_syntax:tuple([erl_syntax:atom(?NODE_REJ), Env]);
-
-visit_node(Var = {var, _, Name}, Opts) ->
+visit_node(Var = {?LOG_VAR, _, _Name}, _Opts) ->
   ?TRACE("Visiting 'var' node ~p.", [Var]),
 
+  % Get monitor meta environment for node.
   Env = get_env(Var),
-  erl_syntax:tuple([erl_syntax:atom(?NODE_VAR), Env, Var]);
+  erl_syntax:tuple([erl_syntax:atom(?MON_VAR), Env, Var]);
 
-visit_node(Node = {max, _, Var = {var, _, _}, Phi}, Opts) ->
+visit_node(Node = {?LOG_MAX, _, Var = {?LOG_VAR, _, _}, Phi}, _Opts) ->
   ?TRACE("Visiting 'max' node ~p.", [Node]),
 
-  Clause = erl_syntax:clause(none, [visit_node(Phi, Opts)]),
-%%  Rec = erl_syntax:application(erl_syntax:named_fun_expr(Var, [Clause]), []),
+  Clause = erl_syntax:clause(none, [visit_node(Phi, _Opts)]),
   Fun = erl_syntax:named_fun_expr(Var, [Clause]),
 
+  % Get monitor meta environment for node.
   Env = get_env(Node),
-  erl_syntax:tuple([erl_syntax:atom(?NODE_REC), Env, Fun]);
+  erl_syntax:tuple([erl_syntax:atom(?MON_REC), Env, Fun]);
 
-% TODO: Can merge this one with the atom.
-visit_node(Node = {Op, _, Phi, Psi}, Opts) when Op =:= 'or'; Op =:= 'and' ->
+visit_node(Node = {Op, _, Phi, Psi}, _Opts)
+  when Op =:= ?LOG_OR; Op =:= ?LOG_AND ->
   ?TRACE("Visiting '~s' node ~p.", [Op, Node]),
 
-  Op0 = erl_syntax:atom(Op),
-%%  Env = erl_syntax:tuple([erl_syntax:atom(env), erl_syntax:list([])]),
+  % Get monitor meta environment for node.
   Env = get_env(Node),
-  erl_syntax:tuple([Op0, Env, visit_node(Phi, Opts), visit_node(Psi, Opts)]);
+  erl_syntax:tuple(
+    [erl_syntax:atom(Op), Env, visit_node(Phi, _Opts), visit_node(Psi, _Opts)]
+  );
 
-
-%%visit_node(_Node = {pos, _, {act, _, Pat, Guard}, Phi}, Opts) ->
-%%  ?TRACE("Visiting 'pos' node ~p.", [_Node]),
-%%
-%%  % TODO: The case for this is just the same but we only need to handle when we have the opposite condition.
-%%  ok;
-
-
-visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, Opts) when Mod =:= pos; Mod =:= nec ->
+visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
+  when Mod =:= ?LOG_POS; Mod =:= ?LOG_NEC ->
   ?TRACE("Visiting '~s' node ~p.", [Mod, Node]),
 
   % Encode the predicate functions for the action and its inverse. The predicate
@@ -301,71 +302,32 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, Opts) when Mod =:= pos; M
     erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(true)])
   ]),
 
-
-%%  LeftPredClause = [
-%%    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(true)]),
-%%    erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(false)])
-%%  ],
-%%
-%%  RightPredClause = [
-%%    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(false)]),
-%%    erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(true)])
-%%  ],
-%%
-%%  LeftPred = erl_syntax:fun_expr(LeftPredClause),
-%%  RightPred = erl_syntax:fun_expr(RightPredClause),
-
-
-%%  LeftBodyClause = [erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, Opts)])],
-%%  LeftBody = erl_syntax:fun_expr(LeftBodyClause),
-
   % Encode the action bodies. The normal (left) action body consists of the
   % pattern with variables, and the continuation monitor. The inverse (right)
   % action consists of the verdict when the inverse pattern and guard test is
   % successful.
-  ContBody = erl_syntax:fun_expr([
-    erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, Opts)])
+  CntBody = erl_syntax:fun_expr([
+    erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, _Opts)])
   ]),
 
-  VerdBody = erl_syntax:fun_expr([
+  VrdBody = erl_syntax:fun_expr([
     erl_syntax:clause([erl_syntax:underscore()], none, [
       if Mod =:= pos ->
-        erl_syntax:tuple([erl_syntax:atom(?NODE_REJ), get_env({ff, -1})]);
+        erl_syntax:tuple([erl_syntax:atom(?MON_REJ), get_env({ff, -1})]);
         Mod =:= nec ->
-          erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), get_env({tt, -1})])
+          erl_syntax:tuple([erl_syntax:atom(?MON_ACC), get_env({tt, -1})])
       end
     ])
   ]),
 
-
-%%  InvBody =
-%%    case Mod of
-%%      pos ->
-%%        erl_syntax:tuple([erl_syntax:atom(?NODE_REJ), get_env({ff, undefined})]);
-%%      nec ->
-%%        erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), get_env({tt, undefined})])
-%%    end,
-
-
-  % Constructs the body of the accept branch, when the monitor takes the other branch.
-%%  Env0 = get_env({tt, undefined}),
-%%  NodeAcc = erl_syntax:tuple([erl_syntax:atom(?NODE_ACC), Env0]),
-
-
-%%  RightBodyClause = [erl_syntax:clause([erl_syntax:underscore()], none, [NodeAcc])],
-%%  RightBody = erl_syntax:fun_expr(RightBodyClause),
-
-
-
   % Get a new unique placeholder for this monitor action.
   Ph = new_ph(),
 
-%%  LeftAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, true), LeftPred, LeftBody]),
-%%  RightAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, false), RightPred, RightBody]),
-
-  % Encode left and right actions.
-  LeftAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, true), Pred, ContBody]),
-  RightAct = erl_syntax:tuple([erl_syntax:atom(act), get_env(Node, Ph, false), InvPred, VerdBody]),
+  % Encode left and right action nodes.
+  LeftAct = erl_syntax:tuple(
+    [erl_syntax:atom(act), get_env(Node, Ph, true), Pred, CntBody]),
+  RightAct = erl_syntax:tuple(
+    [erl_syntax:atom(act), get_env(Node, Ph, false), InvPred, VrdBody]),
 
   % Encode the mutually-exclusive choice consisting of the left and right
   % summands.

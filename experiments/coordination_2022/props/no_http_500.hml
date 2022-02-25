@@ -24,7 +24,7 @@
 %%%-------------------------------------------------------------------
 
 with
-  cowboy_stream_h:request_process(_, _, _)
+  cowboy_stream_h:request_process(6 + 1, #{x := Y}, [_ | _], <<"hello">>)
 check
   [{_ConnProc <- _ReqProc, cowboy_stream_h:request_process(_, _, _)}]
     max X.(

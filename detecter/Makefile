@@ -39,3 +39,4 @@ test-loop: compile-test
         ((number = number + 1)) ; \
     done
 
+# dialyzer --build_plt --apps erts kernel stdlib mnesia compiler syntax_tools ssh public_key edoc parsetools

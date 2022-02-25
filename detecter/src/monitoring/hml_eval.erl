@@ -397,7 +397,7 @@ create_module(Ast, Module, Opts) ->
 
 %% @private Visits SHMLnf formula nodes and generates the corresponding syntax
 %% tree describing one monitor (i.e. one formula is mapped to one monitor).
--spec visit_forms(Forms, Opts) -> Forms :: [erl_parse:abstract_form()]
+-spec visit_forms(Forms, Opts) -> Forms :: [erl_syntax:syntaxTree()]
   when
   Forms :: [formula()],
   Opts :: options().
@@ -598,9 +598,10 @@ visit_nec(_Node = {nec, _, Act, Shml}, Opts) ->
 %% the abstract syntax clause. The specification of the SHMLnf grammar restricts
 %% clauses to consist of exactly one Erlang pattern with an empty body.
 -spec visit_act(Act) ->
-  {Patterns :: erl_syntax:syntaxTree(), Guard :: erl_syntax:syntaxTree()}
+  {Patterns :: [erl_syntax:syntaxTree()], Guard :: erl_syntax:syntaxTree()}
   when
   Act :: af_act().
+%%  Act :: term().
 visit_act({fork, _, Var0, Var1, {mfa, _, Mod, Fun, _, Clause}}) ->
   Patterns = erl_syntax:clause_patterns(Clause),
   Guard = erl_syntax:clause_guard(Clause),

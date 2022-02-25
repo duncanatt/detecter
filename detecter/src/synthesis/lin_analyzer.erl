@@ -149,7 +149,7 @@
 %%           cannot be reduced, the original monitor is returned, and the proof
 %%           derivation list is empty.
 %% }
--spec reduce_tau(M :: monitor(), PdList :: list(pd())) -> {pd(), monitor()}.
+-spec reduce_tau(M :: monitor(), PdList :: list(pd())) -> {list(pd()), monitor()}.
 reduce_tau(M, PdList) ->
   ?TRACE("[ Attempting new derivation for monitor on internal action 'tau' ]"),
 
@@ -189,7 +189,7 @@ reduce_tau(M, PdList) ->
   when
   Event :: event:evm_event(),
   M :: monitor(),
-  PdList :: list(pd).
+  PdList :: list(pd()).
 analyze(Event, M, PdList) ->
   ?TRACE("[ Starting new derivation for monitor on event '~w' ]", [Event]),
 
@@ -342,7 +342,7 @@ dispatch(Event = {recv, _Receiver, Msg}) ->
 %%%           after one tau reduction or `false` if the monitor cannot be
 %%%           reduced.
 %%% }
--spec derive_tau(M, PdId) -> false | {true, pd(), monitor()}
+-spec derive_tau(M, PdId) -> false | {true, {pd(), monitor()}}
   when
   M :: monitor(),
   PdId :: pd_id().
@@ -713,7 +713,7 @@ set_ns({?KEY_ENV, Env}, {ns, Ns}) ->
 
 %%% @private Copies the namespace from the environment of `From` to `To`. The
 %%%          existing namespace is overwritten.
--spec copy_ns(From :: monitor(), To :: monitor()) -> env().
+-spec copy_ns(From :: monitor(), To :: monitor()) -> monitor().
 copy_ns(From, To) ->
   EnvTo = set_ns(get_env(To), get_ns(get_env(From))),
   set_env(To, EnvTo).
@@ -805,7 +805,7 @@ m_to_iolist({rec, Env = {env, _}, M}, Ctx) ->
   [unwrap_value(get_str(Env)), m_to_iolist(M(), Ctx)].
 
 %% @private Formats the specified proof derivation list.
--spec format_pdlist(PdList :: list(pd)) -> iolist().
+-spec format_pdlist(PdList :: list(pd())) -> {non_neg_integer(), iolist()}.
 format_pdlist(PdList) ->
   lists:foldl(
     fun(Pd, {I, IoList}) ->

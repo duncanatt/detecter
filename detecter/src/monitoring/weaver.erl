@@ -139,7 +139,7 @@
 -spec weave(SrcDir, MfaSpec, Opts) -> [comp_ret()]
   when
   SrcDir :: string(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   Opts :: options().
 weave(SrcDir, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
   case filelib:ensure_dir(util:as_dir_name(opts:out_dir_opt(Opts))) of
@@ -185,7 +185,7 @@ weave(SrcDir, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
 -spec weave_file(SrcFile, MfaSpec, Opts) -> comp_ret()
   when
   SrcFile :: string(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   Opts :: options().
 weave_file(File, MfaSpec, Opts) when is_function(MfaSpec, 1) ->
   case filelib:ensure_dir(util:as_dir_name(opts:out_dir_opt(Opts))) of
@@ -295,7 +295,7 @@ compiled_mods(Compiled) ->
   {Id0 :: non_neg_integer(), Ast0 :: [erl_parse:abstract_form()]}
   when
   Ast :: [erl_parse:abstract_form()],
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   FilterSpec :: filter(),
   Id :: non_neg_integer().
 trans_ast([], _, _, Id) ->
@@ -311,7 +311,7 @@ trans_ast([Form | Forms], MfaSpec, FilterSpec, Id) ->
   {Id0 :: non_neg_integer(), Form0 :: erl_parse:abstract_form()}
   when
   Form :: erl_parse:abstract_form(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   FilterSpec :: filter(),
   Id :: non_neg_integer().
 trans_form({function, Line, Name, Arity, Clauses}, MfaSpec, FilterSpec, Id) ->
@@ -327,7 +327,7 @@ trans_form(Form, _, _, Id) ->
   {Id0 :: non_neg_integer(), [erl_parse:abstract_expr()]}
   when
   Body :: [erl_parse:abstract_expr()],
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   FilterSpec :: filter(),
   Id :: non_neg_integer().
 trans_body([], _, _, Id) ->
@@ -366,7 +366,7 @@ trans_body([Expr | Body], MfaSpec, FilterSpec, Id) ->
   {Id0 :: non_neg_integer(), Expr0 :: erl_parse:abstract_expr()}
   when
   Expr :: erl_parse:abstract_expr(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   FilterSpec :: filter(),
   Id :: non_neg_integer().
 % Blocks.
@@ -517,7 +517,7 @@ trans_expr(Expr, _, _, Id) ->
   {Id0 :: non_neg_integer(), Clauses0 :: [erl_parse:abstract_clause()]}
   when
   Clauses :: [erl_parse:abstract_clause()],
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   FilterSpec :: filter(),
   Id :: non_neg_integer().
 trans_clauses([], _, _, Id) ->
@@ -532,7 +532,7 @@ trans_clauses([Clause | Clauses], MfaSpec, FilterSpec, Id) ->
   {Id0 :: non_neg_integer(), Clause0 :: erl_parse:abstract_clause()}
   when
   Clause :: erl_parse:abstract_clause(),
-  MfaSpec :: monitor:mfa_spec(),
+  MfaSpec :: analyzer:mfa_spec(),
   FilterSpec :: filter(),
   Id :: non_neg_integer().
 trans_clause({clause, Line, Patterns, Guards, Body}, MfaSpec, FilterSpec, Id) ->

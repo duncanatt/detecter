@@ -37,7 +37,7 @@
 -export([]).
 
 %%% Types.
--export_type([maxhml/0]).
+-export_type([af_maxhml/0]).
 
 %%% Implemented behaviors.
 %-behavior().
@@ -103,11 +103,11 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
--type line() :: erl_anno:line().
+-type anno() :: erl_anno:line().
 %% Line number in source.
 
--type with() :: {with, line(), mfargs()} |
-{with, line(), mfargs(), constraint()}.
+-type with() :: {with, anno(), af_mfargs()} |
+{with, anno(), af_mfargs(), af_constraint()}.
 %% Process instrumentation selection MFArgs.
 
 % A specification consists of a max hml formula.
@@ -115,45 +115,182 @@
 %% spec - but we need to change the parser specification.
 
 -type specs() :: list(spec()).
--type spec() :: {spec, line(), with(), maxhml()}.
-%% Instrumentation specification.
+-type spec() :: {spec, anno(), with(), af_maxhml()}.
+%% Instrumentation specification abstract form.
 
--type maxhml() :: hml_tt() | hml_ff() | hml_pos() | hml_nec() |
-hml_or() | hml_and() | hml_max() | hml_var().
--type hml_ff() :: {ff, line()}.
--type hml_tt() :: {tt, line()}.
--type hml_pos() :: {pos, line(), sym_act(), maxhml()}.
--type hml_nec() :: {nec, line(), sym_act(), maxhml()}.
--type hml_or() :: {'or', line(), maxhml(), maxhml()}.
--type hml_and() :: {'and', line(), maxhml(), maxhml()}.
--type hml_max() :: {max, line(), hml_var(), maxhml()}.
--type hml_var() :: {var, line(), atom()}.
-%% maxHML formulae.
 
--type sym_act() :: {act, line(), pattern()} |
-{act, line(), pattern(), constraint()}.
-%% Symbolic action.
+%% Maxhml abstract form. af_maxhml should be the title.
 
--type pattern() :: fork() | init() | exit() | send() | recv().
-%% Symbolic action pattern.
+-type af_maxhml() :: af_hml_tt() | af_hml_ff() | af_hml_pos() | af_hml_nec() |
+af_hml_or() | af_hml_and() | af_hml_max() | af_hml_var().
+-type af_hml_ff() :: {ff, anno()}.
+-type af_hml_tt() :: {tt, anno()}.
+-type af_hml_pos() :: {pos, anno(), af_sym_act(), af_maxhml()}.
+-type af_hml_nec() :: {nec, anno(), af_sym_act(), af_maxhml()}.
+-type af_hml_or() :: {'or', anno(), af_maxhml(), af_maxhml()}.
+-type af_hml_and() :: {'and', anno(), af_maxhml(), af_maxhml()}.
+-type af_hml_max() :: {max, anno(), af_hml_var(), af_maxhml()}.
+-type af_hml_var() :: {var, anno(), atom()}.
+%% maxHML formulae abstract form.
 
--type constraint() :: erl_syntax:syntaxTree().
-%% Boolean constraint expression.
+-type af_sym_act() :: {act, anno(), af_pattern()} |
+{act, anno(), af_pattern(), af_constraint()}.
+%% Symbolic action abstract form.
 
--type fork() :: {fork, line(), var(), var(), mfargs()}.
--type init() :: {init, line(), var(), var(), mfargs()}.
--type exit() :: {exit, line(), var(), erl_parse:abstract_clause()}.
--type send() :: {send, line(), var(), var(), erl_parse:abstract_clause()}.
--type recv() :: {recv, line(), var(), erl_parse:abstract_clause()}.
+-type af_pattern() :: af_fork() | af_init() | af_exit() | af_send() | af_recv().
+%% Symbolic action pattern abstract form.
+
+-type af_constraint() :: af_guard().
+%% Boolean constraint expression abstract form.
+
+-type af_fork() :: {fork, anno(), af_var(), af_var(), af_mfargs()}.
+-type af_init() :: {init, anno(), af_var(), af_var(), af_mfargs()}.
+-type af_exit() :: {exit, anno(), af_var(), af_expr()}.
+-type af_send() :: {send, anno(), af_var(), af_var(), af_expr()}.
+-type af_recv() :: {recv, anno(), af_var(), af_expr()}.
 %% Abstract process lifecycle and interaction actions.
 
--type mfargs() :: {mfargs, line(), atom(), atom(), list(erl_parse:abstract_clause())}.
-%% Module, function and arguments.
-
--type var() :: {var, line(), atom()}.
-%% Variable.
+-type af_mfargs() :: {mfargs, anno(), module(), fun_name(), list(af_expr())}.
+%% Module, function and arguments abstract form.
 
 
+-type af_var() :: af_variable(). %% TODO: Can be moved to erlang defs.
+%% Variable abstract form.
+
+-type af_expr() :: abstract_expr(). %% TODO: Can be moved to erlang defs.
+%% Expression abstract form.
+
+-type fun_name() :: atom().
+
+%% Monitors.
+-type monitor() :: erl_syntax:syntaxTree().
+
+
+%% Erlang.
+
+-type abstract_expr() :: af_literal()
+| af_variable()
+| af_tuple(abstract_expr())
+| af_nil()
+| af_cons(abstract_expr())
+| af_bin(abstract_expr())
+| af_binary_op(abstract_expr())
+| af_unary_op(abstract_expr())
+| af_map_creation(abstract_expr())
+| af_list_comprehension()
+| af_binary_comprehension().
+
+-type af_list_comprehension() ::
+{'lc', anno(), af_template(), af_qualifier_seq()}.
+
+-type af_binary_comprehension() ::
+{'bc', anno(), af_template(), af_qualifier_seq()}.
+
+-type af_template() :: abstract_expr().
+
+-type af_qualifier_seq() :: [af_qualifier(), ...].
+
+-type af_qualifier() :: af_generator() | af_filter().
+
+-type af_generator() :: {'generate', anno(), af_pattern(), abstract_expr()}
+| {'b_generate', anno(), af_pattern(), abstract_expr()}.
+
+-type af_filter() :: abstract_expr().
+
+
+
+-type af_map_creation(T) :: {'map', anno(), [af_assoc(T)]}.
+
+
+-type af_assoc(T) :: af_assoc_exact(T).
+
+-type af_assoc_exact(T) :: {'map_field_exact', anno(), T, T}.
+
+
+-type af_guard() :: [af_guard_test(), ...].
+
+-type af_guard_test() :: af_literal()
+| af_variable()
+| af_tuple(af_guard_test())
+| af_nil()
+| af_cons(af_guard_test())
+| af_bin(af_guard_test())
+| af_binary_op(af_guard_test())
+| af_unary_op(af_guard_test())
+| af_map_creation(af_guard_test()).
+
+-type af_literal() :: af_atom()
+| af_character()
+| af_float()
+| af_integer()
+| af_string().
+
+-type af_singleton_integer_type() :: af_integer()
+| af_character()
+| af_unary_op(af_singleton_integer_type())
+| af_binary_op(af_singleton_integer_type()).
+
+
+-type af_atom() :: af_lit_atom(atom()).
+
+-type af_lit_atom(A) :: {'atom', anno(), A}.
+
+-type af_character() :: {'char', anno(), char()}.
+
+-type af_float() :: {'float', anno(), float()}.
+
+-type af_integer() :: {'integer', anno(), non_neg_integer()}.
+
+-type af_string() :: {'string', anno(), string()}.
+
+-type af_variable() :: {'var', anno(), atom()}. % | af_anon_variable()
+
+-type af_tuple(T) :: {'tuple', anno(), [T]}.
+
+-type af_nil() :: {'nil', anno()}.
+
+-type af_cons(T) :: {'cons', anno(), T, T}.
+
+-type af_bin(T) :: {'bin', anno(), [af_binelement(T)]}.
+
+-type af_binelement(T) :: {'bin_element', anno(), T, af_binelement_size(), type_specifier_list()}.
+
+-type af_binelement_size() :: 'default' | abstract_expr().
+
+-type af_binary_op(T) :: {'op', anno(), binary_op(), T, T}.
+
+-type binary_op() :: '/' | '*' | 'div' | 'rem' | 'band' | 'and' | '+' | '-'
+| 'bor' | 'bxor' | 'bsl' | 'bsr' | 'or' | 'xor' | '++'
+| '--' | '==' | '/=' | '=<' | '<'  | '>=' | '>' | '=:='
+| '=/='.
+
+-type af_unary_op(T) :: {'op', anno(), unary_op(), T}.
+
+-type unary_op() :: '+' | '-' | 'bnot' | 'not'.
+
+
+-type type_specifier_list() :: 'default' | [type_specifier(), ...].
+
+-type type_specifier() :: type()
+| signedness()
+| endianness()
+| unit().
+
+-type type() :: 'integer'
+| 'float'
+| 'binary'
+| 'bytes'
+| 'bitstring'
+| 'bits'
+| 'utf8'
+| 'utf16'
+| 'utf32'.
+
+-type signedness() :: 'signed' | 'unsigned'.
+
+-type endianness() :: 'big' | 'little' | 'native'.
+
+-type unit() :: {'unit', 1..256}.
 
 
 %%% ----------------------------------------------------------------------------
@@ -286,15 +423,14 @@ visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard},
   ?DEBUG("MFArgs: ~p.", [MFArgs]),
 
 
-%%  Body = erl_syntax:atom(undefined), % This needs to be obnained from visitmaxhml
 
   Body = erl_syntax:tuple([erl_syntax:atom(ok), visit_node(Phi, Opts)]),
 
   [erl_syntax:clause([mfargs_tuple(MFArgs)], Guard, [Body]) | visit_forms(Forms, Opts)].
 
 
-%%-spec visit_node(Node, Opts) -> erl_syntax:syntaxTree() | [erl_syntax:syntaxTree()].
 
+-spec visit_node(Node :: af_maxhml(), Opts :: term()) -> erl_syntax:syntaxTree().
 visit_node(Node = {Bool, _}, _Opts) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
   ?TRACE("Visiting '~s' node ~p.", [Bool, Node]),
 
@@ -361,9 +497,9 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
   VrdBody = erl_syntax:fun_expr([
     erl_syntax:clause([erl_syntax:underscore()], none, [
       if Mod =:= pos ->
-        erl_syntax:tuple([erl_syntax:atom(?MON_REJ), get_env({ff, -1})]);
+        erl_syntax:tuple([erl_syntax:atom(?MON_REJ), get_env({ff, 0})]);
         Mod =:= nec ->
-          erl_syntax:tuple([erl_syntax:atom(?MON_ACC), get_env({tt, -1})])
+          erl_syntax:tuple([erl_syntax:atom(?MON_ACC), get_env({tt, 0})])
       end
     ])
   ]),
@@ -404,6 +540,7 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
 %%%     }
 %%%   }
 %%% }
+%%-spec pat_tuple(Pattern :: af_pattern()) -> erl_syntax:syntaxTree().
 pat_tuple({fork, _, Pid, Pid2, MFArgs}) ->
   erl_syntax:tuple([
     erl_syntax:atom(trace), Pid, erl_syntax:atom(spawn), Pid2,
@@ -422,8 +559,7 @@ pat_tuple({recv, _, Pid, Var}) ->
   erl_syntax:tuple([
     erl_syntax:atom(trace), Pid, erl_syntax:atom('receive'), Var]).
 
-
-% TODO: Check whether this is used more than once. Yes it is!!
+-spec mfargs_tuple(MFArgs :: af_mfargs()) -> erl_syntax:syntaxTree().
 mfargs_tuple({?MFARGS, _, M, F, Args}) ->
   erl_syntax:tuple([
     erl_syntax:atom(M), erl_syntax:atom(F), erl_syntax:list(Args)
@@ -438,7 +574,12 @@ mfargs_tuple({?MFARGS, _, M, F, Args}) ->
 %%% used to manage the monitor meta information such as the substitution and its
 %%% stringified representation.
 %% TODO:Fix this and use the correct type.
--spec get_env(Node :: any()) -> erl_syntax:syntaxTree().
+
+
+-spec get_env(Node) -> erl_syntax:syntaxTree()
+  when
+  Node :: af_hml_tt() | af_hml_ff() | af_hml_or() | af_hml_and() |
+          af_hml_max() | af_hml_var().
 get_env(Node = {Bool, _}) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
   Str = new_env_kv(?KEY_STR, get_str(Node)),
   new_env([Str]);
@@ -457,20 +598,25 @@ get_env(Node = {?HML_VAR, _, Name}) ->
 %%% @private Returns an Erlang AST representation of the monitor environment
 %%% for monitor parallel disjunction and conjunction.
 %% TODO:Fix this and use the correct type.
-%%-spec get_env(Node :: any()) -> erl_syntax:syntaxTree().
-get_env(Node = {Mod, _, _Act, _Phi}, Ph, Neg)
+-spec get_env(Node, Ph, Inv) -> erl_syntax:syntaxTree()
+  when
+  Node :: af_hml_pos() | af_hml_nec(),
+  Ph :: string(),
+  Inv :: boolean().
+get_env(Node = {Mod, _, _Act, _Phi}, Ph, Inv)
   when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
+%%  when Mod =:= pos; Mod =:= nec ->
 
   % Get stringified representation of the monitor, variable placeholder and
   % pattern used to help stringify the monitor.
-  Str = new_env_kv(?KEY_STR, get_str(Node, Ph, Neg)),
+  Str = new_env_kv(?KEY_STR, get_str(Node, Ph, Inv)),
   Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Ph)),
   Pat = new_env_kv(?KEY_PAT, get_pat(Node)),
   new_env([Str, Var, Pat]).
 
 %%% @private Returns an Erlang AST representation of the monitor environment for
 %%% choice.
--spec get_chs_env() -> erl_syntax:syntaxTree().
+%%-spec get_chs_env() -> erl_syntax:syntaxTree().
 get_chs_env() ->
   Str = new_env_kv(?KEY_STR, get_chs_str()),
   new_env([Str]).
@@ -506,7 +652,7 @@ get_str({ff, _}) ->
 get_str({Op, _, _, _}) when Op =:= 'or'; Op =:= 'and' ->
   erl_syntax:string(atom_to_list(Op));
 get_str({max, _, {var, _, Name}, _}) ->
-  erl_syntax:string(["rec ", atom_to_list(Name)]);
+  erl_syntax:string(lists:flatten("rec ", atom_to_list(Name)));
 get_str({var, _, Name}) ->
   erl_syntax:string(atom_to_list(Name)).
 
@@ -516,7 +662,11 @@ get_str({var, _, Name}) ->
 %%% {@par The action expects a variable placeholder and can generate the action
 %%%       or inverse action based on the flag Inv.
 %%% }
-%%-spec get_str(any()) -> erl_syntax:syntaxTree().
+-spec get_str(Node, Ph, Inv) -> erl_syntax:syntaxTree()
+  when
+  Node :: af_hml_pos() | af_hml_nec(),
+  Ph :: string(),
+  Inv :: boolean().
 get_str({Mod, _, {?HML_ACT, _, Pat, Guard}, _}, Ph, Inv)
   when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
 
@@ -531,7 +681,7 @@ get_str({Mod, _, {?HML_ACT, _, Pat, Guard}, _}, Ph, Inv)
   % negative branch of mutually-exclusive choice.
   IoList__ = if Inv -> IoList_; true -> ["NOT(", IoList_, ")"] end,
 
-  erl_syntax:string(IoList__).
+  erl_syntax:string(lists:flatten(IoList__)).
 
 %%% @private Returns an Erlang AST representation of the stringified monitor
 %%% mutually-exclusive choice.
@@ -555,7 +705,7 @@ get_chs_str() ->
 %%%       time, and must be made to support all the Erlang syntax (unless
 %%%       someone else has done it.
 %%% }
-%%-spec get_pat({Mod, _, {act, _, Pat, Guard}, _}) -> erl_syntax:syntaxTree().
+-spec get_pat(Node :: af_hml_pos() | af_hml_nec()) -> erl_syntax:syntaxTree().
 get_pat({Mod, _, {?HML_ACT, _, Pat, Guard}, _})
   when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
 
@@ -564,16 +714,11 @@ get_pat({Mod, _, {?HML_ACT, _, Pat, Guard}, _})
 
   Replaced = re:replace(Str, "\\b([A-Z_][a-zA-Z0-9_@]*)\\b", "undefined", [{return, list}, global]),
 
-  ?INFO("The Originial patternn is: ~s", [Str]),
-  ?INFO("The replaced patternn is: ~s", [Replaced]),
+%%  ?INFO("The Originial patternn is: ~s", [Str]),
+%%  ?INFO("The replaced patternn is: ~s", [Replaced]),
 
   {ok, Tokens, _EndLine} = erl_scan:string(Replaced ++ "."),
   {ok, [AbsForm]} = erl_parse:parse_exprs(Tokens),
-
-%%  P0 = pat_tuple(Pat).
-
-%%  \b(_[a-zA-Z0-9_@]*)|([A-Z][a-zA-Z0-9_@]*)\b
-
   AbsForm.
 
 
@@ -623,12 +768,6 @@ new_ph() ->
 
   % Generate unique placeholder name.
   lists:flatten(io_lib:format("~s~s~2..0B", [?PH_PRF, Tok, Idx])).
-
-
-
-
-
-
 
 
 create_log(Format, Args, Type) ->

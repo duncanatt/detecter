@@ -37,7 +37,7 @@
 -export([]).
 
 %%% Types.
--export_type([]).
+-export_type([maxhml/0]).
 
 %%% Implemented behaviors.
 %-behavior().
@@ -63,19 +63,17 @@
 %% Default Erlang compiler options.
 -define(COMPILER_OPTS, [nowarn_shadow_vars, return]).
 
-%% Monitoring verdicts.
-%%-define(ACCEPT, yes).
-%%-define(REJECT, no).
-
 %% maxHML logic AST node tags.
--define(LOG_TRU, tt).
--define(LOG_FLS, ff).
--define(LOG_POS, pos).
--define(LOG_NEC, nec).
--define(LOG_OR, 'or').
--define(LOG_AND, 'and').
--define(LOG_MAX, max).
--define(LOG_VAR, var).
+-define(HML_TRU, tt).
+-define(HML_FLS, ff).
+-define(HML_ACT, act).
+-define(HML_POS, pos).
+-define(HML_NEC, nec).
+-define(HML_OR, 'or').
+-define(HML_AND, 'and').
+-define(HML_MAX, max).
+-define(HML_VAR, var).
+-define(MFARGS, mfargs).
 
 %% Monitor AST node tags.
 -define(MON_ACC, yes).
@@ -104,6 +102,58 @@
 %%% ----------------------------------------------------------------------------
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
+
+-type line() :: erl_anno:line().
+%% Line number in source.
+
+-type with() :: {with, line(), mfargs()} |
+{with, line(), mfargs(), constraint()}.
+%% Process instrumentation selection MFArgs.
+
+% A specification consists of a max hml formula.
+
+%% spec - but we need to change the parser specification.
+
+-type specs() :: list(spec()).
+-type spec() :: {spec, line(), with(), maxhml()}.
+%% Instrumentation specification.
+
+-type maxhml() :: hml_tt() | hml_ff() | hml_pos() | hml_nec() |
+hml_or() | hml_and() | hml_max() | hml_var().
+-type hml_ff() :: {ff, line()}.
+-type hml_tt() :: {tt, line()}.
+-type hml_pos() :: {pos, line(), sym_act(), maxhml()}.
+-type hml_nec() :: {nec, line(), sym_act(), maxhml()}.
+-type hml_or() :: {'or', line(), maxhml(), maxhml()}.
+-type hml_and() :: {'and', line(), maxhml(), maxhml()}.
+-type hml_max() :: {max, line(), hml_var(), maxhml()}.
+-type hml_var() :: {var, line(), atom()}.
+%% maxHML formulae.
+
+-type sym_act() :: {act, line(), pattern()} |
+{act, line(), pattern(), constraint()}.
+%% Symbolic action.
+
+-type pattern() :: fork() | init() | exit() | send() | recv().
+%% Symbolic action pattern.
+
+-type constraint() :: erl_syntax:syntaxTree().
+%% Boolean constraint expression.
+
+-type fork() :: {fork, line(), var(), var(), mfargs()}.
+-type init() :: {init, line(), var(), var(), mfargs()}.
+-type exit() :: {exit, line(), var(), erl_parse:abstract_clause()}.
+-type send() :: {send, line(), var(), var(), erl_parse:abstract_clause()}.
+-type recv() :: {recv, line(), var(), erl_parse:abstract_clause()}.
+%% Abstract process lifecycle and interaction actions.
+
+-type mfargs() :: {mfargs, line(), atom(), atom(), list(erl_parse:abstract_clause())}.
+%% Module, function and arguments.
+
+-type var() :: {var, line(), atom()}.
+%% Variable.
+
+
 
 
 %%% ----------------------------------------------------------------------------
@@ -230,8 +280,6 @@ visit_forms([], Opts) ->
     _ ->
       [erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(undefined)])]
   end;
-%%visit_forms([{form, _, {mfa, _, Mod, Fun, _, Clause}, Shml} | Forms], Opts) ->
-%%visit_forms([Form | Forms], Opts) ->
 visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard}, Phi} | Forms], Opts) ->
   ?DEBUG("Form: ~p.", [Form]),
   ?DEBUG("Guard: ~p.", [Guard]),
@@ -247,23 +295,23 @@ visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard},
 
 %%-spec visit_node(Node, Opts) -> erl_syntax:syntaxTree() | [erl_syntax:syntaxTree()].
 
-visit_node(Node = {Bool, _}, _Opts) when Bool =:= ?LOG_TRU; Bool =:= ?LOG_FLS ->
+visit_node(Node = {Bool, _}, _Opts) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
   ?TRACE("Visiting '~s' node ~p.", [Bool, Node]),
 
   % Get monitor meta environment for node.
   Env = get_env(Node),
   erl_syntax:tuple([erl_syntax:atom(
-    if Bool =:= ?LOG_TRU -> ?MON_ACC; Bool =:= ?LOG_FLS -> ?MON_REJ end
+    if Bool =:= ?HML_TRU -> ?MON_ACC; Bool =:= ?HML_FLS -> ?MON_REJ end
   ), Env]);
 
-visit_node(Var = {?LOG_VAR, _, _Name}, _Opts) ->
+visit_node(Var = {?HML_VAR, _, _Name}, _Opts) ->
   ?TRACE("Visiting 'var' node ~p.", [Var]),
 
   % Get monitor meta environment for node.
   Env = get_env(Var),
   erl_syntax:tuple([erl_syntax:atom(?MON_VAR), Env, Var]);
 
-visit_node(Node = {?LOG_MAX, _, Var = {?LOG_VAR, _, _}, Phi}, _Opts) ->
+visit_node(Node = {?HML_MAX, _, Var = {?HML_VAR, _, _}, Phi}, _Opts) ->
   ?TRACE("Visiting 'max' node ~p.", [Node]),
 
   Clause = erl_syntax:clause(none, [visit_node(Phi, _Opts)]),
@@ -274,7 +322,7 @@ visit_node(Node = {?LOG_MAX, _, Var = {?LOG_VAR, _, _}, Phi}, _Opts) ->
   erl_syntax:tuple([erl_syntax:atom(?MON_REC), Env, Fun]);
 
 visit_node(Node = {Op, _, Phi, Psi}, _Opts)
-  when Op =:= ?LOG_OR; Op =:= ?LOG_AND ->
+  when Op =:= ?HML_OR; Op =:= ?HML_AND ->
   ?TRACE("Visiting '~s' node ~p.", [Op, Node]),
 
   % Get monitor meta environment for node.
@@ -284,7 +332,7 @@ visit_node(Node = {Op, _, Phi, Psi}, _Opts)
   );
 
 visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
-  when Mod =:= ?LOG_POS; Mod =:= ?LOG_NEC ->
+  when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
   ?TRACE("Visiting '~s' node ~p.", [Mod, Node]),
 
   % Encode the predicate functions for the action and its inverse. The predicate
@@ -334,54 +382,99 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
   erl_syntax:tuple([erl_syntax:atom(chs), get_chs_env(), LeftAct, RightAct]).
 
 
-% Name: atom
-% Env : syntaxTree
-% Act : syntaxTree
+%%% @private Translates the symbolic action patterns fork, init, exit, send and
+%%% recv to native Erlang trace event patterns.
+%%%
+%%% {@par Translation is as follows:
+%%%   {@ul
+%%%     {@item Fork `{fork, _, Pid, Pid2, MFArgs}' is translated to
+%%%            `{trace, Pid, spawn, Pid2, {M, F, Args}}'
+%%%     }
+%%%     {@item Initialized `{init, _, Pid2, Pid, MFArgs}' is translated to
+%%%            `{trace, Pid, spawned, Pid2, {M, F, Args}}'
+%%%     }
+%%%     {@item Exit pattern `{exit, _, Pid, Var}' is translated to
+%%%            `{trace, Pid, exit, Reason}'
+%%%     }
+%%%     {@item Send pattern `{send, _, Pid, To, Var}' is translated to
+%%%            `{trace, Pid, send, Msg, To}'
+%%%     }
+%%%     {@item Receive pattern `{recv, _, Pid, Var}' is translated to
+%%%            `{trace, Pid, 'receive', Msg}'
+%%%     }
+%%%   }
+%%% }
+pat_tuple({fork, _, Pid, Pid2, MFArgs}) ->
+  erl_syntax:tuple([
+    erl_syntax:atom(trace), Pid, erl_syntax:atom(spawn), Pid2,
+    mfargs_tuple(MFArgs)]);
+pat_tuple({init, _, Pid2, Pid, MFArgs}) ->
+  erl_syntax:tuple([
+    erl_syntax:atom(trace), Pid2, erl_syntax:atom(spawned), Pid,
+    mfargs_tuple(MFArgs)]);
+pat_tuple({exit, _, Pid, Var}) ->
+  erl_syntax:tuple([
+    erl_syntax:atom(trace), Pid, erl_syntax:atom(exit), Var]);
+pat_tuple({send, _, Pid, To, Var}) ->
+  erl_syntax:tuple([
+    erl_syntax:atom(trace), Pid, erl_syntax:atom(send), Var, To]);
+pat_tuple({recv, _, Pid, Var}) ->
+  erl_syntax:tuple([
+    erl_syntax:atom(trace), Pid, erl_syntax:atom('receive'), Var]).
 
 
-% Contains the meta monitor logic for managing the environment.
-get_env(Node = {tt, _}) ->
+% TODO: Check whether this is used more than once. Yes it is!!
+mfargs_tuple({?MFARGS, _, M, F, Args}) ->
+  erl_syntax:tuple([
+    erl_syntax:atom(M), erl_syntax:atom(F), erl_syntax:list(Args)
+  ]).
+
+
+%%% ----------------------------------------------------------------------------
+%%% Private monitor environment creation functions.
+%%% ----------------------------------------------------------------------------
+
+%%% @private Returns an Erlang AST representation of the monitor environment
+%%% used to manage the monitor meta information such as the substitution and its
+%%% stringified representation.
+%% TODO:Fix this and use the correct type.
+-spec get_env(Node :: any()) -> erl_syntax:syntaxTree().
+get_env(Node = {Bool, _}) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
   Str = new_env_kv(?KEY_STR, get_str(Node)),
   new_env([Str]);
-get_env(Node = {ff, _}) ->
+get_env(Node = {Op, _, _, _}) when Op =:= ?HML_OR; Op =:= ?HML_AND ->
   Str = new_env_kv(?KEY_STR, get_str(Node)),
   new_env([Str]);
-get_env(Node = {Op, _, _, _}) when Op =:= 'or'; Op =:= 'and' ->
-  Str = new_env_kv(?KEY_STR, get_str(Node)),
-  new_env([Str]);
-get_env(Node = {max, _, {var, _, Name}, _}) ->
+get_env(Node = {?HML_MAX, _, {?HML_VAR, _, Name}, _}) ->
   Str = new_env_kv(?KEY_STR, get_str(Node)),
   Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Name)),
   new_env([Str, Var]);
-get_env(Node = {var, _, Name}) ->
+get_env(Node = {?HML_VAR, _, Name}) ->
   Str = new_env_kv(?KEY_STR, get_str(Node)),
   Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Name)),
   new_env([Str, Var]).
 
+%%% @private Returns an Erlang AST representation of the monitor environment
+%%% for monitor parallel disjunction and conjunction.
+%% TODO:Fix this and use the correct type.
+%%-spec get_env(Node :: any()) -> erl_syntax:syntaxTree().
+get_env(Node = {Mod, _, _Act, _Phi}, Ph, Neg)
+  when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
 
-
-
-
-get_env(Node = {Mod, _, Act, Phi}, Ph, Neg) when Mod =:= pos; Mod =:= nec ->
-
-
+  % Get stringified representation of the monitor, variable placeholder and
+  % pattern used to help stringify the monitor.
   Str = new_env_kv(?KEY_STR, get_str(Node, Ph, Neg)),
   Var = new_env_kv(?KEY_VAR, erl_syntax:atom(Ph)),
   Pat = new_env_kv(?KEY_PAT, get_pat(Node)),
-  ?INFO("PAT is: ~p", [Pat]),
-
   new_env([Str, Var, Pat]).
 
+%%% @private Returns an Erlang AST representation of the monitor environment for
+%%% choice.
+-spec get_chs_env() -> erl_syntax:syntaxTree().
 get_chs_env() ->
   Str = new_env_kv(?KEY_STR, get_chs_str()),
   new_env([Str]).
 
-
-%% TODO: Add the cases for the nec and pos to generate their own environment.
-
-
-% key : atom
-% val : syntaxTree
 
 %%% @private Returns an Erlang AST representation of a new key-value pair.
 -spec new_env_kv(Key, Val) -> erl_syntax:syntaxTree()
@@ -397,7 +490,13 @@ new_env_kv(Key, Val) ->
 new_env(List) ->
   erl_syntax:tuple([erl_syntax:atom(?KEY_ENV), erl_syntax:list(List)]).
 
-%%% @private Returns an Erlang ASP representation of the stringified monitor.
+
+%%% ----------------------------------------------------------------------------
+%%% Private monitor stringifying and functions.
+%%% ----------------------------------------------------------------------------
+
+%%% @private Returns an Erlang ASP representation of the stringified monitor
+%%% verdicts, parallel Boolean connectives, and recursion.
 %% TODO: Add a proper type later.
 -spec get_str(any()) -> erl_syntax:syntaxTree().
 get_str({tt, _}) ->
@@ -411,8 +510,15 @@ get_str({max, _, {var, _, Name}, _}) ->
 get_str({var, _, Name}) ->
   erl_syntax:string(atom_to_list(Name)).
 
-
-get_str({Mod, _, {act, _, Pat, Guard}, _}, Ph, Neg) when Mod =:= pos; Mod =:= nec ->
+%%% @private Returns an Erlang AST representation of the stringified monitor
+%%% actions.
+%%%
+%%% {@par The action expects a variable placeholder and can generate the action
+%%%       or inverse action based on the flag Inv.
+%%% }
+%%-spec get_str(any()) -> erl_syntax:syntaxTree().
+get_str({Mod, _, {?HML_ACT, _, Pat, Guard}, _}, Ph, Inv)
+  when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
 
   % Stringify placeholder and the internal representation of the pattern as an
   % Erlang trace event.
@@ -423,22 +529,39 @@ get_str({Mod, _, {act, _, Pat, Guard}, _}, Ph, Neg) when Mod =:= pos; Mod =:= ne
 
   % Add the stringified negation if the branch is the inverse one (called the)
   % negative branch of mutually-exclusive choice.
-  IoList__ = if Neg -> IoList_; true -> ["NOT(", IoList_, ")"] end,
+  IoList__ = if Inv -> IoList_; true -> ["NOT(", IoList_, ")"] end,
 
   erl_syntax:string(IoList__).
 
+%%% @private Returns an Erlang AST representation of the stringified monitor
+%%% mutually-exclusive choice.
+-spec get_chs_str() -> erl_syntax:syntaxTree().
 get_chs_str() ->
   erl_syntax:string("+").
 
 
-
-
-get_pat({Mod, _, {act, _, Pat, Guard}, _}) when Mod =:= pos; Mod =:= nec ->
+%%% @private Returns an Erlang AST representation of the native Erlang trace
+%%% event patterns with all the variables and 'don't care' patterns replaced by
+%%% `undefined'. This is used by the monitoring algorithm to unwrap the monitor
+%%% function enclosing monitor actions and compute the stringified
+%%% representation of the monitor on the fly.
+%%%
+%%% {@par The current implementation works, but is inelegant since it piggybacks
+%%%       on the Erlang parsing mechanism. The function first converts the
+%%%       abstract pattern to an IoList, replaces the variables and 'don't care'
+%%%       patterns with `undefined', and parses the result back to an Erlang AST
+%%%       representation. The alternative and (perhaps?) more elegant way is to
+%%%       implement a replace feature that mutates an Erlang AST. This takes
+%%%       time, and must be made to support all the Erlang syntax (unless
+%%%       someone else has done it.
+%%% }
+%%-spec get_pat({Mod, _, {act, _, Pat, Guard}, _}) -> erl_syntax:syntaxTree().
+get_pat({Mod, _, {?HML_ACT, _, Pat, Guard}, _})
+  when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
 
   Str = erl_pp:expr(erl_syntax:revert(pat_tuple(Pat))),
 
 
-%%  Replaced = re:replace(Str, "\W_\W", "undefined", [{return, list}, global]),
   Replaced = re:replace(Str, "\\b([A-Z_][a-zA-Z0-9_@]*)\\b", "undefined", [{return, list}, global]),
 
   ?INFO("The Originial patternn is: ~s", [Str]),
@@ -454,17 +577,21 @@ get_pat({Mod, _, {act, _, Pat, Guard}, _}) when Mod =:= pos; Mod =:= nec ->
   AbsForm.
 
 
-
+%%% @private Initializes the variable placeholder generator.
+-spec init_ph() -> ok.
 init_ph() ->
 
   % Placeholder token list must at least contain one name.
   if length(?PH_NAMES) < 1 -> error("Empty token token names"); true -> ok end,
 
-  put(?KEY_PH_NAMES, ?PH_NAMES), %
-  put(?KEY_PH_CNT, 0). % 0-based index.
+  put(?KEY_PH_NAMES, ?PH_NAMES), % list of available variable placeholder names.
+  put(?KEY_PH_CNT, 0), % 0-based index.
+  ok.
 
+%%% @private Checks whether the variable placeholder generator is initialized
+%%% and initializes it if not.
+-spec check_ph() -> ok.
 check_ph() ->
-
   case get(?KEY_PH_NAMES) of
     undefined ->
 
@@ -474,7 +601,8 @@ check_ph() ->
       ok
   end.
 
-% Generates the next variable place holder.
+%%% @private Returns the next unique variable placeholder name.
+-spec new_ph() -> string().
 new_ph() ->
 
   % Ensure that placeholder token name generator is initialized.
@@ -494,54 +622,10 @@ new_ph() ->
   Idx = Cnt div length(?PH_NAMES),
 
   % Generate unique placeholder name.
-%%  list_to_atom(lists:flatten(io_lib:format("~s~s~2..0B", [?PH_PRF, Tok, Idx]))).
   lists:flatten(io_lib:format("~s~s~2..0B", [?PH_PRF, Tok, Idx])).
 
 
-%%act_clauses({act, _, Pat, Guard}, ActBody, InvBody) ->
-%%  [erl_syntax:clause([pat_tuple(Pat)], Guard, ActBody),
-%%    erl_syntax:clause([erl_syntax:underscore()], none, InvBody)].
 
-
-
-
-
-
-
-
-
-
-pat_tuple({send, _, Pid, To, Var}) ->
-%%  {trace, Pid, send, Msg, To}
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(send), Var, To]);
-pat_tuple({recv, _, Pid, Var}) ->
-%%  {trace, Pid, 'receive', Msg}
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom('receive'), Var]);
-pat_tuple({fork, _, Pid, Pid2, MFArgs}) ->
-%%  {trace, Pid, spawn, Pid2, {M, F, Args}}
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(spawn), Pid2,
-    mfargs_tuple(MFArgs)]);
-
-pat_tuple({init, _, Pid2, Pid, MFArgs}) ->
-%%  {trace, Pid, spawned, Pid2, {M, F, Args}}
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid2, erl_syntax:atom(spawned), Pid,
-    mfargs_tuple(MFArgs)]);
-
-pat_tuple({exit, _, Pid, Var}) ->
-%%  {trace, Pid, exit, Reason}
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(exit), Var]).
-
-
-% TODO: Check whether this is used more than once. Yes it is!!
-mfargs_tuple({mfargs, _, M, F, Args}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(M), erl_syntax:atom(F), erl_syntax:list(Args)
-  ]).
 
 
 

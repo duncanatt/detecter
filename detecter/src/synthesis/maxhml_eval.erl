@@ -23,24 +23,25 @@
 -module(maxhml_eval).
 -author("Duncan Paul Attard").
 
--compile(export_all).
+%%-compile(export_all).
 
 %%% Includes.
 -include_lib("stdlib/include/assert.hrl").
--include_lib("syntax_tools/include/merl.hrl").
+%%-include_lib("syntax_tools/include/merl.hrl").
 -include("log.hrl").
 
 %%% Public API.
--export([]).
+-export([compile/2]).
+-export([parse_string/1, parse_file/1]).
 
 %%% Callbacks/Internal.
--export([]).
+-export([visit/2]).
 
 %%% Types.
 -export_type([af_maxhml/0]).
 
 %%% Implemented behaviors.
-%-behavior().
+-behavior(gen_eval).
 
 
 %%% ----------------------------------------------------------------------------
@@ -48,20 +49,24 @@
 %%% ----------------------------------------------------------------------------
 
 %% File extensions.
--define(EXT_HML, ".hml").
--define(EXT_ERL, ".erl").
--define(EXT_BEAM, ".beam").
+%%-define(EXT_HML, ".hml").
+%%-define(EXT_ERL, ".erl").
+%%-define(EXT_BEAM, ".beam").
 
--define(MFA_SPEC, mfa_spec).
+%%-define(MFA_SPEC, mfa_spec).
 
 %% Option definitions and their values.
 %%-define(OPT_INCLUDE, i). % Kept same option name as Erlang compiler.
--define(OPT_OUT_DIR, outdir). % Kept same option name as Erlang compiler.
--define(OPT_ERL, erl).
--define(OPT_VERBOSE, v).
+%%-define(OPT_OUT_DIR, outdir). % Kept same option name as Erlang compiler.
+%%-define(OPT_ERL, erl).
+%%-define(OPT_VERBOSE, v).
 
 %% Default Erlang compiler options.
--define(COMPILER_OPTS, [nowarn_shadow_vars, return]).
+%%-define(COMPILER_OPTS, [nowarn_shadow_vars, return]).
+
+%% maxHML and
+-define(LEXER_MOD, maxhml_lexer).
+-define(PARSER_MOD, maxhml_parser).
 
 %% maxHML logic AST node tags.
 -define(HML_TRU, tt).
@@ -103,262 +108,268 @@
 %%% Type definitions.
 %%% ----------------------------------------------------------------------------
 
--type anno() :: erl_anno:line().
+-type line() :: erl_anno:line().
 %% Line number in source.
 
--type with() :: {with, anno(), af_mfargs()} |
-{with, anno(), af_mfargs(), af_constraint()}.
+-type with() :: {with, line(), gen_eval:af_mfargs()} |
+{with, line(), gen_eval:af_mfargs(), gen_eval:af_constraint()}.
 %% Process instrumentation selection MFArgs.
 
-% A specification consists of a max hml formula.
-
-%% spec - but we need to change the parser specification.
-
--type specs() :: list(spec()).
--type spec() :: {spec, anno(), with(), af_maxhml()}.
+-type spec() :: {spec, line(), with(), af_maxhml()}.
 %% Instrumentation specification abstract form.
 
-
-%% Maxhml abstract form. af_maxhml should be the title.
-
 -type af_maxhml() :: af_hml_tt() | af_hml_ff() | af_hml_pos() | af_hml_nec() |
-af_hml_or() | af_hml_and() | af_hml_max() | af_hml_var().
--type af_hml_ff() :: {ff, anno()}.
--type af_hml_tt() :: {tt, anno()}.
--type af_hml_pos() :: {pos, anno(), af_sym_act(), af_maxhml()}.
--type af_hml_nec() :: {nec, anno(), af_sym_act(), af_maxhml()}.
--type af_hml_or() :: {'or', anno(), af_maxhml(), af_maxhml()}.
--type af_hml_and() :: {'and', anno(), af_maxhml(), af_maxhml()}.
--type af_hml_max() :: {max, anno(), af_hml_var(), af_maxhml()}.
--type af_hml_var() :: {var, anno(), atom()}.
+af_hml_or() | af_hml_and() |
+af_hml_max() | af_hml_var().
 %% maxHML formulae abstract form.
 
--type af_sym_act() :: {act, anno(), af_pattern()} |
-{act, anno(), af_pattern(), af_constraint()}.
+-type af_hml_ff() :: {ff, line()}.
+-type af_hml_tt() :: {tt, line()}.
+-type af_hml_pos() :: {pos, line(), gen_eval:af_sym_act(), af_maxhml()}.
+-type af_hml_nec() :: {nec, line(), gen_eval:af_sym_act(), af_maxhml()}.
+-type af_hml_or() :: {'or', line(), af_maxhml(), af_maxhml()}.
+-type af_hml_and() :: {'and', line(), af_maxhml(), af_maxhml()}.
+-type af_hml_max() :: {max, line(), af_hml_var(), af_maxhml()}.
+-type af_hml_var() :: {var, line(), atom()}.
+%% HML formulae abstract form.
+
+%%-type af_sym_act() :: {act, line(), af_pattern()} |
+%%{act, line(), af_pattern(), af_constraint()}.
 %% Symbolic action abstract form.
 
--type af_pattern() :: af_fork() | af_init() | af_exit() | af_send() | af_recv().
+%%-type af_pattern() :: af_fork() | af_init() | af_exit() | af_send() | af_recv().
 %% Symbolic action pattern abstract form.
 
--type af_constraint() :: af_guard().
+%%-type af_constraint() :: af_guard().
 %% Boolean constraint expression abstract form.
 
--type af_fork() :: {fork, anno(), af_var(), af_var(), af_mfargs()}.
--type af_init() :: {init, anno(), af_var(), af_var(), af_mfargs()}.
--type af_exit() :: {exit, anno(), af_var(), af_expr()}.
--type af_send() :: {send, anno(), af_var(), af_var(), af_expr()}.
--type af_recv() :: {recv, anno(), af_var(), af_expr()}.
+%%-type af_fork() :: {fork, line(), af_var(), af_var(), af_mfargs()}.
+%%-type af_init() :: {init, line(), af_var(), af_var(), af_mfargs()}.
+%%-type af_exit() :: {exit, line(), af_var(), af_expr()}.
+%%-type af_send() :: {send, line(), af_var(), af_var(), af_expr()}.
+%%-type af_recv() :: {recv, line(), af_var(), af_expr()}.
 %% Abstract process lifecycle and interaction actions.
 
--type af_mfargs() :: {mfargs, anno(), module(), fun_name(), list(af_expr())}.
+%%-type af_mfargs() :: {mfargs, line(), module(), fun_name(), list(af_expr())}.
 %% Module, function and arguments abstract form.
 
 
--type af_var() :: af_variable(). %% TODO: Can be moved to erlang defs.
+%%-type af_var() :: af_variable(). %% TODO: Can be moved to erlang defs.
 %% Variable abstract form.
 
--type af_expr() :: abstract_expr(). %% TODO: Can be moved to erlang defs.
+%%-type af_expr() :: abstract_expr(). %% TODO: Can be moved to erlang defs.
 %% Expression abstract form.
 
--type fun_name() :: atom().
+%%-type fun_name() :: atom().
 
 %% Monitors.
--type monitor() :: erl_syntax:syntaxTree().
+%%-type monitor() :: erl_syntax:syntaxTree().
 
 
 %% Erlang.
 
--type abstract_expr() :: af_literal()
-| af_variable()
-| af_tuple(abstract_expr())
-| af_nil()
-| af_cons(abstract_expr())
-| af_bin(abstract_expr())
-| af_binary_op(abstract_expr())
-| af_unary_op(abstract_expr())
-| af_map_creation(abstract_expr())
-| af_list_comprehension()
-| af_binary_comprehension().
+%%-type abstract_expr() :: af_literal()
+%%| af_variable()
+%%| af_tuple(abstract_expr())
+%%| af_nil()
+%%| af_cons(abstract_expr())
+%%| af_bin(abstract_expr())
+%%| af_binary_op(abstract_expr())
+%%| af_unary_op(abstract_expr())
+%%| af_map_creation(abstract_expr())
+%%| af_list_comprehension()
+%%| af_binary_comprehension().
+%%
+%%-type af_list_comprehension() ::
+%%{'lc', line(), af_template(), af_qualifier_seq()}.
+%%
+%%-type af_binary_comprehension() ::
+%%{'bc', line(), af_template(), af_qualifier_seq()}.
+%%
+%%-type af_template() :: abstract_expr().
+%%
+%%-type af_qualifier_seq() :: [af_qualifier(), ...].
+%%
+%%-type af_qualifier() :: af_generator() | af_filter().
+%%
+%%-type af_generator() :: {'generate', line(), af_pattern(), abstract_expr()}
+%%| {'b_generate', line(), af_pattern(), abstract_expr()}.
+%%
+%%-type af_filter() :: abstract_expr().
+%%
+%%
+%%
+%%-type af_map_creation(T) :: {'map', line(), [af_assoc(T)]}.
+%%
+%%
+%%-type af_assoc(T) :: af_assoc_exact(T).
+%%
+%%-type af_assoc_exact(T) :: {'map_field_exact', line(), T, T}.
+%%
+%%
+%%-type af_guard() :: [af_guard_test(), ...].
+%%
+%%-type af_guard_test() :: af_literal()
+%%| af_variable()
+%%| af_tuple(af_guard_test())
+%%| af_nil()
+%%| af_cons(af_guard_test())
+%%| af_bin(af_guard_test())
+%%| af_binary_op(af_guard_test())
+%%| af_unary_op(af_guard_test())
+%%| af_map_creation(af_guard_test()).
+%%
+%%-type af_literal() :: af_atom()
+%%| af_character()
+%%| af_float()
+%%| af_integer()
+%%| af_string().
+%%
+%%-type af_singleton_integer_type() :: af_integer()
+%%| af_character()
+%%| af_unary_op(af_singleton_integer_type())
+%%| af_binary_op(af_singleton_integer_type()).
+%%
+%%
+%%-type af_atom() :: af_lit_atom(atom()).
+%%
+%%-type af_lit_atom(A) :: {'atom', line(), A}.
+%%
+%%-type af_character() :: {'char', line(), char()}.
+%%
+%%-type af_float() :: {'float', line(), float()}.
+%%
+%%-type af_integer() :: {'integer', line(), non_neg_integer()}.
+%%
+%%-type af_string() :: {'string', line(), string()}.
+%%
+%%-type af_variable() :: {'var', line(), atom()}. % | af_anon_variable()
+%%
+%%-type af_tuple(T) :: {'tuple', line(), [T]}.
+%%
+%%-type af_nil() :: {'nil', line()}.
+%%
+%%-type af_cons(T) :: {'cons', line(), T, T}.
+%%
+%%-type af_bin(T) :: {'bin', line(), [af_binelement(T)]}.
+%%
+%%-type af_binelement(T) :: {'bin_element', line(), T, af_binelement_size(), type_specifier_list()}.
+%%
+%%-type af_binelement_size() :: 'default' | abstract_expr().
+%%
+%%-type af_binary_op(T) :: {'op', line(), binary_op(), T, T}.
+%%
+%%-type binary_op() :: '/' | '*' | 'div' | 'rem' | 'band' | 'and' | '+' | '-'
+%%| 'bor' | 'bxor' | 'bsl' | 'bsr' | 'or' | 'xor' | '++'
+%%| '--' | '==' | '/=' | '=<' | '<'  | '>=' | '>' | '=:='
+%%| '=/='.
+%%
+%%-type af_unary_op(T) :: {'op', line(), unary_op(), T}.
+%%
+%%-type unary_op() :: '+' | '-' | 'bnot' | 'not'.
+%%
+%%
+%%-type type_specifier_list() :: 'default' | [type_specifier(), ...].
+%%
+%%-type type_specifier() :: type()
+%%| signedness()
+%%| endianness()
+%%| unit().
+%%
+%%-type type() :: 'integer'
+%%| 'float'
+%%| 'binary'
+%%| 'bytes'
+%%| 'bitstring'
+%%| 'bits'
+%%| 'utf8'
+%%| 'utf16'
+%%| 'utf32'.
+%%
+%%-type signedness() :: 'signed' | 'unsigned'.
+%%
+%%-type endianness() :: 'big' | 'little' | 'native'.
+%%
+%%-type unit() :: {'unit', 1..256}.
 
--type af_list_comprehension() ::
-{'lc', anno(), af_template(), af_qualifier_seq()}.
 
--type af_binary_comprehension() ::
-{'bc', anno(), af_template(), af_qualifier_seq()}.
-
--type af_template() :: abstract_expr().
-
--type af_qualifier_seq() :: [af_qualifier(), ...].
-
--type af_qualifier() :: af_generator() | af_filter().
-
--type af_generator() :: {'generate', anno(), af_pattern(), abstract_expr()}
-| {'b_generate', anno(), af_pattern(), abstract_expr()}.
-
--type af_filter() :: abstract_expr().
-
-
-
--type af_map_creation(T) :: {'map', anno(), [af_assoc(T)]}.
-
-
--type af_assoc(T) :: af_assoc_exact(T).
-
--type af_assoc_exact(T) :: {'map_field_exact', anno(), T, T}.
-
-
--type af_guard() :: [af_guard_test(), ...].
-
--type af_guard_test() :: af_literal()
-| af_variable()
-| af_tuple(af_guard_test())
-| af_nil()
-| af_cons(af_guard_test())
-| af_bin(af_guard_test())
-| af_binary_op(af_guard_test())
-| af_unary_op(af_guard_test())
-| af_map_creation(af_guard_test()).
-
--type af_literal() :: af_atom()
-| af_character()
-| af_float()
-| af_integer()
-| af_string().
-
--type af_singleton_integer_type() :: af_integer()
-| af_character()
-| af_unary_op(af_singleton_integer_type())
-| af_binary_op(af_singleton_integer_type()).
-
-
--type af_atom() :: af_lit_atom(atom()).
-
--type af_lit_atom(A) :: {'atom', anno(), A}.
-
--type af_character() :: {'char', anno(), char()}.
-
--type af_float() :: {'float', anno(), float()}.
-
--type af_integer() :: {'integer', anno(), non_neg_integer()}.
-
--type af_string() :: {'string', anno(), string()}.
-
--type af_variable() :: {'var', anno(), atom()}. % | af_anon_variable()
-
--type af_tuple(T) :: {'tuple', anno(), [T]}.
-
--type af_nil() :: {'nil', anno()}.
-
--type af_cons(T) :: {'cons', anno(), T, T}.
-
--type af_bin(T) :: {'bin', anno(), [af_binelement(T)]}.
-
--type af_binelement(T) :: {'bin_element', anno(), T, af_binelement_size(), type_specifier_list()}.
-
--type af_binelement_size() :: 'default' | abstract_expr().
-
--type af_binary_op(T) :: {'op', anno(), binary_op(), T, T}.
-
--type binary_op() :: '/' | '*' | 'div' | 'rem' | 'band' | 'and' | '+' | '-'
-| 'bor' | 'bxor' | 'bsl' | 'bsr' | 'or' | 'xor' | '++'
-| '--' | '==' | '/=' | '=<' | '<'  | '>=' | '>' | '=:='
-| '=/='.
-
--type af_unary_op(T) :: {'op', anno(), unary_op(), T}.
-
--type unary_op() :: '+' | '-' | 'bnot' | 'not'.
-
-
--type type_specifier_list() :: 'default' | [type_specifier(), ...].
-
--type type_specifier() :: type()
-| signedness()
-| endianness()
-| unit().
-
--type type() :: 'integer'
-| 'float'
-| 'binary'
-| 'bytes'
-| 'bitstring'
-| 'bits'
-| 'utf8'
-| 'utf16'
-| 'utf32'.
-
--type signedness() :: 'signed' | 'unsigned'.
-
--type endianness() :: 'big' | 'little' | 'native'.
-
--type unit() :: {'unit', 1..256}.
 
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
-compile(File, Opts) when is_list(Opts) ->
-
-  % Load and parse source script file.
-  case parse_file(File) of
-    {ok, Ast} ->
-
-      % Before synthesizing monitor as Erlang source or beam code, make ensure
-      % the output directory exists.
-      case filelib:ensure_dir(util:as_dir_name(opts:out_dir_opt(Opts))) of
-        ok ->
-
-          % Extract base name of source script file to create module name. This
-          % is used in -module attribute in synthesized monitor module.
-          Module = list_to_atom(filename:basename(File, ?EXT_HML)),
-
-          % Synthesize monitor from parsed syntax tree in the form of an Erlang
-          % syntax tree and write result to file as Erlang source or beam code.
-          write_monitor(create_module(Ast, ?MFA_SPEC, Module, Opts), File, Opts);
-
-        {error, Reason} ->
-
-          % Error when creating directory.
-          erlang:raise(error, Reason, erlang:get_stacktrace())
-      end;
-
-    {error, Error} ->
-
-      % Error when performing lexical analysis or parsing.
-      show_error(File, Error)
-  end.
-
-parse_string(String) when is_list(String) ->
-  case maxhml_lexer:string(String) of
-    {ok, [], _} ->
-      {ok, skip};
-    {ok, Tokens, _} ->
-      case maxhml_parser:parse(Tokens) of
-        {ok, Ast} ->
-          {ok, Ast};
-        {error, Error = {_, _, _}} ->
-
-          % Error in parsing.
-          {error, Error}
-      end;
-    {error, Error = {_, _, _}, _} ->
-
-      % Error in lexical analysis.
-      {error, Error}
-  end.
+%%compile(File, Opts) when is_list(Opts) ->
+%%
+%%  % Load and parse source script file.
+%%  case parse_file(File) of
+%%    {ok, Ast} ->
+%%
+%%      % Before synthesizing monitor as Erlang source or beam code, make ensure
+%%      % the output directory exists.
+%%      case filelib:ensure_dir(util:as_dir_name(opts:out_dir_opt(Opts))) of
+%%        ok ->
+%%
+%%          % Extract base name of source script file to create module name. This
+%%          % is used in -module attribute in synthesized monitor module.
+%%          Module = list_to_atom(filename:basename(File, ?EXT_HML)),
+%%
+%%          % Synthesize monitor from parsed syntax tree in the form of an Erlang
+%%          % syntax tree and write result to file as Erlang source or beam code.
+%%          write_monitor(create_module(Ast, ?MFA_SPEC, Module, Opts), File, Opts);
+%%
+%%        {error, Reason} ->
+%%
+%%          % Error when creating directory.
+%%          erlang:raise(error, Reason, erlang:get_stacktrace())
+%%      end;
+%%
+%%    {error, Error} ->
+%%
+%%      % Error when performing lexical analysis or parsing.
+%%      show_error(File, Error)
+%%  end.
 
 
-parse_file(File) when is_list(File) ->
-  case file:read_file(File) of
-    {ok, Bytes} ->
-      parse_string(binary_to_list(Bytes));
-    {error, Reason} ->
-      throw({error, {?MODULE, Reason}})
-  end.
+compile(File, Opts) ->
+  gen_eval:compile(?MODULE, ?LEXER_MOD, ?PARSER_MOD, File, Opts).
 
-%%% ----------------------------------------------------------------------------
-%%% Private helper functions.
-%%% ----------------------------------------------------------------------------
+
+%%parse_string(String) when is_list(String) ->
+%%  case maxhml_lexer:string(String) of
+%%    {ok, [], _} ->
+%%      {ok, skip};
+%%    {ok, Tokens, _} ->
+%%      case maxhml_parser:parse(Tokens) of
+%%        {ok, Ast} ->
+%%          {ok, Ast};
+%%        {error, Error = {_, _, _}} ->
+%%
+%%          % Error in parsing.
+%%          {error, Error}
+%%      end;
+%%    {error, Error = {_, _, _}, _} ->
+%%
+%%      % Error in lexical analysis.
+%%      {error, Error}
+%%  end.
+
+parse_string(String) ->
+  gen_eval:parse_string(?LEXER_MOD, ?PARSER_MOD, String).
+
+
+%%parse_file(File) when is_list(File) ->
+%%  case file:read_file(File) of
+%%    {ok, Bytes} ->
+%%      parse_string(binary_to_list(Bytes));
+%%    {error, Reason} ->
+%%      throw({error, {?MODULE, Reason}})
+%%  end.
+
+parse_file(File) ->
+  gen_eval:parse_file(?LEXER_MOD, ?PARSER_MOD, File).
+
+
 
 
 %%% ----------------------------------------------------------------------------
@@ -368,9 +379,8 @@ parse_file(File) when is_list(File) ->
 %% @private Configures the Erlang compiler options used to generate the beam
 %% code file.
 
-compile_opts(Opts) ->
-%%  [{i, include_opt(Opts)}, {i, out_dir_opt(Opts)} | ?COMPILER_OPTS].
-  [{i, opts:out_dir_opt(Opts)} | ?COMPILER_OPTS].
+%%compile_opts(Opts) ->
+%%  [{i, opts:out_dir_opt(Opts)} | ?COMPILER_OPTS].
 
 
 %%% ----------------------------------------------------------------------------
@@ -379,59 +389,63 @@ compile_opts(Opts) ->
 
 % TODO: Implement check for unguarded variables
 
-create_module(Ast, MonFun, Module, Opts) ->
-
-  % Create monitor file meta information.
-  {{YY, MM, DD}, {HH, Mm, SS}} = calendar:local_time(),
-  Date = io_lib:format("~4B/~2B/~2..0B ~2..0B:~2..0B:~2..0B",
-    [YY, MM, DD, HH, Mm, SS]),
-
-  % Generate module base and attribute meta information.
-  Forms = ?Q([
-    "-module('@Module@').",
-    "-author(\"detectEr\").",
-    "-generated('@Date@').",
-    "-export(['@MonFun@'/1])."
-  ]),
-
-  % Create monitor module.
-  erl_syntax:revert_forms(Forms ++ [
-    erl_syntax:function(erl_syntax:atom(MonFun), visit_forms(Ast, Opts))
-  ]).
+%%create_module(Ast, MonFun, Module, Opts) ->
+%%
+%%  % Create monitor file meta information.
+%%  {{YY, MM, DD}, {HH, Mm, SS}} = calendar:local_time(),
+%%  Date = io_lib:format("~4B/~2B/~2..0B ~2..0B:~2..0B:~2..0B",
+%%    [YY, MM, DD, HH, Mm, SS]),
+%%
+%%  % Generate module base and attribute meta information.
+%%  Forms = ?Q([
+%%    "-module('@Module@').",
+%%    "-author(\"detectEr\").",
+%%    "-generated('@Date@').",
+%%    "-export(['@MonFun@'/1])."
+%%  ]),
+%%
+%%  % Create monitor module.
+%%  erl_syntax:revert_forms(Forms ++ [
+%%    erl_syntax:function(erl_syntax:atom(MonFun), visit_forms(Ast, Opts))
+%%  ]).
 
 %% @private Visits maxHML formula nodes and generates the corresponding syntax
 %% tree describing one monitor (i.e. one formula is mapped to one monitor).
 
-visit_forms([], Opts) ->
+%%visit_forms([], Opts) ->
+%%
+%%  % Generate catchall function clause pattern that matches Mod:Fun(Args) pattern
+%%  % to return undefined. This is the case when no monitor should be attached to
+%%  % said MFA.
+%%  case opts:verbose_opt(Opts) of
+%%    true ->
+%%
+%%      % Create verbose function clause body to include logging information.
+%%      MfaVar = erl_syntax:variable('_Mfa'),
+%%      Log = create_log("Skipping instrumentation for MFA pattern '~p'.~n", [MfaVar], no),
+%%      [erl_syntax:clause([MfaVar], none, [Log | [erl_syntax:atom(undefined)]])];
+%%    _ ->
+%%      [erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(undefined)])]
+%%  end;
+%%visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard}, Phi} | Forms], Opts) ->
+%%  ?DEBUG("Form: ~p.", [Form]),
+%%  ?DEBUG("Guard: ~p.", [Guard]),
+%%  ?DEBUG("MFArgs: ~p.", [MFArgs]),
+%%
+%%
+%%
+%%  Body = erl_syntax:tuple([erl_syntax:atom(ok), visit_node(Phi, Opts)]),
+%%
+%%  [erl_syntax:clause([mfargs_tuple(MFArgs)], Guard, [Body]) | visit_forms(Forms, Opts)].
 
-  % Generate catchall function clause pattern that matches Mod:Fun(Args) pattern
-  % to return undefined. This is the case when no monitor should be attached to
-  % said MFA.
-  case opts:verbose_opt(Opts) of
-    true ->
-
-      % Create verbose function clause body to include logging information.
-      MfaVar = erl_syntax:variable('_Mfa'),
-      Log = create_log("Skipping instrumentation for MFA pattern '~p'.~n", [MfaVar], no),
-      [erl_syntax:clause([MfaVar], none, [Log | [erl_syntax:atom(undefined)]])];
-    _ ->
-      [erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(undefined)])]
-  end;
-visit_forms([Form = {form, _, {sel, _, MFArgs = {mfargs, _, M, F, Args}, Guard}, Phi} | Forms], Opts) ->
-  ?DEBUG("Form: ~p.", [Form]),
-  ?DEBUG("Guard: ~p.", [Guard]),
-  ?DEBUG("MFArgs: ~p.", [MFArgs]),
 
 
 
-  Body = erl_syntax:tuple([erl_syntax:atom(ok), visit_node(Phi, Opts)]),
-
-  [erl_syntax:clause([mfargs_tuple(MFArgs)], Guard, [Body]) | visit_forms(Forms, Opts)].
-
-
-
--spec visit_node(Node :: af_maxhml(), Opts :: term()) -> erl_syntax:syntaxTree().
-visit_node(Node = {Bool, _}, _Opts) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
+-spec visit(Node, Opts) -> erl_syntax:syntaxTree()
+  when
+  Node :: af_maxhml(),
+  Opts :: opts:options().
+visit(Node = {Bool, _}, _Opts) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
   ?TRACE("Visiting '~s' node ~p.", [Bool, Node]),
 
   % Get monitor meta environment for node.
@@ -440,34 +454,34 @@ visit_node(Node = {Bool, _}, _Opts) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
     if Bool =:= ?HML_TRU -> ?MON_ACC; Bool =:= ?HML_FLS -> ?MON_REJ end
   ), Env]);
 
-visit_node(Var = {?HML_VAR, _, _Name}, _Opts) ->
+visit(Var = {?HML_VAR, _, _Name}, _Opts) ->
   ?TRACE("Visiting 'var' node ~p.", [Var]),
 
   % Get monitor meta environment for node.
   Env = get_env(Var),
   erl_syntax:tuple([erl_syntax:atom(?MON_VAR), Env, Var]);
 
-visit_node(Node = {?HML_MAX, _, Var = {?HML_VAR, _, _}, Phi}, _Opts) ->
+visit(Node = {?HML_MAX, _, Var = {?HML_VAR, _, _}, Phi}, _Opts) ->
   ?TRACE("Visiting 'max' node ~p.", [Node]),
 
-  Clause = erl_syntax:clause(none, [visit_node(Phi, _Opts)]),
+  Clause = erl_syntax:clause(none, [visit(Phi, _Opts)]),
   Fun = erl_syntax:named_fun_expr(Var, [Clause]),
 
   % Get monitor meta environment for node.
   Env = get_env(Node),
   erl_syntax:tuple([erl_syntax:atom(?MON_REC), Env, Fun]);
 
-visit_node(Node = {Op, _, Phi, Psi}, _Opts)
+visit(Node = {Op, _, Phi, Psi}, _Opts)
   when Op =:= ?HML_OR; Op =:= ?HML_AND ->
   ?TRACE("Visiting '~s' node ~p.", [Op, Node]),
 
   % Get monitor meta environment for node.
   Env = get_env(Node),
   erl_syntax:tuple(
-    [erl_syntax:atom(Op), Env, visit_node(Phi, _Opts), visit_node(Psi, _Opts)]
+    [erl_syntax:atom(Op), Env, visit(Phi, _Opts), visit(Psi, _Opts)]
   );
 
-visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
+visit(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
   when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
   ?TRACE("Visiting '~s' node ~p.", [Mod, Node]),
 
@@ -477,12 +491,12 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
   % these two predicate functions will always return the negated truth value of
   % of each other.
   Pred = erl_syntax:fun_expr([
-    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(true)]),
+    erl_syntax:clause([gen_eval:pat_tuple(Pat)], Guard, [erl_syntax:atom(true)]),
     erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(false)])
   ]),
 
   InvPred = erl_syntax:fun_expr([
-    erl_syntax:clause([pat_tuple(Pat)], Guard, [erl_syntax:atom(false)]),
+    erl_syntax:clause([gen_eval:pat_tuple(Pat)], Guard, [erl_syntax:atom(false)]),
     erl_syntax:clause([erl_syntax:underscore()], none, [erl_syntax:atom(true)])
   ]),
 
@@ -491,7 +505,7 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
   % action consists of the verdict when the inverse pattern and guard test is
   % successful.
   CntBody = erl_syntax:fun_expr([
-    erl_syntax:clause([pat_tuple(Pat)], none, [visit_node(Phi, _Opts)])
+    erl_syntax:clause([gen_eval:pat_tuple(Pat)], none, [visit(Phi, _Opts)])
   ]),
 
   VrdBody = erl_syntax:fun_expr([
@@ -518,52 +532,52 @@ visit_node(Node = {Mod, _, {act, _, Pat, Guard}, Phi}, _Opts)
   erl_syntax:tuple([erl_syntax:atom(chs), get_chs_env(), LeftAct, RightAct]).
 
 
-%%% @private Translates the symbolic action patterns fork, init, exit, send and
-%%% recv to native Erlang trace event patterns.
-%%%
-%%% {@par Translation is as follows:
-%%%   {@ul
-%%%     {@item Fork `{fork, _, Pid, Pid2, MFArgs}' is translated to
-%%%            `{trace, Pid, spawn, Pid2, {M, F, Args}}'
-%%%     }
-%%%     {@item Initialized `{init, _, Pid2, Pid, MFArgs}' is translated to
-%%%            `{trace, Pid, spawned, Pid2, {M, F, Args}}'
-%%%     }
-%%%     {@item Exit pattern `{exit, _, Pid, Var}' is translated to
-%%%            `{trace, Pid, exit, Reason}'
-%%%     }
-%%%     {@item Send pattern `{send, _, Pid, To, Var}' is translated to
-%%%            `{trace, Pid, send, Msg, To}'
-%%%     }
-%%%     {@item Receive pattern `{recv, _, Pid, Var}' is translated to
-%%%            `{trace, Pid, 'receive', Msg}'
-%%%     }
-%%%   }
-%%% }
-%%-spec pat_tuple(Pattern :: af_pattern()) -> erl_syntax:syntaxTree().
-pat_tuple({fork, _, Pid, Pid2, MFArgs}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(spawn), Pid2,
-    mfargs_tuple(MFArgs)]);
-pat_tuple({init, _, Pid2, Pid, MFArgs}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid2, erl_syntax:atom(spawned), Pid,
-    mfargs_tuple(MFArgs)]);
-pat_tuple({exit, _, Pid, Var}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(exit), Var]);
-pat_tuple({send, _, Pid, To, Var}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom(send), Var, To]);
-pat_tuple({recv, _, Pid, Var}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(trace), Pid, erl_syntax:atom('receive'), Var]).
+%%%%% @private Translates the symbolic action patterns fork, init, exit, send and
+%%%%% recv to native Erlang trace event patterns.
+%%%%%
+%%%%% {@par Translation is as follows:
+%%%%%   {@ul
+%%%%%     {@item Fork `{fork, _, Pid, Pid2, MFArgs}' is translated to
+%%%%%            `{trace, Pid, spawn, Pid2, {M, F, Args}}'
+%%%%%     }
+%%%%%     {@item Initialized `{init, _, Pid2, Pid, MFArgs}' is translated to
+%%%%%            `{trace, Pid, spawned, Pid2, {M, F, Args}}'
+%%%%%     }
+%%%%%     {@item Exit pattern `{exit, _, Pid, Var}' is translated to
+%%%%%            `{trace, Pid, exit, Reason}'
+%%%%%     }
+%%%%%     {@item Send pattern `{send, _, Pid, To, Var}' is translated to
+%%%%%            `{trace, Pid, send, Msg, To}'
+%%%%%     }
+%%%%%     {@item Receive pattern `{recv, _, Pid, Var}' is translated to
+%%%%%            `{trace, Pid, 'receive', Msg}'
+%%%%%     }
+%%%%%   }
+%%%%% }
+%%%%-spec pat_tuple(Pattern :: af_pattern()) -> erl_syntax:syntaxTree().
+%%pat_tuple({fork, _, Pid, Pid2, MFArgs}) ->
+%%  erl_syntax:tuple([
+%%    erl_syntax:atom(trace), Pid, erl_syntax:atom(spawn), Pid2,
+%%    mfargs_tuple(MFArgs)]);
+%%pat_tuple({init, _, Pid2, Pid, MFArgs}) ->
+%%  erl_syntax:tuple([
+%%    erl_syntax:atom(trace), Pid2, erl_syntax:atom(spawned), Pid,
+%%    mfargs_tuple(MFArgs)]);
+%%pat_tuple({exit, _, Pid, Var}) ->
+%%  erl_syntax:tuple([
+%%    erl_syntax:atom(trace), Pid, erl_syntax:atom(exit), Var]);
+%%pat_tuple({send, _, Pid, To, Var}) ->
+%%  erl_syntax:tuple([
+%%    erl_syntax:atom(trace), Pid, erl_syntax:atom(send), Var, To]);
+%%pat_tuple({recv, _, Pid, Var}) ->
+%%  erl_syntax:tuple([
+%%    erl_syntax:atom(trace), Pid, erl_syntax:atom('receive'), Var]).
 
--spec mfargs_tuple(MFArgs :: af_mfargs()) -> erl_syntax:syntaxTree().
-mfargs_tuple({?MFARGS, _, M, F, Args}) ->
-  erl_syntax:tuple([
-    erl_syntax:atom(M), erl_syntax:atom(F), erl_syntax:list(Args)
-  ]).
+%%-spec mfargs_tuple(MFArgs :: af_mfargs()) -> erl_syntax:syntaxTree().
+%%mfargs_tuple({?MFARGS, _, M, F, Args}) ->
+%%  erl_syntax:tuple([
+%%    erl_syntax:atom(M), erl_syntax:atom(F), erl_syntax:list(Args)
+%%  ]).
 
 
 %%% ----------------------------------------------------------------------------
@@ -579,7 +593,7 @@ mfargs_tuple({?MFARGS, _, M, F, Args}) ->
 -spec get_env(Node) -> erl_syntax:syntaxTree()
   when
   Node :: af_hml_tt() | af_hml_ff() | af_hml_or() | af_hml_and() |
-          af_hml_max() | af_hml_var().
+  af_hml_max() | af_hml_var().
 get_env(Node = {Bool, _}) when Bool =:= ?HML_TRU; Bool =:= ?HML_FLS ->
   Str = new_env_kv(?KEY_STR, get_str(Node)),
   new_env([Str]);
@@ -597,7 +611,6 @@ get_env(Node = {?HML_VAR, _, Name}) ->
 
 %%% @private Returns an Erlang AST representation of the monitor environment
 %%% for monitor parallel disjunction and conjunction.
-%% TODO:Fix this and use the correct type.
 -spec get_env(Node, Ph, Inv) -> erl_syntax:syntaxTree()
   when
   Node :: af_hml_pos() | af_hml_nec(),
@@ -605,7 +618,6 @@ get_env(Node = {?HML_VAR, _, Name}) ->
   Inv :: boolean().
 get_env(Node = {Mod, _, _Act, _Phi}, Ph, Inv)
   when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
-%%  when Mod =:= pos; Mod =:= nec ->
 
   % Get stringified representation of the monitor, variable placeholder and
   % pattern used to help stringify the monitor.
@@ -616,7 +628,7 @@ get_env(Node = {Mod, _, _Act, _Phi}, Ph, Inv)
 
 %%% @private Returns an Erlang AST representation of the monitor environment for
 %%% choice.
-%%-spec get_chs_env() -> erl_syntax:syntaxTree().
+-spec get_chs_env() -> erl_syntax:syntaxTree().
 get_chs_env() ->
   Str = new_env_kv(?KEY_STR, get_chs_str()),
   new_env([Str]).
@@ -632,7 +644,7 @@ new_env_kv(Key, Val) ->
 
 %%% @private Returns an Erlang AST representation of a new monitor environment,
 %%% with the specified list elements.
--spec new_env(List :: list(erl_syntax:syntaxTree())) -> erl_syntax:syntaxTree().
+-spec new_env(List :: [erl_syntax:syntaxTree()]) -> erl_syntax:syntaxTree().
 new_env(List) ->
   erl_syntax:tuple([erl_syntax:atom(?KEY_ENV), erl_syntax:list(List)]).
 
@@ -643,17 +655,19 @@ new_env(List) ->
 
 %%% @private Returns an Erlang ASP representation of the stringified monitor
 %%% verdicts, parallel Boolean connectives, and recursion.
-%% TODO: Add a proper type later.
--spec get_str(any()) -> erl_syntax:syntaxTree().
-get_str({tt, _}) ->
+-spec get_str(Node) -> erl_syntax:syntaxTree()
+  when
+  Node :: af_hml_tt() | af_hml_ff() | af_hml_or() | af_hml_and() |
+  af_hml_max() | af_hml_var().
+get_str({?HML_TRU, _}) ->
   erl_syntax:string("yes");
-get_str({ff, _}) ->
+get_str({?HML_FLS, _}) ->
   erl_syntax:string("no");
-get_str({Op, _, _, _}) when Op =:= 'or'; Op =:= 'and' ->
+get_str({Op, _, _, _}) when Op =:= ?HML_OR; Op =:= ?HML_AND ->
   erl_syntax:string(atom_to_list(Op));
-get_str({max, _, {var, _, Name}, _}) ->
+get_str({?HML_MAX, _, {?HML_VAR, _, Name}, _}) ->
   erl_syntax:string(lists:flatten("rec ", atom_to_list(Name)));
-get_str({var, _, Name}) ->
+get_str({?HML_VAR, _, Name}) ->
   erl_syntax:string(atom_to_list(Name)).
 
 %%% @private Returns an Erlang AST representation of the stringified monitor
@@ -672,7 +686,7 @@ get_str({Mod, _, {?HML_ACT, _, Pat, Guard}, _}, Ph, Inv)
 
   % Stringify placeholder and the internal representation of the pattern as an
   % Erlang trace event.
-  IoList = [Ph, $/, erl_pp:expr(erl_syntax:revert(pat_tuple(Pat)))],
+  IoList = [Ph, $/, erl_pp:expr(erl_syntax:revert(gen_eval:pat_tuple(Pat)))],
 
   % Stringify guard only if present.
   IoList_ = if Guard =:= [] -> IoList; true -> [IoList, $ , erl_pp:guard(Guard)] end,
@@ -709,13 +723,8 @@ get_chs_str() ->
 get_pat({Mod, _, {?HML_ACT, _, Pat, Guard}, _})
   when Mod =:= ?HML_POS; Mod =:= ?HML_NEC ->
 
-  Str = erl_pp:expr(erl_syntax:revert(pat_tuple(Pat))),
-
-
+  Str = erl_pp:expr(erl_syntax:revert(gen_eval:pat_tuple(Pat))),
   Replaced = re:replace(Str, "\\b([A-Z_][a-zA-Z0-9_@]*)\\b", "undefined", [{return, list}, global]),
-
-%%  ?INFO("The Originial patternn is: ~s", [Str]),
-%%  ?INFO("The replaced patternn is: ~s", [Replaced]),
 
   {ok, Tokens, _EndLine} = erl_scan:string(Replaced ++ "."),
   {ok, [AbsForm]} = erl_parse:parse_exprs(Tokens),
@@ -770,140 +779,141 @@ new_ph() ->
   lists:flatten(io_lib:format("~s~s~2..0B", [?PH_PRF, Tok, Idx])).
 
 
-create_log(Format, Args, Type) ->
-  Format0 = color_log(["*** [~w] ", Format], Type),
-  SelfCall = erl_syntax:application(none, erl_syntax:atom(self), []),
-  erl_syntax:application(erl_syntax:atom(io), erl_syntax:atom(format),
-    [erl_syntax:string(Format0), erl_syntax:list([SelfCall | Args])]
-  ).
-
-%% @private Applies ASCII colors to the specified log message depending on the
-%% Type of monitor construct. Type argument determines how the log statement is
-%% rendered on the standard output.
-
-color_log(Log, no) ->
-  lists:flatten(["\e[1m\e[31m", Log, "\e[0m"]); % Bold red.
-color_log(Log, prf) ->
-  lists:flatten(["\e[37m", Log, "\e[0m"]); % White.
-color_log(Log, var) ->
-  lists:flatten(["\e[36m", Log, "\e[0m"]); % Cyan.
-color_log(Log, 'end') ->
-  lists:flatten(["\e[1m\e[33m", Log, "\e[0m"]); % Bold yellow.
-color_log(Log, _) ->
-  lists:flatten(Log).
-
-
-%%% ----------------------------------------------------------------------------
-%%% Private code generating functions.
-%%% ----------------------------------------------------------------------------
-
-write_monitor(Ast, File, Opts) ->
-
-  % Create base filename, taking into account the output directory specified in
-  % the compiler options.
-  FileBase = filename:join([opts:out_dir_opt(Opts), filename:basename(File, ?EXT_HML)]),
-
-  % Open file for writing and write Erlang source or beam code depending on
-  % the specified compiler options.
-  % Open file for writing. File extension depends on specified compiler options.
-  {ok, IoDev} = file:open(FileBase ++
-  case opts:erl_opt(Opts) of true -> ?EXT_ERL; _ -> ?EXT_BEAM end, [write]
-  ),
-
-  % Write monitor Erlang or beam source code depending on specified compiler
-  % options.
-  case opts:erl_opt(Opts) of
-    true ->
-      write_erl(IoDev, Ast, File, compile_opts(Opts));
-    _ ->
-      write_beam(IoDev, Ast, File, compile_opts(Opts))
-  end,
-
-  % Close file.
-  file:close(IoDev).
+%%create_log(Format, Args, Type) ->
+%%  Format0 = color_log(["*** [~w] ", Format], Type),
+%%  SelfCall = erl_syntax:application(none, erl_syntax:atom(self), []),
+%%  erl_syntax:application(erl_syntax:atom(io), erl_syntax:atom(format),
+%%    [erl_syntax:string(Format0), erl_syntax:list([SelfCall | Args])]
+%%  ).
+%%
+%%%% @private Applies ASCII colors to the specified log message depending on the
+%%%% Type of monitor construct. Type argument determines how the log statement is
+%%%% rendered on the standard output.
+%%
+%%color_log(Log, no) ->
+%%  lists:flatten(["\e[1m\e[31m", Log, "\e[0m"]); % Bold red.
+%%color_log(Log, prf) ->
+%%  lists:flatten(["\e[37m", Log, "\e[0m"]); % White.
+%%color_log(Log, var) ->
+%%  lists:flatten(["\e[36m", Log, "\e[0m"]); % Cyan.
+%%color_log(Log, 'end') ->
+%%  lists:flatten(["\e[1m\e[33m", Log, "\e[0m"]); % Bold yellow.
+%%color_log(Log, _) ->
+%%  lists:flatten(Log).
 
 
-write_erl(IoDev, Ast, File, CompileOpts) ->
-
-  % Lint Erlang syntax tree and report any errors or warnings found to standard
-  % output. If linting completes without errors, write sources code into a .erl
-  % file.
-  case erl_lint:module(Ast, File, CompileOpts) of
-    Ok = {ok, Warnings} ->
-      show_warnings(Warnings),
-      list_erl(IoDev, Ast),
-      Ok;
-    Error = {error, Errors, Warnings} ->
-      show_errors(Errors),
-      show_warnings(Warnings),
-      Error
-  end.
-
-write_beam(IoDev, Ast, File, CompileOpts) ->
-
-  % Compile Erlang syntax tree and report any errors or warnings found to
-  % standard output. If compilation completes without errors, write object code
-  % into a .beam file.
-  case compile:forms(Ast, [{source, File} | CompileOpts]) of
-    Ok = {ok, _, Binary, Warnings} ->
-      show_warnings(Warnings),
-      list_beam(IoDev, Binary),
-      Ok;
-    Error = {error, Errors, Warnings} ->
-      show_errors(Errors),
-      show_warnings(Warnings),
-      Error
-  end.
-
-
-list_erl(_, []) ->
-  ok;
-list_erl(IoDev, [Form | Forms]) ->
-  io:put_chars(IoDev, erl_pp:form(Form)),
-  list_erl(IoDev, Forms).
-
-%% @private Writes the binary as it to the specified IO device.
-
-list_beam(IoDev, Beam) ->
-  file:write(IoDev, Beam).
+%%%%% ----------------------------------------------------------------------------
+%%%%% Private code generating functions.
+%%%%% ----------------------------------------------------------------------------
+%%
+%%write_monitor(Ast, File, Opts) ->
+%%
+%%  % Create base filename, taking into account the output directory specified in
+%%  % the compiler options.
+%%  FileBase = filename:join([opts:out_dir_opt(Opts), filename:basename(File, ?EXT_HML)]),
+%%
+%%  % Open file for writing and write Erlang source or beam code depending on
+%%  % the specified compiler options.
+%%  % Open file for writing. File extension depends on specified compiler options.
+%%  {ok, IoDev} = file:open(FileBase ++
+%%  case opts:erl_opt(Opts) of true -> ?EXT_ERL; _ -> ?EXT_BEAM end, [write]
+%%  ),
+%%
+%%  % Write monitor Erlang or beam source code depending on specified compiler
+%%  % options.
+%%  case opts:erl_opt(Opts) of
+%%    true ->
+%%      write_erl(IoDev, Ast, File, compile_opts(Opts));
+%%    _ ->
+%%      write_beam(IoDev, Ast, File, compile_opts(Opts))
+%%  end,
+%%
+%%  % Close file.
+%%  file:close(IoDev).
+%%
+%%
+%%write_erl(IoDev, Ast, File, CompileOpts) ->
+%%
+%%  % Lint Erlang syntax tree and report any errors or warnings found to standard
+%%  % output. If linting completes without errors, write sources code into a .erl
+%%  % file.
+%%  case erl_lint:module(Ast, File, CompileOpts) of
+%%    Ok = {ok, Warnings} ->
+%%      show_warnings(Warnings),
+%%      list_erl(IoDev, Ast),
+%%      Ok;
+%%    Error = {error, Errors, Warnings} ->
+%%      show_errors(Errors),
+%%      show_warnings(Warnings),
+%%      Error
+%%  end.
+%%
+%%write_beam(IoDev, Ast, File, CompileOpts) ->
+%%
+%%  % Compile Erlang syntax tree and report any errors or warnings found to
+%%  % standard output. If compilation completes without errors, write object code
+%%  % into a .beam file.
+%%  case compile:forms(Ast, [{source, File} | CompileOpts]) of
+%%    Ok = {ok, _, Binary, Warnings} ->
+%%      show_warnings(Warnings),
+%%      list_beam(IoDev, Binary),
+%%      Ok;
+%%    Error = {error, Errors, Warnings} ->
+%%      show_errors(Errors),
+%%      show_warnings(Warnings),
+%%      Error
+%%  end.
+%%
+%%
+%%list_erl(_, []) ->
+%%  ok;
+%%list_erl(IoDev, [Form | Forms]) ->
+%%  io:put_chars(IoDev, erl_pp:form(Form)),
+%%  list_erl(IoDev, Forms).
+%%
+%%%% @private Writes the binary as it to the specified IO device.
+%%
+%%list_beam(IoDev, Beam) ->
+%%  file:write(IoDev, Beam).
 
 
 %%% ----------------------------------------------------------------------------
 %%% Private error handling and reporting functions.
 %%% ----------------------------------------------------------------------------
 
-show_error(File, Error) ->
-  {Line, Desc} = format_error(Error),
-  io:format("~s:~b: ~s~n", [File, Line, Desc]).
-
-show_errors([]) ->
-  ok;
-show_errors([{File, ErrorsInfos}]) ->
-  lists:map(fun(ErrorInfo) -> show_error(File, ErrorInfo) end, ErrorsInfos),
-  ok.
-%%show_errors(_) ->
+%%show_error(File, Error) ->
+%%  {Line, Desc} = format_error(Error),
+%%  io:format("~s:~b: ~s~n", [File, Line, Desc]).
+%%
+%%show_errors([]) ->
+%%  ok;
+%%show_errors([{File, ErrorsInfos}]) ->
+%%  lists:map(fun(ErrorInfo) -> show_error(File, ErrorInfo) end, ErrorsInfos),
 %%  ok.
-
-show_warnings([]) ->
-  ok;
-show_warnings([{File, ErrorInfos}]) ->
-  lists:map(
-    fun(ErrorInfo) ->
-      {Line, Desc} = format_error(ErrorInfo),
-      io:format("~s:~b: Warning: ~s~n", [File, Line, Desc])
-    end, ErrorInfos),
-  ok.
-%%;
-%%show_warnings(_) ->
+%%%%show_errors(_) ->
+%%%%  ok.
+%%
+%%show_warnings([]) ->
+%%  ok;
+%%show_warnings([{File, ErrorInfos}]) ->
+%%  lists:map(
+%%    fun(ErrorInfo) ->
+%%      {Line, Desc} = format_error(ErrorInfo),
+%%      io:format("~s:~b: Warning: ~s~n", [File, Line, Desc])
+%%    end, ErrorInfos),
 %%  ok.
+%%%%;
+%%%%show_warnings(_) ->
+%%%%  ok.
+%%
+%%%% @private Formats error and warning messages as human-readable descriptions,
+%%%% returning the results together with the corresponding line number where the
+%%%% error occurred.
+%%
+%%format_error({Line, erl_lint, Error}) ->
+%%  {Line, erl_lint:format_error(Error)};
+%%format_error({Line, maxhml_parser, Error}) ->
+%%  {Line, maxhml_parser:format_error(Error)};
+%%format_error({Line, maxhml_lexer, Error}) ->
+%%  {Line, maxhml_lexer:format_error(Error)}.
 
-%% @private Formats error and warning messages as human-readable descriptions,
-%% returning the results together with the corresponding line number where the
-%% error occurred.
-
-format_error({Line, erl_lint, Error}) ->
-  {Line, erl_lint:format_error(Error)};
-format_error({Line, maxhml_parser, Error}) ->
-  {Line, maxhml_parser:format_error(Error)};
-format_error({Line, maxhml_lexer, Error}) ->
-  {Line, maxhml_lexer:format_error(Error)}.

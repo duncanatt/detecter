@@ -98,15 +98,15 @@ Rootsymbol forms.
 %%% ----------------------------------------------------------------------------
 
 % Formula lists.
-forms -> form '.'                       : ['$1'].
-forms -> form ',' forms                 : ['$1' | '$3'].
+forms -> form '.'                             : ['$1'].
+forms -> form ',' forms                       : ['$1' | '$3'].
 
 % Designating the process MFArgs on which the maxHML formula is to be checked.
 % Formulae are interpreted w.r.t. to the traces exhibited by the process forked
 % using MFArgs.
 form -> 'with' mfargs_sel 'check' maxhml_expr : {form, ?anno('$1'), '$2', '$4'}.
-mfargs_sel -> mfargs : {sel, ?anno('$1'), '$1', []}.
-mfargs_sel -> mfargs 'when' guard : {sel, ?anno('$1'), '$1', '$3'}.
+mfargs_sel -> mfargs                          : {sel, ?anno('$1'), '$1', []}.
+mfargs_sel -> mfargs 'when' guard             : {sel, ?anno('$1'), '$1', '$3'}.
 
 
 %%% ----------------------------------------------------------------------------
@@ -155,26 +155,24 @@ maxhml_fact -> '(' maxhml_expr ')'            : '$2'.
 % used as an aid to visual parsing. These are also used to resolve a
 % shift-reduce conflict that arises due to the angled brackets used for the
 % possibility modality and > operator in guards. To be resolved in the future.
-act -> '{' pat '}'                      : {act, ?anno('$1'), '$2', []}.
-act -> '{' pat 'when' guard '}'         : {act, ?anno('$1'), '$2', '$4'}.
-%%act -> pat                              : {act, ?anno('$1'), '$1', []}.
-%%act -> pat 'when' guard                 : {act, ?anno('$1'), '$1', '$3'}.
+act -> '{' pat '}'                  : {act, ?anno('$1'), '$2', []}.
+act -> '{' pat 'when' guard '}'     : {act, ?anno('$1'), '$2', '$4'}.
 
 % Process sending pattern. Process in var_1 sent a message to process in var_2.
-pat -> var ':' var '!' expr              : {send, ?anno('$1'), '$1', '$3', '$5'}.
+pat -> var ':' var '!' expr         : {send, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process receiving pattern. Process in var_1 receives message.
-pat -> var '?' expr                      : {recv, ?anno('$1'), '$1', '$3'}.
+pat -> var '?' expr                 : {recv, ?anno('$1'), '$1', '$3'}.
 
 % Process forking pattern. Process in var_1 forked child in var_2 via MFArgs.
-pat -> var '->' var ',' mfargs       : {fork, ?anno('$1'), '$1', '$3', '$5'}.
+pat -> var '->' var ',' mfargs      : {fork, ?anno('$1'), '$1', '$3', '$5'}.
 
 % Process initialization pattern. Child in var_2 was forked by process in var_1
 % via MFArgs.
-pat -> var '<-' var ',' mfargs       : {init, ?anno('$1'), '$3', '$1', '$5'}.
+pat -> var '<-' var ',' mfargs      : {init, ?anno('$1'), '$3', '$1', '$5'}.
 
 % Process termination pattern. Process in var_1 exited with specified reason.
-pat -> var '**' expr                     : {exit, ?anno('$1'), '$1', '$3'}.
+pat -> var '**' expr                : {exit, ?anno('$1'), '$1', '$3'}.
 
 % MFArgs pattern. There are two ways to implement this. One is to use the Erlang
 % expression syntax where pattern matching can be performed in place, in the
@@ -345,41 +343,41 @@ strings -> string strings : {string, ?anno('$1'), element(3, '$1') ++ element(3,
 %%% Binary and unary operators.
 
 % Unary operators.
-prefix_op -> '+' : '$1'.
-prefix_op -> '-' : '$1'.
-prefix_op -> 'bnot' : '$1'.
-prefix_op -> 'not' : '$1'.
+prefix_op -> '+'              : '$1'.
+prefix_op -> '-'              : '$1'.
+prefix_op -> 'bnot'           : '$1'.
+prefix_op -> 'not'            : '$1'.
 
 % Binary operators.
-mult_op -> '/' : '$1'.
-mult_op -> '*' : '$1'.
-mult_op -> 'div' : '$1'.
-mult_op -> 'rem' : '$1'.
-mult_op -> 'band' : '$1'.
-mult_op -> 'and' : '$1'.
+mult_op -> '/'                : '$1'.
+mult_op -> '*'                : '$1'.
+mult_op -> 'div'              : '$1'.
+mult_op -> 'rem'              : '$1'.
+mult_op -> 'band'             : '$1'.
+mult_op -> 'and'              : '$1'.
 
-add_op -> '+' : '$1'.
-add_op -> '-' : '$1'.
-add_op -> 'bor' : '$1'.
-add_op -> 'bxor' : '$1'.
-add_op -> 'bsl' : '$1'.
-add_op -> 'bsr' : '$1'.
-add_op -> 'or' : '$1'.
-add_op -> 'xor' : '$1'.
+add_op -> '+'                 : '$1'.
+add_op -> '-'                 : '$1'.
+add_op -> 'bor'               : '$1'.
+add_op -> 'bxor'              : '$1'.
+add_op -> 'bsl'               : '$1'.
+add_op -> 'bsr'               : '$1'.
+add_op -> 'or'                : '$1'.
+add_op -> 'xor'               : '$1'.
 
 % List concatenation and difference.
-list_op -> '++' : '$1'.
-list_op -> '--' : '$1'.
+list_op -> '++'               : '$1'.
+list_op -> '--'               : '$1'.
 
 % Relational operators.
-comp_op -> '==' : '$1'.
-comp_op -> '/=' : '$1'.
-comp_op -> '=<' : '$1'.
-comp_op -> '<' : '$1'.
-comp_op -> '>=' : '$1'.
-comp_op -> '>' : '$1'.
-comp_op -> '=:=' : '$1'.
-comp_op -> '=/=' : '$1'.
+comp_op -> '=='               : '$1'.
+comp_op -> '/='               : '$1'.
+comp_op -> '=<'               : '$1'.
+comp_op -> '<'                : '$1'.
+comp_op -> '>='               : '$1'.
+comp_op -> '>'                : '$1'.
+comp_op -> '=:='              : '$1'.
+comp_op -> '=/='              : '$1'.
 
 
 %%% ----------------------------------------------------------------------------
@@ -406,28 +404,5 @@ Erlang code.
   end).
 
 %% Builds the MFArgs AST node.
-%%build_mfargs(Mod, Fun, [], []) ->
-%%{mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), 0, {clause, ?anno(Mod), [], [], []}};
-%%build_mfargs(Mod, Fun, Exprs, ClauseGuard) when is_list(Exprs) ->
-%%Arity = length(Exprs),
-%%{mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), Arity,
-%%  {clause, ?anno(hd(Exprs)), Exprs, ClauseGuard, []}}.
-
-
-%%build_mfargs(Mod, Fun, []) ->
-%%  {mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), []};
 build_mfargs(Mod, Fun, Exprs) when is_list(Exprs) ->
   {mfargs, ?anno(Mod), ?name(Mod), ?name(Fun), Exprs}.
-
-
-
-%%build_mfa(Mod, Fun, Args) when is_list(Args) ->
-%%  {mfa, ?anno(Mod), ?name(Mod), ?name(Fun), length(Args)}.
-
-%% TODO:
-%%build_clause(Exprs, ClauseGuard) ->
-%%  {clause, ?anno(hd(Exprs)), Exprs, ClauseGuard, []}}.
-
-
-%%build_clause(Exprs, Guard) when is_list(Exprs), is_list(Guard) ->
-%%  {clause, ?anno(hd(Exprs)), Exprs, Guard, []}.

@@ -51,7 +51,7 @@
 %%   (i.e. log_level = 3).
 %% -----------------------------------------------------------------------------
 -ifndef(log_level).
--define(log_level, 1).
+-define(log_level, 3).
 -endif.
 
 

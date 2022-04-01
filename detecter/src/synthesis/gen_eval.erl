@@ -58,7 +58,7 @@
 
 %% Default Erlang compiler options. These options suppress the variable
 %% shadowing warning and returns both compile errors and warnings.
--define(COMPILER_OPTS, [nowarn_shadow_vars, return]).
+-define(COMPILER_OPTS, [nowarn_shadow_vars, nowarn_unused_vars, return]).
 
 -define(MFARGS, mfargs).
 

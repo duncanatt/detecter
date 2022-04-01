@@ -290,28 +290,28 @@ embed(M) ->
 dispatch(Event = {fork, _Parent, Child, _Mfa}) ->
   do_monitor(event:to_evm_event(Event),
     fun(Verdict, _) ->
-      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+      format_verdict("After analyzing event ~w.~n", [Event], Verdict)
     end
   ),
   Child;
 dispatch(Event = {init, _Child, Parent, _Mfa}) ->
   do_monitor(event:to_evm_event(Event),
     fun(Verdict, _) ->
-      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+      format_verdict("After analyzing event ~w.~n", [Event], Verdict)
     end
   ),
   Parent;
 dispatch(Event = {exit, _Process, Reason}) ->
   do_monitor(event:to_evm_event(Event),
     fun(Verdict, _) ->
-      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+      format_verdict("After analyzing event ~w.~n", [Event], Verdict)
     end
   ),
   Reason;
 dispatch(Event = {send, _Sender, _Receiver, Msg}) ->
   do_monitor(event:to_evm_event(Event),
     fun(Verdict, _) ->
-      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+      format_verdict("After analyzing event ~w.~n", [Event], Verdict)
     end
   ),
   Msg;

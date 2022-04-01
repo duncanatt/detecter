@@ -3,7 +3,7 @@
 %%% @copyright (C) 2019 Duncan Paul Attard
 %%% @version 0.9
 %%%
-%%% The private server token is not leaked.
+%%% A request for adding two numbers always returns their sum.
 %%%
 %%% Created: 16. Jan 2022
 %%%
@@ -24,13 +24,15 @@
 %%%-------------------------------------------------------------------
 
 with
-  token_server:loop(_, _)
+  calc_server_bug:loop(_)
 check
-  [{_ <- _, token_server:loop(OwnTok, _)}]
+  [{_ <- _, calc_server_bug:loop(_)}]
   max X.(
-    [{_ ? {_, _}}](
-      [{_:_ ! Tok when OwnTok =:= Tok}]ff
+    [{_ ? {_, {add, A, B}}}](
+      [{_:_ ! {ok, Res} when Res =/= A + B}]ff
       and
-      [{_:_ ! Tok when OwnTok =/= Tok}]X
+      [{_:_ ! {ok, Res} when Res =:= A + B}]X
     )
+    and
+    [{_ ? {_, _}}][{_:_ ! {Code, Res} when Code =:= ok orelse Code =:= bye}]X
   ).

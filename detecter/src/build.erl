@@ -82,9 +82,9 @@ edoc() ->
     {title, ?APP_NAME},
     {dir, ?DOC_DIR},
     {stylesheet_file, ?CSS_FILE},
-    {private, true},
-    {def, ?MACROS},
-    {todo, true}
+%%    {private, true},
+    {def, ?MACROS}
+%%    {todo, true}
 %%    {doclet, edoc_doclet_mkdocs}
   ],
   edoc:application(detecter, ".", Params).

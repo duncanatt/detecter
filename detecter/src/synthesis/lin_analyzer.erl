@@ -27,10 +27,12 @@
 -include_lib("stdlib/include/assert.hrl").
 -include("log.hrl").
 
--compile(export_all).
+%%-compile(export_all).
 
 %%% Public API.
--export([]).
+-export([reduce_tau/2, analyze/3]).
+-export([analyze_trace/2, analyze_file/2, show_pdlist/1]).
+-export([embed/1, dispatch/1]).
 
 %%% Callbacks/Internal.
 -export([]).
@@ -194,7 +196,7 @@ analyze(Event, M, PdList) ->
   ?TRACE("[ Starting new derivation for monitor on event '~w' ]", [Event]),
 
   % Analyze trace event.
-  {PdM, M_} = derive_event(Event, M, new_pdid([])),
+  {PdM, M_} = derive_act(Event, M, new_pdid([])),
 
   % Check whether the residual monitor state can be reduced further using tau
   % transitions. This ensures that the monitor is always left in a state where
@@ -225,6 +227,33 @@ analyze(Event, M, PdList) ->
 analyze_trace(Trace, M) when is_list(Trace) ->
   {PdList_, M_} = reduce_tau(M, []),
   analyze_trace(Trace, M_, PdList_).
+
+%% @doc Analyzes the list of events as a trace using the specified monitor.
+%%
+%% {@params
+%%   {@name File}
+%%   {@desc File where the saved trace log is located.}
+%%   {@name M}
+%%   {@desc Monitor to analyze the trace event file.}
+%% }
+%%
+%% {@par The specified monitor is automatically reduced to the ready state prior
+%%       the commencement of trace event analysis.
+%% }
+%%
+%% {@returns Proof derivation list and reduced monitor. The specified monitor
+%%           is guaranteed to be reduced by at one or more steps, where the
+%%           first analyzes the specified trace event.
+%% }
+-spec analyze_file(File, M) -> {list(pd()), monitor()}
+  when
+  File :: string(),
+  M :: monitor().
+analyze_file(File, M) when is_list(File) ->
+
+  % Load trace from file as a list of Erlang terms and analyze.
+  {ok, Trace} = file:consult(File),
+  analyze_trace(Trace, M).
 
 %% @doc Formats and displays the specified proof derivation list to the standard
 %%      output.
@@ -338,8 +367,8 @@ dispatch(Event = {recv, _Receiver, Msg}) ->
 %%%   {@desc Proof derivation ID.}
 %%% }
 %%%
-%%% {@returns `true` together with the proof derivation and monitor continuation
-%%%           after one tau reduction or `false` if the monitor cannot be
+%%% {@returns `true' together with the proof derivation and monitor continuation
+%%%           after one tau reduction or `false' if the monitor cannot be
 %%%           reduced.
 %%% }
 -spec derive_tau(M, PdId) -> false | {true, {pd(), monitor()}}
@@ -480,19 +509,19 @@ derive_tau(_, _) ->
 %%% {@returns Proof derivation and monitor continuation after one event
 %%%           reduction.
 %%% }
--spec derive_event(Event, M, PdId) -> {pd(), monitor()}
+-spec derive_act(Event, M, PdId) -> {pd(), monitor()}
   when
   Event :: event(),
   M :: monitor(),
   PdId :: pd_id().
-derive_event(Event, M = {V, _}, PdId) when V =:= yes; V =:= no ->
+derive_act(Event, M = {V, _}, PdId) when V =:= yes; V =:= no ->
   ?assertNot(Event =:= tau),
   ?DEBUG(":: (~s) Reducing using axiom mVrd: ~s.", [pdid_to_iolist(PdId), m_to_iolist(M)]),
 
   % Axiom mVrd.
   {{PdId, ?M_VRD, Event, M, M}, M};
 
-derive_event(Event, L = {act, Env, C, M}, PdId) ->
+derive_act(Event, L = {act, Env, C, M}, PdId) ->
   ?assertNot(Event =:= tau),
 %%  ?assert(C(Event)),
   ?assert(is_function(M, 1)),
@@ -518,7 +547,7 @@ derive_event(Event, L = {act, Env, C, M}, PdId) ->
   % context of the next unfolding.
   {{PdId, ?M_ACT, Event, L, copy_ns(L_, copy_ctx(L_, M_))}, copy_ns(L_, copy_ctx(L_, M_))}; % Updated monitor env.
 
-derive_event(Event, L = {chs, _, M, N}, PdId) ->
+derive_act(Event, L = {chs, _, M, N}, PdId) ->
   ?assert(is_tuple(M) andalso element(1, M) =:= act),
   ?assert(is_tuple(N) andalso element(1, N) =:= act),
 
@@ -533,25 +562,25 @@ derive_event(Event, L = {chs, _, M, N}, PdId) ->
       ?DEBUG(":: (~s) Reducing using rule mChsL: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
       % Rule mChsL.
-      {PdM_, M_} = derive_event(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
+      {PdM_, M_} = derive_act(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
       {{PdId, ?M_CHS_L, Event, L, M_, {pre, PdM_}}, M_};
 
     {false, true} ->
       ?DEBUG(":: (~s) Reducing using rule mChsR: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
       % Rule mChsR.
-      {PdN_, N_} = derive_event(Event, copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)),
+      {PdN_, N_} = derive_act(Event, copy_ns(L, copy_ctx(L, N)), new_pdid(PdId)),
       {{PdId, ?M_CHS_R, Event, L, N_, {pre, PdN_}}, N_}
   end;
 
-derive_event(Event, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
+derive_act(Event, L = {Op, Env, M, N}, PdId) when Op =:= 'and'; Op =:= 'or' ->
   ?assertNot(Event =:= tau),
   ?DEBUG(":: (~s) Reducing using rule mPar: ~s.", [pdid_to_iolist(PdId), m_to_iolist(L)]),
 
   % Unfold respective sub-monitors. Proof derivation ID for second monitor N is
   % incremented accordingly.
-  {PdM_, M_} = derive_event(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
-  {PdN_, N_} = derive_event(Event, copy_ns(L, copy_ctx(L, N)), inc_pdid(new_pdid(PdId))),
+  {PdM_, M_} = derive_act(Event, copy_ns(L, copy_ctx(L, M)), new_pdid(PdId)),
+  {PdN_, N_} = derive_act(Event, copy_ns(L, copy_ctx(L, N)), inc_pdid(new_pdid(PdId))),
 
   % Merge context of M and N monitors.
   Ctx = merge_ctx(get_ctx(get_env(M_)), get_ctx(get_env(N_))),
@@ -869,6 +898,25 @@ do_monitor(Event, VerdictFun) when is_function(VerdictFun, 2) ->
       ?TRACE("Analyzer undefined; discarding trace event ~w.", [Event]),
       undefined;
     {PdList, M} ->
+
+      % Check whether the trace event should be recorded. We do this via the
+      % environmental variable DEBUG.
+      case os:getenv("DEBUG", undefined) of
+        undefined ->
+          ok;
+        _ ->
+          % Debug flag set. Forward trace event to writer.
+          case whereis(event_writer) of
+            undefined ->
+              ?WARN(
+                "Attempting to forward event ~p to event_writer which is down.
+                Check that it is switched on.", [Event]);
+            Pid ->
+              ?TRACE("Forwarding event ~p to event_writer (~p).", [Event, Pid]),
+              Pid ! {event, Event}
+          end
+      end,
+
 
       % Analyze event. At this point, monitor might have reached a verdict.
       % Check whether verdict is reached to enable immediate detection, should

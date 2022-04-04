@@ -242,17 +242,54 @@
 %%% Callback definitions.
 %%% ----------------------------------------------------------------------------
 
-%% @doc Visits the logic AST and produces the monitor Erlang AST.
+
 -callback visit(Node, Opts) -> erl_syntax:syntaxTree()
   when
   Node :: any(),
   Opts :: opts:options().
-
+%% Visits the logic AST and produces the monitor Erlang AST.
 
 %%% ----------------------------------------------------------------------------
 %%% Public API.
 %%% ----------------------------------------------------------------------------
 
+%% @doc Compiles the specified file containing one or more properties specified
+%% in MaxHML, and writes the executable monitor descriptions to file.
+%%
+%% {@params
+%%   {@name Mod}
+%%   {@desc Module implementing the callback function visit/2.}
+%%   {@name LexerMod}
+%%   {@desc Module that performs the lexical analysis of MaxHML scripts.}
+%%   {@name ParserMod}
+%%   {@desc Module that parses the lexer tokens to return the MaxHML syntax tree.
+%%   }
+%%   {@name File}
+%%   {@desc Path where the file to compile resides.}
+%%   {@name Opts}
+%%   {@desc Compiler options.}
+%% }
+%%
+%% {@par The following options are available:
+%%       {@dl
+%%         {@term `@{outdir, Dir@}'}
+%%         {@desc The directory where the generated output monitor file should
+%%                be written. Defaults to the current directory `.'.
+%%         }
+%%         {@term `erl'}
+%%         {@desc Instructs the compiler to output the generated monitor as
+%%                Erlang source code rather than beam. Defaults to beam.
+%%         }
+%%       }
+%% }
+%%
+%% {@par Errors and warnings that arise during the compilation are reported on
+%%       the standard output. No monitor file is output unless compilation
+%%       completes with no errors. The output depends on whether the flag `erl'
+%%       is specified or otherwise.
+%% }
+%%
+%% {@returns `ok' if compilation succeeds, `@{error, Reason@}' otherwise.}
 compile(Mod, LexerMod, ParserMod, File, Opts) when is_list(Opts) ->
 
   % Load and parse source script file.
@@ -284,6 +321,20 @@ compile(Mod, LexerMod, ParserMod, File, Opts) when is_list(Opts) ->
       show_error(File, Error)
   end.
 
+%% @doc Parses the specified string containing one or more properties specified
+%% in MaxHML.
+%%
+%% {@params
+%%   {@name LexerMod}
+%%   {@desc Module that performs the lexical analysis of MaxHML scripts.}
+%%   {@name ParserMod}
+%%   {@desc Module that parses the lexer tokens to return the MaxHML syntax tree.
+%%   }
+%%   {@name String}
+%%   {@desc String to parse.}
+%% }
+%%
+%% {@returns The syntax tree for the properties specified in MaxHML.}
 parse_string(LexerMod, ParserMod, String) when is_list(String) ->
   case LexerMod:string(String) of
     {ok, [], _} ->
@@ -303,7 +354,20 @@ parse_string(LexerMod, ParserMod, String) when is_list(String) ->
       {error, Error}
   end.
 
-
+%% @doc Parses the specified file containing one or more properties specified
+%% in MaxHML.
+%%
+%% {@params
+%%   {@name LexerMod}
+%%   {@desc Module that performs the lexical analysis of MaxHML scripts.}
+%%   {@name ParserMod}
+%%   {@desc Module that parses the lexer tokens to return the MaxHML syntax tree.
+%%   }
+%%   {@name File}
+%%   {@desc Path where the file to parse resides.}
+%% }
+%%
+%% {@returns The syntax tree for the properties specified in MaxHML.}
 parse_file(LexerMod, ParserMod, File) when is_list(File) ->
   case file:read_file(File) of
     {ok, Bytes} ->
@@ -313,28 +377,28 @@ parse_file(LexerMod, ParserMod, File) when is_list(File) ->
   end.
 
 
-%%% @private Translates the symbolic action patterns fork, init, exit, send and
-%%% recv to native Erlang trace event patterns.
-%%%
-%%% {@par Translation is as follows:
-%%%   {@ul
-%%%     {@item Fork `{fork, _, Pid, Pid2, MFArgs}' is translated to
-%%%            `{trace, Pid, spawn, Pid2, {M, F, Args}}'
-%%%     }
-%%%     {@item Initialized `{init, _, Pid2, Pid, MFArgs}' is translated to
-%%%            `{trace, Pid, spawned, Pid2, {M, F, Args}}'
-%%%     }
-%%%     {@item Exit pattern `{exit, _, Pid, Var}' is translated to
-%%%            `{trace, Pid, exit, Reason}'
-%%%     }
-%%%     {@item Send pattern `{send, _, Pid, To, Var}' is translated to
-%%%            `{trace, Pid, send, Msg, To}'
-%%%     }
-%%%     {@item Receive pattern `{recv, _, Pid, Var}' is translated to
-%%%            `{trace, Pid, 'receive', Msg}'
-%%%     }
-%%%   }
-%%% }
+%% @private Translates the symbolic action patterns fork, init, exit, send and
+%% recv to native Erlang trace event patterns.
+%%
+%% {@par Translation is as follows:
+%%   {@ul
+%%     {@item Fork `{fork, _, Pid, Pid2, MFArgs}' is translated to
+%%            `{trace, Pid, spawn, Pid2, {M, F, Args}}'
+%%     }
+%%     {@item Initialized `{init, _, Pid2, Pid, MFArgs}' is translated to
+%%            `{trace, Pid, spawned, Pid2, {M, F, Args}}'
+%%     }
+%%     {@item Exit pattern `{exit, _, Pid, Var}' is translated to
+%%            `{trace, Pid, exit, Reason}'
+%%     }
+%%     {@item Send pattern `{send, _, Pid, To, Var}' is translated to
+%%            `{trace, Pid, send, Msg, To}'
+%%     }
+%%     {@item Receive pattern `{recv, _, Pid, Var}' is translated to
+%%            `{trace, Pid, 'receive', Msg}'
+%%     }
+%%   }
+%% }
 %%-spec pat_tuple(Pattern :: af_pattern()) -> erl_syntax:syntaxTree().
 pat_tuple({fork, _, Pid, Pid2, MFArgs}) ->
   erl_syntax:tuple([
@@ -436,7 +500,6 @@ create_module(Mod, Ast, MonFun, Module, Opts) ->
 
 %% @private Visits maxHML formula nodes and generates the corresponding syntax
 %% tree describing one monitor (i.e. one formula is mapped to one monitor).
-
 -spec visit_forms(Mod, Form, Opts) -> [erl_syntax:syntaxTree()]
   when
   Mod :: module(),

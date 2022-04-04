@@ -28,7 +28,7 @@ with
 check
   [{_ConnProc <- _ReqProc, cowboy_stream_h:request_process(_, _, _)}]
     max X.(
-      [{_ReqProc:_! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode =:= 200}] X
+      [{_ReqProc:_ ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode =:= 200}] X
       and
       [{_ReqProc:_ ! {{_ConnProc, _}, {response, HttpCode, _, _}} when HttpCode =:= 500}] ff
       and

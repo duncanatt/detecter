@@ -1,0 +1,766 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module tracer</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module tracer</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Module description (becomes module heading).
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Module description (becomes module heading).
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-a_mode">a_mode()</a></h3>
+<p><tt>a_mode() = '?A_MODE_INTERNAL' | '?A_MODE_EXTERNAL'</tt></p>
+
+
+<h3 class="typedecl"><a name="type-analyzer">analyzer()</a></h3>
+<p><tt>analyzer() = pid() | self | undefined</tt></p>
+
+
+<h3 class="typedecl"><a name="type-detach">detach()</a></h3>
+<p><tt>detach() = {detach, PidRtr::pid(), PidS::pid()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-parent">parent()</a></h3>
+<p><tt>parent() = pid() | self</tt></p>
+
+
+<h3 class="typedecl"><a name="type-routed">routed()</a></h3>
+<p><tt>routed(Msg) = {route, PidRtr::pid(), Msg}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-routes">routes()</a></h3>
+<p><tt>routes() = #{pid() =&gt; pid()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-state">state()</a></h3>
+<p><tt>state() = #state{routes = <a href="#type-routes">routes()</a>, traced = <a href="#type-traced">traced()</a>, mfa_spec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a>, a_mode = <a href="#type-a_mode">a_mode()</a>, trace = list(), stats = <a href="#type-stats">stats()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-stats">stats()</a></h3>
+<p><tt>stats() = #stats{cnt_spawn = non_neg_integer(), cnt_exit = non_neg_integer(), cnt_send = non_neg_integer(), cnt_receive = non_neg_integer(), cnt_spawned = non_neg_integer(), cnt_other = non_neg_integer()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-t_mode">t_mode()</a></h3>
+<p><tt>t_mode() = '?T_MODE_PRIORITY' | '?T_MODE_DIRECT'</tt></p>
+
+
+<h3 class="typedecl"><a name="type-traced">traced()</a></h3>
+<p><tt>traced() = #{pid() =&gt; <a href="#type-t_mode">t_mode()</a>}</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#add_proc-3">add_proc/3*</a></td><td>Adds the specified system process to the traced processes map.</td></tr>
+<tr><td valign="top"><a href="#add_route-3">add_route/3*</a></td><td>Adds a new process-tracer mapping to the routes map.</td></tr>
+<tr><td valign="top"><a href="#analyze-2">analyze/2*</a></td><td>Analyses the specified trace event.</td></tr>
+<tr><td valign="top"><a href="#can_detach-1">can_detach/1*</a></td><td>Determines whether a tracer can transition to <code>direct</code> mode.</td></tr>
+<tr><td valign="top"><a href="#color_by_pid-2">color_by_pid/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#del_proc-2">del_proc/2*</a></td><td>Deletes the specified system process from the traced processes map.</td></tr>
+<tr><td valign="top"><a href="#del_route-2">del_route/2*</a></td><td>Deletes the existing process-tracer mapping from the routes map.</td></tr>
+<tr><td valign="top"><a href="#detach-2">detach/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#do_handle-4">do_handle/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format-2">format/2*</a></td><td>Returns a character list that represents the data formatted according to       
+the specified format flags.</td></tr>
+<tr><td valign="top"><a href="#forwd-2">forwd/2*</a></td><td>Forwards the specified trace event or command.</td></tr>
+<tr><td valign="top"><a href="#forwd_detach-4">forwd_detach/4*</a></td><td>Forwards detach commands to the next hop.</td></tr>
+<tr><td valign="top"><a href="#forwd_event-2">forwd_event/2*</a></td><td>Forwards routed trace events.</td></tr>
+<tr><td valign="top"><a href="#get_mon_info-0">get_mon_info/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_mon_info-1">get_mon_info/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_mon_info_rev-0">get_mon_info_rev/0</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_mon_info_rev-1">get_mon_info_rev/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_proc_mon-1">get_proc_mon/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#handle_detach-4">handle_detach/4*</a></td><td>Handles detach commands or forwards them to the next hop.</td></tr>
+<tr><td valign="top"><a href="#handle_event-5">handle_event/5*</a></td><td>Processes trace events in direct and priority modes.</td></tr>
+<tr><td valign="top"><a href="#init_mon_info_tbls-0">init_mon_info_tbls/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#instr-5">instr/5*</a></td><td>Instruments a system process with a new tracer or adds the system  
+process under the current tracer.</td></tr>
+<tr><td valign="top"><a href="#loop-4">loop/4*</a></td><td>Main tracer loop that routes, collects and analyzes trace events.</td></tr>
+<tr><td valign="top"><a href="#new_analyzer-3">new_analyzer/3*</a></td><td>Creates a new internal or external trace event analyzer that is       
+initialized with the specified analysis function.</td></tr>
+<tr><td valign="top"><a href="#pid_tokens-1">pid_tokens/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#pid_tokens-4">pid_tokens/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#root-5">root/5</a></td><td>Starts tracing the specified top-level system process.</td></tr>
+<tr><td valign="top"><a href="#route-2">route/2*</a></td><td>Routes the specified trace event or command.</td></tr>
+<tr><td valign="top"><a href="#route_detach-4">route_detach/4*</a></td><td>Routes detach commands to the next hop.</td></tr>
+<tr><td valign="top"><a href="#set_trc_info-2">set_trc_info/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_state-2">show_state/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start-4">start/4</a></td><td>Starts and instruments the top-level system process with the root       
+tracer.</td></tr>
+<tr><td valign="top"><a href="#stop-0">stop/0</a></td><td>Performs cleanup.</td></tr>
+<tr><td valign="top"><a href="#stop_analyzer-1">stop_analyzer/1*</a></td><td>Stops the embedded or process-based analyzer, if defined.</td></tr>
+<tr><td valign="top"><a href="#tracer-6">tracer/6</a></td><td>Starts tracing the specified system process.</td></tr>
+<tr><td valign="top"><a href="#try_gc-3">try_gc/3*</a></td><td>Terminates the tracer when the routes and traced processes maps are  
+empty.</td></tr>
+<tr><td valign="top"><a href="#upd_proc-3">upd_proc/3*</a></td><td>Updates the specified system process in the traced processes map with       
+the new mode.</td></tr>
+<tr><td valign="top"><a href="#upd_state-2">upd_state/2*</a></td><td>Updates the tracer state for the specified event.</td></tr>
+<tr><td valign="top"><a href="#upd_stats-2">upd_stats/2*</a></td><td>Updates the processed event counts for the specified event.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="add_proc-3">add_proc/3 *</a></h3>
+<div class="spec">
+<p><tt>add_proc(PidS, TMode, Traced) -&gt; <a href="#type-traced">traced()</a></tt>
+<ul class="definitions"><li><tt>PidS = pid()</tt></li><li><tt>TMode = <a href="#type-t_mode">t_mode()</a></tt></li><li><tt>Traced = <a href="#type-traced">traced()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Adds the specified system process to the traced processes map.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of system process to add.</dd>
+    <dt><code>TMode</code></dt>
+    <dd>Tracer mode.</dd>
+    <dt><code>Traced</code></dt>
+    <dd>Traced processes map.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated traced processes map.</p></p>
+
+<h3 class="function"><a name="add_route-3">add_route/3 *</a></h3>
+<div class="spec">
+<p><tt>add_route(PidS::pid(), PidT::pid(), Routes::<a href="#type-routes">routes()</a>) -&gt; <a href="#type-routes">routes()</a></tt><br></p>
+<p> </p>
+</div><p><p>Adds a new process-tracer mapping to the routes map.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of system process for which future trace events will be routed
+           or forwarded.
+    </dd>
+    <dt><code>PidT</code></dt>
+    <dd>PID of tracer process to which future trace events from <code>PidS</code> are
+           forwarded.
+    </dd>
+    <dt><code>Routes</code></dt>
+    <dd>Routes map.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated routes map.</p></p>
+
+<h3 class="function"><a name="analyze-2">analyze/2 *</a></h3>
+<div class="spec">
+<p><tt>analyze(Analyzer, Evt) -&gt; Evt</tt>
+<ul class="definitions"><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Evt = <a href="event.html#type-evm_event">event:evm_event()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Analyses the specified trace event.</p>
+ 
+  <dl><dt><code>Analyzer</code></dt>
+    <dd>Analyzer to use.</dd>
+    <dt><code>Evt</code></dt>
+    <dd>Trace event to analyze.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Analyzed event.</p></p>
+
+<h3 class="function"><a name="can_detach-1">can_detach/1 *</a></h3>
+<div class="spec">
+<p><tt>can_detach(State::<a href="#type-state">state()</a>) -&gt; boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Determines whether a tracer can transition to <code>direct</code> mode.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> if the tracer can transition to <code>direct</code> mode, otherwise
+            false.
+  </p></p>
+
+<h3 class="function"><a name="color_by_pid-2">color_by_pid/2 *</a></h3>
+<div class="spec">
+<p><tt>color_by_pid(Pid::pid(), Text::string()) -&gt; iolist()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="del_proc-2">del_proc/2 *</a></h3>
+<div class="spec">
+<p><tt>del_proc(PidS::pid(), Traced::<a href="#type-traced">traced()</a>) -&gt; <a href="#type-traced">traced()</a></tt><br></p>
+<p> </p>
+</div><p><p>Deletes the specified system process from the traced processes map.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of system process to delete.</dd>
+    <dt><code>Traced</code></dt>
+    <dd>Traced processes map.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated traced processes map.</p></p>
+
+<h3 class="function"><a name="del_route-2">del_route/2 *</a></h3>
+<div class="spec">
+<p><tt>del_route(PidS::pid(), Routes::<a href="#type-routes">routes()</a>) -&gt; <a href="#type-routes">routes()</a></tt><br></p>
+<p> </p>
+</div><p><p>Deletes the existing process-tracer mapping from the routes map.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of system process for which mapping is to be deleted.</dd>
+    <dt><code>Routes</code></dt>
+    <dd>Routes map.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated routes map.</p></p>
+
+<h3 class="function"><a name="detach-2">detach/2 *</a></h3>
+<div class="spec">
+<p><tt>detach(PidS::pid(), PidT::pid()) -&gt; Detach::<a href="#type-detach">detach()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="do_handle-4">do_handle/4 *</a></h3>
+<div class="spec">
+<p><tt>do_handle(PidSrc, State, OnForward, OnHandle) -&gt; term()</tt>
+<ul class="definitions"><li><tt>PidSrc = pid()</tt></li><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>OnForward = fun((NextHop::pid()) -&gt; term())</tt></li><li><tt>OnHandle = fun(() -&gt; term())</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="format-2">format/2 *</a></h3>
+<div class="spec">
+<p><tt>format(Fmt::string(), Args::list()) -&gt; String::string()</tt><br></p>
+<p> </p>
+</div><p><p>Returns a character list that represents the data formatted according to       
+the specified format flags.</p>
+ 
+  <dl><dt><code>Fmt</code></dt>
+    <dd>String formatting.</dd>
+    <dt><code>Args</code></dt>
+    <dd>Arguments to pass to the formatting.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Formatted character list.</p></p>
+
+<h3 class="function"><a name="forwd-2">forwd/2 *</a></h3>
+<div class="spec">
+<p><tt>forwd(PidT, Rtd) -&gt; <a href="#type-routed">routed</a>(<a href="event.html#type-evm_event">event:evm_event()</a>) | <a href="#type-routed">routed</a>(<a href="#type-detach">detach()</a>)</tt>
+<ul class="definitions"><li><tt>PidT = pid()</tt></li><li><tt>Rtd = <a href="#type-routed">routed</a>(<a href="event.html#type-evm_event">event:evm_event()</a>) | <a href="#type-routed">routed</a>(<a href="#type-detach">detach()</a>)</tt></li></ul></p>
+<p> </p>
+</div><p><p>Forwards the specified trace event or command.</p>
+ 
+  <dl><dt><code>PidT</code></dt>
+    <dd>PID of destination tracer process.</dd>
+    <dt><code>Rtd</code></dt>
+    <dd>Routed trace event or command to forward.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Forwarded message.</p></p>
+
+<h3 class="function"><a name="forwd_detach-4">forwd_detach/4 *</a></h3>
+<div class="spec">
+<p><tt>forwd_detach(State, Rtd, Analyzer, Parent) -&gt; <a href="#type-state">state()</a> | no_return()</tt>
+<ul class="definitions"><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Rtd = <a href="#type-routed">routed</a>(<a href="#type-detach">detach()</a>)</tt></li><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Forwards detach commands to the next hop.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Rtd</code></dt>
+    <dd>Routed message to forward.</dd>
+    <dt><code>Analyzer</code></dt>
+    <dd>PID of independent trace event analyzer process if the analysis is
+           external, <code>self</code> if the analysis is internal, or <code>undefined</code> if no
+           analysis is performed.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p>The function should be used in <code>direct</code> mode.</p>
+  <p>When a tracer is in <code>priority</code> mode, it can either handle or forward
+        <code>detach</code> commands. This command enables a tracer to transition from
+        <code>priority</code> mode to <code>direct</code> mode only once all the processes in the
+         traced processes map are marked as detached by the tracer; this
+         procedure can only be accomplished by the tracer when it handles the
+         command for the particular process being detached. When, the command
+         cannot be handled by the tracer, it is forwarded to the next hop, see
+         <a href="#handle_detach-4"><code>handle_detach/4</code></a>. A <code>detach</code> is not designed to be handled by
+         tracers when in <code>direct</code> mode, and <b>must</b> always be forwarded.
+  </p>
+ 
+  <p><b>Returns:</b> Updated tracer state, or does not return if tracer is garbage
+            collected.</p></p>
+
+<h3 class="function"><a name="forwd_event-2">forwd_event/2 *</a></h3>
+<div class="spec">
+<p><tt>forwd_event(State, Rtd) -&gt; <a href="#type-state">state()</a></tt>
+<ul class="definitions"><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Rtd = <a href="#type-routed">routed</a>(<a href="event.html#type-evm_event">event:evm_event()</a>)</tt></li></ul></p>
+<p> </p>
+</div><p><p>Forwards routed trace events.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Rtd</code></dt>
+    <dd>Routed message to forward.</dd>
+  </dl>
+ 
+  <p>The function should be used in <code>direct</code> mode.</p>
+  <p>When a tracer is in <code>priority</code> mode, it can either handle or forward
+        trace events. Handling enables the tracer to analyze the event. When
+        the event cannot be handled by the tracer, it is forwarded to the next
+        hop, see <a href="#handle_event-5"><code>handle_event/5</code></a>, <code>priority</code> mode. A trace event is not
+        designed to be handled by tracers when in <code>direct</code> mode, and <b>must</b> always be forwarded.
+  </p>
+ 
+  <p><b>Returns:</b> Update tracer state.</p></p>
+<p><b><font color="red">To do</font></b><ul><li><font color="red"> Can this be tightened? It can, but the result is more cryptic (IN FUTURE).</font></li></ul></p>
+
+<h3 class="function"><a name="get_mon_info-0">get_mon_info/0</a></h3>
+<div class="spec">
+<p><tt>get_mon_info() -&gt; list()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_mon_info-1">get_mon_info/1</a></h3>
+<div class="spec">
+<p><tt>get_mon_info(MonPid::pid()) -&gt; Info::tuple()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_mon_info_rev-0">get_mon_info_rev/0</a></h3>
+<div class="spec">
+<p><tt>get_mon_info_rev() -&gt; list()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_mon_info_rev-1">get_mon_info_rev/1</a></h3>
+<div class="spec">
+<p><tt>get_mon_info_rev(Pid::pid()) -&gt; Info::tuple() | undefined</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_proc_mon-1">get_proc_mon/1</a></h3>
+<div class="spec">
+<p><tt>get_proc_mon(Pid::pid()) -&gt; MonPid::pid() | undefined</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="handle_detach-4">handle_detach/4 *</a></h3>
+<div class="spec">
+<p><tt>handle_detach(State, Rtd, Analyzer, Parent) -&gt; <a href="#type-state">state()</a> | no_return()</tt>
+<ul class="definitions"><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Rtd = <a href="#type-routed">routed</a>(<a href="#type-detach">detach()</a>)</tt></li><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Handles detach commands or forwards them to the next hop.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Rtd</code></dt>
+    <dd>Routed message to forward.</dd>
+    <dt><code>Analyzer</code></dt>
+    <dd>PID of independent trace event analyzer process if the analysis is
+           external, <code>self</code> if the analysis is internal, or <code>undefined</code> if no
+           analysis is performed.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p>The function should be used in <code>priority</code> mode.</p>
+  <p>Detach commands can be either handled <b>or</b> forwarded when the
+        tracer is in <code>priority</code> mode.
+  </p>
+ 
+  <p><b>Returns:</b> Updated tracer state, or does not return if tracer is garbage
+            collected.</p></p>
+
+<h3 class="function"><a name="handle_event-5">handle_event/5 *</a></h3>
+<div class="spec">
+<p><tt>handle_event(TMode, State, Msg, Analyzer, Parent) -&gt; <a href="#type-state">state()</a></tt>
+<ul class="definitions"><li><tt>TMode = <a href="#type-t_mode">t_mode()</a></tt></li><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Msg = <a href="event.html#type-evm_event">event:evm_event()</a> | <a href="#type-routed">routed</a>(<a href="event.html#type-evm_event">event:evm_event()</a>)</tt></li><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Processes trace events in direct and priority modes.</p>
+ 
+  <dl><dt><code>TMode</code></dt>
+    <dd>Tracer mode.</dd>
+    <dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Msg</code></dt>
+    <dd>Direct or routed trace event message to route, analyze or forward.</dd>
+    <dt><code>Analyzer</code></dt>
+    <dd>PID of independent trace event analyzer process if the analysis is
+           external, <code>self</code> if the analysis is internal, or <code>undefined</code> if no
+           analysis is performed.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated tracer state.</p></p>
+
+<h3 class="function"><a name="init_mon_info_tbls-0">init_mon_info_tbls/0 *</a></h3>
+<div class="spec">
+<p><tt>init_mon_info_tbls() -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="instr-5">instr/5 *</a></h3>
+<div class="spec">
+<p><tt>instr(TMode, State, Evt, PidT, Parent) -&gt; <a href="#type-state">state()</a></tt>
+<ul class="definitions"><li><tt>TMode = <a href="#type-t_mode">t_mode()</a></tt></li><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Evt = <a href="event.html#type-evm_event">event:evm_event()</a></tt></li><li><tt>PidT = pid()</tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Instruments a system process with a new tracer or adds the system  
+process under the current tracer.</p>
+ 
+  <dl><dt><code>TMode</code></dt>
+    <dd>Tracer mode.</dd>
+    <dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Evt</code></dt>
+    <dd>Trace event carrying the information of the new system process.</dd>
+    <dt><code>PidT</code></dt>
+    <dd>PID of the router tracer to detach from.</dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated tracer state.</p></p>
+
+<h3 class="function"><a name="loop-4">loop/4 *</a></h3>
+<div class="spec">
+<p><tt>loop(TMode, State, Analyzer, Parent) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>TMode = <a href="#type-t_mode">t_mode()</a></tt></li><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Main tracer loop that routes, collects and analyzes trace events.</p>
+ 
+  <dl><dt><code>TMode</code></dt>
+    <dd>Tracer mode.</dd>
+    <dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Analyzer</code></dt>
+    <dd>PID of independent trace event analyzer process if the analysis is
+           external, <code>self</code> if the analysis is internal, or <code>undefined</code> if no
+           analysis is performed.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p>When <tt><code>Analyzer</code> =/= <code>self</code></tt>, the tracer creates an independent
+        analyzer process to which it dispatches trace events for asynchronous
+        analysis. The tracer and analyzer processes are not linked. When
+        <tt><code>Analyzer</code> == <code>self</code></tt>, trace events are analyzed internally by
+        the tracer.
+  </p>
+  <p>Tracers operate in one of two modes: <code>direct</code> or <code>priority</code>. In
+        <code>direct</code> mode, a tracer collects trace events for the system process or
+        processes it traces directly. In <code>priority</code> mode, the tracer has to
+        wait for the router tracer to route trace events to it. Routed priority
+        trace events necessarily temporally precede any other event the tracer
+        comes across in the future, and therefore, must be handled first. Only
+        when these are handled, and a corresponding detach command has been
+        issued by the tracer for <b>each</b> of the system processes it traces
+        can it transition to <code>direct</code> mode.
+  </p>
+ 
+  <p>The contents of the routing table are managed by the receive handlers of
+  the <code>spawn</code> and <code>stp</code> events. The <code>spawn</code> event adds new entries into the
+  routing table only if a tracer (and by extension, a monitor) can be created
+  for the spawned process. This is decided based on the MFA in the <code>PropLst</code>
+  dictionary. If no tracer will be created (since the MFA in the <code>spawn</code> event
+  is not contained in the <code>PropLst</code> dictionary) no entry is added in the
+  routing table. Entries are removed from the routing table once a <code>stp</code> event
+  is received. The event <code>stp</code> serves to notify the ancestor tracer that the
+  local tracer is subscribed to its local trace, and therefore, requires no
+  further message routing.</p>
+ 
+  <p><b>Returns:</b> Does not return.</p></p>
+
+<h3 class="function"><a name="new_analyzer-3">new_analyzer/3 *</a></h3>
+<div class="spec">
+<p><tt>new_analyzer(AnlFun, Parent, AMode) -&gt; pid() | self</tt>
+<ul class="definitions"><li><tt>AnlFun = <a href="analyzer.html#type-monitor">analyzer:monitor()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li><li><tt>AMode = <a href="#type-a_mode">a_mode()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Creates a new internal or external trace event analyzer that is       
+initialized with the specified analysis function.</p>
+ 
+  <dl><dt><code>AnlFun</code></dt>
+    <dd>Analysis function that is applied to trace events to determine their
+           correct or incorrect sequence.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+    <dt><code>AMode</code></dt>
+    <dd>Analysis mode.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of external analyzer process or <code>self</code> if the analyzer is
+            embedded in the tracer process itself.
+  </p></p>
+
+<h3 class="function"><a name="pid_tokens-1">pid_tokens/1 *</a></h3>
+<div class="spec">
+<p><tt>pid_tokens(Pid::pid()) -&gt; {non_neg_integer(), non_neg_integer(), non_neg_integer()}</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="pid_tokens-4">pid_tokens/4 *</a></h3>
+<div class="spec">
+<p><tt>pid_tokens(PidChars, Fact, N, Elements) -&gt; {non_neg_integer(), non_neg_integer(), non_neg_integer()}</tt>
+<ul class="definitions"><li><tt>PidChars = string()</tt></li><li><tt>Fact = pos_integer()</tt></li><li><tt>N = non_neg_integer()</tt></li><li><tt>Elements = tuple()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="root-5">root/5</a></h3>
+<div class="spec">
+<p><tt>root(PidS, MfaSpec, AMode, Starter, Parent) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>PidS = pid()</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>AMode = <a href="#type-a_mode">a_mode()</a></tt></li><li><tt>Starter = pid()</tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts tracing the specified top-level system process.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of the top-level system process.</dd>
+    <dt><code>MfaSpec</code></dt>
+    <dd>Function that determines whether an analyzer is associated with a
+           MFA whose process instantiation needs to be monitored.
+    </dd>
+    <dt><code>AMode</code></dt>
+    <dd>Analysis mode determining whether the analysis is conducted
+           internally in tracer processes or externally in independent
+           analyzer processes.
+    </dd>
+    <dt><code>Starter</code></dt>
+    <dd>PID of the process launching the tracer.</dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p>To prevent the loss of trace events, the root tracer blocks after it
+        starts tracing <code>PidS</code> and waits until it is ack'ed by <code>Starter</code>.
+  </p>
+ 
+  <p><b>Returns:</b> Does not return.</p></p>
+
+<h3 class="function"><a name="route-2">route/2 *</a></h3>
+<div class="spec">
+<p><tt>route(PidT, Msg) -&gt; <a href="#type-routed">routed</a>(<a href="event.html#type-evm_event">event:evm_event()</a>) | <a href="#type-routed">routed</a>(<a href="#type-detach">detach()</a>)</tt>
+<ul class="definitions"><li><tt>PidT = pid()</tt></li><li><tt>Msg = <a href="event.html#type-evm_event">event:evm_event()</a> | <a href="#type-detach">detach()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Routes the specified trace event or command.</p>
+ 
+  <dl><dt><code>PidT</code></dt>
+    <dd>PID of destination tracer process.</dd>
+    <dt><code>Msg</code></dt>
+    <dd>Trace event or command to route.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Routed message.</p></p>
+
+<h3 class="function"><a name="route_detach-4">route_detach/4 *</a></h3>
+<div class="spec">
+<p><tt>route_detach(State, Cmd, Analyzer, Parent) -&gt; <a href="#type-state">state()</a> | no_return()</tt>
+<ul class="definitions"><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Cmd = <a href="#type-detach">detach()</a></tt></li><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Routes detach commands to the next hop.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Cmd</code></dt>
+    <dd>Detach command to route.</dd>
+    <dt><code>Analyzer</code></dt>
+    <dd>PID of independent trace event analyzer process if the analysis is
+           external, <code>self</code> if the analysis is internal, or <code>undefined</code> if no
+           analysis is performed.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p>The function should be used in <code>direct</code> mode.</p>
+  <p>Detach commands <b>must</b> be routed when the tracer is in <code>direct</code>
+        mode.
+  </p>
+ 
+  <p><b>Returns:</b> Updated tracer state, or does not return if tracer is garbage
+            collected.
+  </p></p>
+
+<h3 class="function"><a name="set_trc_info-2">set_trc_info/2</a></h3>
+<div class="spec">
+<p><tt>set_trc_info(Pid::pid(), State::<a href="#type-state">state()</a>) -&gt; State::<a href="#type-state">state()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_state-2">show_state/2 *</a></h3>
+<div class="spec">
+<p><tt>show_state(State::<a href="#type-state">state()</a>, Data::any()) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="start-4">start/4</a></h3>
+<div class="spec">
+<p><tt>start(PidS, MfaSpec, AMode, Parent) -&gt; pid()</tt>
+<ul class="definitions"><li><tt>PidS = pid()</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>AMode = <a href="#type-a_mode">a_mode()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts and instruments the top-level system process with the root       
+tracer.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of the top-level system process.</dd>
+    <dt><code>MfaSpec</code></dt>
+    <dd>Function that determines whether an analyzer is associated with a
+           MFA whose process instantiation needs to be monitored.
+    </dd>
+    <dt><code>AMode</code></dt>
+    <dd>Analysis mode determining whether the analysis is conducted
+           internally in tracer processes or externally in independent
+           analyzer processes.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor that is linked to tracer process or <code>self</code>.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of root tracer process.</p></p>
+<p><b><font color="red">To do</font></b><ul><li><font color="red"> What are these? Probably tables used to keep counts used in the ETS table? We'll see</font></li><li><font color="red"> I think they are used in testing to keep the association between tracers and processes.</font></li></ul></p>
+
+<h3 class="function"><a name="stop-0">stop/0</a></h3>
+<div class="spec">
+<p><tt>stop() -&gt; ok</tt><br></p>
+<p> </p>
+</div><p><p>Performs cleanup.</p>
+ 
+  <p><b>Returns:</b> <code>ok</code>.</p></p>
+
+<h3 class="function"><a name="stop_analyzer-1">stop_analyzer/1 *</a></h3>
+<div class="spec">
+<p><tt>stop_analyzer(Analyzer::<a href="#type-analyzer">analyzer()</a>) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p><p>Stops the embedded or process-based analyzer, if defined.</p>
+ 
+  <dl><dt><code>Analyzer</code></dt>
+    <dd>Analyzer to stop.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>ok</code> to indicate success.</p></p>
+
+<h3 class="function"><a name="tracer-6">tracer/6</a></h3>
+<div class="spec">
+<p><tt>tracer(PidS, PidT, AnlFun, MfaSpec, AMode, Parent) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>PidS = pid()</tt></li><li><tt>PidT = pid()</tt></li><li><tt>AnlFun = <a href="analyzer.html#type-monitor">analyzer:monitor()</a></tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>AMode = <a href="#type-a_mode">a_mode()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts tracing the specified system process.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of the top-level system process.</dd>
+    <dt><code>PidT</code></dt>
+    <dd>PID of the router tracer to detach from.</dd>
+    <dt><code>AnlFun</code></dt>
+    <dd>Analysis function that is applied to trace events to determine their
+           correct or incorrect sequence.
+    </dd>
+    <dt><code>MfaSpec</code></dt>
+    <dd>Function that determines whether an analyzer is associated with a
+           MFA whose process instantiation needs to be monitored.
+    </dd>
+    <dt><code>AMode</code></dt>
+    <dd>Analysis mode determining whether the analysis is conducted
+           internally in tracer processes or externally in independent
+           analyzer processes.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Does not return.</p></p>
+
+<h3 class="function"><a name="try_gc-3">try_gc/3 *</a></h3>
+<div class="spec">
+<p><tt>try_gc(State, Analyzer, Parent) -&gt; <a href="#type-state">state()</a> | no_return()</tt>
+<ul class="definitions"><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Analyzer = <a href="#type-analyzer">analyzer()</a></tt></li><li><tt>Parent = <a href="#type-parent">parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Terminates the tracer when the routes and traced processes maps are  
+empty.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Analyzer</code></dt>
+    <dd>PID of independent trace event analyzer process if the analysis is
+           external, <code>self</code> if the analysis is internal, or <code>undefined</code> if no
+           analysis is performed.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to tracer processes or <code>self</code> if no
+           supervision is required.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated tracer state, or does not return if tracer is garbage
+            collected.</p></p>
+
+<h3 class="function"><a name="upd_proc-3">upd_proc/3 *</a></h3>
+<div class="spec">
+<p><tt>upd_proc(PidS, NewMode, Traced) -&gt; <a href="#type-traced">traced()</a></tt>
+<ul class="definitions"><li><tt>PidS = pid()</tt></li><li><tt>NewMode = <a href="#type-t_mode">t_mode()</a></tt></li><li><tt>Traced = <a href="#type-traced">traced()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Updates the specified system process in the traced processes map with       
+the new mode.</p>
+ 
+  <dl><dt><code>PidS</code></dt>
+    <dd>PID of system process to update.</dd>
+    <dt><code>NewMode</code></dt>
+    <dd>New process mode.</dd>
+    <dt><code>Traced</code></dt>
+    <dd>Traced processes map.</dd>
+  </dl>
+ 
+  <p>No update is performed if <code>PidS</code> does not exist.</p>
+ 
+  <p><b>Returns:</b> Updated traced processes map.</p></p>
+
+<h3 class="function"><a name="upd_state-2">upd_state/2 *</a></h3>
+<div class="spec">
+<p><tt>upd_state(State, Evt) -&gt; <a href="#type-state">state()</a></tt>
+<ul class="definitions"><li><tt>State = <a href="#type-state">state()</a></tt></li><li><tt>Evt = <a href="event.html#type-evm_event">event:evm_event()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Updates the tracer state for the specified event.</p>
+ 
+  <dl><dt><code>State</code></dt>
+    <dd>Tracer state.</dd>
+    <dt><code>Evt</code></dt>
+    <dd>Event for which the state is to be updated.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated tracer state.</p></p>
+
+<h3 class="function"><a name="upd_stats-2">upd_stats/2 *</a></h3>
+<div class="spec">
+<p><tt>upd_stats(Stats, Evt) -&gt; <a href="#type-stats">stats()</a></tt>
+<ul class="definitions"><li><tt>Stats = <a href="#type-stats">stats()</a></tt></li><li><tt>Evt = tuple()</tt></li></ul></p>
+<p> </p>
+</div><p><p>Updates the processed event counts for the specified event.</p>
+ 
+  <dl><dt><code>Stats</code></dt>
+    <dd>Trace event counts.</dd>
+    <dt><code>Evt</code></dt>
+    <dd>Event to increment.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Updated event counts.</p></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

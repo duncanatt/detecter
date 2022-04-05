@@ -1,0 +1,586 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module log_tracer</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module log_tracer</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Asynchronous tracing that monitors log file for trace events.
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2><p>Asynchronous tracing that monitors log file for trace events.</p>
+  
+   <p>The module provides a file-based tracing implementation that actively
+         monitors files of trace events to read and dispatch them to allocated
+         tracers. Source log files are structured as <b>one</b> trace event
+         per line; these events describe the execution trace of a single
+         process. The tracer handles interleaved trace events written to the
+         file by multiple processes, and guarantees that the sequential order
+         of events from the point of view of individual processes is respected.
+   </p>
+   <p>This tracing implementation is forward-only, meaning that it cannot
+         revisit previously processed lines in the source log file. It also
+         does not assume that the log file (and traces within) is complete.
+         although it a complete log file can be easily processed. Internally,
+         the tracer employs a polling mechanism (see <a href="log_poller.html"><code>log_poller</code></a> to
+         monitor the log file, similar to what is done by <code>tail</code> in *nix
+         systems.
+   </p>
+  
+   <h4 id="#Log file format">Log file format</h4>
+  
+   <p>For the format of individual trace events, see <a href="log_eval.html"><code>log_eval</code></a>.</p>
+   <p>Log files are structured as one trace event description per line:
+   <pre>   fork(&lt;0.17.0&gt;, &lt;0.19.0&gt;, {mod_p_4, start, []})
+   init(&lt;0.19.0&gt;, &lt;0.17.0&gt;, {mod_p_4, start, []})
+   send(&lt;0.19.0&gt;, &lt;0.11.0&gt;, msg_c)
+   exit(&lt;0.19.0&gt;, kill_p_4)
+   fork(&lt;0.11.0&gt;, &lt;0.13.0&gt;, {mod_p_2, start, []})
+   init(&lt;0.13.0&gt;, &lt;0.11.0&gt;, {mod_p_2, start, []})
+   recv(&lt;0.13.0&gt;, msg_a)
+   send(&lt;0.11.0&gt;, &lt;0.13.0&gt;, msg_a)
+   recv(&lt;0.11.0&gt;, msg_c)
+   exit(&lt;0.11.0&gt;, kill_p_1)
+   fork(&lt;0.13.0&gt;, &lt;0.17.0&gt;, {mod_p_3, start, []})
+   send(&lt;0.13.0&gt;, &lt;0.17.0&gt;, msg_b)
+   init(&lt;0.17.0&gt;, &lt;0.13.0&gt;, {mod_p_3, start, []})
+   recv(&lt;0.17.0&gt;, msg_b)
+   exit(&lt;0.17.0&gt;, kill_p_3)
+   exit(&lt;0.13.0&gt;, kill_p_2)</pre>
+   </p>
+  
+   <p>This log file describes the behavior of four concurrent processes,
+         P<sub>1</sub> (&lt;0.11.0&gt;), P<sub>2</sub> (&lt;0.13.0&gt;),
+         P<sub>3</sub> (&lt;0.17.0&gt;) and P<sub>4</sub> (&lt;0.19.0&gt;).
+         The behaviour of these processes is causally related: P<sub>1</sub>
+         forks P<sub>2</sub>, which in its turn, forks P<sub>3</sub>, with the
+         latter finally forking P<sub>4</sub>. Notwithstanding their causality,
+         the respective trace events of these processes appear in a different
+         order than one would expect due to their interleaved execution. This
+         reordering may also arise when each process is competing for the
+         <b>shared write lock</b> that needs to be acquired before the trace
+         event can be written to the log file by the process.
+   </p>
+   <p>Processes P<sub>1</sub> to P<sub>4</sub> are sequential entities. One
+         should distinguish between the relative ordering of trace events for
+         each process, as opposed to the global ordering of events as reported
+         in the log file. The log tracer implementation expects the trace event
+         order for one particular process to be logically consistent with the
+         behaviour of the process when this is considered in isolation. To
+         illustrate, the interleaved global trace in the example above can be
+         projected into the following four traces:
+   </p>
+   <dl><dt>Trace P<sub>1</sub> (note that the <tt>init</tt> trace event for
+            P<sub>1</sub> is missing from the log file):
+     </dt>
+     <dd><ol><li><tt>fork(&lt;0.11.0&gt;, &lt;0.13.0&gt;, {mod_p_2, start, []})</tt></li>
+              <li><tt>send(&lt;0.11.0&gt;, &lt;0.13.0&gt;, msg_a)</tt></li>
+              <li><tt>recv(&lt;0.11.0&gt;, msg_c)</tt></li>
+              <li><tt>exit(&lt;0.11.0&gt;, kill_p_1)</tt></li>
+     </ol></dd>
+     <dt>Trace P<sub>2</sub>:</dt>
+     <dd><ol><li><tt>init(&lt;0.13.0&gt;, &lt;0.11.0&gt;, {mod_p_2, start, []})</tt></li>
+              <li><tt>recv(&lt;0.13.0&gt;, msg_a)</tt></li>
+              <li><tt>fork(&lt;0.13.0&gt;, &lt;0.17.0&gt;, {mod_p_3, start, []})</tt></li>
+              <li><tt>send(&lt;0.13.0&gt;, &lt;0.17.0&gt;, msg_b)</tt></li>
+              <li><tt>exit(&lt;0.13.0&gt;, kill_p_2)</tt></li>
+     </ol></dd>
+     <dt>Trace P<sub>3</sub>:</dt>
+     <dd><ol><li><tt>fork(&lt;0.17.0&gt;, &lt;0.19.0&gt;, {mod_p_4, start, []})</tt></li>
+              <li><tt>init(&lt;0.17.0&gt;, &lt;0.13.0&gt;, {mod_p_3, start, []})</tt></li>
+              <li><tt>recv(&lt;0.17.0&gt;, msg_b)</tt></li>
+              <li><tt>exit(&lt;0.17.0&gt;, kill_p_3)</tt></li>
+     </ol></dd>
+     <dt>Trace P<sub>4</sub>:</dt>
+     <dd><ol><li><tt>init(&lt;0.19.0&gt;, &lt;0.17.0&gt;, {mod_p_4, start, []})</tt></li>
+              <li><tt>send(&lt;0.19.0&gt;, &lt;0.11.0&gt;, msg_c)</tt></li>
+              <li><tt>exit(&lt;0.19.0&gt;, kill_p_4)</tt></li>
+     </ol></dd>
+   </dl>
+   <p>The projected traces for P<sub>1</sub> to P<sub>4</sub> are valid. For
+         instance, <tt>exit</tt> events, that signal process termination are,
+         never followed by any other event: this would constitute unsound
+         behaviour where the process first terminated and then performed other
+         actions. Likewise, <tt>init</tt> events (when present in the trace),
+         are the first to be exhibited, indicating that a process must be
+         initialized (or created) before it can perform any other action. To
+         summarize, trace events for individual process are totally ordered,
+         whereas a global view of the events for all processes generally yields
+         a partial ordering.
+   </p>
+  
+   <h4 id="#Automatic tracer allocation">Automatic tracer allocation</h4>
+  
+   <p>To be filled later.</p>
+  
+   <h4 id="#Tracer guarantees">Tracer guarantees</h4>
+  
+   <p>To be filled later.</p>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-backlog">backlog()</a></h3>
+<p><tt>backlog() = [<a href="#type-event">event()</a>]</tt></p>
+<p>  Backlog of undelivered trace events.</p>
+
+<h3 class="typedecl"><a name="type-event">event()</a></h3>
+<p><tt>event() = {delay, Ms::timeout(), Event::<a href="event.html#type-int_event">event:int_event()</a>}</tt></p>
+<p>  Delayed trace event with data payload.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#clear-1">clear/1</a></td><td>Clears the tracer for the specified tracee.</td></tr>
+<tr><td valign="top"><a href="#create_alloc-2">create_alloc/2*</a></td><td>Creates a new entry into the allocated tracers table.</td></tr>
+<tr><td valign="top"><a href="#create_alloc_table-0">create_alloc_table/0*</a></td><td>Creates the allocated tracers table.</td></tr>
+<tr><td valign="top"><a href="#delete_alloc-1">delete_alloc/1*</a></td><td>Deletes the entry identified by tracee from the allocated tracers table.</td></tr>
+<tr><td valign="top"><a href="#delete_alloc_table-0">delete_alloc_table/0*</a></td><td>Deletes the allocated tracers table.</td></tr>
+<tr><td valign="top"><a href="#dispatch-1">dispatch/1*</a></td><td>Dispatches the trace event according to the allocated tracers table.</td></tr>
+<tr><td valign="top"><a href="#gen_dispatch-2">gen_dispatch/2*</a></td><td>Handles event dispatching and invokes the specified callback on success.</td></tr>
+<tr><td valign="top"><a href="#get_backlog-0">get_backlog/0</a></td><td>Fetches the backlog of trace events currently queued for delivery.</td></tr>
+<tr><td valign="top"><a href="#get_tracer-1">get_tracer/1</a></td><td>Determines whether tracee is being traced.</td></tr>
+<tr><td valign="top"><a href="#handle_call-3">handle_call/3</a></td><td>Handles requests synchronously.</td></tr>
+<tr><td valign="top"><a href="#handle_cast-2">handle_cast/2</a></td><td>Handles requests asynchronously.</td></tr>
+<tr><td valign="top"><a href="#init-1">init/1</a></td><td>Handles initialization.</td></tr>
+<tr><td valign="top"><a href="#play_backlog-1">play_backlog/1*</a></td><td>Dispatches events from the the backlog to tracers.</td></tr>
+<tr><td valign="top"><a href="#post_event-1">post_event/1</a></td><td>Posts a trace event description to the tracer.</td></tr>
+<tr><td valign="top"><a href="#post_events-1">post_events/1</a></td><td>Posts a list of trace event descriptions to the tracer.</td></tr>
+<tr><td valign="top"><a href="#preempt-1">preempt/1</a></td><td>Sets the caller process as the new tracer for tracee.</td></tr>
+<tr><td valign="top"><a href="#replay_backlog-1">replay_backlog/1*</a></td><td>Dispatches trace events from the backlog to tracers.</td></tr>
+<tr><td valign="top"><a href="#return_alloc-1">return_alloc/1*</a></td><td>Returns the PID of the allocated tracer for the specified tracee PID.</td></tr>
+<tr><td valign="top"><a href="#start-1">start/1</a></td><td>Configures and starts the tracer.</td></tr>
+<tr><td valign="top"><a href="#start-2">start/2</a></td><td>Configures and starts the tracer.</td></tr>
+<tr><td valign="top"><a href="#stop-0">stop/0</a></td><td>Stops the tracer.</td></tr>
+<tr><td valign="top"><a href="#terminate-2">terminate/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trace-1">trace/1</a></td><td>Sets the caller process as the tracer for tracee.</td></tr>
+<tr><td valign="top"><a href="#update_alloc-2">update_alloc/2*</a></td><td>Updates the tracer of the associated tracee.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="clear-1">clear/1</a></h3>
+<div class="spec">
+<p><tt>clear(Tracee::pid()) -&gt; true</tt><br></p>
+<p> </p>
+</div><p><p>Clears the tracer for the specified tracee.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process whose tracer is to be cleared.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> to acknowledge that <code>Tracee</code> is no longer being traced.</p></p>
+
+<h3 class="function"><a name="create_alloc-2">create_alloc/2 *</a></h3>
+<div class="spec">
+<p><tt>create_alloc(Tracee::pid(), Tracer::pid()) -&gt; Success::boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Creates a new entry into the allocated tracers table.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the tracee.</dd>
+    <dt><code>Tracer</code></dt>
+    <dd>PID of the tracer to allocate.</dd>
+  </dl>
+  <p>Operation fails if <code>Tracee</code> already exists in the table.</p>
+ 
+  <p><b>Returns:</b> <code>true</code> if the creation succeeded, otherwise <code>false</code>.</p></p>
+
+<h3 class="function"><a name="create_alloc_table-0">create_alloc_table/0 *</a></h3>
+<div class="spec">
+<p><tt>create_alloc_table() -&gt; '?ETS_ALLOC_NAME'</tt><br></p>
+<p> </p>
+</div><p><p>Creates the allocated tracers table.</p>
+ 
+  <p><b>Returns:</b> Table name.</p></p>
+
+<h3 class="function"><a name="delete_alloc-1">delete_alloc/1 *</a></h3>
+<div class="spec">
+<p><tt>delete_alloc(Tracee::pid()) -&gt; true</tt><br></p>
+<p> </p>
+</div><p><p>Deletes the entry identified by tracee from the allocated tracers table.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the tracee whose entry is to be deleted.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> regardless of whether the tracee exists.</p></p>
+
+<h3 class="function"><a name="delete_alloc_table-0">delete_alloc_table/0 *</a></h3>
+<div class="spec">
+<p><tt>delete_alloc_table() -&gt; true</tt><br></p>
+<p> </p>
+</div><p><p>Deletes the allocated tracers table.</p>
+ 
+  <p><b>Returns:</b> <code>true</code> regardless of whether the table exists.</p></p>
+
+<h3 class="function"><a name="dispatch-1">dispatch/1 *</a></h3>
+<div class="spec">
+<p><tt>dispatch(Event::<a href="#type-event">event()</a>) -&gt; false | {true, stable} | {true, update}</tt><br></p>
+<p> </p>
+</div><p><p>Dispatches the trace event according to the allocated tracers table.</p>
+ 
+  <dl><dt><code>Event</code></dt>
+    <dd>Trace event description dispatch.</dd>
+  </dl>
+ 
+  <p>Trace events are handled according to their type:</p>
+  <dl><dt><code>fork(P, Q)</code></dt>
+    <dd>If process <code>P</code> is allocated a tracer <code>T</code>, the event is dispatched to
+           <code>T</code>. As a side-effect, <code>Q</code> is allocated <code>T</code>, so that subsequent
+           events are dispatched to it. This emulates the automatic tracer
+           inheritance of forked processes in the EVM tracer. The event is
+           otherwise left in the backlog if no tracer is allocated to <code>P</code>.
+    </dd>
+    <dt><code>exit(P)</code></dt>
+    <dd>If process <code>P</code> is allocated a tracer <code>T</code>, the event is dispatched to
+           <code>T</code>. As a side-effect, the allocation of <code>T</code> for <code>P</code> is removed.
+           This emulates the automatic tracer removal for terminated processes
+           in the EVM tracer. The trace event is otherwise left in the backlog
+           if no tracer is allocated to <code>P</code>.
+    </dd>
+    <dt><code>init(P, Q)</code>, <code>send(P, Q)</code>, <code>recv(Q)</code></dt>
+    <dd>If process <code>P</code> is allocated a tracer <code>T</code>, the event is dispatched to
+           <code>T</code>. The event is otherwise left in the backlog if no tracer is
+           allocated to <code>P</code>.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Three outcomes are possible:
+            <dl><li><code>false</code></li>
+              <dd>Trace event could not be dispatched since no tracer is
+                     allocated.
+              </dd>
+              <li><code>{true, stable}</code></li>
+              <dd>Trace event has been dispatched. The backlog does not need
+                     to be revisited to examine events preceding the current
+                     one.
+              </dd>
+              <li><code>{true, update}</code></li>
+              <dd>Trace event has been dispatched and a new tracer has been
+                     automatically allocated. The backlog needs to be revisited
+                     to determine whether events preceding the current one can
+                     be dispatched.
+              </dd>
+            </dl>
+  </p></p>
+
+<h3 class="function"><a name="gen_dispatch-2">gen_dispatch/2 *</a></h3>
+<div class="spec">
+<p><tt>gen_dispatch(Event, OnDispatch) -&gt; Status::false | {true, any()}</tt>
+<ul class="definitions"><li><tt>Event = <a href="#type-event">event()</a></tt></li><li><tt>OnDispatch = function()</tt></li></ul></p>
+<p> </p>
+</div><p><p>Handles event dispatching and invokes the specified callback on success.</p>
+ 
+  <dl><dt><code>Event</code></dt>
+    <dd>Trace event to be dispatched.</dd>
+    <dt><code>OnDispatch</code></dt>
+    <dd>Callback accepting a single parameter <code>Tracer</code> that is populated
+           with the allocated tracer PID.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Two outcomes are possible:
+            <dl><dt><code>false</code></dt>
+              <dd>Trace event could not be dispatched since no tracer is
+                     allocated.
+              </dd>
+              <dt><code>{true, Result}</code></dt>
+              <dd>Trace event has been dispatched, and the result of the
+                     <code>OnDispatch</code> is returned in <code>Result</code>.
+              </dd>
+            </dl>
+  </p></p>
+
+<h3 class="function"><a name="get_backlog-0">get_backlog/0</a></h3>
+<div class="spec">
+<p><tt>get_backlog() -&gt; Backlog::<a href="#type-backlog">backlog()</a></tt><br></p>
+<p> </p>
+</div><p><p>Fetches the backlog of trace events currently queued for delivery.</p>
+ 
+  <p><b>Returns:</b> Trace event queue.</p></p>
+
+<h3 class="function"><a name="get_tracer-1">get_tracer/1</a></h3>
+<div class="spec">
+<p><tt>get_tracer(Tracee::pid()) -&gt; pid() | undefined</tt><br></p>
+<p> </p>
+</div><p><p>Determines whether tracee is being traced.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process to check.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of the associated tracer or <code>undefined</code> if <code>Tracee</code> is not
+            being traced.
+  </p></p>
+
+<h3 class="function"><a name="handle_call-3">handle_call/3</a></h3>
+<div class="spec">
+<p><tt>handle_call(Request, From, Backlog) -&gt; {reply, Backlog, Backlog} | {reply, ok, NewBacklog::<a href="#type-backlog">backlog()</a>} | {reply, {unblocked, Ref::reference()}, Backlog}</tt>
+<ul class="definitions"><li><tt>Request = get_backlog | {post, Event::<a href="#type-event">event()</a>} | {unblock, Ref::reference()}</tt></li><li><tt>From = {Pid::pid(), Tag::reference()}</tt></li><li><tt>Backlog = <a href="#type-backlog">backlog()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Handles requests synchronously.</p>
+ 
+  <p>The following requests are supported:</p>
+  <dl><dt><code>get_backlog</code></dt>
+    <dd><p><b>Returns:</b> Complete trace event backlog to the requesting process.</p></dd>
+    <dt><code>{post, Event::<a href="#type-event"><code>event()</code></a>}</code></dt>
+    <dd><p>Accepts a trace event description to be dispatched to the a tracer
+            if this is allocated to a tracee. If the trace event could not be
+            immediately dispatched due to the absence of such an allocation, it
+            is instead appended to the backlog.
+      </p>
+      <p>If the event dispatch resulted in the automatic allocation of a new
+            tracer, all of the queued events in the backlog are examined to
+            determine whether these have become eligible for dispatch in view
+            of this recent tracer allocation. These are handled accordingly,
+            should this be the case. Note that this handling may itself
+            automatically allocate further tracers, and this must be
+            continually repeated until all the events in the backlog that can
+            be dispatched have been dispatched, and the tracer is in a stable
+            state.
+      </p>
+      <p>Processing trace events in the backlog in sequential fashion
+            ensures that the order in which these were admitted into the
+            backlog remains preserved, despite the possible dynamic automatic
+            allocations of new tracers.
+      </p>
+      <p><b>Returns:</b> <code>ok</code> to acknowledge the requesting process.</p>
+    </dd>
+    <dt><code>{unblock, Ref::<a href="#type-reference"><code>reference()</code></a>}</code></dt>
+    <dd>Blocks the caller until the request is processed by the tracer. Used
+           internally by the <a href="#preempt-1"><code>preempt/1</code></a> implementation, which might
+           change in the future.
+           <p><b>Returns:</b> <code>{unblocked, Ref}</code> to unblock the requesting process.</p>
+    </dd>
+  </dl></p>
+
+<h3 class="function"><a name="handle_cast-2">handle_cast/2</a></h3>
+<div class="spec">
+<p><tt>handle_cast(Request, Backlog) -&gt; {noreply, UpdatedBacklog::<a href="#type-backlog">backlog()</a>}</tt>
+<ul class="definitions"><li><tt>Request = update</tt></li><li><tt>Backlog = <a href="#type-backlog">backlog()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Handles requests asynchronously.</p>
+ 
+  <p>The following requests are supported:</p>
+  <dl><dt><code>update</code></dt>
+    <dd>Indicates to the log tracer that a new tracer allocation has been
+           created externally via the API.
+      <p><b>Returns:</b> No reply is returned.</p>
+    </dd>
+  </dl></p>
+
+<h3 class="function"><a name="init-1">init/1</a></h3>
+<div class="spec">
+<p><tt>init(Args::[File::<a href="file.html#type-filename">file:filename()</a>]) -&gt; no_return()</tt><br></p>
+<p> </p>
+</div><p><p>Handles initialization.</p>
+ 
+  <dl><dt><code>Args</code></dt>
+    <dd>A single-element list that points to the full path path of log file
+           containing the trace event descriptions.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Empty state.</p></p>
+
+<h3 class="function"><a name="play_backlog-1">play_backlog/1 *</a></h3>
+<div class="spec">
+<p><tt>play_backlog(Backlog::<a href="#type-backlog">backlog()</a>) -&gt; {stable, ProcessedBacklog::<a href="#type-backlog">backlog()</a>} | {replay, PartiallyProcessedBacklog::<a href="#type-backlog">backlog()</a>}</tt><br></p>
+<p> </p>
+</div><p><p>Dispatches events from the the backlog to tracers.</p>
+ 
+  <dl><dt><code>Backlog</code></dt>
+    <dd>Trace event backlog to process.</dd>
+  </dl>
+ 
+  <p>When examining each trace event in the backlog, one of three scenarios
+        arises. These are handled thus:
+  </p>
+  <ol><li>Current trace event could not be dispatched since no tracers are
+           allocated at present. The event is left in the backlog.
+    </li>
+    <li>Current trace event was dispatched since an allocated tracer exists.
+           The event is removed from the backlog.
+    </li>
+    <li>Current trace event was dispatched since an allocated tracer exists.
+           The event is removed from the backlog. Additionally, processing the
+           event resulted in the automatic allocation of a tracer. The only
+           instance where this is possible is in the case of <code>fork(P, Q)</code> trace
+           events, where the same tracer <code>T</code> for process <code>P</code> is also allocated
+           to the forked process <code>Q</code>. Processing of the backlog ceases.
+    </li>
+  </ol>
+ 
+  <p><b>Returns:</b> Corresponds to the above scenarios:
+    <dl><dt><code>{stable, ProcessedBacklog}</code></dt>
+      <dd>Backlog has been processed, and all events that could be
+             dispatched (if any) were dispatched. This is the case for 1 and 2.
+      </dd>
+      <dt><code>{replay, PartiallyProcessedBacklog}</code></dt>
+      <dd>Backlog processing interrupted due to the automatic allocation of
+             a tracer. This could potentially render previously examined trace
+             events in the backlog eligible for dispatch. Consequently, ensuing
+             events in the backlog cannot be processed until all other previous
+             events are reexamined to determine whether these can be dispatched
+             or otherwise. When this is the case, the caller of this function
+             must re-invoke this function anew, specifying the partially
+             processed backlog, <code>PartiallyProcessedBacklog</code>, returned by the
+             current call (see <a href="replay_backlog.html"><code>replay_backlog</code></a>). This is the case for 3.
+      </dd>
+    </dl>
+  </p></p>
+
+<h3 class="function"><a name="post_event-1">post_event/1</a></h3>
+<div class="spec">
+<p><tt>post_event(Event::<a href="#type-event">event()</a>) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p><p>Posts a trace event description to the tracer.</p>
+ 
+  <dl><dt><code>Event</code></dt>
+    <dd>Trace event description to post.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>ok</code> to acknowledge success.</p></p>
+
+<h3 class="function"><a name="post_events-1">post_events/1</a></h3>
+<div class="spec">
+<p><tt>post_events(Events::[<a href="#type-event">event()</a>]) -&gt; [ok]</tt><br></p>
+<p> </p>
+</div><p><p>Posts a list of trace event descriptions to the tracer.</p>
+ 
+  <dl><dt><code>Events</code></dt>
+    <dd>List of trace event descriptions to post.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> List of <code>ok</code> atoms for each acknowledged post.</p></p>
+
+<h3 class="function"><a name="preempt-1">preempt/1</a></h3>
+<div class="spec">
+<p><tt>preempt(Tracee::pid()) -&gt; Success::boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Sets the caller process as the new tracer for tracee.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process to trace.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> if successful, or <code>false</code> if <code>Tracee</code> is not being traced.</p></p>
+
+<h3 class="function"><a name="replay_backlog-1">replay_backlog/1 *</a></h3>
+<div class="spec">
+<p><tt>replay_backlog(Backlog::<a href="#type-backlog">backlog()</a>) -&gt; ProcessedBacklog::<a href="#type-backlog">backlog()</a></tt><br></p>
+<p> </p>
+</div><p><p>Dispatches trace events from the backlog to tracers.</p>
+ 
+  <dl><dt><code>Backlog</code></dt>
+    <dd>Trace event backlog to process.</dd>
+  </dl>
+ 
+  <p>Trace events in the backlog are processed sequentially. This ensures
+        that events are dispatched in the correct order with respect to one
+        another, corresponding to the order in which these were admitted into
+        the backlog.
+  </p>
+  <p>Dispatching <code>fork</code> events will result in the automatic allocation of
+        new tracers (see <a href="#play_backlog-1"><code>play_backlog/1</code></a>). When this happens, the
+        sequential processing of the backlog is restarted at the head of the
+        backlog. This guarantees that any queued trace events for the forked
+        process that can be now dispatched (in light of the new tracer
+        allocation) are dispatched before other recent trace events for said
+        process. This reprocessing of the backlog may, yet again, give rise to
+        further automatic tracer allocations, which need to be handled as
+        described. In this manner, this function is reapplied to eliminate from
+        the backlog, via these intermediate steps, all the trace events that
+        can be dispatched, to yield a stable backlog.
+  </p>
+ 
+  <p><b>Returns:</b> Stable backlog.</p></p>
+
+<h3 class="function"><a name="return_alloc-1">return_alloc/1 *</a></h3>
+<div class="spec">
+<p><tt>return_alloc(Tracee::pid()) -&gt; Tracer::pid() | undefined</tt><br></p>
+<p> </p>
+</div><p><p>Returns the PID of the allocated tracer for the specified tracee PID.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the tracee whose tracer is to be returned.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of the tracer if existent, otherwise <code>undefined</code>.</p></p>
+
+<h3 class="function"><a name="start-1">start/1</a></h3>
+<div class="spec">
+<p><tt>start(File::<a href="file.html#type-filename">file:filename()</a>) -&gt; {ok, Pid::pid()} | {error, {already_started, Pid::pid()}}</tt><br></p>
+<p> </p>
+</div><p><p>Configures and starts the tracer.</p>
+ 
+  <dl><dt><code>File</code></dt>
+    <dd>Full path of log file containing the trace event descriptions.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of the tracer process.</p></p>
+
+<h3 class="function"><a name="start-2">start/2</a></h3>
+<div class="spec">
+<p><tt>start(File::<a href="file.html#type-filename">file:filename()</a>, Opts::<a href="proplists.html#type-proplist">proplists:proplist()</a>) -&gt; {ok, Pid::pid()} | {error, {already_started, Pid::pid()}}</tt><br></p>
+<p> </p>
+</div><p><p>Configures and starts the tracer.</p>
+ 
+  <dl><dt><code>File</code></dt>
+    <dd>Full path of log file containing the trace event descriptions.</dd>
+    <dt><code>Opts</code></dt>
+    <dd>Configuration options. No options are currently supported.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of the tracer process.</p></p>
+
+<h3 class="function"><a name="stop-0">stop/0</a></h3>
+<div class="spec">
+<p><tt>stop() -&gt; ok | no_return()</tt><br></p>
+<p> </p>
+</div><p><p>Stops the tracer.</p>
+ 
+  <p><b>Returns:</b> <code>ok</code> to indicate successful termination.</p></p>
+
+<h3 class="function"><a name="terminate-2">terminate/2</a></h3>
+<div class="spec">
+<p><tt>terminate(Reason, Backlog) -&gt; ok</tt>
+<ul class="definitions"><li><tt>Reason = normal | shutdown | {shutdown, term()} | term()</tt></li><li><tt>Backlog = <a href="#type-backlog">backlog()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trace-1">trace/1</a></h3>
+<div class="spec">
+<p><tt>trace(Tracee::pid()) -&gt; Success::boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Sets the caller process as the tracer for tracee.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process to trace.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> if successful, or <code>false</code> if <code>Tracee</code> is already being
+             traced.</p></p>
+
+<h3 class="function"><a name="update_alloc-2">update_alloc/2 *</a></h3>
+<div class="spec">
+<p><tt>update_alloc(Tracee::pid(), Tracer::pid()) -&gt; Success::boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Updates the tracer of the associated tracee.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the tracee whose tracer is to be updated.</dd>
+    <dt><code>Tracer</code></dt>
+    <dd>New tracer PID.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> if the update succeeded, otherwise <code>false</code>.</p></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

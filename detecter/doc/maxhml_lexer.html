@@ -1,0 +1,305 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module maxhml_lexer</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module maxhml_lexer</h1>
+<ul class="index"><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#adjust_line-4">adjust_line/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format_error-1">format_error/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_keyword-1">is_keyword/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#skip_cont-4">skip_cont/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#skip_tokens-3">skip_tokens/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#skip_tokens-9">skip_tokens/9*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#string-1">string/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#string-2">string/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#string-4">string/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#string_cont-4">string_cont/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#token-2">token/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#token-3">token/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#token-8">token/8*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#token_cont-3">token_cont/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#tokens-2">tokens/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#tokens-3">tokens/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#tokens-9">tokens/9*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#tokens_cont-4">tokens_cont/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction-4">yyaction/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_0-2">yyaction_0/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_1-2">yyaction_1/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_10-2">yyaction_10/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_11-2">yyaction_11/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_12-2">yyaction_12/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_13-2">yyaction_13/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_14-0">yyaction_14/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_2-2">yyaction_2/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_3-2">yyaction_3/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_4-2">yyaction_4/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_5-2">yyaction_5/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_6-2">yyaction_6/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_7-2">yyaction_7/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_8-2">yyaction_8/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyaction_9-2">yyaction_9/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yypre-2">yypre/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyrev-1">yyrev/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yyrev-2">yyrev/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yystate-0">yystate/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yystate-6">yystate/6*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#yysuf-2">yysuf/2*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="adjust_line-4">adjust_line/4 *</a></h3>
+<div class="spec">
+<p><tt>adjust_line(N, A, Cs, L) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="format_error-1">format_error/1</a></h3>
+<div class="spec">
+<p><tt>format_error(X1) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="is_keyword-1">is_keyword/1 *</a></h3>
+<div class="spec">
+<p><tt>is_keyword(X1) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="skip_cont-4">skip_cont/4 *</a></h3>
+<div class="spec">
+<p><tt>skip_cont(Rest, Line, X3, Error) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="skip_tokens-3">skip_tokens/3 *</a></h3>
+<div class="spec">
+<p><tt>skip_tokens(Ics, Line, Error) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="skip_tokens-9">skip_tokens/9 *</a></h3>
+<div class="spec">
+<p><tt>skip_tokens(S0, Ics0, L0, Tcs, Tlen0, Tline, Error, A0, Alen0) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="string-1">string/1</a></h3>
+<div class="spec">
+<p><tt>string(String) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="string-2">string/2</a></h3>
+<div class="spec">
+<p><tt>string(String, Line) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="string-4">string/4 *</a></h3>
+<div class="spec">
+<p><tt>string(Ics0, L, Tcs, Ts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="string_cont-4">string_cont/4 *</a></h3>
+<div class="spec">
+<p><tt>string_cont(Rest, Line, X3, Ts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="token-2">token/2</a></h3>
+<div class="spec">
+<p><tt>token(Cont, Chars) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="token-3">token/3</a></h3>
+<div class="spec">
+<p><tt>token(X1, Chars, Line) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="token-8">token/8 *</a></h3>
+<div class="spec">
+<p><tt>token(S0, Ics0, L0, Tcs, Tlen0, Tline, A0, Alen0) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="token_cont-3">token_cont/3 *</a></h3>
+<div class="spec">
+<p><tt>token_cont(Rest, Line, X3) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="tokens-2">tokens/2</a></h3>
+<div class="spec">
+<p><tt>tokens(Cont, Chars) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="tokens-3">tokens/3</a></h3>
+<div class="spec">
+<p><tt>tokens(X1, Chars, Line) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="tokens-9">tokens/9 *</a></h3>
+<div class="spec">
+<p><tt>tokens(S0, Ics0, L0, Tcs, Tlen0, Tline, Ts, A0, Alen0) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="tokens_cont-4">tokens_cont/4 *</a></h3>
+<div class="spec">
+<p><tt>tokens_cont(Rest, Line, X3, Ts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction-4">yyaction/4 *</a></h3>
+<div class="spec">
+<p><tt>yyaction(X1, TokenLen, YYtcs, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_0-2">yyaction_0/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_0(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_1-2">yyaction_1/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_1(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_10-2">yyaction_10/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_10(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_11-2">yyaction_11/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_11(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_12-2">yyaction_12/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_12(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_13-2">yyaction_13/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_13(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_14-0">yyaction_14/0 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_14() -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_2-2">yyaction_2/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_2(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_3-2">yyaction_3/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_3(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_4-2">yyaction_4/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_4(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_5-2">yyaction_5/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_5(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_6-2">yyaction_6/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_6(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_7-2">yyaction_7/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_7(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_8-2">yyaction_8/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_8(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyaction_9-2">yyaction_9/2 *</a></h3>
+<div class="spec">
+<p><tt>yyaction_9(TokenChars, TokenLine) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yypre-2">yypre/2 *</a></h3>
+<div class="spec">
+<p><tt>yypre(List, N) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyrev-1">yyrev/1 *</a></h3>
+<div class="spec">
+<p><tt>yyrev(List) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yyrev-2">yyrev/2 *</a></h3>
+<div class="spec">
+<p><tt>yyrev(List, Tail) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yystate-0">yystate/0 *</a></h3>
+<div class="spec">
+<p><tt>yystate() -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yystate-6">yystate/6 *</a></h3>
+<div class="spec">
+<p><tt>yystate(S, Ics, Line, Tlen, Action, Alen) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="yysuf-2">yysuf/2 *</a></h3>
+<div class="spec">
+<p><tt>yysuf(List, N) -&gt; any()</tt></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module util</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module util</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Provides a number of utility functions.
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Provides a number of utility functions.
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#as_dir_name-1">as_dir_name/1</a></td><td>Appends the forward slash character to the specified directory path  
+if this does not exist.</td></tr>
+<tr><td valign="top"><a href="#promise-1">promise/1</a></td><td>Executes the specified function asynchronously and returns the result  
+when ready.</td></tr>
+<tr><td valign="top"><a href="#rpc-2">rpc/2</a></td><td>Issues a synchronous request that blocks until a corresponding response       
+is received.</td></tr>
+<tr><td valign="top"><a href="#rpc_async-2">rpc_async/2</a></td><td>Issues an asynchronous request.</td></tr>
+<tr><td valign="top"><a href="#rpc_yield-1">rpc_yield/1</a></td><td>Blocks until the response identified by the specified reference is       
+received.</td></tr>
+<tr><td valign="top"><a href="#rpc_yield-2">rpc_yield/2</a></td><td>Receives the response identified by the specified reference.</td></tr>
+<tr><td valign="top"><a href="#syn-1">syn/1</a></td><td>Issues a synchronization request that initiates the first phase of a  
+three-way handshake.</td></tr>
+<tr><td valign="top"><a href="#syn_ack-1">syn_ack/1</a></td><td>Replies to a synchronization request, completing the second phase of a  
+three-way handshake.</td></tr>
+<tr><td valign="top"><a href="#then-1">then/1</a></td><td>Blocks until the promise identified by the specified reference is  
+fulfilled.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="as_dir_name-1">as_dir_name/1</a></h3>
+<div class="spec">
+<p><tt>as_dir_name(Dir::string()) -&gt; Dir0::string()</tt><br></p>
+<p> </p>
+</div><p><p>Appends the forward slash character to the specified directory path  
+if this does not exist.</p>
+ 
+  <dl><dt><code>Dir</code></dt>
+    <dd>The directory path to append with <code>/</code>.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> The dir name appended with <code>/</code>.</p></p>
+
+<h3 class="function"><a name="promise-1">promise/1</a></h3>
+<div class="spec">
+<p><tt>promise(Fun::function()) -&gt; {pid(), reference()}</tt><br></p>
+<p> </p>
+</div><p><p>Executes the specified function asynchronously and returns the result  
+when ready.</p>
+ 
+  <dl><dt><code>Fun</code></dt>
+    <dd>Function to execute.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Reference identifying the function execution.</p></p>
+
+<h3 class="function"><a name="rpc-2">rpc/2</a></h3>
+<div class="spec">
+<p><tt>rpc(To::pid() | atom(), Req::term()) -&gt; term()</tt><br></p>
+<p> </p>
+</div><p><p>Issues a synchronous request that blocks until a corresponding response       
+is received.</p>
+ 
+  <dl><dt><code>To</code></dt>
+    <dd>PID or registered name of target process.</dd>
+    <dt><code>Req</code></dt>
+    <dd>Request to issue.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Response.</p></p>
+
+<h3 class="function"><a name="rpc_async-2">rpc_async/2</a></h3>
+<div class="spec">
+<p><tt>rpc_async(To::pid() | atom(), Req::term()) -&gt; reference()</tt><br></p>
+<p> </p>
+</div><p><p>Issues an asynchronous request.</p>
+ 
+  <dl><dt><code>To</code></dt>
+    <dd>PID or registered name of target process.</dd>
+    <dt><code>Req</code></dt>
+    <dd>Request to issue.</dd>
+  </dl>
+ 
+  <p>The presence of a corresponding response can be checked using either
+        <a href="#rpc_yield-1"><code>rpc_yield/1</code></a> or <a href="#rpc_yield-2"><code>rpc_yield/2</code></a>.
+  </p>
+ 
+  <p><b>Returns:</b> Reference identifying the issued request.</p></p>
+
+<h3 class="function"><a name="rpc_yield-1">rpc_yield/1</a></h3>
+<div class="spec">
+<p><tt>rpc_yield(Ref::reference()) -&gt; term()</tt><br></p>
+<p> </p>
+</div><p><p>Blocks until the response identified by the specified reference is       
+received.</p>
+ 
+  <dl><dt><code>Ref</code></dt>
+    <dd>Response reference.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Corresponding response.</p></p>
+
+<h3 class="function"><a name="rpc_yield-2">rpc_yield/2</a></h3>
+<div class="spec">
+<p><tt>rpc_yield(Ref, TimeoutMs) -&gt; term() | {timeout, reference()}</tt>
+<ul class="definitions"><li><tt>Ref = reference()</tt></li><li><tt>TimeoutMs = non_neg_integer() | infinity</tt></li></ul></p>
+<p> </p>
+</div><p><p>Receives the response identified by the specified reference.</p>
+ 
+  <dl><dt><code>Ref</code></dt>
+    <dd>Response reference.</dd>
+    <dt><code>TimeoutMs</code></dt>
+    <dd>Amount of milliseconds to wait before timing out.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Corresponding response, otherwise <code>{timeout, Ref}</code> if not received
+            within the stipulated timeout window.
+  </p></p>
+
+<h3 class="function"><a name="syn-1">syn/1</a></h3>
+<div class="spec">
+<p><tt>syn(To::pid()) -&gt; {pid(), reference()}</tt><br></p>
+<p> </p>
+</div><p><p>Issues a synchronization request that initiates the first phase of a  
+three-way handshake.</p>
+ 
+  <dl><dt><code>To</code></dt>
+    <dd>PID of the remote party to synchronize with.</dd>
+  </dl>
+ 
+  <p>The caller blocks until an acknowledgement from the remote party is
+    received. This implementation is inspired by the three-way handshake used
+    in TCP (see <a href="https://en.wikipedia.org/wiki/Handshaking#TCP_three-way_handshake">
+    TCP three-way handshake</a>) but uses Erlang references instead of
+    incrementing sequence numbers.
+  </p>
+ 
+  <p><b>Returns:</b> Pair consisting of the remote party PID and synchronization message
+            reference.
+  </p></p>
+
+<h3 class="function"><a name="syn_ack-1">syn_ack/1</a></h3>
+<div class="spec">
+<p><tt>syn_ack(From::pid()) -&gt; {pid(), reference()}</tt><br></p>
+<p> </p>
+</div><p><p>Replies to a synchronization request, completing the second phase of a  
+three-way handshake.</p>
+ 
+  <dl><dt><code>From</code></dt>
+    <dd>PID of the remote party initiating the synchronization.</dd>
+  </dl>
+ 
+  <p>The caller blocks until an initiating request is received. The embedded
+        Erlang reference in the synchronization request is directed back to the
+        initiating remote party: this assures the latter that the
+        acknowledgement originates from the correct party participating in the
+        handshake. In order to ensure that the caller unblocks by one specific
+        initiating remote party, the PID specified in the argument <code>From</code> must
+        correspond to the PID embedded in the synchronization request message
+        issued by the initiating remote party. See <a href="#syn-1"><code>syn/1</code></a>.
+  </p>
+ 
+  <p><b>Returns:</b> Pair consisting of the initiating remote party PID and
+            synchronization message reference.
+  </p></p>
+
+<h3 class="function"><a name="then-1">then/1</a></h3>
+<div class="spec">
+<p><tt>then(Ref::reference()) -&gt; term()</tt><br></p>
+<p> </p>
+</div><p><p>Blocks until the promise identified by the specified reference is  
+fulfilled.</p>
+ 
+  <dl><dt><code>Ref</code></dt>
+    <dd>Promise reference.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Function execution result.</p></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

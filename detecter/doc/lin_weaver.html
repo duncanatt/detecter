@@ -1,0 +1,512 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module lin_weaver</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module lin_weaver</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Module description (becomes module heading).
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Module description (becomes module heading).
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-comp_ret">comp_ret()</a></h3>
+<p><tt>comp_ret() = <a href="#type-mod_ret">mod_ret()</a> | <a href="#type-err_ret">err_ret()</a></tt></p>
+<p>  Compilation result.</p>
+
+<h3 class="typedecl"><a name="type-err_info">err_info()</a></h3>
+<p><tt>err_info() = {<a href="erl_anno.html#type-line">erl_anno:line()</a> | none, module(), term()}</tt></p>
+<p>  Error or warning details identifying the source line number, module raising
+  the error and term describing the error or warning in question.</p>
+
+<h3 class="typedecl"><a name="type-err_ret">err_ret()</a></h3>
+<p><tt>err_ret() = error | {error, <a href="#type-errors">errors()</a>, <a href="#type-warnings">warnings()</a>}</tt></p>
+<p>  Unsuccessful compilation result of module consisting of errors and warnings.</p>
+
+<h3 class="typedecl"><a name="type-errors">errors()</a></h3>
+<p><tt>errors() = [{<a href="file.html#type-filename">file:filename()</a>, [<a href="#type-err_info">err_info()</a>]}]</tt></p>
+<p>  Errors in file.</p>
+
+<h3 class="typedecl"><a name="type-filter">filter()</a></h3>
+<p><tt>filter() = fun((Pattern::term()) -&gt; boolean)</tt></p>
+<p>  Filter used to suppress trace events from being generated and sent to the
+  monitor for analysis.</p>
+
+<h3 class="typedecl"><a name="type-mod_ret">mod_ret()</a></h3>
+<p><tt>mod_ret() = {ok, module()} | {ok, module(), <a href="#type-warnings">warnings()</a>}</tt></p>
+<p>  Successful compilation result of module.</p>
+
+<h3 class="typedecl"><a name="type-option">option()</a></h3>
+<p><tt>option() = <a href="opts.html#type-option">opts:option()</a> | {filter, function()}</tt></p>
+<p>  Options passed to the parse_transform function to control the weaving of
+  tracing and monitor.</p>
+
+<h3 class="typedecl"><a name="type-options">options()</a></h3>
+<p><tt>options() = [<a href="#type-option">option()</a>]</tt></p>
+<p>  Compiler option list.</p>
+
+<h3 class="typedecl"><a name="type-warnings">warnings()</a></h3>
+<p><tt>warnings() = [{<a href="file.html#type-filename">file:filename()</a>, [<a href="#type-err_info">err_info()</a>]}]</tt></p>
+<p>  Warnings in file.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#abs_atom-2">abs_atom/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_block-2">abs_block/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_case-3">abs_case/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_case_clause-4">abs_case_clause/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_char-2">abs_char/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_float-2">abs_float/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_fun-2">abs_fun/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_fun_clause-4">abs_fun_clause/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_fun_clauses-1">abs_fun_clauses/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_integer-2">abs_integer/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_list-2">abs_list/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_local_call-3">abs_local_call/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_match-3">abs_match/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_remote_call-4">abs_remote_call/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_string-2">abs_string/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_tuple-2">abs_tuple/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#abs_var-2">abs_var/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#compiled_mods-1">compiled_mods/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_dispatch-2">create_dispatch/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_embed-2">create_embed/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_self-1">create_self/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_var-3">create_var/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#filter_opt-1">filter_opt/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#load_mods-1">load_mods/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_transform-2">parse_transform/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_arg-4">trans_arg/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_args-4">trans_args/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_association-4">trans_association/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_associations-4">trans_associations/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_ast-4">trans_ast/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_bin_element-4">trans_bin_element/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_bin_elements-4">trans_bin_elements/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_body-4">trans_body/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_clause-4">trans_clause/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_clauses-4">trans_clauses/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_expr-4">trans_expr/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_field-4">trans_field/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_fields-4">trans_fields/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_form-4">trans_form/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_qualifier-4">trans_qualifier/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#trans_qualifiers-4">trans_qualifiers/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave-3">weave/3</a></td><td>Instruments all modules in the specified directory by weaving in tracing  
+and monitor instructions through a transformation of the corresponding module  
+abstract syntax tree.</td></tr>
+<tr><td valign="top"><a href="#weave_file-3">weave_file/3</a></td><td>Instruments the specified module file by weaving in tracing and monitor  
+instructions through a transformation of the corresponding module abstract  
+syntax tree.</td></tr>
+<tr><td valign="top"><a href="#weave_local_spawn-4">weave_local_spawn/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave_receive_clause-4">weave_receive_clause/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave_receive_clauses-4">weave_receive_clauses/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave_receive_expr-4">weave_receive_expr/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave_remote_proc_lib_spawn-4">weave_remote_proc_lib_spawn/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave_remote_spawn-4">weave_remote_spawn/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#weave_send_expr-4">weave_send_expr/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#wrap_fun_call-3">wrap_fun_call/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_file-3">write_file/3*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="abs_atom-2">abs_atom/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_atom(Line, Atom) -&gt; any()</tt></p>
+<p> </p>
+</div>
+<p><b><font color="red">To do</font></b><ul><li><font color="red"> Replace with functions from the erl_parse module.
+   ----------------------------------------------------------------------------</font></li></ul></p>
+
+<h3 class="function"><a name="abs_block-2">abs_block/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_block(Line, Body) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_case-3">abs_case/3 *</a></h3>
+<div class="spec">
+<p><tt>abs_case(Line, Expr, CaseClauses) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_case_clause-4">abs_case_clause/4 *</a></h3>
+<div class="spec">
+<p><tt>abs_case_clause(Line, Patterns, Guards, Body) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_char-2">abs_char/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_char(Line, Char) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_float-2">abs_float/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_float(Line, Float) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_fun-2">abs_fun/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_fun(Line, Clauses) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_fun_clause-4">abs_fun_clause/4 *</a></h3>
+<div class="spec">
+<p><tt>abs_fun_clause(Line, Patterns, Guards, Body) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_fun_clauses-1">abs_fun_clauses/1 *</a></h3>
+<div class="spec">
+<p><tt>abs_fun_clauses(Clauses) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_integer-2">abs_integer/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_integer(Line, Integer) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_list-2">abs_list/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_list(Line, Exprs) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_local_call-3">abs_local_call/3 *</a></h3>
+<div class="spec">
+<p><tt>abs_local_call(Line, Fun, Args) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_match-3">abs_match/3 *</a></h3>
+<div class="spec">
+<p><tt>abs_match(Line, Pattern, Expr) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_remote_call-4">abs_remote_call/4 *</a></h3>
+<div class="spec">
+<p><tt>abs_remote_call(Line, Mod, Fun, Args) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_string-2">abs_string/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_string(Line, String) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_tuple-2">abs_tuple/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_tuple(Line, Exprs) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="abs_var-2">abs_var/2 *</a></h3>
+<div class="spec">
+<p><tt>abs_var(Line, Var) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="compiled_mods-1">compiled_mods/1 *</a></h3>
+<div class="spec">
+<p><tt>compiled_mods(Compiled) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_dispatch-2">create_dispatch/2 *</a></h3>
+<div class="spec">
+<p><tt>create_dispatch(Line, Event) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_embed-2">create_embed/2 *</a></h3>
+<div class="spec">
+<p><tt>create_embed(Line, MonFun) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_self-1">create_self/1 *</a></h3>
+<div class="spec">
+<p><tt>create_self(Line) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_var-3">create_var/3 *</a></h3>
+<div class="spec">
+<p><tt>create_var(Line, Name, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="filter_opt-1">filter_opt/1 *</a></h3>
+<div class="spec">
+<p><tt>filter_opt(Opts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="load_mods-1">load_mods/1</a></h3>
+<div class="spec">
+<p><tt>load_mods(Mods) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_transform-2">parse_transform/2</a></h3>
+<div class="spec">
+<p><tt>parse_transform(Ast, Opts) -&gt; Ast0::[<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>]</tt>
+<ul class="definitions"><li><tt>Ast = [<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>]</tt></li><li><tt>Opts = [<a href="#type-option">option()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_arg-4">trans_arg/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_arg(Expr, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_args-4">trans_args/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_args(Args, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_association-4">trans_association/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_association(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_associations-4">trans_associations/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_associations(Associations, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_ast-4">trans_ast/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_ast(Ast, MfaSpec, FilterSpec, Id) -&gt; {Id0::non_neg_integer(), Ast0::[<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>]}</tt>
+<ul class="definitions"><li><tt>Ast = [<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>]</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>FilterSpec = <a href="#type-filter">filter()</a></tt></li><li><tt>Id = non_neg_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_bin_element-4">trans_bin_element/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_bin_element(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_bin_elements-4">trans_bin_elements/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_bin_elements(Elements, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_body-4">trans_body/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_body(Body, MfaSpec, FilterSpec, Id) -&gt; {Id0::non_neg_integer(), [<a href="erl_parse.html#type-abstract_expr">erl_parse:abstract_expr()</a>]}</tt>
+<ul class="definitions"><li><tt>Body = [<a href="erl_parse.html#type-abstract_expr">erl_parse:abstract_expr()</a>]</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>FilterSpec = <a href="#type-filter">filter()</a></tt></li><li><tt>Id = non_neg_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_clause-4">trans_clause/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_clause(Clause, MfaSpec, FilterSpec, Id) -&gt; {Id0::non_neg_integer(), Clause0::<a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>}</tt>
+<ul class="definitions"><li><tt>Clause = <a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a></tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>FilterSpec = <a href="#type-filter">filter()</a></tt></li><li><tt>Id = non_neg_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_clauses-4">trans_clauses/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_clauses(Clauses, MfaSpec, FilterSpec, Id) -&gt; {Id0::non_neg_integer(), Clauses0::[<a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>]}</tt>
+<ul class="definitions"><li><tt>Clauses = [<a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>]</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>FilterSpec = <a href="#type-filter">filter()</a></tt></li><li><tt>Id = non_neg_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_expr-4">trans_expr/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_expr(Expr, MfaSpec, FilterSpec, Id) -&gt; {Id0::non_neg_integer(), Expr0::<a href="erl_parse.html#type-abstract_expr">erl_parse:abstract_expr()</a>}</tt>
+<ul class="definitions"><li><tt>Expr = <a href="erl_parse.html#type-abstract_expr">erl_parse:abstract_expr()</a></tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>FilterSpec = <a href="#type-filter">filter()</a></tt></li><li><tt>Id = non_neg_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_field-4">trans_field/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_field(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_fields-4">trans_fields/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_fields(Fields, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_form-4">trans_form/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_form(Form, MfaSpec, FilterSpec, Id) -&gt; {Id0::non_neg_integer(), Form0::<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>}</tt>
+<ul class="definitions"><li><tt>Form = <a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a></tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>FilterSpec = <a href="#type-filter">filter()</a></tt></li><li><tt>Id = non_neg_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_qualifier-4">trans_qualifier/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_qualifier(Expr, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="trans_qualifiers-4">trans_qualifiers/4 *</a></h3>
+<div class="spec">
+<p><tt>trans_qualifiers(Qualifiers, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave-3">weave/3</a></h3>
+<div class="spec">
+<p><tt>weave(SrcDir, MfaSpec, Opts) -&gt; [<a href="#type-comp_ret">comp_ret()</a>]</tt>
+<ul class="definitions"><li><tt>SrcDir = string()</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Instruments all modules in the specified directory by weaving in tracing  
+and monitor instructions through a transformation of the corresponding module  
+abstract syntax tree.</p>
+ 
+  <dl><dt><code>SrcDir</code></dt>
+    <dd>The directory path containing the source or object files to be
+           inspected and weaved.
+    </dd>
+    <dt><code>MfaSpec</code></dt>
+    <dd>The function that specifies which remote (<i>i.e.,</i> external)
+           function calls are to be weaved with tracing and monitor
+           instructions.
+    </dd>
+  </dl>
+ 
+  <p>Object (<code>.beam</code>) files that require instrumentation need to be compiled
+        in debug mode.
+  </p>
+ 
+  <p>The following options are available:
+        <dl><dt><code>{outdir, Dir}</code></dt>
+          <dd>The directory where the generated weaved files should
+                 be written. Defaults to the current directory <code>.</code>.
+          </dd>
+          <dt><code>{i, Dir}</code></dt>
+          <dd>The directory containing include files that the source files
+                 in <code>SrcDir</code> depend on.
+          </dd>
+          <dt><code>{filer, Fun}</code></dt>
+          <dd>The filter function that suppressed events. Defaults to allows
+                 all.
+          </dd>
+          <dt><code>erl</code></dt>
+          <dd>Instructs the compiler to output the generated files as
+                 Erlang source code rather than beam. Defaults to beam.
+          </dd>
+        </dl>
+  </p>
+ 
+  <p><b>Returns:</b> A list containing the compilation result of each file in <code>SrcDir</code>.
+            Warnings are included if present.
+  </p></p>
+<p><b><font color="red">To do</font></b><ul><li><font color="red"> Refactor with erl_parse module. Some other time.</font></li></ul></p>
+
+<h3 class="function"><a name="weave_file-3">weave_file/3</a></h3>
+<div class="spec">
+<p><tt>weave_file(SrcFile, MfaSpec, Opts) -&gt; <a href="#type-comp_ret">comp_ret()</a></tt>
+<ul class="definitions"><li><tt>SrcFile = string()</tt></li><li><tt>MfaSpec = <a href="analyzer.html#type-mfa_spec">analyzer:mfa_spec()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Instruments the specified module file by weaving in tracing and monitor  
+instructions through a transformation of the corresponding module abstract  
+syntax tree.</p>
+ 
+  <dl><dt><code>SrcFile</code></dt>
+    <dd>The file to be inspected and weaved.
+    </dd>
+    <dt><code>MfaSpec</code></dt>
+    <dd>The function that specifies which remote (<i>i.e.,</i> external)
+           function calls are to be weaved with tracing and monitor
+           instructions.
+    </dd>
+  </dl>
+ 
+  <p>Object (<code>.beam</code>) files that require instrumentation need to be compiled
+        in debug mode.
+  </p>
+ 
+  <p>See <a href="#weave-3"><code>weave/3</code></a> for configuration options.</p>
+ 
+  <p><b>Returns:</b> A list containing the compilation result of each file in <code>SrcDir</code>.
+            Warnings are included if present.
+  </p></p>
+
+<h3 class="function"><a name="weave_local_spawn-4">weave_local_spawn/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_local_spawn(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave_receive_clause-4">weave_receive_clause/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_receive_clause(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave_receive_clauses-4">weave_receive_clauses/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_receive_clauses(CaseClauses, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave_receive_expr-4">weave_receive_expr/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_receive_expr(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave_remote_proc_lib_spawn-4">weave_remote_proc_lib_spawn/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_remote_proc_lib_spawn(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave_remote_spawn-4">weave_remote_spawn/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_remote_spawn(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="weave_send_expr-4">weave_send_expr/4 *</a></h3>
+<div class="spec">
+<p><tt>weave_send_expr(X1, MfaSpec, FilterSpec, Id) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="wrap_fun_call-3">wrap_fun_call/3 *</a></h3>
+<div class="spec">
+<p><tt>wrap_fun_call(Line, Fun, Args) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_file-3">write_file/3 *</a></h3>
+<div class="spec">
+<p><tt>write_file(File, MfaSpec, Opts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

@@ -1,0 +1,8 @@
+%% encoding: UTF-8
+{application,detecter}.
+{modules,[analyzer,build,dev,event,event_writer,evm_tracer,gen_eval,
+          gen_file_poller,gen_file_poller_impl,hml_eval,hml_lexer,hml_parser,
+          lin_analyzer,lin_weaver,log,log_eval,log_lexer,log_parser,
+          log_poller,log_tracer,maxhml_eval,maxhml_lexer,maxhml_parser,
+          monitor,opts,report,shml_eval,shml_lexer,shml_parser,simple,
+          trace_lib,tracer,util,weaver]}.

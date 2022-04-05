@@ -1,0 +1,438 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module hml_eval</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module hml_eval</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Parsing and compiler module that synthesizes monitor descriptions from
+   SHMLnf specifications.
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Parsing and compiler module that synthesizes monitor descriptions from
+   SHMLnf specifications.
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-af_act">af_act()</a></h3>
+<p><tt>af_act() = <a href="#type-af_fork_act">af_fork_act()</a> | <a href="#type-af_init_act">af_init_act()</a> | <a href="#type-af_exit_act">af_exit_act()</a> | <a href="#type-af_send_act">af_send_act()</a> | <a href="#type-af_recv_act">af_recv_act()</a> | <a href="#type-af_user_act">af_user_act()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_exit_act">af_exit_act()</a></h3>
+<p><tt>af_exit_act() = {exit, <a href="#type-line">line()</a>, <a href="#type-af_var">af_var()</a>, <a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_ff">af_ff()</a></h3>
+<p><tt>af_ff() = {ff, <a href="#type-line">line()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_fork_act">af_fork_act()</a></h3>
+<p><tt>af_fork_act() = {fork, <a href="#type-line">line()</a>, <a href="#type-af_var">af_var()</a>, <a href="#type-af_var">af_var()</a>, <a href="#type-af_mfa">af_mfa()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_init_act">af_init_act()</a></h3>
+<p><tt>af_init_act() = {init, <a href="#type-line">line()</a>, <a href="#type-af_var">af_var()</a>, <a href="#type-af_var">af_var()</a>, <a href="#type-af_mfa">af_mfa()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_max">af_max()</a></h3>
+<p><tt>af_max() = {max, <a href="#type-line">line()</a>, <a href="#type-af_var">af_var()</a>, <a href="#type-af_shml">af_shml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_mfa">af_mfa()</a></h3>
+<p><tt>af_mfa() = {mfa, <a href="#type-line">line()</a>, module(), atom(), arity(), <a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_n_and">af_n_and()</a></h3>
+<p><tt>af_n_and() = {'and', <a href="#type-line">line()</a>, arity(), <a href="#type-af_shml_seq">af_shml_seq()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_nec">af_nec()</a></h3>
+<p><tt>af_nec() = {nec, <a href="#type-line">line()</a>, <a href="#type-af_act">af_act()</a>, <a href="#type-af_shml">af_shml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_recv_act">af_recv_act()</a></h3>
+<p><tt>af_recv_act() = {recv, <a href="#type-line">line()</a>, <a href="#type-af_var">af_var()</a>, <a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_send_act">af_send_act()</a></h3>
+<p><tt>af_send_act() = {send, <a href="#type-line">line()</a>, <a href="#type-af_var">af_var()</a>, <a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_shml">af_shml()</a></h3>
+<p><tt>af_shml() = <a href="#type-af_ff">af_ff()</a> | <a href="#type-af_var">af_var()</a> | <a href="#type-af_max">af_max()</a> | <a href="#type-af_n_and">af_n_and()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_shml_seq">af_shml_seq()</a></h3>
+<p><tt>af_shml_seq() = [<a href="#type-af_nec">af_nec()</a>]</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_user_act">af_user_act()</a></h3>
+<p><tt>af_user_act() = {user, <a href="#type-line">line()</a>, <a href="erl_parse.html#type-abstract_clause">erl_parse:abstract_clause()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_var">af_var()</a></h3>
+<p><tt>af_var() = {var, <a href="#type-line">line()</a>, atom()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-directory">directory()</a></h3>
+<p><tt>directory() = string()</tt></p>
+<p>  Directory.</p>
+
+<h3 class="typedecl"><a name="type-error_description">error_description()</a></h3>
+<p><tt>error_description() = term()</tt></p>
+<p>  Internal error description.</p>
+
+<h3 class="typedecl"><a name="type-error_info">error_info()</a></h3>
+<p><tt>error_info() = {<a href="#type-line">line()</a>, module(), <a href="#type-error_description">error_description()</a>}</tt></p>
+<p>  Error information.</p>
+
+<h3 class="typedecl"><a name="type-errors">errors()</a></h3>
+<p><tt>errors() = [{<a href="file.html#type-filename">file:filename()</a>, [<a href="#type-error_info">error_info()</a>]}] | []</tt></p>
+<p>  Error list.</p>
+
+<h3 class="typedecl"><a name="type-formula">formula()</a></h3>
+<p><tt>formula() = {form, <a href="#type-line">line()</a>, <a href="#type-af_mfa">af_mfa()</a>, <a href="#type-af_shml">af_shml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-line">line()</a></h3>
+<p><tt>line() = <a href="erl_anno.html#type-line">erl_anno:line()</a></tt></p>
+<p>  Line number in source.</p>
+
+<h3 class="typedecl"><a name="type-option">option()</a></h3>
+<p><tt>option() = <a href="opts.html#type-option">opts:option()</a></tt></p>
+<p>  Compiler options.</p>
+
+<h3 class="typedecl"><a name="type-options">options()</a></h3>
+<p><tt>options() = [<a href="#type-option">option()</a>]</tt></p>
+<p>  Compiler option list.</p>
+
+<h3 class="typedecl"><a name="type-warnings">warnings()</a></h3>
+<p><tt>warnings() = [{<a href="file.html#type-filename">file:filename()</a>, [<a href="#type-error_info">error_info()</a>]}] | []</tt></p>
+<p>  Warning list.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#color_log-2">color_log/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#compile-2">compile/2</a></td><td>Compiles the specified file containing one or more properties specified  
+in SHMLnf, and writes the executable monitor descriptions to file.</td></tr>
+<tr><td valign="top"><a href="#compile_opts-1">compile_opts/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_log-3">create_log/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_module-3">create_module/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format_error-1">format_error/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#list_beam-2">list_beam/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#list_erl-2">list_erl/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_file-1">parse_file/1</a></td><td>Parses the specified file containing one or more properties specified  
+in SHMLnf.</td></tr>
+<tr><td valign="top"><a href="#parse_string-1">parse_string/1</a></td><td>Parses the specified string containing one or more properties specified  
+in SHMLnf.</td></tr>
+<tr><td valign="top"><a href="#show_error-2">show_error/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_errors-1">show_errors/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_warnings-1">show_warnings/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit_act-1">visit_act/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit_forms-2">visit_forms/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit_nec-2">visit_nec/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit_shml-2">visit_shml/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit_shml_seq-2">visit_shml_seq/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_beam-4">write_beam/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_erl-4">write_erl/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_monitor-3">write_monitor/3*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="color_log-2">color_log/2 *</a></h3>
+<div class="spec">
+<p><tt>color_log(Log, Type) -&gt; Log0::string()</tt>
+<ul class="definitions"><li><tt>Log = iolist()</tt></li><li><tt>Type = no | prf | var | 'end'</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="compile-2">compile/2</a></h3>
+<div class="spec">
+<p><tt>compile(File, Opts) -&gt; ok | {error, Reason}</tt>
+<ul class="definitions"><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li><li><tt>Reason = <a href="file.html#type-posix">file:posix()</a> | badarg | terminated</tt></li></ul></p>
+<p> </p>
+</div><p><p>Compiles the specified file containing one or more properties specified  
+in SHMLnf, and writes the executable monitor descriptions to file.</p>
+ 
+  <dl><dt><code>File</code></dt>
+   <dd>The path where the file to compile resides.</dd>
+   <dt><code>Opts</code></dt>
+   <dd>Compiler options.</dd>
+  </dl>
+ 
+  <p>The following options are available:
+        <dl><dt><code>{outdir, Dir}</code></dt>
+          <dd>The directory where the generated output monitor file should
+                 be written. Defaults to the current directory <code>.</code>.
+          </dd>
+          <dt><code>v</code></dt>
+          <dd>Inserts logging statements into the generated output monitor
+                 file. Only use for debugging purposes.
+          </dd>
+          <dt><code>erl</code></dt>
+          <dd>Instructs the compiler to output the generated monitor as
+                 Erlang source code rather than beam. Defaults to beam.
+          </dd>
+        </dl>
+  </p>
+ 
+  <p>Errors and warnings that arise during the compilation are reported on
+        the standard output. No monitor file is output unless compilation
+        completes with no errors. The output depends on whether the flag <code>erl</code>
+        is specified or otherwise.
+  </p>
+ 
+  <h4 id="#Specifying_properties">Specifying properties</h4>
+ 
+  <p>Different property specifications must be separated with a comma (<code>,</code>),
+        with the last one being terminated with a period (<code>.</code>). A property
+        specification must target one function pattern, but may optionally
+        include optional guards. The guard specification format follows exactly
+        the one used in Erlang, the only difference being that guard functions
+        (<i>e.g.,</i> <code>is_pid/2</code>, <code>is_alive/1</code>, <i>etc.</i>) are not supported. Patterns
+        and guards on binaries, bitstring and maps have yet to be implemented
+        in the future. In addition, only external function calls may be
+        targeted <i>i.e.,</i> <code>Mod:Fun(Args)</code>, with this being the function that is
+        specified into a <a href="erlang.html#spawn-3"><code>erlang:spawn/3</code></a>, <a href="erlang.html#spawn-4"><code>erlang:spawn/4</code></a>,
+        <i>etc.</i> calls.
+  </p>
+  <p>For instance, a property specification that targets the function named
+        <code>test</code> in module <code>example</code> taking two parameters <code>A</code> and <code>B</code> such that
+        <code>A</code> is an integer in the closed interval <code>[0,10]</code> is specified as
+        follows:
+  <pre>  with
+   example:test(A, B) when A &gt;= 0, A =&lt; 10
+  monitor
+    &lt;property in SHMLnf&gt;</pre>
+  </p>
+ 
+  <p>The property itself (<i>i.e.,</i> <code>&lt;property in SHMLnf&gt;</code>) is then written
+        using the grammar defined as follows:
+  <pre>  &lt;SHML&gt; ::= ff (falsity, an atom)
+           | X (recursion variable specified as a standard Erlang variable)
+           | max(X. &lt;SHML&gt;) (maximal fix-point to specify recursive loops,
+                             comprised of one variable and a sub-formula
+                             &lt;SHML&gt;)
+           | and(&lt;SHML list&gt;) (a sequence of comma-separated conjuncts where
+                               each is itself a sub-formula &lt;SHML&gt; that however
+                               must start with a necessity [&lt;ACTION&gt;]&lt;SHML&gt;)</pre>
+        An action in a necessity <code>[&lt;ACTION&gt;]</code> can be one of the following:
+        <ul><li>A <code>fork</code> action, specified as <code>&lt;VAR_0&gt; -&gt; &lt;VAR_1&gt;, &lt;MFA&gt;</code>,
+                 meaning that the parent process <code>&lt;VAR_0&gt;</code> forked child
+                 <code>&lt;VAR_1&gt;</code>;
+          </li>
+          <li>A <code>init</code> action, specified as <code>&lt;VAR_0&gt; &lt;- &lt;VAR_1&gt;, &lt;MFA&gt;</code>,
+                 meaning that the child process <code>&lt;VAR_0&gt;</code> was started by
+                 parent <code>&lt;VAR_1&gt;</code>;
+          </li>
+          <li>A process <code>exit</code> action, specified as <code>&lt;VAR&gt; ** &lt;CLAUSE&gt;</code>,
+                 meaning that the process <code>&lt;VAR&gt;</code> terminated with reason
+                 <code>&lt;CLAUSE&gt;</code>;
+          </li>
+          <li>A process <code>send</code> action, specified as <code>&lt;VAR&gt; ! &lt;CLAUSE&gt;</code>,
+                 meaning that the sending process <code>&lt;VAR&gt;</code> send message
+                 <code>&lt;CLAUSE&gt;</code>;
+          </li>
+          <li>A process <code>receive</code> action, specified as <code>&lt;VAR&gt; ? &lt;CLAUSE&gt;</code>,
+                 meaning that the receiving process <code>&lt;VAR&gt;</code> received message
+                 <code>&lt;CLAUSE&gt;</code>;
+          </li>
+          <li>A generic user-given action, specified as <code>&lt;CLAUSE&gt;</code>.</li>
+        </ul>
+        where <code>&lt;VAR&gt;</code>, <code>&lt;VAR_0&gt;</code> and <code>&lt;VAR_1&gt;</code> are standard Erlang variables,
+        <code>&lt;CLAUSE&gt;</code> is a standard Erlang clause, and <code>&lt;MFA&gt;</code> is <code>Mod:Fun(Args)</code>
+        as described above. Actions in necessities can optionally includes
+        guards, albeit with the same restrictions outlined above.
+  </p>
+  <p>The following are some examples of properties:
+  <pre>  % Parent process P cannot fork a child process C via {M,F,Args} {child,
+  % init, [Id, StartCnt]} (_ is used to match StartCnt since one does not care
+  % about that value), such that the Id assigned to C is negative.
+  with
+   example:test(A, B) when A &gt;= 0, A =&lt; 10
+  monitor
+    and([P -&gt; C, child:init([Id, _]) when Id &lt; 0]ff).</pre>
+  <pre>  % Parent process P cannot fork a child process C via {M,F,Args} {child,
+  % init, [Id, StartCnt]} (_ is used to match StartCnt since one does not care
+  % about that value), only to terminate immediately with reason `aborted'.
+  with
+   example:test(A, B) when A &gt;= 0, A =&lt; 10
+  monitor
+    and([P -&gt; C, child:init([Id, _])] and([P ** aborted]ff)).</pre>
+  <pre>  % Server process S can engage in a request-response cycle such that it
+  % receives a request {req, A1, A2} consisting of two integers A1 and A2,
+  % returning the result of their addition in the response {resp, AA}. It
+  % however cannot return something other than their addition: this is taken
+  % care of by the second necessity in the second conjunct via the action
+  % clause {resp, AA} when AA =/= A1 + A2.
+  with
+   example:test(A, B) when A &gt;= 0, A =&lt; 10
+  monitor
+    max(X.
+      and(
+        [S ? {req, A1, A2}] and(
+          [S ! {resp, AA} when AA =/= A1 + A2]ff,
+          [S ! {resp, AA} when AA =:= A1 + A2]X)
+        )
+      )
+    ).</pre>
+  </p>
+ 
+  <p><b>Returns:</b> <code>ok</code> if compilation succeeds, <code>{error, Reason}</code> otherwise.</p></p>
+
+<h3 class="function"><a name="compile_opts-1">compile_opts/1 *</a></h3>
+<div class="spec">
+<p><tt>compile_opts(Opts::<a href="#type-options">options()</a>) -&gt; CompileOpts::[<a href="compile.html#type-option">compile:option()</a>]</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_log-3">create_log/3 *</a></h3>
+<div class="spec">
+<p><tt>create_log(Format, Args, Type) -&gt; Call::<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Format = string()</tt></li><li><tt>Args = [<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt></li><li><tt>Type = no | prf | var | 'end'</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_module-3">create_module/3 *</a></h3>
+<div class="spec">
+<p><tt>create_module(Ast, Module, Opts) -&gt; Forms::[<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>]</tt>
+<ul class="definitions"><li><tt>Ast = [<a href="#type-formula">formula()</a>]</tt></li><li><tt>Module = module()</tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="format_error-1">format_error/1 *</a></h3>
+<div class="spec">
+<p><tt>format_error(ErrorInfo) -&gt; {Line::<a href="#type-line">line()</a>, Description::string()}</tt>
+<ul class="definitions"><li><tt>ErrorInfo = <a href="#type-error_info">error_info()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="list_beam-2">list_beam/2 *</a></h3>
+<div class="spec">
+<p><tt>list_beam(IoDev, Beam) -&gt; ok | {error, Reason}</tt>
+<ul class="definitions"><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>Beam = binary()</tt></li><li><tt>Reason = <a href="file.html#type-posix">file:posix()</a> | badarg | terminated</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="list_erl-2">list_erl/2 *</a></h3>
+<div class="spec">
+<p><tt>list_erl(IoDev, Forms) -&gt; ok</tt>
+<ul class="definitions"><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>Forms = [<a href="erl_parse.html#type-abstract_form">erl_parse:abstract_form()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_file-1">parse_file/1</a></h3>
+<div class="spec">
+<p><tt>parse_file(File::<a href="file.html#type-filename">file:filename()</a>) -&gt; {ok, Ast::[<a href="#type-formula">formula()</a>]} | {error, Error::<a href="#type-error_info">error_info()</a>}</tt><br></p>
+<p> </p>
+</div><p><p>Parses the specified file containing one or more properties specified  
+in SHMLnf.</p>
+ 
+  <dl><dt><code>File</code></dt>
+    <dd>The path where the file to parse resides.</dd>
+  </dl>
+ 
+  <p>See <a href="#compile-2"><code>compile/2</code></a> for details on SHMLnf specification format.</p>
+ 
+  <p><b>Returns:</b> The syntax tree for the properties specified in SHMLnf.</p></p>
+
+<h3 class="function"><a name="parse_string-1">parse_string/1</a></h3>
+<div class="spec">
+<p><tt>parse_string(String) -&gt; {ok, Ast::[<a href="#type-formula">formula()</a>]} | {error, Error::<a href="#type-error_info">error_info()</a>}</tt>
+<ul class="definitions"><li><tt>String = string()</tt></li></ul></p>
+<p> </p>
+</div><p><p>Parses the specified string containing one or more properties specified  
+in SHMLnf.</p>
+ 
+  <dl><dt><code>String</code></dt>
+    <dd>The string to parse.</dd>
+  </dl>
+  <p>See <a href="#parse_string-1"><code>parse_string/1</code></a> for details on SHMLnf specification format.</p>
+ 
+  <p><b>Returns:</b> The syntax tree for the properties specified in SHMLnf.</p></p>
+
+<h3 class="function"><a name="show_error-2">show_error/2 *</a></h3>
+<div class="spec">
+<p><tt>show_error(File::<a href="file.html#type-filename">file:filename()</a>, Error::<a href="#type-error_info">error_info()</a>) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_errors-1">show_errors/1 *</a></h3>
+<div class="spec">
+<p><tt>show_errors(Errors::<a href="#type-errors">errors()</a>) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_warnings-1">show_warnings/1 *</a></h3>
+<div class="spec">
+<p><tt>show_warnings(Warnings::<a href="#type-warnings">warnings()</a>) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit_act-1">visit_act/1 *</a></h3>
+<div class="spec">
+<p><tt>visit_act(Act) -&gt; {Patterns::[<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>], Guard::<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>}</tt>
+<ul class="definitions"><li><tt>Act = <a href="#type-af_act">af_act()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit_forms-2">visit_forms/2 *</a></h3>
+<div class="spec">
+<p><tt>visit_forms(Forms, Opts) -&gt; Forms::[<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt>
+<ul class="definitions"><li><tt>Forms = [<a href="#type-formula">formula()</a>]</tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit_nec-2">visit_nec/2 *</a></h3>
+<div class="spec">
+<p><tt>visit_nec(Nec, Opts) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Nec = <a href="#type-af_nec">af_nec()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit_shml-2">visit_shml/2 *</a></h3>
+<div class="spec">
+<p><tt>visit_shml(Shml, Opts) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Shml = <a href="#type-af_shml">af_shml()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit_shml_seq-2">visit_shml_seq/2 *</a></h3>
+<div class="spec">
+<p><tt>visit_shml_seq(ShmlSeq, Opts) -&gt; [<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt>
+<ul class="definitions"><li><tt>ShmlSeq = <a href="#type-af_shml_seq">af_shml_seq()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_beam-4">write_beam/4 *</a></h3>
+<div class="spec">
+<p><tt>write_beam(IoDev, Ast, File, CompileOpts) -&gt; {ok, Warnings::<a href="#type-warnings">warnings()</a>} | {error, Errors::<a href="#type-errors">errors()</a>, Warnings::<a href="#type-warnings">warnings()</a>}</tt>
+<ul class="definitions"><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>Ast = [<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>CompileOpts = [<a href="compile.html#type-option">compile:option()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_erl-4">write_erl/4 *</a></h3>
+<div class="spec">
+<p><tt>write_erl(IoDev, Ast, File, CompileOpts) -&gt; {ok, Warnings::<a href="#type-warnings">warnings()</a>} | {error, Errors::<a href="#type-errors">errors()</a>, Warnings::<a href="#type-warnings">warnings()</a>}</tt>
+<ul class="definitions"><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>Ast = [<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>CompileOpts = [<a href="compile.html#type-option">compile:option()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_monitor-3">write_monitor/3 *</a></h3>
+<div class="spec">
+<p><tt>write_monitor(Ast, File, Opts) -&gt; ok | {error, Reason}</tt>
+<ul class="definitions"><li><tt>Ast = [<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li><li><tt>Reason = <a href="file.html#type-posix">file:posix()</a> | badarg | terminated</tt></li></ul></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

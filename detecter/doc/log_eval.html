@@ -1,0 +1,185 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module log_eval</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module log_eval</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Parsing of string trace event descriptions.
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2><p>Parsing of string trace event descriptions.</p>
+  
+   <h4 id="#Trace event descriptions">Trace event descriptions</h4>
+  
+   <p>The following five trace event descriptions are supported:</p>
+   <ul><li><tt><b>fork</b>(<code>P</code>, <code>Q</code>, <code>MFA</code>) [<b>delayed by</b> <code>Ms</code>]</tt></li>
+     <li><tt><b>init</b>(<code>Q</code>, <code>P</code>, <code>MFA</code>) [<b>delayed by</b> <code>Ms</code>]</tt></li>
+     <li><tt><b>exit</b>(<code>P</code>, <code>Res</code>) [<b>delayed by</b> <code>Ms</code>]</tt></li>
+     <li><tt><b>send</b>(<code>P</code>, <code>Q</code>, <code>Msg</code>) [<b>delayed by</b> <code>Ms</code>]</tt></li>
+     <li><tt><b>recv</b>(<code>Q</code>, <code>Msg</code>) [<b>delayed by</b> <code>Ms</code>]</tt></li>
+   </ul>
+   <dl><dt><code>P</code> and <code>Q</code></dt>
+     <dd><code>P</code> is the ID of the process P that forks process Q with ID <code>Q</code>.
+             Process IDs are represented by the triple <tt>&lt;<a href="#type-integer"><code>integer()</code></a>, <a href="#type-integer"><code>integer()</code></a>, <a href="#type-integer"><code>integer()</code></a>&gt;</tt>,
+             <i>e.g.,</i> <tt>&lt;10.10.97&gt;</tt>.
+     </dd>
+     <dt><code>MFA</code></dt>
+     <dd>Encoded function description in terms of <tt>{<code>Mod</code>, <code>Fun</code>, <code>Args</code>}</tt>, where <code>Mod</code> is the module name, <code>Fun</code> is
+            a function inside <code>Mod</code>, and <code>Args</code> is the list of arguments passed
+            to <code>Fun</code>. <code>Args</code> may contain process IDs atoms, integers or floats,
+            <i>e.g.,</i> <tt>[9, &lt;10.10.97&gt;, true]</tt>. <code>Args</code> may also be
+            empty.
+     </dd>
+     <dt><code>Res</code></dt>
+     <dd>Termination reason which must be an atom, <i>e.g.,</i> <tt>crashed.</tt></dd>
+     <dt><code>Msg</code></dt>
+     <dd>Message sent by process P to process Q. Must be a process ID, atom,
+            integer or float.
+     </dd>
+     <dt><tt><b>delayed by</b> <code>Ms</code></tt> (optional)</dt>
+     <dd>Delay in milliseconds after which the trace event message is
+            dispatched by the tracer. May be used for testing.
+     </dd>
+   </dl>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-ev_atom">ev_atom()</a></h3>
+<p><tt>ev_atom() = {atom, <a href="#type-line_num">line_num()</a>, atom()}</tt></p>
+<p>  Atom token.</p>
+
+<h3 class="typedecl"><a name="type-ev_delay">ev_delay()</a></h3>
+<p><tt>ev_delay() = {delay, Ms::<a href="#type-ev_int">ev_int()</a>, Event::<a href="#type-ev_event">ev_event()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-ev_event">ev_event()</a></h3>
+<p><tt>ev_event() = <a href="#type-ev_fork">ev_fork()</a> | <a href="#type-ev_init">ev_init()</a> | <a href="#type-ev_exit">ev_exit()</a> | <a href="#type-ev_send">ev_send()</a> | <a href="#type-ev_recv">ev_recv()</a></tt></p>
+<p>  Trace event AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_exit">ev_exit()</a></h3>
+<p><tt>ev_exit() = {exit, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_atom">ev_atom()</a>}</tt></p>
+<p>  Exit trace event AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_float">ev_float()</a></h3>
+<p><tt>ev_float() = {float, <a href="#type-line_num">line_num()</a>, float()}</tt></p>
+<p>  Float token.</p>
+
+<h3 class="typedecl"><a name="type-ev_fork">ev_fork()</a></h3>
+<p><tt>ev_fork() = {fork, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_mfa">ev_mfa()</a>}</tt></p>
+<p>  Fork trace event AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_init">ev_init()</a></h3>
+<p><tt>ev_init() = {init, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_mfa">ev_mfa()</a>}</tt></p>
+<p>  Init trace event AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_int">ev_int()</a></h3>
+<p><tt>ev_int() = {int, <a href="#type-line_num">line_num()</a>, integer()}</tt></p>
+<p>  Integer token.</p>
+
+<h3 class="typedecl"><a name="type-ev_list">ev_list()</a></h3>
+<p><tt>ev_list() = nil | {cons, <a href="#type-ev_term">ev_term()</a>, nil} | {cons, <a href="#type-ev_term">ev_term()</a>, <a href="#type-ev_list">ev_list()</a>}</tt></p>
+<p>  List AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_mfa">ev_mfa()</a></h3>
+<p><tt>ev_mfa() = {mfa, <a href="#type-ev_atom">ev_atom()</a>, <a href="#type-ev_atom">ev_atom()</a>, <a href="#type-ev_list">ev_list()</a>}</tt></p>
+<p>  MFA AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_pid">ev_pid()</a></h3>
+<p><tt>ev_pid() = {pid, <a href="#type-line_num">line_num()</a>, pid()}</tt></p>
+<p>  PID token.</p>
+
+<h3 class="typedecl"><a name="type-ev_recv">ev_recv()</a></h3>
+<p><tt>ev_recv() = {recv, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_term">ev_term()</a>}</tt></p>
+<p>  Receive trace event AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_send">ev_send()</a></h3>
+<p><tt>ev_send() = {send, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_pid">ev_pid()</a>, <a href="#type-ev_term">ev_term()</a>}</tt></p>
+<p>  Send trace event AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_string">ev_string()</a></h3>
+<p><tt>ev_string() = {string, <a href="#type-line_num">line_num()</a>, string()}</tt></p>
+<p>  String token.</p>
+
+<h3 class="typedecl"><a name="type-ev_term">ev_term()</a></h3>
+<p><tt>ev_term() = <a href="#type-ev_atom">ev_atom()</a> | <a href="#type-ev_int">ev_int()</a> | <a href="#type-ev_float">ev_float()</a> | <a href="#type-ev_pid">ev_pid()</a> | <a href="#type-ev_string">ev_string()</a> | <a href="#type-ev_list">ev_list()</a> | <a href="#type-ev_tuple">ev_tuple()</a></tt></p>
+<p>  Term AST node.</p>
+
+<h3 class="typedecl"><a name="type-ev_tuple">ev_tuple()</a></h3>
+<p><tt>ev_tuple() = {tuple, [<a href="#type-ev_term">ev_term()</a>]}</tt></p>
+<p>  Tuple AST node.</p>
+
+<h3 class="typedecl"><a name="type-line_num">line_num()</a></h3>
+<p><tt>line_num() = pos_integer()</tt></p>
+<p>  Line number of parsed token in source log file.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#conv_list-1">conv_list/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#eval_delay-1">eval_delay/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#eval_event-1">eval_event/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#eval_mfa-1">eval_mfa/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#eval_string-2">eval_string/2</a></td><td>Parses the specified trace event description into its intermediate  
+representation in Erlang format.</td></tr>
+<tr><td valign="top"><a href="#eval_term-1">eval_term/1*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="conv_list-1">conv_list/1 *</a></h3>
+<div class="spec">
+<p><tt>conv_list(Terms::[<a href="#type-ev_delay">ev_delay()</a>]) -&gt; list()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="eval_delay-1">eval_delay/1 *</a></h3>
+<div class="spec">
+<p><tt>eval_delay(Delay::<a href="#type-ev_delay">ev_delay()</a> | <a href="#type-ev_event">ev_event()</a>) -&gt; <a href="log_tracer.html#type-event">log_tracer:event()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="eval_event-1">eval_event/1 *</a></h3>
+<div class="spec">
+<p><tt>eval_event(Event::<a href="#type-ev_event">ev_event()</a>) -&gt; <a href="event.html#type-int_event">event:int_event()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="eval_mfa-1">eval_mfa/1 *</a></h3>
+<div class="spec">
+<p><tt>eval_mfa(Mfa::<a href="#type-ev_mfa">ev_mfa()</a>) -&gt; mfa()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="eval_string-2">eval_string/2</a></h3>
+<div class="spec">
+<p><tt>eval_string(String, LineNum) -&gt; {ok, skip} | {ok, <a href="log_tracer.html#type-event">log_tracer:event()</a>} | no_return()</tt>
+<ul class="definitions"><li><tt>String = string()</tt></li><li><tt>LineNum = <a href="#type-line_num">line_num()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Parses the specified trace event description into its intermediate  
+representation in Erlang format.</p>
+ 
+  <dl><dt><code>String</code></dt>
+    <dd>Trace event description string. See <a href="#Trace_events">Trace events</a>
+           for the trace event string format.
+    </dd>
+    <dt><code>LineNum</code></dt>
+    <dd>Line number of the trace event description in source log file.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Intermediate trace event representation in Erlang format.</p></p>
+
+<h3 class="function"><a name="eval_term-1">eval_term/1 *</a></h3>
+<div class="spec">
+<p><tt>eval_term(Term::<a href="#type-ev_term">ev_term()</a>) -&gt; pid() | atom() | integer() | float() | list() | tuple()</tt><br></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

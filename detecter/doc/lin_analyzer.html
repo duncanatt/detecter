@@ -1,0 +1,498 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module lin_analyzer</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module lin_analyzer</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Module description (becomes module heading).
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Module description (becomes module heading).
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-ctx">ctx()</a></h3>
+<p><tt>ctx() = {'?KEY_CTX', list()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-env">env()</a></h3>
+<p><tt>env() = {'?KEY_ENV', list()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-event">event()</a></h3>
+<p><tt>event() = any()</tt></p>
+<p>  Analysable trace event actions.</p>
+
+<h3 class="typedecl"><a name="type-monitor">monitor()</a></h3>
+<p><tt>monitor() = term()</tt></p>
+<p>  Monitor type.</p>
+
+<h3 class="typedecl"><a name="type-ns">ns()</a></h3>
+<p><tt>ns() = {'?KEY_NS', atom()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-pat">pat()</a></h3>
+<p><tt>pat() = {'?KEY_PAT', term()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-pd">pd()</a></h3>
+<p><tt>pd() = {<a href="#type-pd_id">pd_id()</a>, <a href="#type-rule">rule()</a>, <a href="#type-event">event()</a>, <a href="#type-monitor">monitor()</a>, <a href="#type-monitor">monitor()</a>} | {<a href="#type-pd_id">pd_id()</a>, <a href="#type-rule">rule()</a>, <a href="#type-event">event()</a>, <a href="#type-monitor">monitor()</a>, <a href="#type-monitor">monitor()</a>, <a href="#type-premise">premise()</a>} | {<a href="#type-pd_id">pd_id()</a>, <a href="#type-rule">rule()</a>, <a href="#type-event">event()</a>, <a href="#type-monitor">monitor()</a>, <a href="#type-monitor">monitor()</a>, <a href="#type-monitor">monitor()</a>, <a href="#type-premise">premise()</a>, <a href="#type-premise">premise()</a>}</tt></p>
+<p>  Three types of proof derivations. One is for axioms that have no premises,
+  one for derivations having one premise, and one for derivations having two
+  premises.</p>
+
+<h3 class="typedecl"><a name="type-pd_id">pd_id()</a></h3>
+<p><tt>pd_id() = [integer()]</tt></p>
+<p>  Proof derivation ID.</p>
+
+<h3 class="typedecl"><a name="type-premise">premise()</a></h3>
+<p><tt>premise() = {pre, <a href="#type-pd">pd()</a>}</tt></p>
+<p>  Proof derivation premise.</p>
+
+<h3 class="typedecl"><a name="type-rule">rule()</a></h3>
+<p><tt>rule() = '?M_TAU_L' | '?M_TAU_R' | '?M_REC' | '?M_DIS_Y_L' | '?M_DIS_Y_L' | '?M_DIS_N_L' | '?M_DIS_N_R' | '?M_CON_Y_L' | '?M_CON_Y_R' | '?M_CON_N_L' | '?M_CON_N_R' | '?M_VRD' | '?M_ACT' | '?M_CHS_L' | '?M_CHS_R' | '?M_PAR'</tt></p>
+<p>  Small-step semantics rule names.</p>
+
+<h3 class="typedecl"><a name="type-str">str()</a></h3>
+<p><tt>str() = {'?KEY_STR', string()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-var">var()</a></h3>
+<p><tt>var() = {'?KEY_VAR', atom()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-verdict">verdict()</a></h3>
+<p><tt>verdict() = '?VERDICT_NO' | '?VERDICT_YES'</tt></p>
+<p>  Verdicts reachable by the runtime analysis.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#analyze-3">analyze/3</a></td><td>Analyzes the specified trace event and performs the monitor reduction       
+accordingly.</td></tr>
+<tr><td valign="top"><a href="#analyze_file-2">analyze_file/2</a></td><td>Analyzes the list of events as a trace using the specified monitor.</td></tr>
+<tr><td valign="top"><a href="#analyze_trace-2">analyze_trace/2</a></td><td>Analyzes the list of events as a trace using the specified monitor.</td></tr>
+<tr><td valign="top"><a href="#analyze_trace-3">analyze_trace/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#clean_ns-2">clean_ns/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#copy_ctx-2">copy_ctx/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#copy_ns-2">copy_ns/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#derive_act-3">derive_act/3*</a></td><td>Determines the rule that must be applied to reduce the monitor state by        
+one trace event.</td></tr>
+<tr><td valign="top"><a href="#derive_tau-2">derive_tau/2*</a></td><td>Determines the rule that must be applied to reduce the monitor state by        
+one tau transition.</td></tr>
+<tr><td valign="top"><a href="#dispatch-1">dispatch/1</a></td><td>Dispatches the specified abstract event to the monitor for analysis.</td></tr>
+<tr><td valign="top"><a href="#do_monitor-2">do_monitor/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#embed-1">embed/1</a></td><td>Embeds the trace event analysis function into the process dictionary.</td></tr>
+<tr><td valign="top"><a href="#filter-1">filter/1*</a></td><td>Default filter that allows all events to pass.</td></tr>
+<tr><td valign="top"><a href="#format_pd-1">format_pd/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format_pdlist-1">format_pdlist/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format_verdict-3">format_verdict/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_ctx-1">get_ctx/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_env-1">get_env/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_key-3">get_key/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_ns-1">get_ns/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_pat-1">get_pat/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_str-1">get_str/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_var-1">get_var/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#inc_pdid-1">inc_pdid/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_satisfied-2">is_satisfied/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_verdict-1">is_verdict/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#m_to_iolist-1">m_to_iolist/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#m_to_iolist-2">m_to_iolist/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#merge_ctx-2">merge_ctx/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_binding-4">new_binding/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_pdid-1">new_pdid/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#pdid_to_iolist-1">pdid_to_iolist/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#put_key-3">put_key/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#reduce_tau-2">reduce_tau/2</a></td><td>Reduces the specified monitor using tau transitions repeatedly until it       
+cannot be reduced further.</td></tr>
+<tr><td valign="top"><a href="#set_ctx-2">set_ctx/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#set_env-2">set_env/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#set_ns-2">set_ns/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_pdlist-1">show_pdlist/1</a></td><td>Formats and displays the specified proof derivation list to the standard       
+output.</td></tr>
+<tr><td valign="top"><a href="#unwrap_value-1">unwrap_value/1*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="analyze-3">analyze/3</a></h3>
+<div class="spec">
+<p><tt>analyze(Event, M, PdList) -&gt; {[<a href="#type-pd">pd()</a>], <a href="#type-monitor">monitor()</a>}</tt>
+<ul class="definitions"><li><tt>Event = <a href="event.html#type-evm_event">event:evm_event()</a></tt></li><li><tt>M = <a href="#type-monitor">monitor()</a></tt></li><li><tt>PdList = [<a href="#type-pd">pd()</a>]</tt></li></ul></p>
+<p> </p>
+</div><p><p>Analyzes the specified trace event and performs the monitor reduction       
+accordingly.</p>
+ 
+  <dl><dt><code>Event</code></dt>
+    <dd>Trace event to analyze.</dd>
+    <dt><code>M</code></dt>
+    <dd>Monitor to analyze the trace event.</dd>
+    <dt><code>PdList</code></dt>
+    <dd>Initial list of proof derivations. New derivations are added to the
+           head of the list.</dd>
+  </dl>
+  <p>The reductions effected are added to the head of the specified proof
+        derivation list. The function assumes that the monitor supplied is
+        already in the ready state. See <a href="lin_analyzer.html#reduce_tau-2"><code>lin_analyzer:reduce_tau/2</code></a>.
+  </p>
+ 
+  <p><b>Returns:</b> Proof derivation list and reduced monitor. The specified monitor
+            is guaranteed to be reduced by at one or more steps, where the
+            first analyzes the specified trace event.
+  </p></p>
+
+<h3 class="function"><a name="analyze_file-2">analyze_file/2</a></h3>
+<div class="spec">
+<p><tt>analyze_file(File, M) -&gt; {[<a href="#type-pd">pd()</a>], <a href="#type-monitor">monitor()</a>}</tt>
+<ul class="definitions"><li><tt>File = string()</tt></li><li><tt>M = <a href="#type-monitor">monitor()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Analyzes the list of events as a trace using the specified monitor.</p>
+ 
+  <dl><dt><code>File</code></dt>
+    <dd>File where the saved trace log is located.</dd>
+    <dt><code>M</code></dt>
+    <dd>Monitor to analyze the trace event file.</dd>
+  </dl>
+ 
+  <p>The specified monitor is automatically reduced to the ready state prior
+        the commencement of trace event analysis.
+  </p>
+ 
+  <p><b>Returns:</b> Proof derivation list and reduced monitor. The specified monitor
+            is guaranteed to be reduced by at one or more steps, where the
+            first analyzes the specified trace event.
+  </p></p>
+
+<h3 class="function"><a name="analyze_trace-2">analyze_trace/2</a></h3>
+<div class="spec">
+<p><tt>analyze_trace(Trace, M) -&gt; {[<a href="#type-pd">pd()</a>], <a href="#type-monitor">monitor()</a>}</tt>
+<ul class="definitions"><li><tt>Trace = [<a href="event.html#type-int_event">event:int_event()</a>]</tt></li><li><tt>M = <a href="#type-monitor">monitor()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Analyzes the list of events as a trace using the specified monitor.</p>
+ 
+  <dl><dt><code>Trace</code></dt>
+    <dd>Trace of events to analyze.</dd>
+    <dt><code>M</code></dt>
+    <dd>Monitor to analyze the trace event list.</dd>
+  </dl>
+ 
+  <p>The specified monitor is automatically reduced to the ready state prior
+        the commencement of trace event analysis.
+  </p>
+ 
+  <p><b>Returns:</b> Proof derivation list and reduced monitor. The specified monitor
+            is guaranteed to be reduced by at one or more steps, where the
+            first analyzes the specified trace event.
+  </p></p>
+
+<h3 class="function"><a name="analyze_trace-3">analyze_trace/3 *</a></h3>
+<div class="spec">
+<p><tt>analyze_trace(Trace, M, PdList) -&gt; {[<a href="#type-pd">pd()</a>], <a href="#type-monitor">monitor()</a>}</tt>
+<ul class="definitions"><li><tt>Trace = [<a href="event.html#type-int_event">event:int_event()</a>]</tt></li><li><tt>M = <a href="#type-monitor">monitor()</a></tt></li><li><tt>PdList = [<a href="#type-pd">pd()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="clean_ns-2">clean_ns/2 *</a></h3>
+<div class="spec">
+<p><tt>clean_ns(Ctx::<a href="#type-ctx">ctx()</a>, Ns::<a href="#type-ns">ns()</a>) -&gt; <a href="#type-ctx">ctx()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="copy_ctx-2">copy_ctx/2 *</a></h3>
+<div class="spec">
+<p><tt>copy_ctx(From::<a href="#type-monitor">monitor()</a>, To::<a href="#type-monitor">monitor()</a>) -&gt; <a href="#type-monitor">monitor()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="copy_ns-2">copy_ns/2 *</a></h3>
+<div class="spec">
+<p><tt>copy_ns(From::<a href="#type-monitor">monitor()</a>, To::<a href="#type-monitor">monitor()</a>) -&gt; <a href="#type-monitor">monitor()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="derive_act-3">derive_act/3 *</a></h3>
+<div class="spec">
+<p><tt>derive_act(Event, M, PdId) -&gt; {<a href="#type-pd">pd()</a>, <a href="#type-monitor">monitor()</a>}</tt>
+<ul class="definitions"><li><tt>Event = <a href="#type-event">event()</a></tt></li><li><tt>M = <a href="#type-monitor">monitor()</a></tt></li><li><tt>PdId = <a href="#type-pd_id">pd_id()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Determines the rule that must be applied to reduce the monitor state by        
+one trace event.</p>
+  
+   <dl><dt><code>Event</code></dt>
+     <dd>Trace event to analyze.</dd>
+     <dt><code>M</code></dt>
+     <dd>Monitor to be reduced.</dd>
+     <dt><code>PdId</code></dt>
+     <dd>Proof derivation ID.</dd>
+   </dl>
+  
+   <p><b>Returns:</b> Proof derivation and monitor continuation after one event
+             reduction.
+   </p></p>
+
+<h3 class="function"><a name="derive_tau-2">derive_tau/2 *</a></h3>
+<div class="spec">
+<p><tt>derive_tau(M, PdId) -&gt; false | {true, {<a href="#type-pd">pd()</a>, <a href="#type-monitor">monitor()</a>}}</tt>
+<ul class="definitions"><li><tt>M = <a href="#type-monitor">monitor()</a></tt></li><li><tt>PdId = <a href="#type-pd_id">pd_id()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Determines the rule that must be applied to reduce the monitor state by        
+one tau transition.</p>
+  
+   <dl><dt><code>M</code></dt>
+     <dd>Monitor to be reduced.</dd>
+     <dt><code>PdId</code></dt>
+     <dd>Proof derivation ID.</dd>
+   </dl>
+  
+   <p><b>Returns:</b> <code>true</code> together with the proof derivation and monitor continuation
+             after one tau reduction or <code>false</code> if the monitor cannot be
+             reduced.
+   </p></p>
+
+<h3 class="function"><a name="dispatch-1">dispatch/1</a></h3>
+<div class="spec">
+<p><tt>dispatch(Event::<a href="event.html#type-int_event">event:int_event()</a>) -&gt; term()</tt><br></p>
+<p> </p>
+</div><p><p>Dispatches the specified abstract event to the monitor for analysis.</p>
+ 
+  <dl><dt><code>Event</code></dt>
+    <dd>The abstract event that the monitor is to analyze.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Depends on the event type. See <a href="event.html#event-0"><code>event:event/0</code></a>.
+            <ul><li>When event is of type <code>fork</code>, the PID of the new child
+                     process is returned;
+              </li>
+              <li>When event is of type <code>init</code>, the PID of the parent
+                     process is returned;
+              </li>
+              <li>When event is of type <code>exit</code>, the exit reason is
+                     returned;
+              </li>
+              <li>When event is of type <code>send</code>, the message is returned;</li>
+              <li>When event is of type <code>recv</code>, the message is returned.</li>
+            </ul>
+  </p></p>
+
+<h3 class="function"><a name="do_monitor-2">do_monitor/2 *</a></h3>
+<div class="spec">
+<p><tt>do_monitor(Event, VerdictFun) -&gt; <a href="#type-monitor">monitor()</a> | undefined</tt>
+<ul class="definitions"><li><tt>Event = <a href="event.html#type-evm_event">event:evm_event()</a></tt></li><li><tt>VerdictFun = fun((Verdict::<a href="#type-verdict">verdict()</a>, [<a href="#type-pd">pd()</a>]) -&gt; any())</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="embed-1">embed/1</a></h3>
+<div class="spec">
+<p><tt>embed(M::<a href="#type-monitor">monitor()</a>) -&gt; true</tt><br></p>
+<p> </p>
+</div><p><p>Embeds the trace event analysis function into the process dictionary.</p>
+ 
+  <dl><dt><code>M</code></dt>
+    <dd>Monitor function that is applied to trace events to determine their
+           correct or incorrect sequence.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> to indicate success, otherwise <code>false</code>.</p></p>
+
+<h3 class="function"><a name="filter-1">filter/1 *</a></h3>
+<div class="spec">
+<p><tt>filter(Event::<a href="event.html#type-int_event">event:int_event()</a>) -&gt; true</tt><br></p>
+<p> </p>
+</div><p>Default filter that allows all events to pass.</p>
+
+<h3 class="function"><a name="format_pd-1">format_pd/1 *</a></h3>
+<div class="spec">
+<p><tt>format_pd(X1::<a href="#type-pd">pd()</a>) -&gt; iolist()</tt><br></p>
+<p> </p>
+</div>
+<p><b><font color="red">To do</font></b><ul><li><font color="red"> Use the ?INDENT() parametrized macro.</font></li></ul></p>
+
+<h3 class="function"><a name="format_pdlist-1">format_pdlist/1 *</a></h3>
+<div class="spec">
+<p><tt>format_pdlist(PdList::[<a href="#type-pd">pd()</a>]) -&gt; {non_neg_integer(), iolist()}</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="format_verdict-3">format_verdict/3 *</a></h3>
+<div class="spec">
+<p><tt>format_verdict(Fmt, Args, M) -&gt; ok</tt>
+<ul class="definitions"><li><tt>Fmt = <a href="io.html#type-format">io:format()</a></tt></li><li><tt>Args = list()</tt></li><li><tt>M = <a href="#type-verdict">verdict()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_ctx-1">get_ctx/1 *</a></h3>
+<div class="spec">
+<p><tt>get_ctx(Env::<a href="#type-env">env()</a>) -&gt; <a href="#type-ctx">ctx()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_env-1">get_env/1 *</a></h3>
+<div class="spec">
+<p><tt>get_env(M::<a href="#type-monitor">monitor()</a>) -&gt; <a href="#type-env">env()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_key-3">get_key/3 *</a></h3>
+<div class="spec">
+<p><tt>get_key(Key, List, Default) -&gt; false | {Key, any()}</tt>
+<ul class="definitions"><li><tt>Key = any()</tt></li><li><tt>List = list()</tt></li><li><tt>Default = false | {any(), any()}</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_ns-1">get_ns/1 *</a></h3>
+<div class="spec">
+<p><tt>get_ns(Env::<a href="#type-env">env()</a>) -&gt; <a href="#type-ns">ns()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_pat-1">get_pat/1 *</a></h3>
+<div class="spec">
+<p><tt>get_pat(Env::<a href="#type-env">env()</a>) -&gt; <a href="#type-pat">pat()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_str-1">get_str/1 *</a></h3>
+<div class="spec">
+<p><tt>get_str(Env::<a href="#type-env">env()</a>) -&gt; <a href="#type-str">str()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_var-1">get_var/1 *</a></h3>
+<div class="spec">
+<p><tt>get_var(Env::<a href="#type-env">env()</a>) -&gt; <a href="#type-var">var()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="inc_pdid-1">inc_pdid/1 *</a></h3>
+<div class="spec">
+<p><tt>inc_pdid(Id::[integer()]) -&gt; [integer()]</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="is_satisfied-2">is_satisfied/2 *</a></h3>
+<div class="spec">
+<p><tt>is_satisfied(Event, X2) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="is_verdict-1">is_verdict/1 *</a></h3>
+<div class="spec">
+<p><tt>is_verdict(V::{'?VERDICT_YES' | '?VERDICT_NO', <a href="#type-env">env()</a>}) -&gt; boolean()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="m_to_iolist-1">m_to_iolist/1 *</a></h3>
+<div class="spec">
+<p><tt>m_to_iolist(M::<a href="#type-monitor">monitor()</a>) -&gt; iolist()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="m_to_iolist-2">m_to_iolist/2 *</a></h3>
+<div class="spec">
+<p><tt>m_to_iolist(M::<a href="#type-monitor">monitor()</a>, Ctx::[{atom(), any()}]) -&gt; iolist()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="merge_ctx-2">merge_ctx/2 *</a></h3>
+<div class="spec">
+<p><tt>merge_ctx(Ctx1::<a href="#type-ctx">ctx()</a>, Ctx2::<a href="#type-ctx">ctx()</a>) -&gt; <a href="#type-ctx">ctx()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_binding-4">new_binding/4 *</a></h3>
+<div class="spec">
+<p><tt>new_binding(Ctx, Ns, Name, Value) -&gt; <a href="#type-ctx">ctx()</a></tt>
+<ul class="definitions"><li><tt>Ctx = <a href="#type-ctx">ctx()</a></tt></li><li><tt>Ns = <a href="#type-ns">ns()</a></tt></li><li><tt>Name = atom()</tt></li><li><tt>Value = any()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_pdid-1">new_pdid/1 *</a></h3>
+<div class="spec">
+<p><tt>new_pdid(Id::[integer()]) -&gt; [integer()]</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="pdid_to_iolist-1">pdid_to_iolist/1 *</a></h3>
+<div class="spec">
+<p><tt>pdid_to_iolist(Id::[integer()]) -&gt; iolist()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="put_key-3">put_key/3 *</a></h3>
+<div class="spec">
+<p><tt>put_key(Key, Value, List) -&gt; list()</tt>
+<ul class="definitions"><li><tt>Key = any()</tt></li><li><tt>Value = any()</tt></li><li><tt>List = list()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="reduce_tau-2">reduce_tau/2</a></h3>
+<div class="spec">
+<p><tt>reduce_tau(M::<a href="#type-monitor">monitor()</a>, PdList::[<a href="#type-pd">pd()</a>]) -&gt; {[<a href="#type-pd">pd()</a>], <a href="#type-monitor">monitor()</a>}</tt><br></p>
+<p> </p>
+</div><p><p>Reduces the specified monitor using tau transitions repeatedly until it       
+cannot be reduced further.</p>
+ 
+  <dl><dt><code>M</code></dt>
+    <dd>Monitor to reduce.</dd>
+    <dt><code>PdList</code></dt>
+    <dd>Initial list of proof derivations. New derivations are added to the
+           head of the list.
+    </dd>
+  </dl>
+ 
+  <p>The monitor is left in a state that is ready to analyze trace events.</p>
+ 
+  <p><b>Returns:</b> Proof derivation list and reduced monitor. If the specified monitor
+            cannot be reduced, the original monitor is returned, and the proof
+            derivation list is empty.
+  </p></p>
+
+<h3 class="function"><a name="set_ctx-2">set_ctx/2 *</a></h3>
+<div class="spec">
+<p><tt>set_ctx(Env::<a href="#type-env">env()</a>, Ctx::<a href="#type-ctx">ctx()</a>) -&gt; <a href="#type-env">env()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="set_env-2">set_env/2 *</a></h3>
+<div class="spec">
+<p><tt>set_env(M::<a href="#type-monitor">monitor()</a>, Env::<a href="#type-env">env()</a>) -&gt; <a href="#type-monitor">monitor()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="set_ns-2">set_ns/2 *</a></h3>
+<div class="spec">
+<p><tt>set_ns(Env::<a href="#type-env">env()</a>, Ns::<a href="#type-ns">ns()</a>) -&gt; <a href="#type-env">env()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_pdlist-1">show_pdlist/1</a></h3>
+<div class="spec">
+<p><tt>show_pdlist(PdList::[<a href="#type-pd">pd()</a>]) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p><p>Formats and displays the specified proof derivation list to the standard       
+output.</p>
+ 
+  <dl><dt><code>PdList</code></dt>
+    <dd>Proof derivation list to format.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> ok.</p></p>
+
+<h3 class="function"><a name="unwrap_value-1">unwrap_value/1 *</a></h3>
+<div class="spec">
+<p><tt>unwrap_value(Pair::{atom(), any()}) -&gt; any()</tt><br></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

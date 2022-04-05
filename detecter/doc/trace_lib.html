@@ -1,0 +1,165 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module trace_lib</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module trace_lib</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Common front-end library for different tracing infrastructures.
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2><p>Common front-end library for different tracing infrastructures.</p>
+  
+   <p>The following tracing methods are supported:
+     <dl><li><code>evm</code></li>
+       <dd>Native Erlang Virtual Machine tracing.</dd>
+       <li><code>{log, File}</code></li>
+       <dd>Log file tracing that emulates the functionality exposed by the
+              Erlang Virtual Machine for seamless swapping. Trace event
+              descriptions are obtained from the specified log <code>File</code>. See
+              <a href="log_tracer.html"><code>log_tracer</code></a> for more information.
+       </dd>
+     </dl>
+   </p>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-trace_method">trace_method()</a></h3>
+<p><tt>trace_method() = evm | {log, File::<a href="file.html#type-filename">file:filename()</a>}</tt></p>
+<p>  Supported tracing methods:
+  <dl>
+    <dt><code>evm</code></dt>
+    <dd>Native Erlang Virtual Machine tracing.</dd>
+    <dt><code>{log, File}</code></dt>
+    <dd>
+      Log file tracing that emulates the functionality exposed by the
+      Erlang Virtual Machine for seamless swapping. Trace event
+      descriptions are obtained from the specified log <code>File</code>. See
+      <a href="log_tracer.html"><code>log_tracer</code></a> for more information.
+    </dd>
+  </dl></p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#clear-1">clear/1</a></td><td>Clears the tracer for the specified tracee PID.</td></tr>
+<tr><td valign="top"><a href="#get_mod-0">get_mod/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#preempt-1">preempt/1</a></td><td>Establishes the calling process as the new tracer of the specified  
+tracee PID.</td></tr>
+<tr><td valign="top"><a href="#put_mod-1">put_mod/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start-1">start/1</a></td><td>Configures and starts the tracer.</td></tr>
+<tr><td valign="top"><a href="#stop-0">stop/0</a></td><td>Shuts down the tracer.</td></tr>
+<tr><td valign="top"><a href="#trace-1">trace/1</a></td><td>Sets the caller process as the tracer for the specified tracee PID.</td></tr>
+<tr><td valign="top"><a href="#try_start-3">try_start/3*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="clear-1">clear/1</a></h3>
+<div class="spec">
+<p><tt>clear(Tracee::pid()) -&gt; boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Clears the tracer for the specified tracee PID.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process whose tracer is to be cleared.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> regardless of whether a tracer was set up for <code>Tracee</code>.</p></p>
+
+<h3 class="function"><a name="get_mod-0">get_mod/0 *</a></h3>
+<div class="spec">
+<p><tt>get_mod() -&gt; module() | no_return()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="preempt-1">preempt/1</a></h3>
+<div class="spec">
+<p><tt>preempt(Tracee::pid()) -&gt; boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Establishes the calling process as the new tracer of the specified  
+tracee PID.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process whose tracer is to be preempted.</dd>
+  </dl>
+  <p>Call fails if no tracer is set up for <code>Tracee</code>.</p>
+ 
+  <p><b>Returns:</b> <code>true</code> if successful, otherwise <code>false</code>.</p></p>
+
+<h3 class="function"><a name="put_mod-1">put_mod/1 *</a></h3>
+<div class="spec">
+<p><tt>put_mod(Mod::module()) -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="start-1">start/1</a></h3>
+<div class="spec">
+<p><tt>start(Method::<a href="#type-trace_method">trace_method()</a>) -&gt; ok | {ok, pid()}</tt><br></p>
+<p> </p>
+</div><p><p>Configures and starts the tracer.</p>
+ 
+  <dl><dt><code>Method</code></dt>
+    <dd>The tracing infrastructure to use.</dd>
+  </dl>
+ 
+  <p>The following infrastructures are supported:
+    <dl><dt><code>evm</code></dt>
+      <dd>Native Erlang Virtual Machine tracing.</dd>
+      <dt><code>{log, File}</code></dt>
+      <dd>Log file tracing that emulates the functionality exposed by the
+             Erlang Virtual Machine. <code>File</code> should point to the log file where
+             the trace event descriptions reside. See <a href="log_tracer.html"><code>log_tracer</code></a> for
+             more information.
+      </dd>
+    </dl>
+  </p>
+  <p><b>Returns:</b> Depends on the tracing <code>Method</code> used:
+    <dl><dt><code>ok</code></dt>
+      <dd>When <code>Method</code> is set to <code>evm</code>. </dd>
+      <dt><code>{ok, Pid}</code></dt>
+      <dd>When <code>Method</code> is set to <code>log</code>. <code>Pid</code> is the PID of the tracing
+             service process.
+      </dd>
+    </dl>
+  </p></p>
+
+<h3 class="function"><a name="stop-0">stop/0</a></h3>
+<div class="spec">
+<p><tt>stop() -&gt; ok | {error, not_started}</tt><br></p>
+<p> </p>
+</div><p><p>Shuts down the tracer.</p>
+ 
+  <p><b>Returns:</b> <code>ok</code> to indicate successful shut down, <code>{error, not_started}</code>
+             otherwise.
+  </p></p>
+
+<h3 class="function"><a name="trace-1">trace/1</a></h3>
+<div class="spec">
+<p><tt>trace(Tracee::pid()) -&gt; boolean()</tt><br></p>
+<p> </p>
+</div><p><p>Sets the caller process as the tracer for the specified tracee PID.</p>
+ 
+  <dl><dt><code>Tracee</code></dt>
+    <dd>PID of the process to trace.</dd>
+  </dl>
+  <p>Call fails if another process is already tracing <code>Tracee</code>. The call is
+        non-blocking.
+  </p>
+ 
+  <p><b>Returns:</b> <code>true</code> if successful, otherwise <code>false</code>.</p></p>
+
+<h3 class="function"><a name="try_start-3">try_start/3 *</a></h3>
+<div class="spec">
+<p><tt>try_start(Mod::module(), Fun::atom(), Args::list()) -&gt; ok | {ok, Pid::pid()} | {error, {already_started, undefined | pid()}}</tt><br></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

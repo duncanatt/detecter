@@ -1,0 +1,364 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module gen_file_poller</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module gen_file_poller</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Generic file poller behaviour.
+
+<p><b>This module defines the <tt>gen_file_poller</tt> behaviour.</b><br> Required callback functions: <tt>init/1</tt>, <tt>handle_line/3</tt>.<br> Optional callback functions: <tt>terminate/2</tt>.</p>
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2><p>Generic file poller behaviour.</p>
+  
+  
+   <h4 id="#Callbacks:">Callbacks:</h4>
+   <dl><li><tt>
+         init(Args :: <a href="#type-list"><code>list()</code></a>) -&gt;
+         {ok, State :: <a href="#type-term"><code>term()</code></a>} | {stop, Reason :: <a href="#type-term"><code>term()</code></a>}
+       </tt>
+     </li>
+     <dd>Called by the generic file poller upon initialization, but prior to
+            starting the main polling loop. The callback is expected to return
+            the initialization state <code>{ok, State}</code> specific to the file
+            poller implementation, or a termination reason <code>{stop, Reason}</code>.
+     </dd>
+     <li><tt>
+         handle_line(Line :: [<a href="#type-byte"><code>byte()</code></a>],
+         LineInfo :: <a href="#type-line_info"><code>line_info()</code></a>, State :: <a href="#type-term"><code>term()</code></a>) -&gt;
+         {ok, NewState :: <a href="#type-term"><code>term()</code></a>}
+       </tt>
+     </li>
+     <dd>Called by the generic file poller whenever a new line is parsed to
+            completion. The <code>Line</code> consists of a list of bytes that do not
+            include the new line delimiter characters. Lines are delimited by
+            <code>\n</code> in Unix, Linux and macOS, and <code>\r\n</code> in Windows. <code>LineInfo</code>
+            contains the information specific to the parsed line (see
+            <a href="#type-line_info"><code>line_info()</code></a>), while State is the opaque state specific to
+            the file poller implementation, passed to the generic file poller
+            in the initialization phase through <a href="#init-1"><code>init/1</code></a>. The callback is
+            expected to return the updated state <code>{ok, NewState}</code>.
+     </dd>
+     <li><tt>
+         terminate(Reason :: <a href="#type-term"><code>term()</code></a>, State :: <a href="#type-term"><code>term()</code></a>) -&gt;
+         <a href="#type-any"><code>any()</code></a>
+       </tt>
+     </li>
+     <dd>Called by the generic file poller prior to termination. <code>State</code> is
+            the last updated state specific to the file poller implementation.
+            The callback may be used by the implementation to perform cleanup.
+            Optional.
+     </dd>
+   </dl>
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-buf_stat">buf_stat()</a></h3>
+<p><tt>buf_stat() = #buf_stat{byte_cnt = <a href="#type-offset">offset()</a>, line_cnt = non_neg_integer(), buf_left = [byte()]}</tt></p>
+<p>  Buffer information.</p>
+
+<h3 class="typedecl"><a name="type-emgr_name">emgr_name()</a></h3>
+<p><tt>emgr_name() = {local, atom()} | {global, term()} | {via, Mod::module(), Name::term()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-line_info">line_info()</a></h3>
+<p><tt>line_info() = #line_info{byte_off = <a href="#type-offset">offset()</a>, line_num = pos_integer()}</tt></p>
+<p>  Line location information.</p>
+
+<h3 class="typedecl"><a name="type-offset">offset()</a></h3>
+<p><tt>offset() = non_neg_integer()</tt></p>
+<p>  Byte offset in the source file.</p>
+
+<h3 class="typedecl"><a name="type-option">option()</a></h3>
+<p><tt>option() = {poll_ms, timeout()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-options">options()</a></h3>
+<p><tt>options() = [<a href="#type-option">option()</a>]</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#handle_line-5">handle_line/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#handle_system_msg-10">handle_system_msg/10*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#init-5">init/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#init_it-6">init_it/6</a></td><td></td></tr>
+<tr><td valign="top"><a href="#line_info_byte_off-1">line_info_byte_off/1</a></td><td>Returns the byte offset from the specified line information record.</td></tr>
+<tr><td valign="top"><a href="#line_info_line_num-1">line_info_line_num/1</a></td><td>Returns the line number from the specified line information record.</td></tr>
+<tr><td valign="top"><a href="#loop-10">loop/10*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_buf_stat-3">new_buf_stat/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_line_info-2">new_line_info/2</a></td><td>Returns a new line information record from the specified arguments.</td></tr>
+<tr><td valign="top"><a href="#parse_line-1">parse_line/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_line-4">parse_line/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_lines-6">parse_lines/6*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_lines-7">parse_lines/7*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start-3">start/3</a></td><td>Starts a standalone file poller process that is not part of a  
+supervision tree.</td></tr>
+<tr><td valign="top"><a href="#start-4">start/4</a></td><td>Starts a named standalone file poller process that is not part of a  
+supervision tree.</td></tr>
+<tr><td valign="top"><a href="#start_link-3">start_link/3</a></td><td>Starts a file poller process as part of a supervision tree.</td></tr>
+<tr><td valign="top"><a href="#start_link-4">start_link/4</a></td><td>Starts a file poller process as part of a supervision tree.</td></tr>
+<tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Shuts down a file poller process.</td></tr>
+<tr><td valign="top"><a href="#system_code_change-4">system_code_change/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#system_continue-3">system_continue/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#system_get_state-1">system_get_state/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#system_replace_state-2">system_replace_state/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#system_terminate-4">system_terminate/4</a></td><td></td></tr>
+<tr><td valign="top"><a href="#terminate-5">terminate/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#terminate_reason-3">terminate_reason/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#try_callback-3">try_callback/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_debug-3">write_debug/3*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="handle_line-5">handle_line/5 *</a></h3>
+<div class="spec">
+<p><tt>handle_line(Name, State, Mod, Line, LineInfo) -&gt; {ok, NewState::term()} | no_return()</tt>
+<ul class="definitions"><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>State = term()</tt></li><li><tt>Mod = module()</tt></li><li><tt>Line = [byte()]</tt></li><li><tt>LineInfo = <a href="#type-line_info">line_info()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="handle_system_msg-10">handle_system_msg/10 *</a></h3>
+<div class="spec">
+<p><tt>handle_system_msg(Parent, Name, State, Mod, File, PollMs, LastModTime, ByteOff, LineNum, Debug) -&gt; ok | no_return()</tt>
+<ul class="definitions"><li><tt>Parent = pid() | self</tt></li><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>State = term()</tt></li><li><tt>Mod = module()</tt></li><li><tt>File = string()</tt></li><li><tt>PollMs = timeout()</tt></li><li><tt>LastModTime = <a href="file.html#type-date_time">file:date_time()</a></tt></li><li><tt>ByteOff = <a href="#type-offset">offset()</a></tt></li><li><tt>LineNum = pos_integer()</tt></li><li><tt>Debug = [<a href="sys.html#type-dbg_opt">sys:dbg_opt()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="init-5">init/5 *</a></h3>
+<div class="spec">
+<p><tt>init(Starter, Parent, Name, Mod, Args) -&gt; {ok, State::term()} | {stop, Reason::term()} | no_return()</tt>
+<ul class="definitions"><li><tt>Starter = pid()</tt></li><li><tt>Parent = pid() | self</tt></li><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>Mod = module()</tt></li><li><tt>Args = list()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="init_it-6">init_it/6</a></h3>
+<div class="spec">
+<p><tt>init_it(Starter, Parent, Name, Mod, Args, Opts) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Starter = pid()</tt></li><li><tt>Parent = pid() | self</tt></li><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>Mod = module()</tt></li><li><tt>Args = list()</tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="line_info_byte_off-1">line_info_byte_off/1</a></h3>
+<div class="spec">
+<p><tt>line_info_byte_off(LineInfo::<a href="#type-line_info">line_info()</a>) -&gt; <a href="#type-offset">offset()</a></tt><br></p>
+<p> </p>
+</div><p><p>Returns the byte offset from the specified line information record.</p>
+ 
+  <dl><dt><code>LineInfo</code></dt>
+    <dd>Line information record.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> The byte offset.</p></p>
+
+<h3 class="function"><a name="line_info_line_num-1">line_info_line_num/1</a></h3>
+<div class="spec">
+<p><tt>line_info_line_num(LineInfo::<a href="#type-line_info">line_info()</a>) -&gt; pos_integer()</tt><br></p>
+<p> </p>
+</div><p><p>Returns the line number from the specified line information record.</p>
+ 
+  <dl><dt><code>LineInfo</code></dt>
+    <dd>Line information record.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> The line number.</p></p>
+
+<h3 class="function"><a name="loop-10">loop/10 *</a></h3>
+<div class="spec">
+<p><tt>loop(Parent, Name, State, Mod, File, PollMs, LastModTime, ByteOff, LineNum, Debug) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Parent = pid() | self</tt></li><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>State = term()</tt></li><li><tt>Mod = module()</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>PollMs = timeout()</tt></li><li><tt>LastModTime = <a href="file.html#type-date_time">file:date_time()</a></tt></li><li><tt>ByteOff = <a href="#type-offset">offset()</a></tt></li><li><tt>LineNum = pos_integer()</tt></li><li><tt>Debug = [<a href="sys.html#type-dbg_opt">sys:dbg_opt()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_buf_stat-3">new_buf_stat/3 *</a></h3>
+<div class="spec">
+<p><tt>new_buf_stat(ByteCnt, LineCnt, BufLeft) -&gt; <a href="#type-buf_stat">buf_stat()</a></tt>
+<ul class="definitions"><li><tt>ByteCnt = <a href="#type-offset">offset()</a></tt></li><li><tt>LineCnt = non_neg_integer()</tt></li><li><tt>BufLeft = [byte()]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_line_info-2">new_line_info/2</a></h3>
+<div class="spec">
+<p><tt>new_line_info(ByteOff, LineNum) -&gt; <a href="#type-line_info">line_info()</a></tt>
+<ul class="definitions"><li><tt>ByteOff = <a href="#type-offset">offset()</a></tt></li><li><tt>LineNum = pos_integer()</tt></li></ul></p>
+<p> </p>
+</div><p><p>Returns a new line information record from the specified arguments.</p>
+ 
+  <dl><dt><code>ByteOff</code></dt>
+    <dd>Starting byte offset of the current line in source file.</dd>
+    <dt><code>LineNum</code></dt>
+    <dd>Current line number in source file.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> A new line information record.</p></p>
+
+<h3 class="function"><a name="parse_line-1">parse_line/1 *</a></h3>
+<div class="spec">
+<p><tt>parse_line(Buf::[byte()]) -&gt; {fault, BufStat::<a href="#type-buf_stat">buf_stat()</a>} | {ok, BufStat::<a href="#type-buf_stat">buf_stat()</a>, Line::[byte()]}</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_line-4">parse_line/4 *</a></h3>
+<div class="spec">
+<p><tt>parse_line(Buf, BytesCnt, LinesCnt, Line) -&gt; {fault, BufStat::<a href="#type-buf_stat">buf_stat()</a>} | {ok, BufStat::<a href="#type-buf_stat">buf_stat()</a>, Line::[byte()]}</tt>
+<ul class="definitions"><li><tt>Buf = [byte()]</tt></li><li><tt>BytesCnt = <a href="#type-offset">offset()</a></tt></li><li><tt>LinesCnt = non_neg_integer()</tt></li><li><tt>Line = [byte()]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_lines-6">parse_lines/6 *</a></h3>
+<div class="spec">
+<p><tt>parse_lines(Name, State, Mod, IoDev, ByteOff, LineNum) -&gt; {ok, NextByteOff::<a href="#type-offset">offset()</a>, NextLineNum::pos_integer(), State::term()}</tt>
+<ul class="definitions"><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>State = term()</tt></li><li><tt>Mod = module()</tt></li><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>ByteOff = <a href="#type-offset">offset()</a></tt></li><li><tt>LineNum = pos_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_lines-7">parse_lines/7 *</a></h3>
+<div class="spec">
+<p><tt>parse_lines(Name, State, Mod, IoDev, Buf, ByteOff, LineNum) -&gt; {ok, NextByteOff::<a href="#type-offset">offset()</a>, NextLineNum::<a href="#type-offset">offset()</a>, State::term()}</tt>
+<ul class="definitions"><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>State = term()</tt></li><li><tt>Mod = module()</tt></li><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>Buf = [byte()]</tt></li><li><tt>ByteOff = <a href="#type-offset">offset()</a></tt></li><li><tt>LineNum = pos_integer()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="start-3">start/3</a></h3>
+<div class="spec">
+<p><tt>start(Mod, File, Opts) -&gt; {ok, Pid::pid()}</tt>
+<ul class="definitions"><li><tt>Mod = module()</tt></li><li><tt>File = string()</tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts a standalone file poller process that is not part of a  
+supervision tree.</p>
+ 
+  <p>For description of arguments and return values see
+        <a href="#start_link-4"><code>start_link/4</code></a>.
+  </p></p>
+
+<h3 class="function"><a name="start-4">start/4</a></h3>
+<div class="spec">
+<p><tt>start(Name, Mod, File, Opts) -&gt; {ok, Pid::pid()}</tt>
+<ul class="definitions"><li><tt>Name = <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>Mod = module()</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts a named standalone file poller process that is not part of a  
+supervision tree.</p>
+ 
+  <p>For description of arguments and return values see
+        <a href="#start_link-4"><code>start_link/4</code></a>.
+  </p></p>
+
+<h3 class="function"><a name="start_link-3">start_link/3</a></h3>
+<div class="spec">
+<p><tt>start_link(Mod, File, Opts) -&gt; {ok, Pid::pid()}</tt>
+<ul class="definitions"><li><tt>Mod = module()</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts a file poller process as part of a supervision tree.</p>
+ 
+  <p>For description of arguments and return values see
+        <a href="#start_link-4"><code>start_link/4</code></a>.
+  </p></p>
+
+<h3 class="function"><a name="start_link-4">start_link/4</a></h3>
+<div class="spec">
+<p><tt>start_link(Name, Mod, File, Opts) -&gt; {ok, Pid::pid()}</tt>
+<ul class="definitions"><li><tt>Name = <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>Mod = module()</tt></li><li><tt>File = <a href="file.html#type-filename">file:filename()</a></tt></li><li><tt>Opts = <a href="#type-options">options()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts a file poller process as part of a supervision tree.</p>
+ 
+  <dl><dt><code>Name</code></dt>
+    <dd>File poller process registered name.</dd>
+    <dt><code>Mod</code></dt>
+    <dd>Module implementing the callback <code>Mod:handle_line/3</code>.</dd>
+    <dt><code>File</code></dt>
+    <dd>Source file to monitor for changes.</dd>
+    <dt><code>Opts</code></dt>
+    <dd>File poller configuration options. Only one option is supported:
+           <dl><dt><code>{poll_ms, Ms}</code></dt>
+             <dd>Polling interval in milliseconds. Defaults to 500 ms.</dd>
+           </dl>
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>{ok, Pid}</code>, where <code>Pid</code> is the PID of the file poller process.</p></p>
+
+<h3 class="function"><a name="stop-1">stop/1</a></h3>
+<div class="spec">
+<p><tt>stop(Name::pid() | atom()) -&gt; ok | no_return()</tt><br></p>
+<p> </p>
+</div><p><p>Shuts down a file poller process.</p>
+ 
+  <dl><dt><code>Name</code></dt>
+    <dd>File poller PID or registered name.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Does not return in case of errors, otherwise <code>ok</code> to indicate a
+            successful shut down.
+  </p></p>
+
+<h3 class="function"><a name="system_code_change-4">system_code_change/4</a></h3>
+<div class="spec">
+<p><tt>system_code_change(Misc, GenMod, OldVsn, Extra) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Misc = list()</tt></li><li><tt>GenMod = module()</tt></li><li><tt>OldVsn = term()</tt></li><li><tt>Extra = term()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="system_continue-3">system_continue/3</a></h3>
+<div class="spec">
+<p><tt>system_continue(Parent, Debug, Misc) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Parent = pid()</tt></li><li><tt>Debug = [<a href="sys.html#type-dbg_opt">sys:dbg_opt()</a>]</tt></li><li><tt>Misc = term()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="system_get_state-1">system_get_state/1</a></h3>
+<div class="spec">
+<p><tt>system_get_state(Misc::list()) -&gt; {ok, State::term()}</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="system_replace_state-2">system_replace_state/2</a></h3>
+<div class="spec">
+<p><tt>system_replace_state(StateFun::function(), Misc::list()) -&gt; {ok, NewState::term(), NewMisc::list()}</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="system_terminate-4">system_terminate/4</a></h3>
+<div class="spec">
+<p><tt>system_terminate(Reason, Parent, Debug, Misc) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Reason = term()</tt></li><li><tt>Parent = pid()</tt></li><li><tt>Debug = [<a href="sys.html#type-dbg_opt">sys:dbg_opt()</a>]</tt></li><li><tt>Misc = term()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="terminate-5">terminate/5 *</a></h3>
+<div class="spec">
+<p><tt>terminate(Reason, Name, State, Mod, Debug) -&gt; {ok, ok} | {ok, Return::term()} | {'EXIT', Class::exit | error, Reason::term(), Stacktrace::term()}</tt>
+<ul class="definitions"><li><tt>Reason = term()</tt></li><li><tt>Name = pid() | <a href="#type-emgr_name">emgr_name()</a></tt></li><li><tt>State = term()</tt></li><li><tt>Mod = module()</tt></li><li><tt>Debug = [<a href="sys.html#type-dbg_opt">sys:dbg_opt()</a>]</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="terminate_reason-3">terminate_reason/3 *</a></h3>
+<div class="spec">
+<p><tt>terminate_reason(Class, Reason, Stacktrace) -&gt; {Reason, Stacktrace} | Reason</tt>
+<ul class="definitions"><li><tt>Class = error | exit</tt></li><li><tt>Reason = term()</tt></li><li><tt>Stacktrace = term()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="try_callback-3">try_callback/3 *</a></h3>
+<div class="spec">
+<p><tt>try_callback(Mod, Callback, Args) -&gt; {ok, Return::term()} | {'EXIT', Class::exit | error, Reason::term(), Stacktrace::term()}</tt>
+<ul class="definitions"><li><tt>Mod = module()</tt></li><li><tt>Callback = atom()</tt></li><li><tt>Args = list()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_debug-3">write_debug/3 *</a></h3>
+<div class="spec">
+<p><tt>write_debug(IoDev, Event, Name) -&gt; ok</tt>
+<ul class="definitions"><li><tt>IoDev = <a href="file.html#type-io_device">file:io_device()</a></tt></li><li><tt>Event = term()</tt></li><li><tt>Name = atom()</tt></li></ul></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

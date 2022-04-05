@@ -1,0 +1,180 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module analyzer</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module analyzer</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Module description (becomes module heading).
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Module description (becomes module heading).
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-mfa_spec">mfa_spec()</a></h3>
+<p><tt>mfa_spec() = fun((Mfa::mfa()) -&gt; {ok, <a href="#type-monitor">monitor()</a>} | undefined)</tt></p>
+<p>  Function mapping that returns the analysis encoding as an anonymous function.
+  The analysis encoding corresponds to the logic formula that specifies the
+  runtime property to be analysed, and therefore, is the product of the
+  synthesis, see <a href="hml_eval.html"><code>hml_eval</code></a>.
+  When the mapping is <code>undefined</code>, the system process corresponding to the
+  forked function will share the same tracer of its parent process, otherwise,
+  a new and separate tracer is forked for the new process, see <a href="tracer.html"><code>tracer</code></a>.
+  Note that only external function calls can be tracked, and therefore,
+  instrumented with a new tracer.</p>
+
+<h3 class="typedecl"><a name="type-monitor">monitor()</a></h3>
+<p><tt>monitor() = fun((Event::term()) -&gt; <a href="#type-verdict">verdict()</a> | no_return())</tt></p>
+<p>  Analyzer that accepts a trace event and transitions to its subsequent
+  unfolded continuation, or a verdict stage when the no such transitions are
+  possible. An analyzer can also diverge indefinitely, in which case events are
+  consumed albeit a final verdict is never reached.</p>
+
+<h3 class="typedecl"><a name="type-verdict">verdict()</a></h3>
+<p><tt>verdict() = '?VERDICT_YES' | '?VERDICT_NO' | '?VERDICT_END'</tt></p>
+<p>  Three analysis verdicts.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#analyze-2">analyze/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#dispatch-1">dispatch/1</a></td><td>Dispatches the specified abstract event to the monitor for analysis.</td></tr>
+<tr><td valign="top"><a href="#do_monitor-2">do_monitor/2</a></td><td>Retrieves the monitor function stored in the process dictionary (if
+  any), and applies it on the event.</td></tr>
+<tr><td valign="top"><a href="#embed-1">embed/1</a></td><td>Embeds the trace event analysis function into the process dictionary.</td></tr>
+<tr><td valign="top"><a href="#filter-1">filter/1</a></td><td>Default filter that allows all events to pass.</td></tr>
+<tr><td valign="top"><a href="#init-1">init/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#is_verdict-1">is_verdict/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#loop-1">loop/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#start-2">start/2</a></td><td>Starts the analyzer.</td></tr>
+<tr><td valign="top"><a href="#stop-1">stop/1</a></td><td>Stops the analyzer identified by the specified PID.</td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="analyze-2">analyze/2 *</a></h3>
+<div class="spec">
+<p><tt>analyze(Monitor, Event) -&gt; <a href="#type-monitor">monitor()</a></tt>
+<ul class="definitions"><li><tt>Monitor = <a href="#type-monitor">monitor()</a></tt></li><li><tt>Event = <a href="event.html#type-int_event">event:int_event()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="dispatch-1">dispatch/1</a></h3>
+<div class="spec">
+<p><tt>dispatch(Event::<a href="event.html#type-int_event">event:int_event()</a>) -&gt; term()</tt><br></p>
+<p> </p>
+</div><p><p>Dispatches the specified abstract event to the monitor for analysis.</p>
+ 
+  <dl><dt><code>Event</code></dt>
+    <dd>The abstract event that the monitor is to analyze.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> Depends on the event type. See <a href="event.html#event-0"><code>event:event/0</code></a>.
+            <ul><li>When event is of type <code>fork</code>, the PID of the new child
+                     process is returned;
+              </li>
+              <li>When event is of type <code>init</code>, the PID of the parent
+                     process is returned;
+              </li>
+              <li>When event is of type <code>exit</code>, the exit reason is
+                     returned;
+              </li>
+              <li>When event is of type <code>send</code>, the message is returned;</li>
+              <li>When event is of type <code>recv</code>, the message is returned.</li>
+            </ul>
+  </p></p>
+
+<h3 class="function"><a name="do_monitor-2">do_monitor/2</a></h3>
+<div class="spec">
+<p><tt>do_monitor(Event, VerdictFun) -&gt; <a href="#type-monitor">monitor()</a> | undefined</tt>
+<ul class="definitions"><li><tt>Event = <a href="event.html#type-evm_event">event:evm_event()</a></tt></li><li><tt>VerdictFun = fun((Verdict::<a href="#type-verdict">verdict()</a>) -&gt; any())</tt></li></ul></p>
+<p> </p>
+</div><p>Retrieves the monitor function stored in the process dictionary (if
+  any), and applies it on the event. The result is put back in the process
+  dictionary. If a verdict state is reached, the callback function is invoked,
+  otherwise nothing is done. When no monitor function is stored inside the
+  process dictionary (i.e. meaning that the process is not monitored), the atom
+  <code>undefined</code> is returned.</p>
+
+<h3 class="function"><a name="embed-1">embed/1</a></h3>
+<div class="spec">
+<p><tt>embed(AnlFun::<a href="#type-monitor">monitor()</a>) -&gt; true</tt><br></p>
+<p> </p>
+</div><p><p>Embeds the trace event analysis function into the process dictionary.</p>
+ 
+  <dl><dt><code>AnlFun</code></dt>
+    <dd>Analysis function that is applied to trace events to determine their
+           correct or incorrect sequence.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>true</code> to indicate success, otherwise <code>false</code>.</p></p>
+
+<h3 class="function"><a name="filter-1">filter/1</a></h3>
+<div class="spec">
+<p><tt>filter(Event::<a href="event.html#type-int_event">event:int_event()</a>) -&gt; true</tt><br></p>
+<p> </p>
+</div><p>Default filter that allows all events to pass.</p>
+
+<h3 class="function"><a name="init-1">init/1</a></h3>
+<div class="spec">
+<p><tt>init(Parent) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Parent = <a href="tracer.html#type-parent">tracer:parent()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="is_verdict-1">is_verdict/1 *</a></h3>
+<div class="spec">
+<p><tt>is_verdict(Verdict::term()) -&gt; boolean()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="loop-1">loop/1 *</a></h3>
+<div class="spec">
+<p><tt>loop(Parent) -&gt; no_return()</tt>
+<ul class="definitions"><li><tt>Parent = <a href="tracer.html#type-parent">tracer:parent()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="start-2">start/2</a></h3>
+<div class="spec">
+<p><tt>start(AnlFun, Parent) -&gt; pid()</tt>
+<ul class="definitions"><li><tt>AnlFun = <a href="#type-monitor">monitor()</a></tt></li><li><tt>Parent = <a href="tracer.html#type-parent">tracer:parent()</a></tt></li></ul></p>
+<p> </p>
+</div><p><p>Starts the analyzer.</p>
+ 
+  <dl><dt><code>AnlFun</code></dt>
+    <dd>Analysis function that is applied to trace events to determine their
+           correct or incorrect sequence.
+    </dd>
+    <dt><code>Parent</code></dt>
+    <dd>PID of supervisor to be linked to the analyzer process or <code>self</code> if
+           no supervision is required.
+    </dd>
+  </dl>
+ 
+  <p><b>Returns:</b> PID of analyzer process.</p></p>
+<p><b><font color="red">To do</font></b><ul><li><font color="red"> IMO, should also add monitor() to the below, monitor() | verdict(). Check with dialyzer.</font></li></ul></p>
+
+<h3 class="function"><a name="stop-1">stop/1</a></h3>
+<div class="spec">
+<p><tt>stop(Pid::pid()) -&gt; ok</tt><br></p>
+<p> </p>
+</div><p><p>Stops the analyzer identified by the specified PID.</p>
+ 
+  <dl><dt><code>Pid</code></dt>
+    <dd>PID of analyzer to stop.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> <code>ok</code> to indicate successful termination.</p></p>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

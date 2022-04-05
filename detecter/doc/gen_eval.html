@@ -1,0 +1,421 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module gen_eval</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module gen_eval</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Module description (becomes module heading).
+
+<p><b>This module defines the <tt>gen_eval</tt> behaviour.</b><br> Required callback functions: <tt>visit/2</tt>.</p>
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Module description (becomes module heading).
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-abstract_expr">abstract_expr()</a></h3>
+<p><tt>abstract_expr() = <a href="#type-af_literal">af_literal()</a> | <a href="#type-af_variable">af_variable()</a> | <a href="#type-af_tuple">af_tuple</a>(<a href="#type-abstract_expr">abstract_expr()</a>) | <a href="#type-af_nil">af_nil()</a> | <a href="#type-af_cons">af_cons</a>(<a href="#type-abstract_expr">abstract_expr()</a>) | <a href="#type-af_bin">af_bin</a>(<a href="#type-abstract_expr">abstract_expr()</a>) | <a href="#type-af_binary_op">af_binary_op</a>(<a href="#type-abstract_expr">abstract_expr()</a>) | <a href="#type-af_unary_op">af_unary_op</a>(<a href="#type-abstract_expr">abstract_expr()</a>) | <a href="#type-af_map_creation">af_map_creation</a>(<a href="#type-abstract_expr">abstract_expr()</a>) | <a href="#type-af_list_comprehension">af_list_comprehension()</a> | <a href="#type-af_binary_comprehension">af_binary_comprehension()</a></tt></p>
+<p>  Expression abstract form.</p>
+
+<h3 class="typedecl"><a name="type-af_assoc">af_assoc()</a></h3>
+<p><tt>af_assoc(T) = <a href="#type-af_assoc_exact">af_assoc_exact</a>(T)</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_assoc_exact">af_assoc_exact()</a></h3>
+<p><tt>af_assoc_exact(T) = {map_field_exact, <a href="#type-line">line()</a>, T, T}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_atom">af_atom()</a></h3>
+<p><tt>af_atom() = <a href="#type-af_lit_atom">af_lit_atom</a>(atom())</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_bin">af_bin()</a></h3>
+<p><tt>af_bin(T) = {bin, <a href="#type-line">line()</a>, [<a href="#type-af_binelement">af_binelement</a>(T)]}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_binary_comprehension">af_binary_comprehension()</a></h3>
+<p><tt>af_binary_comprehension() = {bc, <a href="#type-line">line()</a>, <a href="#type-af_template">af_template()</a>, <a href="#type-af_qualifier_seq">af_qualifier_seq()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_binary_op">af_binary_op()</a></h3>
+<p><tt>af_binary_op(T) = {op, <a href="#type-line">line()</a>, <a href="#type-binary_op">binary_op()</a>, T, T}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_binelement">af_binelement()</a></h3>
+<p><tt>af_binelement(T) = {bin_element, <a href="#type-line">line()</a>, T, <a href="#type-af_binelement_size">af_binelement_size()</a>, <a href="#type-type_specifier_list">type_specifier_list()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_binelement_size">af_binelement_size()</a></h3>
+<p><tt>af_binelement_size() = default | <a href="#type-abstract_expr">abstract_expr()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_character">af_character()</a></h3>
+<p><tt>af_character() = {char, <a href="#type-line">line()</a>, char()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_cons">af_cons()</a></h3>
+<p><tt>af_cons(T) = {cons, <a href="#type-line">line()</a>, T, T}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_constraint">af_constraint()</a></h3>
+<p><tt>af_constraint() = <a href="#type-af_guard">af_guard()</a></tt></p>
+<p>  Boolean constraint expression abstract form.</p>
+
+<h3 class="typedecl"><a name="type-af_exit">af_exit()</a></h3>
+<p><tt>af_exit() = {exit, <a href="#type-line">line()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-abstract_expr">abstract_expr()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_filter">af_filter()</a></h3>
+<p><tt>af_filter() = <a href="#type-abstract_expr">abstract_expr()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_float">af_float()</a></h3>
+<p><tt>af_float() = {float, <a href="#type-line">line()</a>, float()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_fork">af_fork()</a></h3>
+<p><tt>af_fork() = {fork, <a href="#type-line">line()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-af_mfargs">af_mfargs()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_generator">af_generator()</a></h3>
+<p><tt>af_generator() = {generate, <a href="#type-line">line()</a>, <a href="#type-af_pattern">af_pattern()</a>, <a href="#type-abstract_expr">abstract_expr()</a>} | {b_generate, <a href="#type-line">line()</a>, <a href="#type-af_pattern">af_pattern()</a>, <a href="#type-abstract_expr">abstract_expr()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_guard">af_guard()</a></h3>
+<p><tt>af_guard() = [<a href="#type-af_guard_test">af_guard_test()</a>, ...]</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_guard_test">af_guard_test()</a></h3>
+<p><tt>af_guard_test() = <a href="#type-af_literal">af_literal()</a> | <a href="#type-af_variable">af_variable()</a> | <a href="#type-af_tuple">af_tuple</a>(<a href="#type-af_guard_test">af_guard_test()</a>) | <a href="#type-af_nil">af_nil()</a> | <a href="#type-af_cons">af_cons</a>(<a href="#type-af_guard_test">af_guard_test()</a>) | <a href="#type-af_bin">af_bin</a>(<a href="#type-af_guard_test">af_guard_test()</a>) | <a href="#type-af_binary_op">af_binary_op</a>(<a href="#type-af_guard_test">af_guard_test()</a>) | <a href="#type-af_unary_op">af_unary_op</a>(<a href="#type-af_guard_test">af_guard_test()</a>) | <a href="#type-af_map_creation">af_map_creation</a>(<a href="#type-af_guard_test">af_guard_test()</a>)</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_init">af_init()</a></h3>
+<p><tt>af_init() = {init, <a href="#type-line">line()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-af_mfargs">af_mfargs()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_integer">af_integer()</a></h3>
+<p><tt>af_integer() = {integer, <a href="#type-line">line()</a>, non_neg_integer()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_list_comprehension">af_list_comprehension()</a></h3>
+<p><tt>af_list_comprehension() = {lc, <a href="#type-line">line()</a>, <a href="#type-af_template">af_template()</a>, <a href="#type-af_qualifier_seq">af_qualifier_seq()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_lit_atom">af_lit_atom()</a></h3>
+<p><tt>af_lit_atom(A) = {atom, <a href="#type-line">line()</a>, A}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_literal">af_literal()</a></h3>
+<p><tt>af_literal() = <a href="#type-af_atom">af_atom()</a> | <a href="#type-af_character">af_character()</a> | <a href="#type-af_float">af_float()</a> | <a href="#type-af_integer">af_integer()</a> | <a href="#type-af_string">af_string()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_map_creation">af_map_creation()</a></h3>
+<p><tt>af_map_creation(T) = {map, <a href="#type-line">line()</a>, [<a href="#type-af_assoc">af_assoc</a>(T)]}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_mfargs">af_mfargs()</a></h3>
+<p><tt>af_mfargs() = {mfargs, <a href="#type-line">line()</a>, module(), <a href="#type-fun_name">fun_name()</a>, [<a href="#type-abstract_expr">abstract_expr()</a>]}</tt></p>
+<p>  Module, function and arguments abstract form.</p>
+
+<h3 class="typedecl"><a name="type-af_nil">af_nil()</a></h3>
+<p><tt>af_nil() = {nil, <a href="#type-line">line()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_pattern">af_pattern()</a></h3>
+<p><tt>af_pattern() = <a href="#type-af_fork">af_fork()</a> | <a href="#type-af_init">af_init()</a> | <a href="#type-af_exit">af_exit()</a> | <a href="#type-af_send">af_send()</a> | <a href="#type-af_recv">af_recv()</a></tt></p>
+<p>  Symbolic action pattern abstract form.</p>
+
+<h3 class="typedecl"><a name="type-af_qualifier">af_qualifier()</a></h3>
+<p><tt>af_qualifier() = <a href="#type-af_generator">af_generator()</a> | <a href="#type-af_filter">af_filter()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_qualifier_seq">af_qualifier_seq()</a></h3>
+<p><tt>af_qualifier_seq() = [<a href="#type-af_qualifier">af_qualifier()</a>, ...]</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_recv">af_recv()</a></h3>
+<p><tt>af_recv() = {recv, <a href="#type-line">line()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-abstract_expr">abstract_expr()</a>}</tt></p>
+<p>  Abstract process lifecycle and interaction actions.</p>
+
+<h3 class="typedecl"><a name="type-af_send">af_send()</a></h3>
+<p><tt>af_send() = {send, <a href="#type-line">line()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-af_variable">af_variable()</a>, <a href="#type-abstract_expr">abstract_expr()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_string">af_string()</a></h3>
+<p><tt>af_string() = {string, <a href="#type-line">line()</a>, string()}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_sym_act">af_sym_act()</a></h3>
+<p><tt>af_sym_act() = {act, <a href="#type-line">line()</a>, <a href="#type-af_pattern">af_pattern()</a>} | {act, <a href="#type-line">line()</a>, <a href="#type-af_pattern">af_pattern()</a>, <a href="#type-af_constraint">af_constraint()</a>}</tt></p>
+<p>  Symbolic action abstract form.</p>
+
+<h3 class="typedecl"><a name="type-af_template">af_template()</a></h3>
+<p><tt>af_template() = <a href="#type-abstract_expr">abstract_expr()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_tuple">af_tuple()</a></h3>
+<p><tt>af_tuple(T) = {tuple, <a href="#type-line">line()</a>, [T]}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_unary_op">af_unary_op()</a></h3>
+<p><tt>af_unary_op(T) = {op, <a href="#type-line">line()</a>, <a href="#type-unary_op">unary_op()</a>, T}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_variable">af_variable()</a></h3>
+<p><tt>af_variable() = {var, <a href="#type-line">line()</a>, atom()}</tt></p>
+<p> | af_anon_variable()</p>
+
+<h3 class="typedecl"><a name="type-binary_op">binary_op()</a></h3>
+<p><tt>binary_op() = '/' | '*' | 'div' | 'rem' | 'band' | 'and' | '+' | '-' | 'bor' | 'bxor' | 'bsl' | 'bsr' | 'or' | 'xor' | '++' | '--' | '==' | '/=' | '=&lt;' | '&lt;' | '&gt;=' | '&gt;' | '=:=' | '=/='</tt></p>
+
+
+<h3 class="typedecl"><a name="type-endianness">endianness()</a></h3>
+<p><tt>endianness() = big | little | native</tt></p>
+
+
+<h3 class="typedecl"><a name="type-fun_name">fun_name()</a></h3>
+<p><tt>fun_name() = atom()</tt></p>
+
+
+<h3 class="typedecl"><a name="type-line">line()</a></h3>
+<p><tt>line() = <a href="erl_anno.html#type-line">erl_anno:line()</a></tt></p>
+<p>  Line number in source.</p>
+
+<h3 class="typedecl"><a name="type-signedness">signedness()</a></h3>
+<p><tt>signedness() = signed | unsigned</tt></p>
+
+
+<h3 class="typedecl"><a name="type-type">type()</a></h3>
+<p><tt>type() = integer | float | binary | bytes | bitstring | bits | utf8 | utf16 | utf32</tt></p>
+
+
+<h3 class="typedecl"><a name="type-type_specifier">type_specifier()</a></h3>
+<p><tt>type_specifier() = <a href="#type-type">type()</a> | <a href="#type-signedness">signedness()</a> | <a href="#type-endianness">endianness()</a> | <a href="#type-unit">unit()</a></tt></p>
+
+
+<h3 class="typedecl"><a name="type-type_specifier_list">type_specifier_list()</a></h3>
+<p><tt>type_specifier_list() = default | [<a href="#type-type_specifier">type_specifier()</a>, ...]</tt></p>
+
+
+<h3 class="typedecl"><a name="type-unary_op">unary_op()</a></h3>
+<p><tt>unary_op() = '+' | '-' | 'bnot' | 'not'</tt></p>
+
+
+<h3 class="typedecl"><a name="type-unit">unit()</a></h3>
+<p><tt>unit() = {unit, 1..256}</tt></p>
+
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#color_log-2">color_log/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#compile-5">compile/5</a></td><td>Compiles the specified file containing one or more properties specified  
+in MaxHML, and writes the executable monitor descriptions to file.</td></tr>
+<tr><td valign="top"><a href="#compile_opts-1">compile_opts/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_log-3">create_log/3</a></td><td></td></tr>
+<tr><td valign="top"><a href="#create_module-5">create_module/5*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#format_error-1">format_error/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#list_beam-2">list_beam/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#list_erl-2">list_erl/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#mfargs_tuple-1">mfargs_tuple/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_file-3">parse_file/3</a></td><td>Parses the specified file containing one or more properties specified  
+in MaxHML.</td></tr>
+<tr><td valign="top"><a href="#parse_string-3">parse_string/3</a></td><td>Parses the specified string containing one or more properties specified  
+in MaxHML.</td></tr>
+<tr><td valign="top"><a href="#pat_tuple-1">pat_tuple/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_error-2">show_error/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_errors-1">show_errors/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#show_warnings-1">show_warnings/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit_forms-3">visit_forms/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_beam-4">write_beam/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_erl-4">write_erl/4*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#write_monitor-3">write_monitor/3*</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="color_log-2">color_log/2 *</a></h3>
+<div class="spec">
+<p><tt>color_log(Log, Type) -&gt; any()</tt>
+<ul class="definitions"><li><tt>Log = list()</tt></li><li><tt>Type = any()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="compile-5">compile/5</a></h3>
+<div class="spec">
+<p><tt>compile(Mod, LexerMod, ParserMod, File, Opts) -&gt; any()</tt></p>
+<p> </p>
+</div><p><p>Compiles the specified file containing one or more properties specified  
+in MaxHML, and writes the executable monitor descriptions to file.</p>
+ 
+  <dl><dt><code>Mod</code></dt>
+    <dd>Module implementing the callback function visit/2.</dd>
+    <dt><code>LexerMod</code></dt>
+    <dd>Module that performs the lexical analysis of MaxHML scripts.</dd>
+    <dt><code>ParserMod</code></dt>
+    <dd>Module that parses the lexer tokens to return the MaxHML syntax tree.
+    </dd>
+    <dt><code>File</code></dt>
+    <dd>Path where the file to compile resides.</dd>
+    <dt><code>Opts</code></dt>
+    <dd>Compiler options.</dd>
+  </dl>
+ 
+  <p>The following options are available:
+        <dl><dt><code>{outdir, Dir}</code></dt>
+          <dd>The directory where the generated output monitor file should
+                 be written. Defaults to the current directory <code>.</code>.
+          </dd>
+          <dt><code>erl</code></dt>
+          <dd>Instructs the compiler to output the generated monitor as
+                 Erlang source code rather than beam. Defaults to beam.
+          </dd>
+        </dl>
+  </p>
+ 
+  <p>Errors and warnings that arise during the compilation are reported on
+        the standard output. No monitor file is output unless compilation
+        completes with no errors. The output depends on whether the flag <code>erl</code>
+        is specified or otherwise.
+  </p>
+ 
+  <p><b>Returns:</b> <code>ok</code> if compilation succeeds, <code>{error, Reason}</code> otherwise.</p></p>
+
+<h3 class="function"><a name="compile_opts-1">compile_opts/1 *</a></h3>
+<div class="spec">
+<p><tt>compile_opts(Opts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_log-3">create_log/3</a></h3>
+<div class="spec">
+<p><tt>create_log(Format, Args, Type) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Format = string()</tt></li><li><tt>Args = list()</tt></li><li><tt>Type = any()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="create_module-5">create_module/5 *</a></h3>
+<div class="spec">
+<p><tt>create_module(Mod, Ast, MonFun, Module, Opts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="format_error-1">format_error/1 *</a></h3>
+<div class="spec">
+<p><tt>format_error(X1::{Line, Mod, Error}) -&gt; {<a href="#type-line">line()</a>, [char() | list()]}</tt>
+<ul class="definitions"><li><tt>Line = <a href="#type-line">line()</a></tt></li><li><tt>Mod = module()</tt></li><li><tt>Error = any()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="list_beam-2">list_beam/2 *</a></h3>
+<div class="spec">
+<p><tt>list_beam(IoDev, Beam) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="list_erl-2">list_erl/2 *</a></h3>
+<div class="spec">
+<p><tt>list_erl(IoDev, Forms) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="mfargs_tuple-1">mfargs_tuple/1 *</a></h3>
+<div class="spec">
+<p><tt>mfargs_tuple(MFArgs::<a href="#type-af_mfargs">af_mfargs()</a>) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_file-3">parse_file/3</a></h3>
+<div class="spec">
+<p><tt>parse_file(LexerMod, ParserMod, File) -&gt; any()</tt></p>
+<p> </p>
+</div><p><p>Parses the specified file containing one or more properties specified  
+in MaxHML.</p>
+ 
+  <dl><dt><code>LexerMod</code></dt>
+    <dd>Module that performs the lexical analysis of MaxHML scripts.</dd>
+    <dt><code>ParserMod</code></dt>
+    <dd>Module that parses the lexer tokens to return the MaxHML syntax tree.
+    </dd>
+    <dt><code>File</code></dt>
+    <dd>Path where the file to parse resides.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> The syntax tree for the properties specified in MaxHML.</p></p>
+
+<h3 class="function"><a name="parse_string-3">parse_string/3</a></h3>
+<div class="spec">
+<p><tt>parse_string(LexerMod, ParserMod, String) -&gt; any()</tt></p>
+<p> </p>
+</div><p><p>Parses the specified string containing one or more properties specified  
+in MaxHML.</p>
+ 
+  <dl><dt><code>LexerMod</code></dt>
+    <dd>Module that performs the lexical analysis of MaxHML scripts.</dd>
+    <dt><code>ParserMod</code></dt>
+    <dd>Module that parses the lexer tokens to return the MaxHML syntax tree.
+    </dd>
+    <dt><code>String</code></dt>
+    <dd>String to parse.</dd>
+  </dl>
+ 
+  <p><b>Returns:</b> The syntax tree for the properties specified in MaxHML.</p></p>
+
+<h3 class="function"><a name="pat_tuple-1">pat_tuple/1</a></h3>
+<div class="spec">
+<p><tt>pat_tuple(X1) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_error-2">show_error/2 *</a></h3>
+<div class="spec">
+<p><tt>show_error(File, Error) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_errors-1">show_errors/1 *</a></h3>
+<div class="spec">
+<p><tt>show_errors(X1) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="show_warnings-1">show_warnings/1 *</a></h3>
+<div class="spec">
+<p><tt>show_warnings(X1) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit_forms-3">visit_forms/3 *</a></h3>
+<div class="spec">
+<p><tt>visit_forms(Mod, Form, Opts) -&gt; [<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]</tt>
+<ul class="definitions"><li><tt>Mod = module()</tt></li><li><tt>Form = any()</tt></li><li><tt>Opts = <a href="opts.html#type-options">opts:options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_beam-4">write_beam/4 *</a></h3>
+<div class="spec">
+<p><tt>write_beam(IoDev, Ast, File, CompileOpts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_erl-4">write_erl/4 *</a></h3>
+<div class="spec">
+<p><tt>write_erl(IoDev, Ast, File, CompileOpts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="write_monitor-3">write_monitor/3 *</a></h3>
+<div class="spec">
+<p><tt>write_monitor(Ast, File, Opts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

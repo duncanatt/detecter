@@ -1,0 +1,188 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Module maxhml_eval</title>
+<link rel="stylesheet" type="text/css" href="stylesheet.css" title="EDoc">
+</head>
+<body bgcolor="white">
+<div class="navbar"><a name="#navbar_top"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<hr>
+
+<h1>Module maxhml_eval</h1>
+<ul class="index"><li><a href="#description">Description</a></li><li><a href="#types">Data Types</a></li><li><a href="#index">Function Index</a></li><li><a href="#functions">Function Details</a></li></ul>Module description (becomes module heading).
+
+<p><b>Authors:</b> Duncan Paul Attard.</p>
+
+<h2><a name="description">Description</a></h2>Module description (becomes module heading).
+  
+<h2><a name="types">Data Types</a></h2>
+
+<h3 class="typedecl"><a name="type-af_hml_and">af_hml_and()</a></h3>
+<p><tt>af_hml_and() = {'and', <a href="#type-line">line()</a>, <a href="#type-af_maxhml">af_maxhml()</a>, <a href="#type-af_maxhml">af_maxhml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_ff">af_hml_ff()</a></h3>
+<p><tt>af_hml_ff() = {ff, <a href="#type-line">line()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_max">af_hml_max()</a></h3>
+<p><tt>af_hml_max() = {max, <a href="#type-line">line()</a>, <a href="#type-af_hml_var">af_hml_var()</a>, <a href="#type-af_maxhml">af_maxhml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_nec">af_hml_nec()</a></h3>
+<p><tt>af_hml_nec() = {nec, <a href="#type-line">line()</a>, <a href="gen_eval.html#type-af_sym_act">gen_eval:af_sym_act()</a>, <a href="#type-af_maxhml">af_maxhml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_or">af_hml_or()</a></h3>
+<p><tt>af_hml_or() = {'or', <a href="#type-line">line()</a>, <a href="#type-af_maxhml">af_maxhml()</a>, <a href="#type-af_maxhml">af_maxhml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_pos">af_hml_pos()</a></h3>
+<p><tt>af_hml_pos() = {pos, <a href="#type-line">line()</a>, <a href="gen_eval.html#type-af_sym_act">gen_eval:af_sym_act()</a>, <a href="#type-af_maxhml">af_maxhml()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_tt">af_hml_tt()</a></h3>
+<p><tt>af_hml_tt() = {tt, <a href="#type-line">line()</a>}</tt></p>
+
+
+<h3 class="typedecl"><a name="type-af_hml_var">af_hml_var()</a></h3>
+<p><tt>af_hml_var() = {var, <a href="#type-line">line()</a>, atom()}</tt></p>
+<p>  HML formulae abstract form.</p>
+
+<h3 class="typedecl"><a name="type-af_maxhml">af_maxhml()</a></h3>
+<p><tt>af_maxhml() = <a href="#type-af_hml_tt">af_hml_tt()</a> | <a href="#type-af_hml_ff">af_hml_ff()</a> | <a href="#type-af_hml_pos">af_hml_pos()</a> | <a href="#type-af_hml_nec">af_hml_nec()</a> | <a href="#type-af_hml_or">af_hml_or()</a> | <a href="#type-af_hml_and">af_hml_and()</a> | <a href="#type-af_hml_max">af_hml_max()</a> | <a href="#type-af_hml_var">af_hml_var()</a></tt></p>
+<p>  maxHML formulae abstract form.</p>
+
+<h3 class="typedecl"><a name="type-line">line()</a></h3>
+<p><tt>line() = <a href="erl_anno.html#type-line">erl_anno:line()</a></tt></p>
+<p>  Line number in source.</p>
+
+<h2><a name="index">Function Index</a></h2>
+<table width="100%" border="1" cellspacing="0" cellpadding="2" summary="function index"><tr><td valign="top"><a href="#check_ph-0">check_ph/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#compile-2">compile/2</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_chs_env-0">get_chs_env/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_chs_str-0">get_chs_str/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_env-1">get_env/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_env-3">get_env/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_pat-1">get_pat/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_str-1">get_str/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#get_str-3">get_str/3*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#init_ph-0">init_ph/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_env-1">new_env/1*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_env_kv-2">new_env_kv/2*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#new_ph-0">new_ph/0*</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_file-1">parse_file/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#parse_string-1">parse_string/1</a></td><td></td></tr>
+<tr><td valign="top"><a href="#visit-2">visit/2</a></td><td></td></tr>
+</table>
+
+<h2><a name="functions">Function Details</a></h2>
+
+<h3 class="function"><a name="check_ph-0">check_ph/0 *</a></h3>
+<div class="spec">
+<p><tt>check_ph() -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="compile-2">compile/2</a></h3>
+<div class="spec">
+<p><tt>compile(File, Opts) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_chs_env-0">get_chs_env/0 *</a></h3>
+<div class="spec">
+<p><tt>get_chs_env() -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_chs_str-0">get_chs_str/0 *</a></h3>
+<div class="spec">
+<p><tt>get_chs_str() -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_env-1">get_env/1 *</a></h3>
+<div class="spec">
+<p><tt>get_env(Node) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Node = <a href="#type-af_hml_tt">af_hml_tt()</a> | <a href="#type-af_hml_ff">af_hml_ff()</a> | <a href="#type-af_hml_or">af_hml_or()</a> | <a href="#type-af_hml_and">af_hml_and()</a> | <a href="#type-af_hml_max">af_hml_max()</a> | <a href="#type-af_hml_var">af_hml_var()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_env-3">get_env/3 *</a></h3>
+<div class="spec">
+<p><tt>get_env(Node, Ph, Inv) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Node = <a href="#type-af_hml_pos">af_hml_pos()</a> | <a href="#type-af_hml_nec">af_hml_nec()</a></tt></li><li><tt>Ph = string()</tt></li><li><tt>Inv = boolean()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_pat-1">get_pat/1 *</a></h3>
+<div class="spec">
+<p><tt>get_pat(Node::<a href="#type-af_hml_pos">af_hml_pos()</a> | <a href="#type-af_hml_nec">af_hml_nec()</a>) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_str-1">get_str/1 *</a></h3>
+<div class="spec">
+<p><tt>get_str(Node) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Node = <a href="#type-af_hml_tt">af_hml_tt()</a> | <a href="#type-af_hml_ff">af_hml_ff()</a> | <a href="#type-af_hml_or">af_hml_or()</a> | <a href="#type-af_hml_and">af_hml_and()</a> | <a href="#type-af_hml_max">af_hml_max()</a> | <a href="#type-af_hml_var">af_hml_var()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="get_str-3">get_str/3 *</a></h3>
+<div class="spec">
+<p><tt>get_str(Node, Ph, Inv) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Node = <a href="#type-af_hml_pos">af_hml_pos()</a> | <a href="#type-af_hml_nec">af_hml_nec()</a></tt></li><li><tt>Ph = string()</tt></li><li><tt>Inv = boolean()</tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="init_ph-0">init_ph/0 *</a></h3>
+<div class="spec">
+<p><tt>init_ph() -&gt; ok</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_env-1">new_env/1 *</a></h3>
+<div class="spec">
+<p><tt>new_env(List::[<a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a>]) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_env_kv-2">new_env_kv/2 *</a></h3>
+<div class="spec">
+<p><tt>new_env_kv(Key, Val) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Key = atom()</tt></li><li><tt>Val = <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt></li></ul></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="new_ph-0">new_ph/0 *</a></h3>
+<div class="spec">
+<p><tt>new_ph() -&gt; string()</tt><br></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_file-1">parse_file/1</a></h3>
+<div class="spec">
+<p><tt>parse_file(File) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="parse_string-1">parse_string/1</a></h3>
+<div class="spec">
+<p><tt>parse_string(String) -&gt; any()</tt></p>
+<p> </p>
+</div>
+
+<h3 class="function"><a name="visit-2">visit/2</a></h3>
+<div class="spec">
+<p><tt>visit(Node, Opts) -&gt; <a href="erl_syntax.html#type-syntaxTree">erl_syntax:syntaxTree()</a></tt>
+<ul class="definitions"><li><tt>Node = <a href="#type-af_maxhml">af_maxhml()</a></tt></li><li><tt>Opts = <a href="opts.html#type-options">opts:options()</a></tt></li></ul></p>
+<p> </p>
+</div>
+<hr>
+
+<div class="navbar"><a name="#navbar_bottom"></a><table width="100%" border="0" cellspacing="0" cellpadding="2" summary="navigation bar"><tr><td><a href="overview-summary.html" target="overviewFrame">Overview</a></td><td><a href="http://www.erlang.org/"><img src="erlang.png" align="right" border="0" alt="erlang logo"></a></td></tr></table></div>
+<p><i>Generated by EDoc</i></p>
+</body>
+</html>

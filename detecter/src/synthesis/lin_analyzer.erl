@@ -347,7 +347,7 @@ dispatch(Event = {send, _Sender, _Receiver, Msg}) ->
 dispatch(Event = {recv, _Receiver, Msg}) ->
   do_monitor(event:to_evm_event(Event),
     fun(Verdict, _) ->
-      format_verdict("Reached after analyzing event ~w.~n", [Event], Verdict)
+      format_verdict("After analyzing event ~w.~n", [Event], Verdict)
     end
   ),
   Msg.

@@ -9,3 +9,7 @@ A runtime verification tool for monitoring asynchronous component systems.
 
 ![GitHub issues](https://img.shields.io/github/issues/duncanatt/detecter)
 ![GitHub closed issues](https://img.shields.io/github/issues-closed/duncanatt/detecter)
+
+# Releases
+
+* [![DOI](https://zenodo.org/badge/342591077.svg)](https://zenodo.org/badge/latestdoi/342591077) COORDINATION 2020 artifact evaluation

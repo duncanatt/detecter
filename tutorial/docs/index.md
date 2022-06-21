@@ -47,7 +47,12 @@ Interested readers are also referred to the list of publications that follows.
 
 ## Publications
 
-[FORTE 2021](https://link.springer.com/content/pdf/10.1007%2F978-3-030-78089-0_14.pdf){ .md-button .md-button--secondary}
+[COORDINATION 2022](http://staff.um.edu.mt/afra1/papers/Coord2022b.pdf){ .md-button .md-button--secondary}
+[FORTE 2021](http://staff.um.edu.mt/afra1/papers/forte-tutorial-2021.pdf){ .md-button .md-button--secondary}
+[POPL 2019](http://staff.um.edu.mt/afra1/papers/popl19.pdf){ .md-button .md-button--secondary}
+[BETTY 2017](http://staff.um.edu.mt/afra1/papers/betty-book.pdf){ .md-button .md-button--secondary}
+[FMSD 2017](http://staff.um.edu.mt/afra1/papers/rvhmlr-jour.pdf){ .md-button .md-button--secondary}
+[RV 2016](http://staff.um.edu.mt/afra1/papers/rv2016.pdf){ .md-button .md-button--secondary}
 
 List of other publications to be added later :)
 

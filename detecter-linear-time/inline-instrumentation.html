@@ -806,7 +806,7 @@ The two variants of <code class="highlight"><span class="n">weave</span></code> 
 <p>You might have noticed that the <code>recv</code> and <code>send</code> events exhibited by the server process as it terminated (step 4 above) are also analysed by our analyser.
 Both of these analyses yield the same rejection verdict of <code>no</code>.
 Why does this happen?
-In the section <a href="../using/detecter/runtime-verification.md#is-one-execution-trace-enough">Is one execution trace enough?</a> we explained that analysers yield irrevocable verdicts (<em>i.e.</em>, ones that cannot be retracted).
+In the section <a href="../using-detecter/runtime-verification.html#is-one-execution-trace-enough">Is one execution trace enough?</a> we explained that analysers yield irrevocable verdicts (<em>i.e.</em>, ones that cannot be retracted).
 This is one such instance, where the verdict <code>no</code> is flagged, and the analyser will persist its decision, regardless of the events it analyses going forward.</p>
 <h2 id="correcting-the-server-implementation">Correcting the server implementation<a class="headerlink" href="#correcting-the-server-implementation" title="Permanent link">&para;</a></h2>
 <p>Let us once again look at the server implementation.</p>

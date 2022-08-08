@@ -552,7 +552,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k_ii/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -564,7 +564,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k_ii/outline/decentralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -578,7 +578,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random inline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/inline/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random inline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k_ii/inline/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -590,7 +590,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/centralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k_ii/outline/centralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -602,7 +602,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random baseline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/baseline -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random baseline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k_ii/baseline -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -617,7 +617,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -629,7 +629,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -643,7 +643,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse inline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/inline/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse inline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/inline/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -655,7 +655,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/centralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/centralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] Baseline
@@ -667,7 +667,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse baseline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/baseline -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse baseline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/baseline -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -682,7 +682,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
    ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -694,7 +694,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -708,7 +708,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst inline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/inline/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst inline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/inline/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -720,7 +720,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/centralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/centralized/merged/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -732,7 +732,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst baseline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/baseline -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst baseline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/baseline -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -763,7 +763,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -776,7 +776,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 random outline -r 1000 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -792,7 +792,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -805,7 +805,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -821,7 +821,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -834,7 +834,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/merged/master_only -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 ---
@@ -1200,7 +1200,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/separate/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/separate/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1212,7 +1212,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/merged/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/merged/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -1226,7 +1226,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random inline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/inline/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random inline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/inline/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -1238,7 +1238,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/centralized/merged/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/centralized/merged/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -1250,7 +1250,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random baseline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/baseline -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random baseline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/baseline -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1265,7 +1265,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/separate/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/separate/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1277,7 +1277,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/merged/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/merged/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -1291,7 +1291,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse inline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/inline/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse inline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/inline/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -1303,7 +1303,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/centralized/merged/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/centralized/merged/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -1315,7 +1315,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse baseline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/baseline -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse baseline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/baseline -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1330,7 +1330,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/separate/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/separate/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1342,7 +1342,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/merged/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/merged/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -1356,7 +1356,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst inline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/inline/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst inline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/inline/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -1368,7 +1368,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/centralized/merged/all -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/centralized/merged/all -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -1380,7 +1380,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst baseline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/baseline -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst baseline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/baseline -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1411,7 +1411,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/separate/master_only -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/separate/master_only -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1425,7 +1425,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/merged/master_only -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/merged/master_only -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1441,7 +1441,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/separate/master_only -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/separate/master_only -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1454,7 +1454,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/merged/master_only -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/merged/master_only -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1470,7 +1470,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/separate/master_only -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/separate/master_only -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1483,7 +1483,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/500_k/outline/decentralized/merged/master_only -wc 100 -b 50000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/500_k_16_sched/outline/decentralized/merged/master_only -wc 100 -b 50000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 ---
@@ -1524,7 +1524,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/separate/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/separate/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1536,7 +1536,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/merged/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/merged/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -1550,7 +1550,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random inline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/inline/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random inline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/inline/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -1562,7 +1562,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/centralized/merged/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/centralized/merged/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -1574,7 +1574,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random baseline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/baseline -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random baseline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/baseline -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1589,7 +1589,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/separate/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/separate/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1601,7 +1601,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/merged/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/merged/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -1615,7 +1615,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse inline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/inline/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse inline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/inline/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -1627,7 +1627,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/centralized/merged/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/centralized/merged/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -1639,7 +1639,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse baseline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/baseline -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse baseline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/baseline -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1654,7 +1654,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/separate/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/separate/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1666,7 +1666,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/merged/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/merged/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Inline*
@@ -1680,7 +1680,7 @@ these should be applied for each experiment run:
     5. Execute `make weave`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst inline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/inline/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst inline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/inline/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
@@ -1692,7 +1692,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/centralized/merged/all -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/centralized/merged/all -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Baseline*
@@ -1704,7 +1704,7 @@ these should be applied for each experiment run:
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst baseline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/baseline -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst baseline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/baseline -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1735,7 +1735,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/separate/master_only -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/separate/master_only -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1749,7 +1749,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/merged/master_only -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 random outline -r 10000 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/merged/master_only -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1765,7 +1765,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/separate/master_only -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/separate/master_only -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1778,7 +1778,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/merged/master_only -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/merged/master_only -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
 
@@ -1794,7 +1794,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/separate/master_only -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/separate/master_only -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
@@ -1807,7 +1807,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
     4. Execute `make`.
 
     ```bash
-    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Development/detecter-private/runs/thesis/1_M/outline/decentralized/merged/master_only -wc 100 -b 100000 -sr 3 -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    (nohup python -u -m cli run 1000000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /Users/duncan/Development/detecter-private/runs/thesis/1_M_16_sched/outline/decentralized/merged/master_only -wc 100 -b 100000 -sr 3 -pa /Users/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
 ---

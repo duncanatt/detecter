@@ -75,8 +75,8 @@ extra:
     bin_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/ebin
     runs_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/runs
     plots_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/plots
-    rep_cnt: 30
-    sched_cnt: 160
+    rep_cnt: 3
+    sched_cnt: 16
 
 
 theme:

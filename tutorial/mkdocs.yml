@@ -71,6 +71,13 @@ extra:
     - icon: fontawesome/solid/envelope-open
       link: mailto:duncanatt@gmail.com
       name: Drop a line
+  benchmark:
+    bin_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/ebin
+    runs_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/runs
+    plots_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/plots
+    rep_cnt: 30
+    sched_cnt: 160
+
 
 theme:
   name: material

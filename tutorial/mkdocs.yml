@@ -35,6 +35,7 @@ markdown_extensions:
       emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
   - pymdownx.tasklist:
+      custom_checkbox: true
       clickable_checkbox: true
   - toc:
       permalink: true
@@ -75,7 +76,7 @@ extra:
     bin_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/ebin
     runs_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/runs
     plots_dir: /Users/duncan/Dropbox/PhD/Development/detecter-private/plots
-    rep_cnt: 3
+    rep_cnt: 5
     sched_cnt: 16
 
 

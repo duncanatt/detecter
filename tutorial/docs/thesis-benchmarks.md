@@ -2,6 +2,22 @@
 
 ---
 
+## Benchmarks to take for sanity checks
+
+### {++n = 500k++} (4 schedulers)
+
+- [x] Compare decentralized outline (separate) taken with 16 schedulers *vs.* the same test taken with 4 schedulers..
+    
+### {++n = 500k++} (16 schedulers)
+
+- [ ] Compare centralized outline (merged) and a multiplexing monitor *vs.* the same test taken with a simple monitor. 
+
+- [ ] Compare centralized outline (merged) *vs.* centralized outline (separate) with a multiplexing monitor.
+
+- [ ] Compare decentralized outline (merged) *vs.* decentralized outline (separate). 
+
+---
+
 ## Monitors for Master and Slave processes ({++n = 2k++})
 
 The following code modifications are required to run the experiments correctly;
@@ -14,8 +30,8 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `sudo vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
      monitors.
     4. Execute `make`.
@@ -26,10 +42,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -38,10 +54,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -52,10 +68,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -64,10 +80,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -104,10 +120,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -116,10 +132,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -128,10 +144,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -142,10 +158,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -154,10 +170,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -169,10 +185,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -181,10 +197,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -193,10 +209,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -207,10 +223,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -219,10 +235,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -234,10 +250,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -246,10 +262,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -258,10 +274,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -272,10 +288,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -284,10 +300,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -324,10 +340,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -336,10 +352,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -348,10 +364,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -362,10 +378,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -374,10 +390,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -389,10 +405,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -401,10 +417,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -413,10 +429,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -427,10 +443,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -439,10 +455,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -454,10 +470,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -466,10 +482,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -478,10 +494,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -492,10 +508,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -504,10 +520,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -545,10 +561,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -557,10 +573,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -569,10 +585,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -583,10 +599,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -595,10 +611,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -610,10 +626,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -622,10 +638,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -634,10 +650,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -648,10 +664,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -660,10 +676,10 @@ these should be applied for each experiment run:
 
 - [ ] Baseline
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -675,10 +691,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -687,10 +703,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -699,10 +715,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -713,10 +729,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -725,10 +741,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -756,7 +772,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -768,8 +784,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -785,7 +801,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -797,8 +813,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -814,7 +830,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -826,8 +842,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -869,10 +885,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -881,10 +897,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -893,10 +909,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -907,10 +923,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -919,10 +935,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -934,10 +950,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -946,10 +962,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -958,10 +974,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -972,10 +988,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -984,10 +1000,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -999,10 +1015,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1011,10 +1027,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1023,10 +1039,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1037,10 +1053,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1049,10 +1065,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1080,7 +1096,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1093,8 +1109,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1110,7 +1126,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1122,8 +1138,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1139,7 +1155,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1151,8 +1167,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1193,10 +1209,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1205,10 +1221,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1217,10 +1233,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1231,22 +1247,34 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
     (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d {{benchmark.runs_dir}}/thesis/500_k_{{benchmark.sched_cnt}}/outline/centralized/merged/all -wc 100 -b 50000 -sr {{benchmark.rep_cnt}} -pa {{benchmark.bin_dir}} -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
     ```
 
+- [ ] *Centralized Outline (Separate Tracer and Monitor)*
+
+    1. Update `runner.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
+    3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
+       monitor: `vim src/experiments/experiment_thesis.erl `.
+    4. Execute `make`.
+
+    ```bash
+    (nohup python -u -m cli run 500000 random outline -r 5000 -ps 0.9 -pr 0.9 -d {{benchmark.runs_dir}}/thesis/500_k_{{benchmark.sched_cnt}}/outline/centralized/separate/all -wc 100 -b 50000 -sr {{benchmark.rep_cnt}} -pa {{benchmark.bin_dir}} -m experiment_thesis -i random_0.9_0.9 &) && tail -f nohup.out
+    ```
+
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1258,10 +1286,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1270,10 +1298,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1282,10 +1310,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1296,22 +1324,34 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
     (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d {{benchmark.runs_dir}}/thesis/500_k_{{benchmark.sched_cnt}}/outline/centralized/merged/all -wc 100 -b 50000 -sr {{benchmark.rep_cnt}} -pa {{benchmark.bin_dir}} -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
     ```
 
+- [ ] *Centralized Outline (Separate Tracer and Monitor)*
+
+    1. Update `runner.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
+    3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
+       monitor: `vim src/experiments/experiment_thesis.erl `.
+    4. Execute `make`.
+
+    ```bash
+    (nohup python -u -m cli run 500000 pulse outline -tu 100 -s 25 -ps 0.9 -pr 0.9 -d {{benchmark.runs_dir}}/thesis/500_k_{{benchmark.sched_cnt}}/outline/centralized/separate/all -wc 100 -b 50000 -sr {{benchmark.rep_cnt}} -pa {{benchmark.bin_dir}} -m experiment_thesis -i pulse_0.9_0.9 &) && tail -f nohup.out
+    ```
+
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1323,10 +1363,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1335,10 +1375,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1347,10 +1387,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1361,22 +1401,34 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
     (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d {{benchmark.runs_dir}}/thesis/500_k_{{benchmark.sched_cnt}}/outline/centralized/merged/all -wc 100 -b 50000 -sr {{benchmark.rep_cnt}} -pa {{benchmark.bin_dir}} -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
     ```
 
+- [ ] *Centralized Outline (Separate Tracer and Monitor)*
+
+    1. Update `runner.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
+    3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
+       monitor: `vim src/experiments/experiment_thesis.erl `.
+    4. Execute `make`.
+
+    ```bash
+    (nohup python -u -m cli run 500000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d {{benchmark.runs_dir}}/thesis/500_k_{{benchmark.sched_cnt}}/outline/centralized/separate/all -wc 100 -b 50000 -sr {{benchmark.rep_cnt}} -pa {{benchmark.bin_dir}} -m experiment_thesis -i burst_0.9_0.9 &) && tail -f nohup.out
+    ```
+
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1404,7 +1456,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1417,8 +1469,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1434,7 +1486,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1446,8 +1498,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1463,7 +1515,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1475,8 +1527,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1517,10 +1569,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1529,10 +1581,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1541,10 +1593,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1555,10 +1607,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1567,10 +1619,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1582,10 +1634,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1594,10 +1646,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1606,10 +1658,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1620,10 +1672,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1632,10 +1684,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1647,10 +1699,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1659,10 +1711,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1671,10 +1723,10 @@ these should be applied for each experiment run:
 
 - [ ] *Decentralized Inline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Check that `Makefile` weaved in the correct monitor specifications using the
        function `fun experiment_thesis:driver_monitors/1`.
     5. Execute `make weave`.
@@ -1685,10 +1737,10 @@ these should be applied for each experiment run:
 
 - [ ] *Centralized Outline (Merged Tracer and Monitor)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
-       monitor.
+       monitor: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1697,10 +1749,10 @@ these should be applied for each experiment run:
 
 - [ ] *Baseline*
 
-    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner.py` and set the `num_mons` variable to `coverage + 1`: `vim scripts/simulate/runner.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable both master and slave
-       monitors.
+       monitors: `vim src/experiments/experiment_thesis.erl `.
     4. Execute `make`.
 
     ```bash
@@ -1728,7 +1780,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1741,8 +1793,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1758,7 +1810,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1770,8 +1822,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.
@@ -1787,7 +1839,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 - [ ] *Decentralized Outline (Separate Tracers and Monitors)*
 
     1. Update `runner.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part.
+    2. Update `cli.py`, uncomment {==SEPARATE==} part and comment {==MERGED==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `async_mon`.
@@ -1799,8 +1851,8 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.
 
 - [ ] *Decentralized Outline (Merged Tracers and Monitors)*
 
-    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`.
-    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part.
+    1. Update `runner_thesis.py` and set the `num_mons` variable to `1`: `vim scripts/simulate/thesis/runner_thesis.py`.
+    2. Update `cli.py`, uncomment {==MERGED==} part and comment {==SEPARATE==} part: `vim scripts/cli.py`.
     3. Update `experiment_thesis:driver_monitors/1` and enable **only** master
        monitor version that communicates the `EXIT` message to the owner process. The
        owner process must be set to `experiment_thesis`.

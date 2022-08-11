@@ -559,7 +559,25 @@
                 
                 <h1 id="thesis-experiments">THESIS Experiments<a class="headerlink" href="#thesis-experiments" title="Permanent link">&para;</a></h1>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd0n-2kczjqqkd1">Monitors for Master and Slave processes (<ins class="critic">n = 2k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd0n-2kczjqqkd1" title="Permanent link">&para;</a></h2>
+<h2 id="benchmarks-to-take-for-sanity-checks">Benchmarks to take for sanity checks<a class="headerlink" href="#benchmarks-to-take-for-sanity-checks" title="Permanent link">&para;</a></h2>
+<h3 id="czjqqkd0n-500kczjqqkd1-4-schedulers"><ins class="critic">n = 500k</ins> (4 schedulers)<a class="headerlink" href="#czjqqkd0n-500kczjqqkd1-4-schedulers" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" checked/><span class="task-list-indicator"></span></label> Compare decentralized outline (separate) taken with 16 schedulers <em>vs.</em> the same test taken with 4 schedulers..</li>
+</ul>
+<h3 id="czjqqkd2n-500kczjqqkd3-16-schedulers"><ins class="critic">n = 500k</ins> (16 schedulers)<a class="headerlink" href="#czjqqkd2n-500kczjqqkd3-16-schedulers" title="Permanent link">&para;</a></h3>
+<ul class="task-list">
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Compare centralized outline (merged) and a multiplexing monitor <em>vs.</em> the same test taken with a simple monitor. </p>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Compare centralized outline (merged) <em>vs.</em> centralized outline (separate) with a multiplexing monitor.</p>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Compare decentralized outline (merged) <em>vs.</em> decentralized outline (separate). </p>
+</li>
+</ul>
+<hr />
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd4n-2kczjqqkd5">Monitors for Master and Slave processes (<ins class="critic">n = 2k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd4n-2kczjqqkd5" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
@@ -567,9 +585,9 @@ these should be applied for each experiment run:
 <h3 id="steady-load">Steady Load<a class="headerlink" href="#steady-load" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
+<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>sudo vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
 <li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
  monitors.</li>
@@ -579,7 +597,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -591,7 +609,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -605,7 +623,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -617,7 +635,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -630,14 +648,14 @@ these should be applied for each experiment run:
 </li>
 </ul>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd22n-10kczjqqkd23">Monitors for Master and Slave processes (<ins class="critic">n = 10k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd22n-10kczjqqkd23" title="Permanent link">&para;</a></h2>
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd26n-10kczjqqkd27">Monitors for Master and Slave processes (<ins class="critic">n = 10k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd26n-10kczjqqkd27" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
 <h3 id="steady-load_1">Steady Load<a class="headerlink" href="#steady-load_1" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -649,7 +667,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -661,7 +679,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -675,7 +693,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -687,7 +705,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -702,7 +720,7 @@ these should be applied for each experiment run:
 <h3 id="pulse-load">Pulse Load<a class="headerlink" href="#pulse-load" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -714,7 +732,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -726,7 +744,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -740,7 +758,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -752,7 +770,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -767,7 +785,7 @@ these should be applied for each experiment run:
 <h3 id="burst-load">Burst Load<a class="headerlink" href="#burst-load" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -779,7 +797,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -791,7 +809,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -805,7 +823,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -817,7 +835,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -830,14 +848,14 @@ these should be applied for each experiment run:
 </li>
 </ul>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd84n-20kczjqqkd85">Monitors for Master and Slave processes (<ins class="critic">n = 20k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd84n-20kczjqqkd85" title="Permanent link">&para;</a></h2>
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd88n-20kczjqqkd89">Monitors for Master and Slave processes (<ins class="critic">n = 20k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd88n-20kczjqqkd89" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
 <h3 id="steady-load_2">Steady Load<a class="headerlink" href="#steady-load_2" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -849,7 +867,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -861,7 +879,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -875,7 +893,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -887,7 +905,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -902,7 +920,7 @@ these should be applied for each experiment run:
 <h3 id="pulse-load_1">Pulse Load<a class="headerlink" href="#pulse-load_1" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -914,7 +932,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -926,7 +944,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -940,7 +958,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -952,7 +970,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -967,7 +985,7 @@ these should be applied for each experiment run:
 <h3 id="burst-load_1">Burst Load<a class="headerlink" href="#burst-load_1" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -979,7 +997,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -991,7 +1009,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1005,7 +1023,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1017,7 +1035,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1030,14 +1048,14 @@ these should be applied for each experiment run:
 </li>
 </ul>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd146n-100kczjqqkd147">Monitors for Master and Slave processes (<ins class="critic">n = 100k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd146n-100kczjqqkd147" title="Permanent link">&para;</a></h2>
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd150n-100kczjqqkd151">Monitors for Master and Slave processes (<ins class="critic">n = 100k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd150n-100kczjqqkd151" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
 <h3 id="steady-load_3">Steady Load<a class="headerlink" href="#steady-load_3" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1049,7 +1067,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1061,7 +1079,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1075,7 +1093,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1087,7 +1105,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1102,7 +1120,7 @@ these should be applied for each experiment run:
 <h3 id="pulse-load_2">Pulse Load<a class="headerlink" href="#pulse-load_2" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1114,7 +1132,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1126,7 +1144,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1140,7 +1158,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1152,7 +1170,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> Baseline</p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> Baseline</p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1167,7 +1185,7 @@ these should be applied for each experiment run:
 <h3 id="burst-load_2">Burst Load<a class="headerlink" href="#burst-load_2" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1179,7 +1197,7 @@ these should be applied for each experiment run:
 (nohup python -u -m cli run 100000 burst outline -tu 100 -p 100 -ps 0.9 -pr 0.9 -d /home/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/100_k/outline/decentralized/separate/all -wc 100 -b 10000 -sr 3 -pa /home/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 &amp;) &amp;&amp; tail -f nohup.out</code></p>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1191,7 +1209,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1205,7 +1223,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1217,7 +1235,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1229,7 +1247,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h2 id="monitor-for-master-process-only-czjqqkd208n-100kczjqqkd209">Monitor for Master Process Only (<ins class="critic">n = 100k</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd208n-100kczjqqkd209" title="Permanent link">&para;</a></h2>
+<h2 id="monitor-for-master-process-only-czjqqkd212n-100kczjqqkd213">Monitor for Master Process Only (<ins class="critic">n = 100k</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd212n-100kczjqqkd213" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> <strong>not</strong> to use the <code>set_on_spawn</code> flag for each
@@ -1243,7 +1261,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="steady-load_4">Steady Load<a class="headerlink" href="#steady-load_4" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1256,7 +1274,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1272,7 +1290,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="pulse-load_3">Pulse Load<a class="headerlink" href="#pulse-load_3" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1285,7 +1303,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1301,7 +1319,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h4 id="burst-load_3">Burst Load<a class="headerlink" href="#burst-load_3" title="Permanent link">&para;</a></h4>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1314,7 +1332,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1328,14 +1346,14 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </li>
 </ul>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd234n-200kczjqqkd235">Monitors for Master and Slave processes (<ins class="critic">n = 200k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd234n-200kczjqqkd235" title="Permanent link">&para;</a></h2>
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd238n-200kczjqqkd239">Monitors for Master and Slave processes (<ins class="critic">n = 200k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd238n-200kczjqqkd239" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
 <h3 id="steady-load_5">Steady Load<a class="headerlink" href="#steady-load_5" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1347,7 +1365,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1359,7 +1377,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1373,7 +1391,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1385,7 +1403,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1400,7 +1418,7 @@ these should be applied for each experiment run:
 <h3 id="pulse-load_4">Pulse Load<a class="headerlink" href="#pulse-load_4" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1412,7 +1430,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1424,7 +1442,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1438,7 +1456,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1450,7 +1468,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1465,7 +1483,7 @@ these should be applied for each experiment run:
 <h3 id="burst-load_4">Burst Load<a class="headerlink" href="#burst-load_4" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1477,7 +1495,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1489,7 +1507,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1503,7 +1521,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1515,7 +1533,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1527,7 +1545,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h2 id="monitor-for-master-process-only-czjqqkd296n-200kczjqqkd297">Monitor for Master Process Only (<ins class="critic">n = 200k</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd296n-200kczjqqkd297" title="Permanent link">&para;</a></h2>
+<h2 id="monitor-for-master-process-only-czjqqkd300n-200kczjqqkd301">Monitor for Master Process Only (<ins class="critic">n = 200k</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd300n-200kczjqqkd301" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> <strong>not</strong> to use the <code>set_on_spawn</code> flag for each
@@ -1541,7 +1559,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="steady-load_6">Steady Load<a class="headerlink" href="#steady-load_6" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1554,7 +1572,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1570,7 +1588,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="pulse-load_5">Pulse Load<a class="headerlink" href="#pulse-load_5" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1583,7 +1601,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1599,7 +1617,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="burst-load_5">Burst Load<a class="headerlink" href="#burst-load_5" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1612,7 +1630,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1626,14 +1644,14 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </li>
 </ul>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd322n-500kczjqqkd323">Monitors for Master and Slave processes (<ins class="critic">n = 500k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd322n-500kczjqqkd323" title="Permanent link">&para;</a></h2>
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd326n-500kczjqqkd327">Monitors for Master and Slave processes (<ins class="critic">n = 500k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd326n-500kczjqqkd327" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
 <h3 id="steady-load_7">Steady Load<a class="headerlink" href="#steady-load_7" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1645,7 +1663,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1657,7 +1675,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1671,7 +1689,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1683,7 +1701,19 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Separate Tracer and Monitor)</em></p>
+<ol>
+<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
+<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
+<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
+   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
+<li>Execute <code>make</code>.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">500000</span> random outline -r <span class="m">5000</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /Users/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/500_k_16/outline/centralized/separate/all -wc <span class="m">100</span> -b <span class="m">50000</span> -sr <span class="m">5</span> -pa /Users/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
+</code></pre></div>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1698,7 +1728,7 @@ these should be applied for each experiment run:
 <h3 id="pulse-load_6">Pulse Load<a class="headerlink" href="#pulse-load_6" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1710,7 +1740,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1722,7 +1752,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1736,7 +1766,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1748,7 +1778,19 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Separate Tracer and Monitor)</em></p>
+<ol>
+<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
+<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
+<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
+   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
+<li>Execute <code>make</code>.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">500000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /Users/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/500_k_16/outline/centralized/separate/all -wc <span class="m">100</span> -b <span class="m">50000</span> -sr <span class="m">5</span> -pa /Users/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
+</code></pre></div>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1763,7 +1805,7 @@ these should be applied for each experiment run:
 <h3 id="burst-load_6">Burst Load<a class="headerlink" href="#burst-load_6" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1775,7 +1817,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1787,7 +1829,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1801,7 +1843,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1813,7 +1855,19 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Separate Tracer and Monitor)</em></p>
+<ol>
+<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
+<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
+<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
+   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
+<li>Execute <code>make</code>.</li>
+</ol>
+<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">500000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /Users/duncan/Dropbox/PhD/Development/detecter-private/runs/thesis/500_k_16/outline/centralized/separate/all -wc <span class="m">100</span> -b <span class="m">50000</span> -sr <span class="m">5</span> -pa /Users/duncan/Dropbox/PhD/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
+</code></pre></div>
+</li>
+<li class="task-list-item">
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1825,7 +1879,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h2 id="monitor-for-master-process-only-czjqqkd384n-500kczjqqkd385">Monitor for Master Process Only (<ins class="critic">n = 500k</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd384n-500kczjqqkd385" title="Permanent link">&para;</a></h2>
+<h2 id="monitor-for-master-process-only-czjqqkd400n-500kczjqqkd401">Monitor for Master Process Only (<ins class="critic">n = 500k</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd400n-500kczjqqkd401" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> <strong>not</strong> to use the <code>set_on_spawn</code> flag for each
@@ -1839,7 +1893,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="steady-load_8">Steady Load<a class="headerlink" href="#steady-load_8" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1852,7 +1906,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1868,7 +1922,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="pulse-load_7">Pulse Load<a class="headerlink" href="#pulse-load_7" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1881,7 +1935,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1897,7 +1951,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="burst-load_7">Burst Load<a class="headerlink" href="#burst-load_7" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1910,7 +1964,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1924,14 +1978,14 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </li>
 </ul>
 <hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd410n-1mczjqqkd411">Monitors for Master and Slave processes (<ins class="critic">n = 1M</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd410n-1mczjqqkd411" title="Permanent link">&para;</a></h2>
+<h2 id="monitors-for-master-and-slave-processes-czjqqkd426n-1mczjqqkd427">Monitors for Master and Slave processes (<ins class="critic">n = 1M</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd426n-1mczjqqkd427" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
 <h3 id="steady-load_9">Steady Load<a class="headerlink" href="#steady-load_9" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1943,7 +1997,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1955,7 +2009,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1969,7 +2023,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1981,7 +2035,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -1996,7 +2050,7 @@ these should be applied for each experiment run:
 <h3 id="pulse-load_8">Pulse Load<a class="headerlink" href="#pulse-load_8" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2008,7 +2062,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2020,7 +2074,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2034,7 +2088,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2046,7 +2100,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2061,7 +2115,7 @@ these should be applied for each experiment run:
 <h3 id="burst-load_8">Burst Load<a class="headerlink" href="#burst-load_8" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2073,7 +2127,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2085,7 +2139,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Inline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2099,7 +2153,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2111,7 +2165,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Baseline</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2123,7 +2177,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h2 id="monitor-for-master-process-only-czjqqkd472n-1mczjqqkd473">Monitor for Master Process Only (<ins class="critic">n = 1M</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd472n-1mczjqqkd473" title="Permanent link">&para;</a></h2>
+<h2 id="monitor-for-master-process-only-czjqqkd488n-1mczjqqkd489">Monitor for Master Process Only (<ins class="critic">n = 1M</ins>)<a class="headerlink" href="#monitor-for-master-process-only-czjqqkd488n-1mczjqqkd489" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> <strong>not</strong> to use the <code>set_on_spawn</code> flag for each
@@ -2137,7 +2191,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="steady-load_10">Steady Load<a class="headerlink" href="#steady-load_10" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2150,7 +2204,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2166,7 +2220,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="pulse-load_9">Pulse Load<a class="headerlink" href="#pulse-load_9" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2179,7 +2233,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2195,7 +2249,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <h3 id="burst-load_9">Burst Load<a class="headerlink" href="#burst-load_9" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>1</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
@@ -2208,7 +2262,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 <li class="task-list-item">
-<p><input type="checkbox"/> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
+<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
 <ol>
 <li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
 <li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>

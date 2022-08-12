@@ -668,411 +668,11 @@
 </ul>
 <hr />
 <h1 id="thesis-benchmark-configuration">THESIS benchmark configuration<a class="headerlink" href="#thesis-benchmark-configuration" title="Permanent link">&para;</a></h1>
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd30n-10kczjqqkd31">Monitors for Master and Slave processes (<ins class="critic">n = 10k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd30n-10kczjqqkd31" title="Permanent link">&para;</a></h2>
-<p>The following code modifications are required to run the experiments correctly;
-these should be applied for each experiment run:
-1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
-<h3 id="steady-load_2">Steady load<a class="headerlink" href="#steady-load_2" title="Permanent link">&para;</a></h3>
-<ul class="task-list">
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> random outline -r <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/decentralized/separate/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> random outline -r <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/decentralized/merged/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Check that <code>Makefile</code> weaved in the correct monitor specifications using the
-   function <code>fun experiment_thesis:driver_monitors/1</code>.</li>
-<li>Execute <code>make weave</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> random inline -r <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/inline/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
-   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> random outline -r <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/centralized/merged/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> random baseline -r <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/baseline -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-</ul>
-<h3 id="pulse-load_2">Pulse load<a class="headerlink" href="#pulse-load_2" title="Permanent link">&para;</a></h3>
-<ul class="task-list">
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/decentralized/separate/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/decentralized/merged/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Check that <code>Makefile</code> weaved in the correct monitor specifications using the
-   function <code>fun experiment_thesis:driver_monitors/1</code>.</li>
-<li>Execute <code>make weave</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> pulse inline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/inline/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
-   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/centralized/merged/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> pulse baseline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/baseline -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-</ul>
-<h3 id="burst-load_2">Burst load<a class="headerlink" href="#burst-load_2" title="Permanent link">&para;</a></h3>
-<ul class="task-list">
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/decentralized/separate/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/decentralized/merged/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Check that <code>Makefile</code> weaved in the correct monitor specifications using the
-   function <code>fun experiment_thesis:driver_monitors/1</code>.</li>
-<li>Execute <code>make weave</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> burst inline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/inline/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
-   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/outline/centralized/merged/all -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">10000</span> burst baseline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/10_k/baseline -wc <span class="m">100</span> -b <span class="m">1000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-</ul>
-<hr />
-<h2 id="monitors-for-master-and-slave-processes-czjqqkd92n-20kczjqqkd93">Monitors for Master and Slave processes (<ins class="critic">n = 20k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd92n-20kczjqqkd93" title="Permanent link">&para;</a></h2>
-<p>The following code modifications are required to run the experiments correctly;
-these should be applied for each experiment run:
-1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
-<h3 id="steady-load_3">Steady load<a class="headerlink" href="#steady-load_3" title="Permanent link">&para;</a></h3>
-<ul class="task-list">
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> random outline -r <span class="m">200</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/decentralized/separate/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> random outline -r <span class="m">200</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/decentralized/merged/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Check that <code>Makefile</code> weaved in the correct monitor specifications using the
-   function <code>fun experiment_thesis:driver_monitors/1</code>.</li>
-<li>Execute <code>make weave</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> random inline -r <span class="m">200</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/inline/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
-   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> random outline -r <span class="m">200</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/centralized/merged/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> random baseline -r <span class="m">200</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/baseline -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i random_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-</ul>
-<h3 id="pulse-load_3">Pulse load<a class="headerlink" href="#pulse-load_3" title="Permanent link">&para;</a></h3>
-<ul class="task-list">
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/decentralized/separate/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/decentralized/merged/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Check that <code>Makefile</code> weaved in the correct monitor specifications using the
-   function <code>fun experiment_thesis:driver_monitors/1</code>.</li>
-<li>Execute <code>make weave</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> pulse inline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/inline/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
-   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> pulse outline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/centralized/merged/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> pulse baseline -tu <span class="m">100</span> -s <span class="m">25</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/baseline -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i pulse_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-</ul>
-<h3 id="burst-load_3">Burst load<a class="headerlink" href="#burst-load_3" title="Permanent link">&para;</a></h3>
-<ul class="task-list">
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/decentralized/separate/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Merged Tracers and Monitors)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/decentralized/merged/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Inline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">SEPARATE</mark> part and comment <mark class="critic">MERGED</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Check that <code>Makefile</code> weaved in the correct monitor specifications using the
-   function <code>fun experiment_thesis:driver_monitors/1</code>.</li>
-<li>Execute <code>make weave</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> burst inline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/inline/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Centralized Outline (Merged Tracer and Monitor)</em></p>
-<ol>
-<li>Update <code>runner_thesis.py</code> and set the <code>num_mons</code> variable to <code>1</code>: <code>vim scripts/simulate/thesis/runner_thesis.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable <strong>only</strong> master
-   monitor: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> burst outline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/outline/centralized/merged/all -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-<li class="task-list-item">
-<p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Baseline</em></p>
-<ol>
-<li>Update <code>runner.py</code> and set the <code>num_mons</code> variable to <code>coverage + 1</code>: <code>vim scripts/simulate/runner.py</code>.</li>
-<li>Update <code>cli.py</code>, uncomment <mark class="critic">MERGED</mark> part and comment <mark class="critic">SEPARATE</mark> part: <code>vim scripts/cli.py</code>.</li>
-<li>Update <code>experiment_thesis:driver_monitors/1</code> and enable both master and slave
-   monitors: <code>vim src/experiments/experiment_thesis.erl</code>.</li>
-<li>Execute <code>make</code>.</li>
-</ol>
-<div class="highlight"><pre><span></span><code><span class="o">(</span>nohup python -u -m cli run <span class="m">20000</span> burst baseline -tu <span class="m">100</span> -p <span class="m">100</span> -ps <span class="m">0</span>.9 -pr <span class="m">0</span>.9 -d /home/duncan/Development/detecter-private/runs/thesis/20_k/baseline -wc <span class="m">100</span> -b <span class="m">2000</span> -sr <span class="m">3</span> -pa /home/duncan/Development/detecter-private/ebin -m experiment_thesis -i burst_0.9_0.9 <span class="p">&amp;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> tail -f nohup.out
-</code></pre></div>
-</li>
-</ul>
-<hr />
 <h2 id="monitors-for-master-and-slave-processes-czjqqkd154n-100kczjqqkd155">Monitors for Master and Slave processes (<ins class="critic">n = 100k</ins>)<a class="headerlink" href="#monitors-for-master-and-slave-processes-czjqqkd154n-100kczjqqkd155" title="Permanent link">&para;</a></h2>
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
-<h3 id="steady-load_4">Steady load<a class="headerlink" href="#steady-load_4" title="Permanent link">&para;</a></h3>
+<h3 id="steady-load_2">Steady load<a class="headerlink" href="#steady-load_2" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1149,7 +749,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h3 id="pulse-load_4">Pulse load<a class="headerlink" href="#pulse-load_4" title="Permanent link">&para;</a></h3>
+<h3 id="pulse-load_2">Pulse load<a class="headerlink" href="#pulse-load_2" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1226,7 +826,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h3 id="burst-load_4">Burst load<a class="headerlink" href="#burst-load_4" title="Permanent link">&para;</a></h3>
+<h3 id="burst-load_2">Burst load<a class="headerlink" href="#burst-load_2" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1314,7 +914,7 @@ We use this to compute the estimated cost of monitoring overhead on the slaves
 only by subtracting from the total cost of monitoring the master and slave
 processes the cost of monitoring just the master. By dividing the result by the
 number of slaves, we obtain the amortized cost of monitor overhead per slave.</p>
-<h3 id="steady-load_5">Steady load<a class="headerlink" href="#steady-load_5" title="Permanent link">&para;</a></h3>
+<h3 id="steady-load_3">Steady load<a class="headerlink" href="#steady-load_3" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1343,7 +943,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 </ul>
-<h3 id="pulse-load_5">Pulse load<a class="headerlink" href="#pulse-load_5" title="Permanent link">&para;</a></h3>
+<h3 id="pulse-load_3">Pulse load<a class="headerlink" href="#pulse-load_3" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1372,7 +972,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 </ul>
-<h4 id="burst-load_5">Burst load<a class="headerlink" href="#burst-load_5" title="Permanent link">&para;</a></h4>
+<h4 id="burst-load_3">Burst load<a class="headerlink" href="#burst-load_3" title="Permanent link">&para;</a></h4>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1406,7 +1006,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 <p>The following code modifications are required to run the experiments correctly;
 these should be applied for each experiment run:
 1. Set <code>evm_tracer:trace/2</code> to use the <code>set_on_spawn</code> flag for each process.</p>
-<h3 id="steady-load_6">Steady load<a class="headerlink" href="#steady-load_6" title="Permanent link">&para;</a></h3>
+<h3 id="steady-load_4">Steady load<a class="headerlink" href="#steady-load_4" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1485,7 +1085,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h3 id="pulse-load_6">Pulse load<a class="headerlink" href="#pulse-load_6" title="Permanent link">&para;</a></h3>
+<h3 id="pulse-load_4">Pulse load<a class="headerlink" href="#pulse-load_4" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1564,7 +1164,7 @@ these should be applied for each experiment run:
 </code></pre></div>
 </li>
 </ul>
-<h3 id="burst-load_6">Burst load<a class="headerlink" href="#burst-load_6" title="Permanent link">&para;</a></h3>
+<h3 id="burst-load_4">Burst load<a class="headerlink" href="#burst-load_4" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1654,7 +1254,7 @@ We use this to compute the estimated cost of monitoring overhead on the slaves
 only by subtracting from the total cost of monitoring the master and slave
 processes the cost of monitoring just the master. By dividing the result by the
 number of slaves, we obtain the amortized cost of monitor overhead per slave.</p>
-<h3 id="steady-load_7">Steady load<a class="headerlink" href="#steady-load_7" title="Permanent link">&para;</a></h3>
+<h3 id="steady-load_5">Steady load<a class="headerlink" href="#steady-load_5" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1683,7 +1283,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 </ul>
-<h3 id="pulse-load_7">Pulse load<a class="headerlink" href="#pulse-load_7" title="Permanent link">&para;</a></h3>
+<h3 id="pulse-load_5">Pulse load<a class="headerlink" href="#pulse-load_5" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
@@ -1712,7 +1312,7 @@ number of slaves, we obtain the amortized cost of monitor overhead per slave.</p
 </code></pre></div>
 </li>
 </ul>
-<h3 id="burst-load_7">Burst load<a class="headerlink" href="#burst-load_7" title="Permanent link">&para;</a></h3>
+<h3 id="burst-load_5">Burst load<a class="headerlink" href="#burst-load_5" title="Permanent link">&para;</a></h3>
 <ul class="task-list">
 <li class="task-list-item">
 <p><label class="task-list-control"><input type="checkbox"/><span class="task-list-indicator"></span></label> <em>Decentralized Outline (Separate Tracers and Monitors)</em></p>
